@@ -88,7 +88,7 @@ class Helpers
         switch ($stars) {
             case 1:
                 $name = "Auto";
-                $diff = 60;
+                $diff = 50;
                 $auto = true;
                 break;
             case 2:
