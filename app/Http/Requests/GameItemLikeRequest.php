@@ -20,6 +20,7 @@ class GameItemLikeRequest extends GameRequest
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
+                'exclude_if:accountID,0',
                 Rule::exists(GameAccount::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
