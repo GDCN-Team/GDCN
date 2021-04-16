@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Requests;
+
+use App\Models\GameAccount;
+use Illuminate\Validation\Rule;
+
+class GameDailyLevelGetRequest extends GameRequest
+{
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules(): array
+    {
+        return [
+            'gameVersion' => [
+                'required',
+                'gte:21'
+            ],
+            'binaryVersion' => 'required_with:gameVersion',
+            'gdw' => [
+                'required',
+                'boolean'
+            ],
+            'accountID' => [
+                'sometimes',
+                'required',
+                Rule::exists(GameAccount::class, 'id')
+            ],
+            'gjp' => 'required_with:accountID',
+            'secret' => [
+                'required',
+                Rule::in('Wmfd2893gb7')
+            ],
+            'weekly' => [
+                'required',
+                'boolean'
+            ]
+        ];
+    }
+}

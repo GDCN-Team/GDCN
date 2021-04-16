@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Requests;
+
+use App\Exceptions\GameUserNotFoundException;
+use App\Models\GameAccount;
+use App\Models\GameLevel;
+use App\Models\GameUser;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\Rule;
+
+class GameLevelDeleteRequest extends GameRequest
+{
+    /**
+     * @var GameUser
+     */
+    public $user;
+
+    /**
+     * @var GameLevel
+     */
+    public $level;
+
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if (empty($this->levelID)) {
+            return false;
+        }
+
+        try {
+            $this->level = GameLevel::whereId($this->levelID)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return false;
+        }
+
+        try {
+            $this->user = $this->getGameUser();
+        } catch (GameUserNotFoundException $e) {
+            return false;
+        }
+
+        if (!$this->user->can('delete', $this->level)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules(): array
+    {
+        return [
+            'gameVersion' => [
+                'required',
+                'gte:21'
+            ],
+            'binaryVersion' => 'required_with:gameVersion',
+            'gdw' => [
+                'required',
+                'boolean'
+            ],
+            'accountID' => [
+                'sometimes',
+                'required',
+                Rule::exists(GameAccount::class, 'id')
+            ],
+            'gjp' => 'required_with:accountID',
+            'uuid' => 'required_without_all:accountID,gjp',
+            'udid' => 'required_with:uuid',
+            'levelID' => [
+                'required',
+                Rule::exists(GameLevel::class, 'id')
+            ],
+            'secret' => [
+                'required',
+                Rule::in('Wmfv2898gc9')
+            ]
+        ];
+    }
+}

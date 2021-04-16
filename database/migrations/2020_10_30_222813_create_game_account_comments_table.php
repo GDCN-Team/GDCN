@@ -1,0 +1,41 @@
+<?php
+
+/*
+ * Copyright (c) 2020. WOSHIZHAZHA120 & GDCN Team
+ */
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+/**
+ * Class CreateGameAccountCommentsTable
+ */
+class CreateGameAccountCommentsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up(): void
+    {
+        Schema::create('game_account_comments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('account')->index();
+            $table->string('comment');
+            $table->integer('likes')->default(0);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('game_account_comments');
+    }
+}
