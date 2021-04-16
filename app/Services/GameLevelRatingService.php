@@ -53,7 +53,10 @@ class GameLevelRatingService
         $rating->epic = false;
         $rating->coin_verified = false;
         $rating->demon_difficulty = 0;
-        return $rating->save();
+
+        $result = $level->rating->save();
+        $this->recalculateCreatorPoints();
+        return $result;
     }
 
     /**
@@ -67,7 +70,9 @@ class GameLevelRatingService
         }
 
         try {
-            return $level->rating->delete();
+            $result = $level->rating->delete();
+            $this->recalculateCreatorPoints();
+            return $result;
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -85,7 +90,9 @@ class GameLevelRatingService
         }
 
         $level->rating->featured_score = $score;
-        return $level->rating->save();
+        $result = $level->rating->save();
+        $this->recalculateCreatorPoints();
+        return $result;
     }
 
     /**
@@ -100,7 +107,9 @@ class GameLevelRatingService
         }
 
         $level->rating->epic = $status;
-        return $level->rating->save();
+        $result = $level->rating->save();
+        $this->recalculateCreatorPoints();
+        return $result;
     }
 
     /**
