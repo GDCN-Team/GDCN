@@ -44,7 +44,7 @@ class GameCommentCommandSystemTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee('Success!');
+        $request->assertSee('worked!');
     }
 
     public function test_level_comment(): void
@@ -83,6 +83,6 @@ class GameCommentCommandSystemTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee('Success!');
+        $request->assertSee('worked!');
     }
 }
