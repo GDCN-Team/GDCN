@@ -65,13 +65,17 @@ class GameLevelDownloadRequest extends GameRequest
                 break;
         }
 
-        $logCreated = app(GameLog::class)
-            ->existsOrNew(
-                GameLogType::fromValue(GameLogType::DOWNLOADED_LEVEL),
-                $this->level->id,
-                null, true);
+        $attributes = [
+            'type' => GameLogType::DOWNLOADED_LEVEL,
+            'value' => $this->level->id,
+            'ip' => $this->ip()
+        ];
 
-        if ($logCreated) {
+        $log = GameLog::query()
+            ->where($attributes);
+
+        if (!$log->exists()) {
+            $log->create($attributes);
             $this->level->increment('downloads');
         }
 

@@ -52,15 +52,9 @@ class GameLevelRatingRateStarsRequest extends GameRequest
     public function rules(): array
     {
         return [
-            'gameVersion' => [
-                'required',
-                'gte:20'
-            ],
-            'binaryVersion' => 'required_with:gameVersion',
-            'gdw' => [
-                'required',
-                'boolean'
-            ],
+            'gameVersion' => 'required',
+            'binaryVersion' => 'required',
+            'gdw' => 'required',
             'accountID' => [
                 'required',
                 'exclude_if:accountID,0',

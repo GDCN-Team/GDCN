@@ -60,15 +60,9 @@ class GameLevelCommentDeleteRequest extends GameRequest
     public function rules(): array
     {
         return [
-            'gameVersion' => [
-                'required',
-                'gte:21'
-            ],
-            'binaryVersion' => 'required_with:gameVersion',
-            'gdw' => [
-                'required',
-                'boolean'
-            ],
+            'gameVersion' => 'required',
+            'binaryVersion' => 'required',
+            'gdw' => 'required',
             'accountID' => [
                 'required',
                 Rule::exists(GameAccount::class, 'id')

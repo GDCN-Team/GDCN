@@ -38,15 +38,9 @@ class GameAccountSaveDataSaveRequest extends GameRequest
                 'required',
                 'password'
             ],
-            'gameVersion' => [
-                'required',
-                'gte:21'
-            ],
-            'binaryVersion' => 'required_with:gameVersion',
-            'gdw' => [
-                'required',
-                'boolean'
-            ],
+            'gameVersion' => 'required',
+            'binaryVersion' => 'required',
+            'gdw' => 'required',
             'saveData' => 'required',
             'secret' => [
                 'required',
