@@ -59,8 +59,28 @@ class GameMiscController extends Controller
                 return ResponseCode::ITEM_NOT_FOUND;
             }
 
-            if ($log->existsOrNew(GameLogType::fromValue($logType), $item->id, $request->getGameUser())) {
-                $data['like'] ? $item->increment('likes') : $item->decrement('likes');
+            $user = $request->getGameUser();
+            $attributes = [
+                'type' => $logType,
+                'value' => $item->id,
+                'user' => $user->id
+            ];
+
+            $ip = [
+                'ip' => $request->ip()
+            ];
+
+            $log = GameLog::query()
+                ->where($attributes);
+
+            if (!$log->exists()) {
+                if ($data['like']) {
+                    $item->increment('likes');
+                } else {
+                    $item->decrement('likes');
+                }
+
+                $log->create(array_merge($attributes, $ip));
                 $item->save();
 
                 return ResponseCode::OK;
