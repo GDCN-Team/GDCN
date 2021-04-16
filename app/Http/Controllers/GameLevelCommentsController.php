@@ -95,9 +95,9 @@ class GameLevelCommentsController extends Controller
     /**
      * @param GameLevelCommentUploadRequest $request
      * @param Helpers $helper
-     * @return int commentID
+     * @return int|mixed|string
      */
-    public function upload(GameLevelCommentUploadRequest $request, Helpers $helper): int
+    public function upload(GameLevelCommentUploadRequest $request, Helpers $helper)
     {
         $data = $request->validated();
 
@@ -113,8 +113,7 @@ class GameLevelCommentsController extends Controller
             'content' => $data['comment']
         ]);
 
-        $helper->doCommand($comment);
-        return $comment->id;
+        return $helper->doCommand($comment) ?? $comment->id;
     }
 
     /**

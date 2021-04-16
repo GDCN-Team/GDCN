@@ -58,11 +58,11 @@ class GameAccountCommentsController extends Controller
     /**
      * @param GameAccountCommentUploadRequest $request
      * @param Helpers $helper
-     * @return int
+     * @return int|mixed|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/uploadGJAccComment20
      */
-    public function upload(GameAccountCommentUploadRequest $request, Helpers $helper): int
+    public function upload(GameAccountCommentUploadRequest $request, Helpers $helper)
     {
         $data = $request->validated();
 
@@ -77,8 +77,7 @@ class GameAccountCommentsController extends Controller
             'content' => $data['comment']
         ]);
 
-        $helper->doCommand($comment);
-        return $comment->id;
+        return $helper->doCommand($comment) ?? $comment->id;
     }
 
     /**
