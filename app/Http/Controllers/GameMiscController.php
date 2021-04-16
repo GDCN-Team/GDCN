@@ -22,13 +22,12 @@ class GameMiscController extends Controller
 {
     /**
      * @param GameItemLikeRequest $request
-     * @param GameLog $log
      * @param GameHashesController $hash
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/likeGJItem211
      */
-    public function likeItem(GameItemLikeRequest $request, GameLog $log, GameHashesController $hash): ?int
+    public function likeItem(GameItemLikeRequest $request, GameHashesController $hash): ?int
     {
         try {
             $data = $request->validated();
