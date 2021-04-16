@@ -101,6 +101,9 @@ return [
         'fuck', // comment will mark as spam when content contained 'fuck'
         'shit'
     ],
+    'default_permissions' => [
+        'command-song-level'
+    ],
     'feature' => [
         'command' => [
             'account_comment' => [
