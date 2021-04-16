@@ -26,6 +26,7 @@
         "spomky-labs/base64url": "^2.0"
     },
     "require-dev": {
+        "brianium/paratest": "^6.2",
         "enlightn/enlightn": "^1.15",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
