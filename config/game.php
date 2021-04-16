@@ -102,7 +102,9 @@ return [
         'shit'
     ],
     'default_permissions' => [
-        'command-song-level'
+        'command-song-level',
+        'command-test-level',
+        'command-test-account'
     ],
     'feature' => [
         'command' => [
