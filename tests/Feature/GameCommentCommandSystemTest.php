@@ -44,13 +44,7 @@ class GameCommentCommandSystemTest extends TestCase
         );
 
         $request->assertOk();
-        $this->assertDatabaseHas(
-            'game_account_comments',
-            [
-                'account' => $account->id,
-                'content' => Base64Url::encode('worked!', true)
-            ]
-        );
+        $request->assertSee('Success!');
     }
 
     public function test_level_comment(): void
@@ -89,12 +83,6 @@ class GameCommentCommandSystemTest extends TestCase
         );
 
         $request->assertOk();
-        $this->assertDatabaseHas(
-            'game_level_comments',
-            [
-                'level' => $level->id,
-                'content' => Base64Url::encode('worked!', true)
-            ]
-        );
+        $request->assertSee('Success!');
     }
 }
