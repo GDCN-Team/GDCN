@@ -110,8 +110,22 @@ class Base
 
         if ($this->comment instanceof GameAccountComment) {
             $logType = GameLogType::fromValue(GameLogType::DO_ACCOUNT_COMMENT_COMMAND);
+
+            try {
+                $this->authorize("command-{$name}-account");
+            } catch (GameCommandAuthorizationException $e) {
+                return $e->getMessage();
+            }
+
         } elseif ($this->comment instanceof GameLevelComment) {
             $logType = GameLogType::fromValue(GameLogType::DO_LEVEL_COMMENT_COMMAND);
+
+            try {
+                $this->authorize("command-{$name}-level");
+            } catch (GameCommandAuthorizationException $e) {
+                return $e->getMessage();
+            }
+
         } else {
             throw new GameCommandExecuteException('Comment must be account comment or level comment.');
         }

@@ -152,9 +152,9 @@ class Helpers
 
     /**
      * @param GameAccountComment|GameLevelComment $comment
-     * @return bool|null
+     * @return string|null
      */
-    public function doCommand($comment): ?bool
+    public function doCommand($comment): ?string
     {
         if ($comment instanceof GameAccountComment && config('game.feature.command.account_comment.enabled')) {
             $class = AccountCommentCommands::class;
@@ -174,7 +174,7 @@ class Helpers
 
         if (Str::startsWith($content, $prefix)) {
             [$name, $arguments] = $this->parseCommand($content);
-            $name = Str::camel(substr($name, strlen($prefix)));
+            $name = Str::snake(substr($name, strlen($prefix)));
 
             try {
                 $command = new $class($comment->sender, $comment, $arguments);
@@ -184,8 +184,8 @@ class Helpers
             }
 
             if (!empty($result)) {
-                $comment->content = Base64Url::encode($result, true);
-                return $comment->save();
+                $comment->delete();
+                return "temp_0_$result";
             }
 
             return null;

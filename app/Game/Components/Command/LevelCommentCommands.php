@@ -3,12 +3,10 @@
 namespace App\Game\Components\Command;
 
 use App\Exceptions\GameCommandArgumentNotFoundException;
-use App\Exceptions\GameCommandAuthorizationException;
 use App\Exceptions\GameCommandExecuteException;
-use App\Models\GameLevelRating;
-use Exception;
+use App\Services\GameLevelRatingService;
+use App\Services\GameLevelService;
 use Illuminate\Support\Str;
-use Throwable;
 
 /**
  * Class LevelCommentCommands
@@ -23,27 +21,16 @@ class LevelCommentCommands extends Base
     protected function rate($stars = 0): string
     {
         try {
-            $this->authorize('command-rate-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
-        }
-
-        try {
             $stars = $stars ?: $this->argument('stars');
         } catch (GameCommandArgumentNotFoundException $e) {
             return $e->getMessage();
         }
 
-        if ($stars < 1) {
-            return $this->failed('Stars must > 1.');
+        if ($stars < 1 || $stars > 10) {
+            return $this->failed('Stars must between 1 to 10.');
         }
 
-        if ($stars > 10) {
-            return $this->failed('Stars must < 10.');
-        }
-
-        $this->level->rate($stars);
-        return $this->success;
+        return app(GameLevelRatingService::class)->rate($this->level, $stars) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -51,23 +38,12 @@ class LevelCommentCommands extends Base
      */
     protected function unrate(): string
     {
-        try {
-            $this->authorize('command-unrate-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
-        }
-
         if (!$this->level->rated) {
             return $this->failed('Level isn\'t rated.');
         }
 
-        try {
-            $this->level->rating->delete();
-        } catch (Exception $e) {
-            return $this->failed($e);
-        }
-
-        return $this->success;
+        $result = app(GameLevelRatingService::class)->unrate($this->level);
+        return $result === true ? $this->success : $this->failed($result);
     }
 
     /**
@@ -77,12 +53,6 @@ class LevelCommentCommands extends Base
      */
     protected function mod($key = null, $value = null): string
     {
-        try {
-            $this->authorize('command-mod-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
-        }
-
         try {
             $key = $key ?: $this->argument('key');
         } catch (GameCommandArgumentNotFoundException $e) {
@@ -124,12 +94,6 @@ class LevelCommentCommands extends Base
      */
     protected function feature($score = 1): string
     {
-        try {
-            $this->authorize('command-feature-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
-        }
-
         if (!$this->level->rated) {
             return $this->failed('Level isn\'t rated.');
         }
@@ -138,16 +102,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Score must > 0');
         }
 
-        try {
-            tap($this->level->rating, function ($rating) use ($score) {
-                $rating->featured_score = $score;
-                $rating->save();
-            });
-        } catch (Exception $e) {
-            return $this->failed($e);
-        }
-
-        return $this->success;
+        return app(GameLevelRatingService::class)->setFeatureScore($this->level, $score) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -155,26 +110,11 @@ class LevelCommentCommands extends Base
      */
     protected function unfeature(): string
     {
-        try {
-            $this->authorize('command-unfeature-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
-        }
-
         if (!$this->level->rated) {
             return $this->failed('Level isn\'t rated.');
         }
 
-        try {
-            tap($this->level->rating, function ($rating) {
-                $rating->featured_score = 0;
-                $rating->save();
-            });
-        } catch (Exception $e) {
-            return $this->failed($e);
-        }
-
-        return $this->success;
+        return app(GameLevelRatingService::class)->setFeatureScore($this->level, 0) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -182,26 +122,11 @@ class LevelCommentCommands extends Base
      */
     protected function epic(): string
     {
-        try {
-            $this->authorize('command-epic-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
-        }
-
         if (!$this->level->rated) {
             return $this->failed('Level isn\'t rated.');
         }
 
-        try {
-            tap($this->level->rating, function (GameLevelRating $rating) {
-                $rating->epic = true;
-                $rating->saveOrFail();
-            });
-        } catch (Throwable $e) {
-            return $this->failed($e);
-        }
-
-        return $this->success;
+        return app(GameLevelRatingService::class)->setEpic($this->level, true) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -209,26 +134,11 @@ class LevelCommentCommands extends Base
      */
     protected function unepic(): string
     {
-        try {
-            $this->authorize('command-unepic-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
-        }
-
         if (!$this->level->rated) {
             return $this->failed('Level isn\'t rated.');
         }
 
-        try {
-            tap($this->level->rating, function (GameLevelRating $rating) {
-                $rating->epic = false;
-                $rating->saveOrFail();
-            });
-        } catch (Throwable $e) {
-            return $this->failed($e);
-        }
-
-        return $this->success;
+        return app(GameLevelRatingService::class)->setEpic($this->level, false) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -236,26 +146,11 @@ class LevelCommentCommands extends Base
      */
     protected function verify_coin(): string
     {
-        try {
-            $this->authorize('command-verify_coin-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
-        }
-
         if (!$this->level->rated) {
             return $this->failed('Level isn\'t rated.');
         }
 
-        try {
-            tap($this->level->rating, function (GameLevelRating $rating) {
-                $rating->coin_verified = true;
-                $rating->saveOrFail();
-            });
-        } catch (Throwable $e) {
-            return $this->failed($e);
-        }
-
-        return $this->success;
+        return app(GameLevelRatingService::class)->setCoinState($this->level, true) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -263,53 +158,29 @@ class LevelCommentCommands extends Base
      */
     protected function unverify_coin(): string
     {
-        try {
-            $this->authorize('command-unverify_coin-level');
-        } catch (GameCommandAuthorizationException $e) {
-            return $e->getMessage();
+        if (!$this->level->rated) {
+            return $this->failed('Level isn\'t rated.');
         }
 
         if (!$this->level->rated) {
             return $this->failed('Level isn\'t rated.');
         }
 
-        try {
-            tap($this->level->rating, function (GameLevelRating $rating) {
-                $rating->coin_verified = false;
-                $rating->saveOrFail();
-            });
-        } catch (Throwable $e) {
-            return $this->failed($e);
-        }
-
-        return $this->success;
+        return app(GameLevelRatingService::class)->setCoinState($this->level, false) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
-     * @param int $id
+     * @param int $songID
      * @return string
      */
-    protected function song(int $id = 0): string
+    protected function song(int $songID = 0): string
     {
-        if (!$id) {
-            return $this->failed('Song id must be integer.');
-        }
-
         try {
             $this->checkOperatorIsLevelOwner();
         } catch (GameCommandExecuteException $e) {
-            try {
-                $this->authorize('command-song-level');
-            } catch (GameCommandAuthorizationException $e) {
-                return $e->getMessage();
-            }
+            return $e->getMessage();
         }
 
-        tap($this->level, function ($level) use ($id) {
-            $level->song = $id;
-            $level->save();
-        });
-
-        return $this->success;
+        return app(GameLevelService::class)->setSong($this->level, $songID) ? $this->success : $this->failed('Unknown Error');
     }
 }
