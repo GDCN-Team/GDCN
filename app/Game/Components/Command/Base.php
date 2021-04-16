@@ -88,7 +88,7 @@ class Base
      */
     public function authorize($flag): void
     {
-        if (!in_array($flag, config('game.default_permissions'), true) && !$this->operator->permission->can($flag)) {
+        if (!in_array($flag, config('game.default_permissions'), true) && !optional($this->operator->permission)->can($flag)) {
             throw new GameCommandAuthorizationException("Permission denied.");
         }
     }
