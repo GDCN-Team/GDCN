@@ -51,7 +51,7 @@ class GameMiscController extends Controller
                     $logType = GameLogType::LIKE_ACCOUNT_COMMENT;
                     break;
                 default:
-                    return false;
+                    return ResponseCode::INVALID_REQUEST;
             }
 
             if (!$item) {
