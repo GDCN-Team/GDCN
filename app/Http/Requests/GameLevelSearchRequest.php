@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\GameLevelSearchType;
 use App\Models\GameAccount;
 use Illuminate\Validation\Rule;
 
@@ -29,10 +28,10 @@ class GameLevelSearchRequest extends GameRequest
                 'required',
                 Rule::in([0, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 16])
             ],
-            'followed' => 'required_if:type,' . GameLevelSearchType::FOLLOWED,
             'str' => 'nullable',
             'page' => 'required',
             'total' => 'required',
+            'followed' => 'nullable',
 
             /* Advanced Options */
 
