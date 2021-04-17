@@ -162,7 +162,7 @@ class GameLevelTest extends TestCase
         /** @var GameLevel $level */
         $level = GameLevel::factory()->create();
 
-        $request = $request = $this->post(
+        $request = $this->post(
             route('game.level.search'),
             [
                 'gameVersion' => 21,
