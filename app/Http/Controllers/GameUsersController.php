@@ -237,7 +237,7 @@ class GameUsersController extends Controller
 
                 return $query->get()
                     ->map(function (GameAccountFriend $friend) use ($data) {
-                        $accountID = ($friend->account === $data['accountID'] ? $friend->target_account : $friend->account);
+                        $accountID = ($friend->account === (int)$data['accountID'] ? $friend->target_account : $friend->account);
                         $new = $friend->account === $accountID ? !$friend->new = false : !$friend->target_new = false;
                         $friend->save();
 
@@ -269,7 +269,7 @@ class GameUsersController extends Controller
                     ->map(function (GameAccountBlock $block) use ($data) {
 
                         try {
-                            $accountID = ($block->account === $data['accountID']) ? $block->target_account : $block->account;
+                            $accountID = ($block->account === (int)$data['accountID']) ? $block->target_account : $block->account;
                             $account = GameAccount::whereId($accountID)->firstOrFail();
                         } catch (ModelNotFoundException $e) {
                             return ResponseCode::ACCOUNT_NOT_FOUND;
