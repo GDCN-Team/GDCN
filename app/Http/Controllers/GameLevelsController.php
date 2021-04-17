@@ -240,9 +240,7 @@ class GameLevelsController extends Controller
                     });
                     break;
                 case GameLevelSearchType::FOLLOWED:
-                    $query->whereHas('creator', function (Builder $query) use ($data) {
-                        $query->whereIn('uuid', explode(',', $data['followed']));
-                    });
+                    $query->whereIn('user', explode(',', $data['followed']));
                     break;
                 case GameLevelSearchType::FRIENDS:
                     try {
