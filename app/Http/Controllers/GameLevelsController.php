@@ -174,7 +174,8 @@ class GameLevelsController extends Controller
                 switch ($data['diff']) {
                     case GameLevelSearchSpecialDiffFilter::NA:
                         $query->whereDoesntHave('rating', function (Builder $query) {
-                            $query->where('stars', '<=', 0);
+                            $query->where('difficulty', '!=', 0);
+                            $query->where('stars', '!=', 0);
                         });
                         break;
                     case GameLevelSearchSpecialDiffFilter::DEMON:
@@ -317,7 +318,7 @@ class GameLevelsController extends Controller
                     return $song->toSongString();
                 })->join('~:~');
 
-            return "{$result}#{$users}#{$songs}#{$helper->generatePageHash($count, $page)}#{$hash->generateLevelListHash($query->get())}";
+            return "$result#$users#$songs#{$helper->generatePageHash($count, $page)}#{$hash->generateLevelListHash($query->get())}";
         } catch (ValidationException $e) {
             return ResponseCode::REQUEST_CHECK_FAILED;
         }
