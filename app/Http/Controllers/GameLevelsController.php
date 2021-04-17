@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\GameLevelSearchSpecialDiffFilter;
 use App\Enums\GameLevelSearchType;
 use App\Enums\GameLogType;
 use App\Enums\ResponseCode;
@@ -159,22 +160,46 @@ class GameLevelsController extends Controller
             }
 
             // Filters
+            if (!empty($data['len'])) {
+                $query->whereIn('length', explode(',', $data['len']));
+            }
+
+            if (!empty($data['star'])) {
+                $query->whereDoesntHave('rating', function (Builder $query) {
+                    $query->where('stars', '>', 0);
+                });
+            }
+
             if (!empty($data['diff'])) {
-                if ($data['diff'] === '-1') {
-                    $query->whereHas('rating', function (Builder $query) {
-                        $query->where('auto', true);
-                        $query->orWhere('stars', 1);
-                    });
-                } elseif ($data['diff'] === '-2' && !empty($data['demonFilter'])) {
-                    $query->whereHas('rating', function (Builder $query) use ($helper, $data) {
-                        $diff = $helper->guessDemonDifficultyFromRating($data['demonFilter']);
-                        $query->where('demon_difficulty', $diff);
-                    });
-                } else {
-                    $difficulties = explode(',', strtr($data['diff'], [',' => '0,']) . '0');
-                    $query->whereHas('rating', function (Builder $query) use ($difficulties) {
-                        $query->whereIn('difficulty', $difficulties);
-                    });
+                switch ($data['diff']) {
+                    case GameLevelSearchSpecialDiffFilter::NA:
+                        $query->whereDoesntHave('rating', function (Builder $query) {
+                            $query->where('stars', '<=', 0);
+                        });
+                        break;
+                    case GameLevelSearchSpecialDiffFilter::DEMON:
+                        $query->whereHas('rating', function (Builder $query) use ($helper, $data) {
+                            $query->where('demon', true);
+
+                            if (!empty($data['demonFilter'])) {
+                                $diff = $helper->guessDemonDifficultyFromRating($data['demonFilter']);
+                                $query->where('demon_difficulty', $diff);
+                            }
+                        });
+                        break;
+                    case GameLevelSearchSpecialDiffFilter::AUTO:
+                        $query->whereHas('rating', function (Builder $query) {
+                            $query->where('auto', true);
+                        });
+                        break;
+                    default:
+                        $difficulties = explode(',', strtr($data['diff'], [',' => '0,']) . '0');
+                        $query->whereHas('rating', function (Builder $query) use ($difficulties) {
+                            $query->where('auto', false);
+                            $query->where('demon', false);
+                            $query->whereIn('difficulty', $difficulties);
+                        });
+                        break;
                 }
             }
 

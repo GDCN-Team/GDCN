@@ -33,7 +33,6 @@ class GameLevelSearchRequest extends GameRequest
                 'exclude_if:diff,-',
                 'required'
             ],
-            'len' => 'nullable',
             'page' => 'required',
             'total' => 'required',
 
@@ -74,6 +73,14 @@ class GameLevelSearchRequest extends GameRequest
 
             /* Filters */
 
+            'len' => [
+                'sometimes',
+                'required'
+            ],
+            'star' => [
+                'sometimes',
+                'required'
+            ],
             'demonFilter' => [
                 'sometimes',
                 'required',
