@@ -136,18 +136,17 @@ class GameUsersController extends Controller
                     49 => $target->permission->mod_level ?? 0,
                     50 => $target->setting->comment_history_state ?? 0
                 ];
+            }
 
-                if ($viewerAccountID === $data['targetAccountID']) {
-                    $userInfo[38] = $target->message->count_new();
-                    $userInfo[39] = $target->friend_request->count_new();
-                    $userInfo[40] = $target->friend->count_new();
-                }
-
-                if (!empty($friendRequest)) {
-                    $userInfo[32] = $friendRequest->id;
-                    $userInfo[35] = $friendRequest->comment;
-                    $userInfo[37] = $friendRequest->created_at->diffForHumans(null, true);
-                }
+            if ($viewerAccountID === (int)$data['targetAccountID']) {
+                $userInfo[38] = $target->message->count_new();
+                $userInfo[39] = $target->friend_request->count_new();
+                $userInfo[40] = $target->friend->count_new();
+            }
+            if (!empty($friendRequest)) {
+                $userInfo[32] = $friendRequest->id;
+                $userInfo[35] = $friendRequest->comment;
+                $userInfo[37] = $friendRequest->created_at->diffForHumans(null, true);
             }
 
             return GDObject::merge($userInfo, ':');
