@@ -165,7 +165,7 @@ class GameLevelsController extends Controller
             }
 
             if (!empty($data['star'])) {
-                $query->whereDoesntHave('rating', function (Builder $query) {
+                $query->whereHas('rating', function (Builder $query) {
                     $query->where('stars', '>', 0);
                 });
             }
