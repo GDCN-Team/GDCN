@@ -160,7 +160,7 @@ class GameLevelsController extends Controller
             }
 
             // Filters
-            if (!empty($data['len'])) {
+            if (!empty($data['len']) && $data['len'] !== '-') {
                 $query->whereIn('length', explode(',', $data['len']));
             }
 
@@ -170,7 +170,7 @@ class GameLevelsController extends Controller
                 });
             }
 
-            if (!empty($data['diff'])) {
+            if (!empty($data['diff']) && $data['diff'] !== '-') {
                 switch ($data['diff']) {
                     case GameLevelSearchSpecialDiffFilter::NA:
                         $query->whereDoesntHave('rating', function (Builder $query) {
