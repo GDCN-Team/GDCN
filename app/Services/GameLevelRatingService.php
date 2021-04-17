@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Game\Helpers;
 use App\Models\GameLevel;
 use App\Models\GameLevelRating;
+use App\Models\GameUserScore;
 use Exception;
 
 /**
@@ -133,24 +134,28 @@ class GameLevelRatingService
     public function recalculateCreatorPoints(): bool
     {
         $ratings = GameLevelRating::all();
+        GameUserScore::query()
+            ->update(['creator_points' => 0]);
+
         foreach ($ratings as $rating) {
             if (!$score = GameLevel::find($rating->level)->creator->score) {
                 continue;
             }
 
-            $score->creator_points = 0;
+            $creator_points = $score->creator_points;
             if ($rating->stars > 0) {
-                $score->creator_points += config('game.creator_points_count.rated', 1);
+                $creator_points += config('game.creator_points_count.rated', 1);
             }
 
             if ($rating->featured_score > 0) {
-                $score->creator_points += config('game.creator_points_count.featured', 2);
+                $creator_points += config('game.creator_points_count.featured', 2);
             }
 
             if ($rating->epic) {
-                $score->creator_points += config('game.creator_points_count.epic', 4);
+                $creator_points += config('game.creator_points_count.epic', 4);
             }
 
+            $score->creator_points += $creator_points;
             $score->save();
         }
 
