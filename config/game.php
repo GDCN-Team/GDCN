@@ -8,6 +8,11 @@ return [
     'perPage' => 10,
     'customSongIdOffset' => 5000000,
     'weeklyIdOffset' => 100000,
+    'creator_points_count' => [
+        'rated' => 1,
+        'featured' => 2,
+        'epic' => 4
+    ],
     'reward' => [
         'small' => [
             'orbs' => [

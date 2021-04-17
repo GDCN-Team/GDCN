@@ -140,15 +140,15 @@ class GameLevelRatingService
 
             $score->creator_points = 0;
             if ($rating->stars > 0) {
-                ++$score->creator_points;
+                $score->creator_points += config('game.creator_points_count.rated', 1);
             }
 
             if ($rating->featured_score > 0) {
-                $score->creator_points += 2;
+                $score->creator_points += config('game.creator_points_count.featured', 2);
             }
 
             if ($rating->epic) {
-                $score->creator_points += 3;
+                $score->creator_points += config('game.creator_points_count.epic', 4);
             }
 
             $score->save();
