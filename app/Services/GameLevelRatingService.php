@@ -54,7 +54,7 @@ class GameLevelRatingService
         $rating->coin_verified = false;
         $rating->demon_difficulty = 0;
 
-        $result = $level->rating->save();
+        $result = $rating->save();
         $this->recalculateCreatorPoints();
         return $result;
     }
