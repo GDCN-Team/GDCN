@@ -45,7 +45,6 @@ class GameLevelRatingService
         $info = $this->helper->guessDiffFromStars($stars);
         $diff = $diff ?? $info[1];
 
-
         $rating->difficulty = $diff ?: $this->helper->guessDiffFromStars($stars);
         $rating->stars = $stars;
         $rating->auto = $info[2];
