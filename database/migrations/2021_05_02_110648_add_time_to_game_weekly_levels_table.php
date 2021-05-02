@@ -14,7 +14,7 @@ class AddTimeToGameWeeklyLevelsTable extends Migration
     public function up()
     {
         Schema::table('game_weekly_levels', function (Blueprint $table) {
-            $table->timestamp('time')->useCurrent();
+            $table->timestamp('time')->nullable();
         });
     }
 
