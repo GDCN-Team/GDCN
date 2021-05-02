@@ -26,6 +26,8 @@ class GameSongTest extends TestCase
 
     public function test_get_top_artists(): void
     {
+        $this->test_get();
+
         $request = $this->post(
             route('game.artists.get'),
             [
