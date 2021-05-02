@@ -21,6 +21,7 @@ class GameChallengeGetRequest extends GameRequest
             'accountID' => [
                 'sometimes',
                 'required',
+                'exclude_if:accountID,0',
                 Rule::exists(GameAccount::class, 'id')
             ],
             'gjp' => 'required_with:accountID',

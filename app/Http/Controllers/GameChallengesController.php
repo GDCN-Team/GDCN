@@ -83,7 +83,7 @@ class GameChallengesController extends Controller
 
             $challengeInfo = [
                 Str::random(5),
-                $data['uuid'] ?? $user->id,
+                $data['uuid'] ?: $user->id,
 
                 $hash->decodeChk(
                     substr($data['chk'], 5),
