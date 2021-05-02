@@ -5,6 +5,8 @@ namespace App\Game\Components\Command;
 use App\Exceptions\GameCommandArgumentNotFoundException;
 use App\Exceptions\GameCommandExecuteException;
 use App\Game\Helpers;
+use App\Models\GameDailyLevel;
+use App\Models\GameWeeklyLevel;
 use App\Services\GameLevelRatingService;
 use App\Services\GameLevelService;
 use Illuminate\Support\Str;
@@ -184,5 +186,39 @@ class LevelCommentCommands extends Base
         }
 
         return app(GameLevelService::class)->setSong($this->level, $songID) ? $this->success : $this->failed('Unknown Error');
+    }
+
+    /**
+     * @return string
+     */
+    public function daily(): string
+    {
+        $lastDailyTime = GameDailyLevel::query()
+            ->latest()
+            ->value('time');
+
+        $daily = new GameDailyLevel;
+        $daily->level = $this->level->id;
+        $daily->time = !empty($lastDailyTime) ? ($lastDailyTime + 86400) : strtotime('tomorrow 00:00:00');
+        $daily->save();
+
+        return $this->success;
+    }
+
+    /**
+     * @return string
+     */
+    public function weekly(): string
+    {
+        $lastWeeklyTime = GameWeeklyLevel::query()
+            ->latest()
+            ->value('time');
+
+        $weekly = new GameWeeklyLevel;
+        $weekly->level = $this->level->id;
+        $weekly->time = !empty($lastWeeklyTime) ? ($lastWeeklyTime + 604800) : strtotime('next monday 00:00:00');
+        $weekly->save();
+
+        return $this->success;
     }
 }
