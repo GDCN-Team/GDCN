@@ -261,9 +261,6 @@ class GameLevelTest extends TestCase
 
     public function test_delete(): void
     {
-        /** @var GameAccount $account */
-        $account = GameAccount::factory()->create();
-
         /** @var GameLevel $level */
         $level = GameLevel::factory()->create();
 
@@ -279,8 +276,8 @@ class GameLevelTest extends TestCase
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'accountID' => $account->id,
-                'gjp' => 'AgUGBgMF',
+                'uuid' => $level->user,
+                'udid' => $level->creator->udid,
                 'levelID' => $level->id,
                 'secret' => 'Wmfv2898gc9'
             ]
@@ -288,7 +285,7 @@ class GameLevelTest extends TestCase
 
         $request->assertOk();
         $this->fake(function ($storage) use ($level) {
-            Storage::disk($storage['disk'])->assertExists($storage['path'] . '/' . sha1($level->id) . '.dat');
+            Storage::disk($storage['disk'])->assertMissing($storage['path'] . '/' . sha1($level->id) . '.dat');
         });
 
         $this->assertDeleted(
