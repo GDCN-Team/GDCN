@@ -14,7 +14,7 @@ class AddTimeToGameDailyLevelsTable extends Migration
     public function up()
     {
         Schema::table('game_daily_levels', function (Blueprint $table) {
-            $table->timestamp('time');
+            $table->timestamp('time')->useCurrent();
         });
     }
 
