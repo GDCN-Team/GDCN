@@ -38,7 +38,9 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(static function (Throwable $e) {
-            //
+            if (config('app.debug')) {
+                dd($e);
+            }
         });
     }
 }
