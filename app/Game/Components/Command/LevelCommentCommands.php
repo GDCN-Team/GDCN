@@ -4,6 +4,7 @@ namespace App\Game\Components\Command;
 
 use App\Exceptions\GameCommandArgumentNotFoundException;
 use App\Exceptions\GameCommandExecuteException;
+use App\Game\Helpers;
 use App\Services\GameLevelRatingService;
 use App\Services\GameLevelService;
 use Illuminate\Support\Str;
@@ -77,7 +78,8 @@ class LevelCommentCommands extends Base
                 }
 
                 tap($this->level->rating, function ($rating) use ($value) {
-                    $rating->demon_difficulty = $value;
+                    $demon_difficulty = app(Helpers::class)->guessDemonDifficultyFromRating($value);
+                    $rating->demon_difficulty = $demon_difficulty;
                     $rating->save();
                 });
                 break;
