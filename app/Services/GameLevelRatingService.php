@@ -134,14 +134,16 @@ class GameLevelRatingService
     {
         $ratings = GameLevelRating::all();
         GameUserScore::query()
+            ->where('creator_points', '!=', 0)
             ->update(['creator_points' => 0]);
 
         foreach ($ratings as $rating) {
-            if (!$score = GameLevel::find($rating->level)->creator->score) {
+            $level = GameLevel::find($rating->level);
+            if (!$level || !$score = $level->creator->score) {
                 continue;
             }
 
-            $creator_points = $score->creator_points;
+            $creator_points = 0;
             if ($rating->stars > 0) {
                 $creator_points += config('game.creator_points_count.rated', 1);
             }
@@ -154,7 +156,7 @@ class GameLevelRatingService
                 $creator_points += config('game.creator_points_count.epic', 4);
             }
 
-            $score->creator_points += $creator_points;
+            $score->creator_points = $creator_points;
             $score->save();
         }
 
