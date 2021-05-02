@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameLevelGauntletFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameLevelGauntlet whereLevel5($value)
  * @method static Builder|GameLevelGauntlet whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameLevelGauntletFactory factory(...$parameters)
  */
 class GameLevelGauntlet extends Model
 {

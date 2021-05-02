@@ -6,6 +6,7 @@ use App\Exceptions\InvalidArgumentException;
 use App\Game\AccountFriendRequestsManager;
 use App\Game\AccountFriendsManager;
 use App\Game\AccountMessagesManager;
+use Database\Factories\GameAccountFactory;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
@@ -67,6 +68,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameAccount whereRememberToken($value)
  * @method static Builder|GameAccount whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameAccountFactory factory(...$parameters)
  */
 class GameAccount extends Model implements MustVerifyEmailContract, CanResetPasswordContract, AuthenticatableContract, AuthorizableContract
 {

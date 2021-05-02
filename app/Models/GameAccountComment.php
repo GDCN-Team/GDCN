@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameAccountCommentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameAccountComment whereLikes($value)
  * @method static Builder|GameAccountComment whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameAccountCommentFactory factory(...$parameters)
  */
 class GameAccountComment extends Model
 {

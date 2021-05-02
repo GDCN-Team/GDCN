@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Database\Factories\GameAccountPermissionGroupFactory;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -28,6 +30,9 @@ use Illuminate\Support\Carbon;
  * @mixin Model
  * @property string|null $comment_color
  * @method static Builder|GameAccountPermissionGroup whereCommentColor($value)
+ * @property-read Collection|GameAccount[] $members
+ * @property-read int|null $members_count
+ * @method static GameAccountPermissionGroupFactory factory(...$parameters)
  */
 class GameAccountPermissionGroup extends Model
 {

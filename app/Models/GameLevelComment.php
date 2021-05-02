@@ -35,6 +35,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameLevelComment wherePercent($value)
  * @method static Builder|GameLevelComment whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameLevelCommentFactory factory(...$parameters)
  */
 class GameLevelComment extends Model
 {

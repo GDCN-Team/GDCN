@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameWeeklyLevelFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameWeeklyLevel whereLevel($value)
  * @method static Builder|GameWeeklyLevel whereUpdatedAt($value)
  * @mixin Model
+ * @property string $time
+ * @method static GameWeeklyLevelFactory factory(...$parameters)
+ * @method static Builder|GameWeeklyLevel whereTime($value)
  */
 class GameWeeklyLevel extends Model
 {

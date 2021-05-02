@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameAccountBlockFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameAccountBlock whereTargetAccount($value)
  * @method static Builder|GameAccountBlock whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameAccountBlockFactory factory(...$parameters)
  */
 class GameAccountBlock extends Model
 {

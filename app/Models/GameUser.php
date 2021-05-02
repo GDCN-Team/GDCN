@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameUserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +34,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameUser whereUpdatedAt($value)
  * @method static Builder|GameUser whereUuid($value)
  * @mixin Model
+ * @method static GameUserFactory factory(...$parameters)
  */
 class GameUser extends Model
 {

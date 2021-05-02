@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameDailyLevelFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameDailyLevel whereLevel($value)
  * @method static Builder|GameDailyLevel whereUpdatedAt($value)
  * @mixin Model
+ * @property string $time
+ * @method static GameDailyLevelFactory factory(...$parameters)
+ * @method static Builder|GameDailyLevel whereTime($value)
  */
 class GameDailyLevel extends Model
 {

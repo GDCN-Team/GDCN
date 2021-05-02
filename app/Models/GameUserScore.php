@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameUserScoreFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,6 +79,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameUserScore whereUser($value)
  * @method static Builder|GameUserScore whereUserCoins($value)
  * @mixin Model
+ * @method static GameUserScoreFactory factory(...$parameters)
  */
 class GameUserScore extends Model
 {

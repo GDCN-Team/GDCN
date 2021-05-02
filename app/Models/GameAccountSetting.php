@@ -6,6 +6,7 @@ use App\Enums\GameAccountSettingCommentHistoryStateType;
 use App\Enums\GameAccountSettingFriendRequestStateType;
 use App\Enums\GameAccountSettingMessageStateType;
 use App\Models\GameAccount as AccountModel;
+use Database\Factories\GameAccountSettingFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,6 +43,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameAccountSetting whereUpdatedAt($value)
  * @method static Builder|GameAccountSetting whereYoutube($value)
  * @mixin Model
+ * @method static GameAccountSettingFactory factory(...$parameters)
  */
 class GameAccountSetting extends Model
 {

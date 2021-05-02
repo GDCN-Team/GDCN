@@ -6,6 +6,7 @@ use App\Game\Helpers;
 use App\Models\GameLevelComment as LevelCommentModel;
 use App\Models\GameLevelRating as LevelRatingModel;
 use App\Models\GameUser as UserModel;
+use Database\Factories\GameLevelFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -75,6 +76,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameLevel whereVersion($value)
  * @mixin Model
  * @property-read bool $rated
+ * @method static GameLevelFactory factory(...$parameters)
  */
 class GameLevel extends Model
 {

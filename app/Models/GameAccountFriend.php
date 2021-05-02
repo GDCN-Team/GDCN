@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\GameAccount as AccountModel;
+use Database\Factories\GameAccountFriendFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameAccountFriend whereTargetNew($value)
  * @method static Builder|GameAccountFriend whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameAccountFriendFactory factory(...$parameters)
  */
 class GameAccountFriend extends Model
 {

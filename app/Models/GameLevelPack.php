@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameLevelPackFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +36,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameLevelPack whereTextColor($value)
  * @method static Builder|GameLevelPack whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameLevelPackFactory factory(...$parameters)
  */
 class GameLevelPack extends Model
 {

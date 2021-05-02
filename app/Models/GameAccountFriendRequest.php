@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameAccountFriendRequestFactory;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,6 +32,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameAccountFriendRequest whereToAccount($value)
  * @method static Builder|GameAccountFriendRequest whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameAccountFriendRequestFactory factory(...$parameters)
  */
 class GameAccountFriendRequest extends Model
 {

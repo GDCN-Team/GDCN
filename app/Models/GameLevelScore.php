@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\GameAccount as AccountModel;
+use Database\Factories\GameLevelScoreFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameLevelScore wherePercent($value)
  * @method static Builder|GameLevelScore whereUpdatedAt($value)
  * @mixin Model
+ * @method static GameLevelScoreFactory factory(...$parameters)
  */
 class GameLevelScore extends Model
 {

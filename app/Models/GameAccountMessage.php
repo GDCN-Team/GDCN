@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GameAccountMessageFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|GameAccountMessage whereToAccount($value)
  * @method static Builder|GameAccountMessage whereUpdatedAt($value)
  * @mixin Model
- * @property-read \App\Models\GameAccount $sender
+ * @property-read GameAccount $sender
+ * @method static GameAccountMessageFactory factory(...$parameters)
  */
 class GameAccountMessage extends Model
 {
