@@ -13,11 +13,10 @@ class GameLevelCommentPolicy
     /**
      * @param GameAccount $account
      * @param GameLevelComment $comment
-     * @param int $levelID
      * @return bool
      */
-    public function delete(GameAccount $account, GameLevelComment $comment, int $levelID): bool
+    public function delete(GameAccount $account, GameLevelComment $comment): bool
     {
-        return $account->id === $comment->account && $comment->level === $levelID;
+        return $account->id === (int)$comment->account;
     }
 }
