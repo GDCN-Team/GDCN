@@ -45,7 +45,7 @@ class GameLevelCommentDeleteRequest extends GameRequest
             return false;
         }
 
-        if (!$this->account->can('delete', [$this->comment, $this->levelID])) {
+        if (!$this->account->can('delete', $this->comment)) {
             return false;
         }
 
