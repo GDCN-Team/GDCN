@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Game\Helpers;
 use App\Http\Requests\GameSongGetRequest;
 use App\Http\Requests\GameTopArtistsGetRequest;
 use App\Models\GameCustomSong;
@@ -59,10 +60,18 @@ class GameSongsController extends Controller
      */
     public function getTopArtists(GameTopArtistsGetRequest $request): string
     {
-        return Http::asForm()
-            ->post(
-                'http://dl.geometrydashchinese.com/getGJTopArtists.php',
-                $request->validated()
-            )->body();
+        $data = $request->validated();
+
+        $page = $data['page'];
+        $perPage = app(Helpers::class)->perPage;
+
+        return GameSong::query()
+            ->forPage(++$page, $perPage)
+            ->get()
+            ->map(function (GameSong $song) {
+                return GDObject::merge([
+                    4 => $song->author_name
+                ], ':');
+            })->join('|');
     }
 }
