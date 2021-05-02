@@ -42,7 +42,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        $result = app(GameLevelRatingService::class)->unrate($this->level);
+        $result = app(GameLevelRatingService::class)->un_rate($this->level);
         return $result === true ? $this->success : $this->failed($result);
     }
 

@@ -63,7 +63,7 @@ class GameLevelRatingService
      * @param GameLevel $level
      * @return bool|string|null
      */
-    public function unrate(GameLevel $level)
+    public function un_rate(GameLevel $level)
     {
         if (!$level->rated) {
             return false;
