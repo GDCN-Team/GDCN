@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'game.'], function () {
     Route::post('/accounts/registerGJAccount.php', [GameAccountsController::class, 'register'])->name('account.register');
-    Route::get('/accounts/verifyGJAccount.php/{id}/{hash}', [GameAccountsController::class, 'verify'])->middleware(['web', 'signed'])->name('verification.verify');
+    Route::get('/accounts/verifyGJAccount.php', [GameAccountsController::class, 'verify'])->middleware(['web', 'auth', 'signed'])->name('account.verify');
     Route::post('/accounts/loginGJAccount.php', [GameAccountsController::class, 'login'])->name('account.login');
     Route::post('/updateGJUserScore22.php', [GameUserScoresController::class, 'update'])->name('user.score.update');
     Route::post('/getGJUserInfo20.php', [GameUsersController::class, 'info'])->name('user.info');

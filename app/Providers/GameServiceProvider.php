@@ -44,11 +44,10 @@ class GameServiceProvider extends ServiceProvider
 
         VerifyEmail::createUrlUsing(function ($notifiable) {
             return URL::temporarySignedRoute(
-                'game.verification.verify',
+                'game.account.verify',
                 Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
                 [
-                    'id' => $notifiable->getKey(),
-                    'hash' => sha1($notifiable->getEmailForVerification()),
+                    'hash' => hash('sha1', $notifiable->getKey() . ':' . $notifiable->getEmailForVerification())
                 ]
             );
         });
