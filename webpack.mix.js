@@ -12,5 +12,7 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/resources/js').extract()
-    .copy('resources/images/*.png', 'public/resources/images')
-    .postCss('resources/css/app.css', 'public/resources/css');
+    .postCss('resources/css/app.css', 'public/resources/css', [
+        require('tailwindcss'),
+        require('autoprefixer')
+    ]);

@@ -13,4 +13,5 @@ use BenSampo\Enum\Enum;
 final class GameCustomSongType extends Enum
 {
     public const NETEASE_MUSIC = 1;
+    public const LINK = 2;
 }

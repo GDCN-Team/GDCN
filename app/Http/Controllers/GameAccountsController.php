@@ -8,9 +8,12 @@ use App\Http\Requests\GameAccountLoginRequest;
 use App\Http\Requests\GameAccountRegisterRequest;
 use App\Http\Requests\GameRequest;
 use App\Models\GameAccount;
+use App\Services\WebNoticeService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 
 /**
  * Class GameAccountsController
@@ -18,6 +21,20 @@ use Illuminate\Support\Facades\Hash;
  */
 class GameAccountsController extends Controller
 {
+    /**
+     * @var WebNoticeService
+     */
+    protected $noticeService;
+
+    /**
+     * GameAccountsController constructor.
+     * @param WebNoticeService $noticeService
+     */
+    public function __construct(WebNoticeService $noticeService)
+    {
+        $this->noticeService = $noticeService;
+    }
+
     /**
      * @param GameAccountRegisterRequest $request
      * @return int
@@ -57,26 +74,15 @@ class GameAccountsController extends Controller
     public function verify(GameRequest $request): RedirectResponse
     {
         /** @var GameAccount $account */
-        $account = $request->user();
+        $account = Auth::user();
 
-        if (!$account) {
-            $notify = [
-                'type' => 'error',
-                'message' => trans('emailVerify.account.not.found')
-            ];
+        if ($account->markEmailAsVerified()) {
+            $this->noticeService->sendSuccessNotice('账号验证成功!');
         } else {
-            $notify = $account->markEmailAsVerified() ? [
-                'type' => 'success',
-                'message' => trans('emailVerify.success')
-            ] : [
-                'type' => 'error',
-                'message' => trans('emailVerify.failed')
-            ];
+            $this->noticeService->sendErrorNotice('账号验证失败');
         }
 
-        return redirect()
-            ->route('home')
-            ->with('notification', $notify);
+        return Redirect::route('home');
     }
 
     /**

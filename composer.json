@@ -19,6 +19,7 @@
         "gdcn/hash": "^1.0",
         "gdcn/xor-cipher": "^1.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "inertiajs/inertia-laravel": "^0.4.2",
         "jacobcyl/ali-oss-storage": "^2.1",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
