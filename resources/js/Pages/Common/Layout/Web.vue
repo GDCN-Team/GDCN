@@ -3,7 +3,7 @@
         <Sider></Sider>
         <a-layout>
             <a-layout-content class="bg-gray-800 overflow-auto text-white p-3">
-                <slot></slot>
+                <slot @back="back"></slot>
             </a-layout-content>
             <Footer></Footer>
         </a-layout>
@@ -28,6 +28,9 @@ export default {
         this.loadNotices()
     },
     methods: {
+        back: function () {
+            history.back();
+        },
         loadNotices: function () {
             const notices = this.$page.props.notices;
             for (let notice in notices) {

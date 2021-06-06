@@ -10,8 +10,9 @@ use App\Http\Requests\WebToolsSongDeleteApiRequest;
 use App\Http\Requests\WebToolsSongUpdateApiRequest;
 use App\Http\Requests\WebToolsSongUploadLinkApiRequest;
 use App\Http\Requests\WebToolsSongUploadNeteaseApiRequest;
+use App\Models\GameCustomSong;
+use App\Services\WebToolsAccountService;
 use App\Services\WebToolsLevelService;
-use App\Services\WebToolsService;
 use App\Services\WebToolsSongService;
 use Illuminate\Http\Response;
 use Inertia\Response as InertiaResponse;
@@ -23,9 +24,9 @@ use Inertia\Response as InertiaResponse;
 class WebToolsApiController extends Controller
 {
     /**
-     * @var WebToolsService
+     * @var WebToolsAccountService
      */
-    protected $service;
+    protected $accountService;
 
     /**
      * @var WebToolsSongService
@@ -39,13 +40,13 @@ class WebToolsApiController extends Controller
 
     /**
      * WebToolsApiController constructor.
-     * @param WebToolsService $service
+     * @param WebToolsAccountService $accountService
      * @param WebToolsSongService $songService
      * @param WebToolsLevelService $levelService
      */
-    public function __construct(WebToolsService $service, WebToolsSongService $songService, WebToolsLevelService $levelService)
+    public function __construct(WebToolsAccountService $accountService, WebToolsSongService $songService, WebToolsLevelService $levelService)
     {
-        $this->service = $service;
+        $this->accountService = $accountService;
         $this->songService = $songService;
         $this->levelService = $levelService;
     }
@@ -57,7 +58,7 @@ class WebToolsApiController extends Controller
     public function linkAccount(WebToolsAccountLinkApiRequest $request): Response
     {
         $data = $request->validated();
-        return $this->service->linkAccount($data['server'], $data['target_name'], $data['target_password']);
+        return $this->accountService->linkAccount($data['server'], $data['target_name'], $data['target_password']);
     }
 
     /**
@@ -67,7 +68,7 @@ class WebToolsApiController extends Controller
     public function unlinkAccount(WebToolsAccountUnlinkApiRequest $request): Response
     {
         $data = $request->validated();
-        return $this->service->unlinkAccount($data['id']);
+        return $this->accountService->unlinkAccount($data['id']);
     }
 
     /**
@@ -97,7 +98,10 @@ class WebToolsApiController extends Controller
     public function deleteSong(WebToolsSongDeleteApiRequest $request): Response
     {
         $data = $request->validated();
-        return $this->songService->deleteSong($data['id']);
+        return $this->songService->deleteSong(
+            $request->user(),
+            GameCustomSong::find($data['id'])
+        );
     }
 
     /**
@@ -107,7 +111,13 @@ class WebToolsApiController extends Controller
     public function updateSong(WebToolsSongUpdateApiRequest $request): Response
     {
         $data = $request->validated();
-        return $this->songService->updateSong($data['id'], $data['song_id'], $data['name'], $data['author_name']);
+        return $this->songService->updateSong(
+            $request->user(),
+            GameCustomSong::find($data['id']),
+            $data['song_id'],
+            $data['name'],
+            $data['author_name']
+        );
     }
 
     /**

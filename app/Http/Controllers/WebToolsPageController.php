@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GameAccount;
 use App\Models\GameAccountLink;
 use App\Models\GameCustomSong;
 use App\Presenter\WebToolsPresenter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Inertia\Response;
 
@@ -27,33 +27,27 @@ class WebToolsPageController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return Response
      */
-    public function renderAccountLinkPage(Request $request): Response
+    public function renderAccountLinkPage(): Response
     {
-        /** @var GameAccount $account */
-        $account = $request->user();
-
-        $links = GameAccountLink::whereAccount($account->id)->get(['id', 'host', 'target_name'])->toArray();
-        return $this->presenter->accountLink($links);
+        return $this->presenter->accountLink(
+            GameAccountLink::whereAccount(Auth::id())
+                ->get(['id', 'host', 'target_name'])
+                ->toArray()
+        );
     }
 
     /**
-     * @param Request $request
      * @return Response
      */
-    public function renderSongListPage(Request $request): Response
+    public function renderSongListPage(): Response
     {
-        /** @var GameAccount $account */
-        $account = $request->user();
-
-        $songs = GameCustomSong::query()
-            ->with('owner:id,name')
-            ->get(['id', 'name', 'author_name', 'download_url', 'song_id', 'size', 'uploader']);
-
-
-        return $this->presenter->songList($songs);
+        return $this->presenter->songList(
+            GameCustomSong::query()
+                ->with('owner:id,name')
+                ->get(['id', 'name', 'author_name', 'download_url', 'song_id', 'size', 'uploader'])
+        );
     }
 
     /**

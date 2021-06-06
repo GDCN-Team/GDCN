@@ -9,7 +9,10 @@ export default {
     name: "SubmitBottom",
     props: {
         text: String,
-        check: Function
+        check: {
+            type: Function,
+            default: () => false
+        }
     }
 }
 </script>

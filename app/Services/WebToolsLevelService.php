@@ -34,7 +34,12 @@ class WebToolsLevelService
         $this->noticeService = $noticeService;
     }
 
-    public function transIn($host, $levelID)
+    /**
+     * @param $host
+     * @param $levelID
+     * @return Response
+     */
+    public function transIn($host, $levelID): Response
     {
         $storages = config('game.storage.levels');
         $storageManager = new StorageManager($storages);

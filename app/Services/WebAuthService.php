@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\GameAccount;
-use Illuminate\Auth\Events\Registered;
+use App\Presenter\WebAuthPresenter;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 /**
  * Class WebAuthService
@@ -16,27 +16,42 @@ use Inertia\Inertia;
 class WebAuthService
 {
     /**
+     * @var WebAuthPresenter
+     */
+    protected $presenter;
+
+    /**
      * @var WebNoticeService
      */
     protected $noticeService;
 
     /**
-     * WebAuthService constructor.
-     * @param WebNoticeService $noticeService
+     * @var GameAccountService
      */
-    public function __construct(WebNoticeService $noticeService)
+    protected $gameAccountService;
+
+    /**
+     * WebAuthService constructor.
+     * @param WebAuthPresenter $presenter
+     * @param WebNoticeService $noticeService
+     * @param GameAccountService $gameAccountService
+     */
+    public function __construct(WebAuthPresenter $presenter, WebNoticeService $noticeService, GameAccountService $gameAccountService)
     {
+        $this->presenter = $presenter;
         $this->noticeService = $noticeService;
+        $this->gameAccountService = $gameAccountService;
     }
 
     /**
      * @param string $name
      * @param string $password
-     * @return bool
+     * @return Response|InertiaResponse
      */
-    public function login(string $name, string $password): bool
+    public function login(string $name, string $password)
     {
-        return Auth::attempt(compact('name', 'password'));
+        $result = Auth::attempt(compact('name', 'password'));
+        return $result ? Inertia::location(Session::pull('url.intended', '/')) : $this->presenter->login(['errors' => ['password' => '密码错误']]);
     }
 
     /**
@@ -47,16 +62,20 @@ class WebAuthService
      */
     public function register(string $name, string $password, string $email): Response
     {
-        $account = new GameAccount;
-        $account->name = $name;
-        $account->password = Hash::make($password);
-        $account->email = $email;
-        $account->save();
-
-        event(new Registered($account));
+        $account = $this->gameAccountService->register($name, $password, $email);
         Auth::login($account, true);
 
         $this->noticeService->sendSuccessNotice('注册成功!');
         return Inertia::location(route('dashboard.home'));
+    }
+
+    /**
+     * @return Response
+     */
+    public function logout(): Response
+    {
+        Auth::logout();
+        $this->noticeService->sendSuccessNotice('登出成功');
+        return Inertia::location(Session::pull('url.intended', '/'));
     }
 }

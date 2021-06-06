@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\GameAccount;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class WebDashboardUpdateAccountSettingApiRequest extends FormRequest
 {
@@ -15,28 +16,16 @@ class WebDashboardUpdateAccountSettingApiRequest extends FormRequest
      */
     public function rules(): array
     {
+        $accountID = Auth::id();
+
         return [
             'name' => [
                 'required',
-                function ($attribute, $value, $fail) {
-                    /** @var GameAccount $account */
-                    $account = Auth::user();
-
-                    if ($value !== $account->name && GameAccount::whereName($value)->exists()) {
-                        $fail('用户名 ' . $attribute . ' 已被使用');
-                    }
-                }
+                Rule::unique(GameAccount::class)->ignore($accountID)
             ],
             'email' => [
                 'required',
-                function ($attribute, $value, $fail) {
-                    /** @var GameAccount $account */
-                    $account = Auth::user();
-
-                    if ($value !== $account->email && GameAccount::whereEmail($value)->exists()) {
-                        $fail('邮箱 ' . $attribute . ' 已被使用');
-                    }
-                }
+                Rule::unique(GameAccount::class)->ignore($accountID)
             ],
             'password_confirmation' => [
                 'required',

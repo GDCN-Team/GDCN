@@ -28,6 +28,19 @@ class WebNoticeService
      * @param $message
      * @param null $description
      */
+    public function sendInfoNotice($message, $description = null): void
+    {
+        Session::push('notices', [
+            'type' => 'info',
+            'message' => $message,
+            'description' => $description
+        ]);
+    }
+
+    /**
+     * @param $message
+     * @param null $description
+     */
     public function sendSuccessNotice($message, $description = null): void
     {
         Session::push('notices', [

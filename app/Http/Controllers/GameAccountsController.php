@@ -11,8 +11,8 @@ use App\Models\GameAccount;
 use App\Services\WebNoticeService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Redirect;
 
 /**
@@ -74,12 +74,12 @@ class GameAccountsController extends Controller
     public function verify(GameRequest $request): RedirectResponse
     {
         /** @var GameAccount $account */
-        $account = Auth::user();
+        $account = $request->user();
 
         if ($account->markEmailAsVerified()) {
-            $this->noticeService->sendSuccessNotice('账号验证成功!');
+            $this->noticeService->sendSuccessNotice(Lang::get('GameAccountEmailVerify.success'));
         } else {
-            $this->noticeService->sendErrorNotice('账号验证失败');
+            $this->noticeService->sendErrorNotice(Lang::get('GameAccountEmailVerify.failed'));
         }
 
         return Redirect::route('home');

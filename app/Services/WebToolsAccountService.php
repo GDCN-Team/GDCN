@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 /**
- * Class WebToolsService
+ * Class WebToolsAccountService
  * @package App\Services
  */
-class WebToolsService
+class WebToolsAccountService
 {
     /**
      * @var WebNoticeService
@@ -21,7 +21,7 @@ class WebToolsService
     protected $noticeService;
 
     /**
-     * WebToolsService constructor.
+     * WebToolsAccountService constructor.
      * @param WebNoticeService $noticeService
      */
     public function __construct(WebNoticeService $noticeService)

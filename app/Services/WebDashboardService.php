@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\Exceptions\GameChangeEmailSameEmailException;
+use App\Exceptions\GameChangeNameSameNameException;
+use App\Exceptions\GameChangePasswordSamePasswordException;
 use App\Models\GameAccount;
-use App\Presenter\WebAuthPresenter;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 /**
@@ -17,24 +17,24 @@ use Inertia\Inertia;
 class WebDashboardService
 {
     /**
-     * @var WebAuthPresenter
-     */
-    protected $authPresenter;
-
-    /**
      * @var WebNoticeService
      */
     protected $noticeService;
 
     /**
-     * WebDashboardService constructor.
-     * @param WebAuthPresenter $authPresenter
-     * @param WebNoticeService $noticeService
+     * @var GameAccountService
      */
-    public function __construct(WebAuthPresenter $authPresenter, WebNoticeService $noticeService)
+    protected $gameAccountService;
+
+    /**
+     * WebDashboardService constructor.
+     * @param WebNoticeService $noticeService
+     * @param GameAccountService $gameAccountService
+     */
+    public function __construct(WebNoticeService $noticeService, GameAccountService $gameAccountService)
     {
-        $this->authPresenter = $authPresenter;
         $this->noticeService = $noticeService;
+        $this->gameAccountService = $gameAccountService;
     }
 
     /**
@@ -47,25 +47,20 @@ class WebDashboardService
         /** @var GameAccount $account */
         $account = Auth::user();
 
-        if ($account->name !== $name) {
-            if ($user = $account->user) {
-                $user->name = $name;
-                $user->save();
-            }
-
-            $account->name = $name;
-            $account->save();
-
-            $this->noticeService->sendSuccessNotice('用户名修改成功!');
+        try {
+            $this->gameAccountService->changeName($account, $name)
+                ? $this->noticeService->sendSuccessNotice('用户名修改成功!')
+                : $this->noticeService->sendErrorNotice('用户名修改失败');
+        } catch (GameChangeNameSameNameException $e) {
+            $this->noticeService->sendInfoNotice('用户名未作修改');
         }
 
-        if ($account->email !== $email) {
-            $account->email = $email;
-            $account->email_verified_at = null;
-            $account->save();
-
-            $this->noticeService->sendSuccessNotice('邮箱修改成功!', '请去邮箱内重新验证您的账号');
-            event(new Registered($account));
+        try {
+            $this->gameAccountService->changeEmail($account, $email)
+                ? $this->noticeService->sendSuccessNotice('邮箱修改成功!', '请去邮箱内重新验证您的账号')
+                : $this->noticeService->sendErrorNotice('邮箱修改失败');
+        } catch (GameChangeEmailSameEmailException $e) {
+            $this->noticeService->sendInfoNotice('邮箱未作修改');
         }
 
         return Inertia::location(route('dashboard.profile'));
@@ -79,10 +74,15 @@ class WebDashboardService
     {
         /** @var GameAccount $account */
         $account = Auth::user();
-        $account->password = Hash::make($newPassword);
-        $account->save();
 
-        $this->noticeService->sendSuccessNotice('密码修改成功!');
+        try {
+            $this->gameAccountService->changePassword($account, $newPassword)
+                ? $this->noticeService->sendSuccessNotice('密码修改成功!')
+                : $this->noticeService->sendErrorNotice('密码修改失败');
+        } catch (GameChangePasswordSamePasswordException $e) {
+            $this->noticeService->sendErrorNotice('您的新密码不能与老密码一样');
+        }
+
         return Inertia::location(route('dashboard.home'));
     }
 }
