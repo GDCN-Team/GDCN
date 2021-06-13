@@ -20,6 +20,7 @@
     "dependencies": {
         "@inertiajs/inertia": "^0.8.7",
         "@inertiajs/inertia-vue": "^0.5.12",
+        "@inertiajs/progress": "^0.2.5",
         "@tailwindcss/postcss7-compat": "^2.1.2",
         "ant-design-vue": "^1.7.2",
         "autoprefixer": "9",

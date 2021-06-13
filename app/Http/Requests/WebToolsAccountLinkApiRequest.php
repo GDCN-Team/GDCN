@@ -18,8 +18,7 @@ class WebToolsAccountLinkApiRequest extends FormRequest
             'server' => [
                 'required',
                 Rule::in([
-                    'dl.geometrydashchinese.com',
-                    'www.boomlings.com/database'
+                    'official'
                 ])
             ],
             'target_name' => 'required',

@@ -2,15 +2,18 @@
 
 namespace App\Services;
 
+use App\Enums\GameOtherServerAliasEnum;
 use App\Game\StorageManager;
 use App\Models\GameAccount;
 use App\Models\GameAccountLink;
 use App\Models\GameLevel;
+use App\Presenter\WebToolsPresenter;
 use GDCN\GDObject;
 use GDCN\Hash;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,20 +29,27 @@ class WebToolsLevelService
     protected $noticeService;
 
     /**
+     * @var WebToolsPresenter
+     */
+    protected $presenter;
+
+    /**
      * WebToolsLevelService constructor.
+     * @param WebToolsPresenter $presenter
      * @param WebNoticeService $noticeService
      */
-    public function __construct(WebNoticeService $noticeService)
+    public function __construct(WebToolsPresenter $presenter, WebNoticeService $noticeService)
     {
+        $this->presenter = $presenter;
         $this->noticeService = $noticeService;
     }
 
     /**
-     * @param $host
+     * @param $serverAlias
      * @param $levelID
      * @return Response
      */
-    public function transIn($host, $levelID): Response
+    public function transIn($serverAlias, $levelID): Response
     {
         $storages = config('game.storage.levels');
         $storageManager = new StorageManager($storages);
@@ -49,6 +59,13 @@ class WebToolsLevelService
         if (empty($account->user->id)) {
             $this->noticeService->sendErrorNotice('用户ID获取失败');
         } else {
+            $serverAlias = Str::upper($serverAlias);
+            $host = GameOtherServerAliasEnum::getValue($serverAlias);
+            if (empty($host)) {
+                $this->noticeService->sendErrorNotice('未知服务器');
+                return $this->presenter->levelTransIn();
+            }
+
             $request = Http::asForm()
                 ->post("http://$host/downloadGJLevel22.php", [
                     'gameVersion' => 21,
@@ -83,7 +100,7 @@ class WebToolsLevelService
                     if (!$query->whereAccount($account->id)->whereTargetUserId($levelObject[6])->exists()) {
                         $this->noticeService->sendErrorNotice('错误: 未检测到账号链接信息，请链接关卡Creator的账号');
                     } else {
-                        $level = new GameLevel;
+                        $level = new GameLevel();
                         $level->original = $levelObject[1];
                         $level->user = $account->user->id;
                         $level->game_version = $levelObject[13];
@@ -113,8 +130,7 @@ class WebToolsLevelService
             }
         }
 
-        $this->noticeService->loadNotices();
-        return Inertia::render('Tools/Level/TransIn');
+        return $this->presenter->levelTransIn();
     }
 
     /**
@@ -202,7 +218,6 @@ class WebToolsLevelService
             $this->noticeService->sendErrorNotice('关卡不存在（或未找到）');
         }
 
-        $this->noticeService->loadNotices();
         return Inertia::render('Tools/Level/TransOut');
     }
 }

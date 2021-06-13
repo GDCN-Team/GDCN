@@ -19,8 +19,7 @@ class WebToolsLevelTransInApiRequest extends FormRequest
             'server' => [
                 'required',
                 Rule::in([
-                    'dl.geometrydashchinese.com',
-                    'www.boomlings.com/database'
+                    'official'
                 ])
             ],
             'levelID' => [

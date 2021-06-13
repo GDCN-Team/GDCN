@@ -22,6 +22,8 @@ class WebNoticeService
             'message' => $message,
             'description' => $description
         ]);
+
+        $this->loadNotices();
     }
 
     /**
@@ -35,6 +37,8 @@ class WebNoticeService
             'message' => $message,
             'description' => $description
         ]);
+
+        $this->loadNotices();
     }
 
     /**
@@ -48,9 +52,11 @@ class WebNoticeService
             'message' => $message,
             'description' => $description
         ]);
+
+        $this->loadNotices();
     }
 
-    public function loadNotices(): void
+    protected function loadNotices(): void
     {
         Inertia::share('notices', Session::pull('notices'));
     }

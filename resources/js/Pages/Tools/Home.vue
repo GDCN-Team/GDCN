@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import Layout from '../Common/Layout/Web';
+import Layout from '../Common/Layout';
 
 export default {
     name: "Home",

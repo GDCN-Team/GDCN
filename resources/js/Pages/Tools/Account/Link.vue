@@ -6,19 +6,36 @@
                     <a-form-model :model="form" @submit="submit" @submit.native.prevent>
                         <a-form-model-item label="服务器">
                             <a-select v-model="form.server">
-                                <a-select-option value="www.boomlings.com/database">
+                                <a-select-option value="official">
                                     官服
-                                </a-select-option>
-                                <a-select-option value="dl.geometrydashchinese.com">
-                                    官服(使用GDProxy代理)
                                 </a-select-option>
                             </a-select>
                         </a-form-model-item>
 
-                        <Input :errors="errors" :form="form" icon="user" name="target_name" placeholder="用户名"></Input>
-                        <Input :errors="errors" :form="form" icon="lock" name="target_password" placeholder="密码"
-                               type="password"></Input>
-                        <submit-bottom :check="check" text="链接"></submit-bottom>
+                        <a-form-model :model="form" @submit="submit" @submit.native.prevent>
+                            <a-form-model-item :help="errors.target_name"
+                                               :validate-status="this.checkValidateStatus(errors.target_name, this.form)"
+                                               has-feedback>
+                                <a-input v-model="form.target_name" placeholder="用户名" type="text">
+                                    <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="user"></a-icon>
+                                </a-input>
+                            </a-form-model-item>
+                            <a-form-model-item :help="errors.target_password"
+                                               :validate-status="this.checkValidateStatus(errors.target_password, this.form)"
+                                               has-feedback>
+                                <a-input v-model="form.target_password" placeholder="密码" type="password">
+                                    <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="lock"></a-icon>
+                                </a-input>
+                            </a-form-model-item>
+                            <a-form-model-item>
+                                <a-button
+                                    :disabled="this.form.target_name === '' || this.form.target_password === '' || this.form.processing"
+                                    html-type="submit"
+                                    type="primary">
+                                    链接
+                                </a-button>
+                            </a-form-model-item>
+                        </a-form-model>
                     </a-form-model>
                 </a-card>
             </a-col>
@@ -36,9 +53,8 @@
 </template>
 
 <script>
-import Layout from '../../Common/Layout/Web';
-import Input from '../../Common/Form/Input';
-import SubmitBottom from '../../Common/Form/SubmitBottom';
+import {checkValidateStatus} from '../../../Helpers';
+import Layout from '../../Common/Layout';
 
 export default {
     name: "Link",
@@ -48,14 +64,12 @@ export default {
     },
     components: {
         Layout,
-        Input,
-        SubmitBottom
     },
     data: function () {
         return {
             visible: true,
             form: {
-                server: 'dl.geometrydashchinese.com',
+                server: 'official',
                 target_name: '',
                 target_password: ''
             },
@@ -77,9 +91,7 @@ export default {
         }
     },
     methods: {
-        check: function () {
-            return this.form.target_name === '' || this.form.target_password === '';
-        },
+        checkValidateStatus,
         submit: function () {
             return this.$inertia.form(this.form).post('/tools/account/link');
         },

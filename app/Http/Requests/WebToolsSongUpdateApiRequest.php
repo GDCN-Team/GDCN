@@ -16,13 +16,10 @@ class WebToolsSongUpdateApiRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => [
-                'required',
-                Rule::exists(GameCustomSong::class)
-            ],
             'song_id' => [
                 'required',
-                'integer'
+                'gte:' . config('game.customSongIdOffset'),
+                Rule::unique(GameCustomSong::class)
             ],
             'name' => 'required',
             'author_name' => 'required'

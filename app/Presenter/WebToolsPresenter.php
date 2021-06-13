@@ -2,10 +2,13 @@
 
 namespace App\Presenter;
 
-use App\Enums\GameCustomSongType;
+use App\Enums\GameOtherServerAliasEnum;
+use App\Models\GameAccountLink;
 use App\Models\GameCustomSong;
+use App\Repositories\GameCustomSongRepository;
 use App\Services\WebNoticeService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,33 +24,45 @@ class WebToolsPresenter
     protected $noticeService;
 
     /**
+     * @var GameCustomSongRepository
+     */
+    protected $repository;
+
+    /**
      * WebToolsPresenter constructor.
      * @param WebNoticeService $noticeService
+     * @param GameCustomSongRepository $repository
      */
-    public function __construct(WebNoticeService $noticeService)
+    public function __construct(WebNoticeService $noticeService, GameCustomSongRepository $repository)
     {
         $this->noticeService = $noticeService;
+        $this->repository = $repository;
     }
 
     /**
-     * @param array $links
      * @return Response
      */
-    public function accountLink(array $links): Response
+    public function accountLink(): Response
     {
         return Inertia::render('Tools/Account/Link', [
-            'links' => $links
+            'links' => GameAccountLink::whereAccount(Auth::id())
+                ->get(['id', 'host', 'target_name'])
+                ->map(function ($link) {
+                    $host = strtr($link->host, ['.' => '_']);
+                    $host = Str::upper($host);
+                    $link->host = GameOtherServerAliasEnum::getValue($host);
+                    return $link;
+                })->toArray()
         ]);
     }
 
     /**
-     * @param $songs
      * @return Response
      */
-    public function songList($songs): Response
+    public function songList(): Response
     {
         return Inertia::render('Tools/Song/List', [
-            'songs' => $songs
+            'songs' => $this->repository->getForSongList()
         ]);
     }
 
@@ -85,29 +100,11 @@ class WebToolsPresenter
         ]);
     }
 
-    public function editSong($id)
+    /**
+     * @return Response
+     */
+    public function levelTransIn(): Response
     {
-        if (!$song = GameCustomSong::whereId($id)->first()) {
-            return Inertia::location(route('tools.song.list'));
-        }
-
-        if (!$song->uploader === Auth::id()) {
-            $this->noticeService->sendErrorNotice('您不是歌曲上传者');
-            return Inertia::location(route('tools.song.list'));
-        }
-
-        if ($song->type === GameCustomSongType::NETEASE_MUSIC) {
-            $this->noticeService->sendErrorNotice('该歌曲不可编辑');
-            return Inertia::location(route('tools.song.list'));
-        }
-
-        $songs = GameCustomSong::query()
-            ->with('owner:id,name')
-            ->get(['id', 'name', 'author_name', 'download_url', 'song_id', 'size', 'uploader']);
-
-        return Inertia::render('Tools/Song/Edit', [
-            'song' => $song,
-            'songs' => $songs
-        ]);
+        return Inertia::render('Tools/Level/TransIn');
     }
 }

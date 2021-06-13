@@ -30,9 +30,9 @@ class WebAuthApiController extends Controller
 
     /**
      * @param WebAuthRegisterApiRequest $request
-     * @return Response
+     * @return InertiaResponse
      */
-    public function register(WebAuthRegisterApiRequest $request): Response
+    public function register(WebAuthRegisterApiRequest $request): InertiaResponse
     {
         $data = $request->validated();
         return $this->service->register($data['name'], $data['password'], $data['email']);
@@ -45,7 +45,7 @@ class WebAuthApiController extends Controller
     public function login(WebAuthLoginApiRequest $request)
     {
         $data = $request->validated();
-        return $this->service->login($data['name'], $data['password']);
+        return $this->service->login($data['name'], $data['password'], $data['remember']);
     }
 
     /**

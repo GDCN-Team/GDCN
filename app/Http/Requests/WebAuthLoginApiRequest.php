@@ -19,7 +19,11 @@ class WebAuthLoginApiRequest extends FormRequest
                 'required',
                 Rule::exists('game_accounts')
             ],
-            'password' => 'required'
+            'password' => 'required',
+            'remember' => [
+                'required',
+                'boolean'
+            ]
         ];
     }
 

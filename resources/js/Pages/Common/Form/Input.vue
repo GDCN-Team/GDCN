@@ -5,10 +5,13 @@
         <a-input v-model="form[name]" :placeholder="placeholder" :type="type">
             <a-icon v-if="icon" slot="prefix" :type="icon" style="color:rgba(0,0,0,.25)"></a-icon>
         </a-input>
+
+        <slot class="float-left" name="extra"></slot>
     </a-form-model-item>
 </template>
 
 <script>
+
 export default {
     name: "Input",
     props: {

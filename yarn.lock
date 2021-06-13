@@ -922,6 +922,13 @@
     deepmerge "^4.0.0"
     qs "^6.9.0"
 
+"@inertiajs/progress@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.nlark.com/@inertiajs/progress/download/@inertiajs/progress-0.2.5.tgz#f8a32ba05c63889b85cba86abdd6bbdc3c797634"
+  integrity sha1-+KMroFxjiJuFy6hqvda73Dx5djQ=
+  dependencies:
+    nprogress "^0.2.0"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -5186,6 +5193,11 @@ npm-run-path@^2.0.0:
   integrity sha1-NakjLfo11wZ7TLLd8jV7GHFTbF8=
   dependencies:
     path-key "^2.0.0"
+
+nprogress@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.nlark.com/nprogress/download/nprogress-0.2.0.tgz#cb8f34c53213d895723fcbab907e9422adbcafb1"
+  integrity sha1-y480xTIT2JVyP8urkH6UIq28r7E=
 
 nth-check@^1.0.2:
   version "1.0.2"

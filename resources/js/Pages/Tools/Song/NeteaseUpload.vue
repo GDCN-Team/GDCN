@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import Layout from "../../Common/Layout/Web";
+import Layout from "../../Common/Layout";
 import Input from "../../Common/Form/Input";
 import SubmitBottom from "../../Common/Form/SubmitBottom";
 

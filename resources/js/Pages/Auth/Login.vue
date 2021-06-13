@@ -1,54 +1,67 @@
 <template>
     <layout>
-        <a-modal v-model="visible" :footer="null" title="登录" @cancel="$emit('back')">
+        <a-modal :visible="true" title="登录" @cancel="$emit('back')">
             <a-form-model :model="form" @submit="submit" @submit.native.prevent>
-                <Input :errors="errors" :form="form" icon="user" name="name" placeholder="用户名" required></Input>
-                <Input :errors="errors" :form="form" icon="lock" name="password" placeholder="密码" required
-                       type="password">
-                </Input>
-                <div>
-                    <CheckBox :form="form" name="remember">
+                <a-form-model-item :help="errors.name"
+                                   :validate-status="this.checkValidateStatus(errors.name, this.form)"
+                                   has-feedback>
+                    <a-input v-model="form.name" placeholder="用户名" type="text">
+                        <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="user"></a-icon>
+                    </a-input>
+                </a-form-model-item>
+                <a-form-model-item :help="errors.password"
+                                   :validate-status="this.checkValidateStatus(errors.password, this.form)"
+                                   has-feedback>
+                    <a-input v-model="form.password" placeholder="密码" type="password">
+                        <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="lock"></a-icon>
+                    </a-input>
+                </a-form-model-item>
+                <a-form-model-item>
+                    <a-checkbox v-model="form.remember">
                         记住我
-                    </CheckBox>
-                    <inertia-link
-                        as="a-button"
-                        class="float-right"
-                        href="/auth/forget-password"
-                        type="link">
-                        忘记密码
-                    </inertia-link>
-                </div>
-                <div>
-                    <submit-bottom text="登录"></submit-bottom>
-                    <inertia-link as="a-button" href="/auth/register" type="link">
-                        注册新账号
-                    </inertia-link>
-                </div>
+                    </a-checkbox>
+                </a-form-model-item>
+                <a-form-model-item>
+                    <a-button
+                        :disabled="this.form.name === '' || this.form.password === '' || this.form.processing"
+                        html-type="submit"
+                        type="primary">
+                        登录
+                    </a-button>
+                </a-form-model-item>
             </a-form-model>
+            <template slot="footer">
+                <a-row :gutter="[10, 10]">
+                    <a-col span="12">
+                        <inertia-link as="a-button" class="float-left" href="/auth/register" type="link">
+                            注册新账号
+                        </inertia-link>
+                    </a-col>
+                    <a-col span="12">
+                        <inertia-link as="a-button" class="float-right" href="/auth/forget-password" type="link">
+                            忘记密码
+                        </inertia-link>
+                    </a-col>
+                </a-row>
+            </template>
         </a-modal>
     </layout>
 </template>
 
 <script>
-import Layout from '../Common/Layout/Web';
-import CheckBox from "../Common/Form/CheckBox";
-import Input from '../Common/Form/Input';
-import SubmitBottom from '../Common/Form/SubmitBottom';
+import Layout from '../Common/Layout';
+import {checkValidateStatus} from '../../Helpers';
 
 export default {
     name: "Login",
     components: {
-        Layout,
-        CheckBox,
-        Input,
-        SubmitBottom
+        Layout
     },
     props: {
         errors: Object
     },
     data: function () {
         return {
-            visible: true,
             form: {
                 name: '',
                 password: '',
@@ -57,6 +70,7 @@ export default {
         }
     },
     methods: {
+        checkValidateStatus,
         submit: function () {
             return this.$inertia.form(this.form).post('/auth/login');
         }

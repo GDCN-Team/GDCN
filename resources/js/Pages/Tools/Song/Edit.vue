@@ -47,7 +47,7 @@ export default {
             return this.form.song_id === '' || this.form.name === '' || this.form.author_name === '';
         },
         submit: function () {
-            this.$inertia.form(this.form).post('/tools/song/edit:save');
+            this.$inertia.form(this.form).post(`/tools/song/${this.form.id}/edit`);
         }
     }
 }

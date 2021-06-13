@@ -57,20 +57,36 @@ Route::group([
     'middleware' => 'auth'
 ], function () {
     Route::inertia('/', 'Tools/Home')->name('home');
-    Route::get('/account/link', [WebToolsPageController::class, 'renderAccountLinkPage'])->name('account.link');
-    Route::inertia('/level/trans:in', 'Tools/Level/TransIn')->name('level.trans.in');
-    Route::inertia('/level/trans:out', 'Tools/Level/TransOut')->name('level.trans.out');
-    Route::get('/song/upload:link', [WebToolsPageController::class, 'renderUploadLinkPage'])->name('song.upload.link');
-    Route::get('/song/upload:netease', [WebToolsPageController::class, 'renderUploadNeteasePage'])->name('song.upload.netease');
-    Route::get('/song/list', [WebToolsPageController::class, 'renderSongListPage'])->name('song.list');
 
-    Route::post('/account/link', [WebToolsApiController::class, 'linkAccount'])->name('account.link.api');
-    Route::post('/account/unlink', [WebToolsApiController::class, 'unlinkAccount'])->name('account.link.api');
-    Route::post('/level/trans:in', [WebToolsApiController::class, 'levelTransIn'])->name('level.trans.in');
-    #Route::post('/level/trans:out', [WebToolsApiController::class, 'levelTransOut'])->name('level.trans.out');
-    Route::post('/song/edit', [WebToolsPageController::class, 'renderEditSongPage'])->name('song.edit');
-    Route::post('/song/edit:save', [WebToolsApiController::class, 'updateSong'])->name('song.edit.api');
-    Route::post('/song/delete', [WebToolsApiController::class, 'deleteSong'])->name('song.delete');
-    Route::post('/song/upload:link', [WebToolsApiController::class, 'CustomSongUpload_Link'])->name('song.upload.link.api');
-    Route::post('/song/upload:netease', [WebToolsApiController::class, 'CustomSongUpload_NeteaseMusic'])->name('song.upload.netease.api');
+    Route::group([
+        'as' => 'account.'
+    ], function () {
+        Route::get('/account/link', [WebToolsPageController::class, 'renderAccountLinkPage'])->name('link');
+        Route::post('/account/link', [WebToolsApiController::class, 'linkAccount'])->name('link.api');
+        Route::post('/account/unlink', [WebToolsApiController::class, 'unlinkAccount'])->name('unlink.api');
+    });
+
+    Route::group([
+        'as' => 'level.'
+    ], function () {
+        Route::inertia('/level/trans:in', 'Tools/Level/TransIn')->name('trans.in');
+        Route::post('/level/trans:in', [WebToolsApiController::class, 'levelTransIn'])->name('trans.in.api');
+
+        // Route::inertia('/level/trans:out', 'Tools/Level/TransOut')->name('trans.out');
+        // Route::post('/level/trans:out', [WebToolsApiController::class, 'levelTransOut'])->name('trans.out');
+    });
+
+    Route::group([
+        'as' => 'song.'
+    ], function () {
+        Route::get('/song/upload:link', [WebToolsPageController::class, 'renderUploadLinkPage'])->name('upload.link');
+        Route::post('/song/upload:link', [WebToolsApiController::class, 'CustomSongUpload_Link'])->name('upload.link.api');
+
+        Route::get('/song/upload:netease', [WebToolsPageController::class, 'renderUploadNeteasePage'])->name('upload.netease');
+        Route::post('/song/upload:netease', [WebToolsApiController::class, 'CustomSongUpload_NeteaseMusic'])->name('upload.netease.api');
+
+        Route::get('/song/list', [WebToolsPageController::class, 'renderSongListPage'])->name('list');
+        Route::post('/song/edit/{song}', [WebToolsApiController::class, 'updateSong'])->name('edit.api');
+        Route::post('/song/delete/{song}', [WebToolsApiController::class, 'deleteSong'])->name('delete.api');
+    });
 });

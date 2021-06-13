@@ -6,15 +6,15 @@ use App\Http\Requests\WebToolsAccountLinkApiRequest;
 use App\Http\Requests\WebToolsAccountUnlinkApiRequest;
 use App\Http\Requests\WebToolsLevelTransInApiRequest;
 use App\Http\Requests\WebToolsLevelTransOutApiRequest;
-use App\Http\Requests\WebToolsSongDeleteApiRequest;
 use App\Http\Requests\WebToolsSongUpdateApiRequest;
 use App\Http\Requests\WebToolsSongUploadLinkApiRequest;
 use App\Http\Requests\WebToolsSongUploadNeteaseApiRequest;
+use App\Models\GameAccount;
 use App\Models\GameCustomSong;
 use App\Services\WebToolsAccountService;
 use App\Services\WebToolsLevelService;
 use App\Services\WebToolsSongService;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Response as InertiaResponse;
 
 /**
@@ -53,9 +53,9 @@ class WebToolsApiController extends Controller
 
     /**
      * @param WebToolsAccountLinkApiRequest $request
-     * @return Response
+     * @return InertiaResponse
      */
-    public function linkAccount(WebToolsAccountLinkApiRequest $request): Response
+    public function linkAccount(WebToolsAccountLinkApiRequest $request): InertiaResponse
     {
         $data = $request->validated();
         return $this->accountService->linkAccount($data['server'], $data['target_name'], $data['target_password']);
@@ -63,9 +63,9 @@ class WebToolsApiController extends Controller
 
     /**
      * @param WebToolsAccountUnlinkApiRequest $request
-     * @return Response
+     * @return InertiaResponse
      */
-    public function unlinkAccount(WebToolsAccountUnlinkApiRequest $request): Response
+    public function unlinkAccount(WebToolsAccountUnlinkApiRequest $request): InertiaResponse
     {
         $data = $request->validated();
         return $this->accountService->unlinkAccount($data['id']);
@@ -92,28 +92,28 @@ class WebToolsApiController extends Controller
     }
 
     /**
-     * @param WebToolsSongDeleteApiRequest $request
-     * @return Response
+     * @param GameCustomSong $song
+     * @return InertiaResponse
      */
-    public function deleteSong(WebToolsSongDeleteApiRequest $request): Response
+    public function deleteSong(GameCustomSong $song): InertiaResponse
     {
-        $data = $request->validated();
-        return $this->songService->deleteSong(
-            $request->user(),
-            GameCustomSong::find($data['id'])
-        );
+        /** @var GameAccount $account */
+        $account = Auth::user();
+
+        return $this->songService->deleteSong($account, $song);
     }
 
     /**
+     * @param GameCustomSong $song
      * @param WebToolsSongUpdateApiRequest $request
-     * @return Response
+     * @return InertiaResponse
      */
-    public function updateSong(WebToolsSongUpdateApiRequest $request): Response
+    public function updateSong(GameCustomSong $song, WebToolsSongUpdateApiRequest $request): InertiaResponse
     {
         $data = $request->validated();
         return $this->songService->updateSong(
             $request->user(),
-            GameCustomSong::find($data['id']),
+            $song,
             $data['song_id'],
             $data['name'],
             $data['author_name']
@@ -136,7 +136,7 @@ class WebToolsApiController extends Controller
      */
     public function levelTransOut(WebToolsLevelTransOutApiRequest $request): InertiaResponse
     {
-        $data = $request->validated();
-        return $this->levelService->transOut($data['server'], $data['levelID']);
+        // $data = $request->validated();
+        // return $this->levelService->transOut($data['server'], $data['levelID']);
     }
 }

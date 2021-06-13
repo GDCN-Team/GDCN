@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GameAccountLink;
-use App\Models\GameCustomSong;
 use App\Presenter\WebToolsPresenter;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
+use App\Repositories\GameCustomSongRepository;
 use Inertia\Response;
 
 class WebToolsPageController extends Controller
@@ -18,12 +14,19 @@ class WebToolsPageController extends Controller
     protected $presenter;
 
     /**
+     * @var GameCustomSongRepository
+     */
+    protected $repository;
+
+    /**
      * WebToolsPageController constructor.
      * @param WebToolsPresenter $presenter
+     * @param GameCustomSongRepository $repository
      */
-    public function __construct(WebToolsPresenter $presenter)
+    public function __construct(WebToolsPresenter $presenter, GameCustomSongRepository $repository)
     {
         $this->presenter = $presenter;
+        $this->repository = $repository;
     }
 
     /**
@@ -31,11 +34,7 @@ class WebToolsPageController extends Controller
      */
     public function renderAccountLinkPage(): Response
     {
-        return $this->presenter->accountLink(
-            GameAccountLink::whereAccount(Auth::id())
-                ->get(['id', 'host', 'target_name'])
-                ->toArray()
-        );
+        return $this->presenter->accountLink();
     }
 
     /**
@@ -43,11 +42,7 @@ class WebToolsPageController extends Controller
      */
     public function renderSongListPage(): Response
     {
-        return $this->presenter->songList(
-            GameCustomSong::query()
-                ->with('owner:id,name')
-                ->get(['id', 'name', 'author_name', 'download_url', 'song_id', 'size', 'uploader'])
-        );
+        return $this->presenter->songList();
     }
 
     /**
@@ -64,17 +59,5 @@ class WebToolsPageController extends Controller
     public function renderUploadNeteasePage(): Response
     {
         return $this->presenter->uploadNetease();
-    }
-
-    public function renderEditSongPage(Request $request)
-    {
-        $data = $request->validate([
-            'id' => [
-                'required',
-                Rule::exists(GameCustomSong::class)
-            ]
-        ]);
-
-        return $this->presenter->editSong($data['id']);
     }
 }

@@ -6,9 +6,9 @@ use App\Exceptions\GameChangeEmailSameEmailException;
 use App\Exceptions\GameChangeNameSameNameException;
 use App\Exceptions\GameChangePasswordSamePasswordException;
 use App\Models\GameAccount;
-use Illuminate\Http\Response;
+use App\Presenter\WebDashboardPresenter;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 /**
  * Class WebDashboardService
@@ -27,12 +27,19 @@ class WebDashboardService
     protected $gameAccountService;
 
     /**
+     * @var WebDashboardPresenter
+     */
+    protected $presenter;
+
+    /**
      * WebDashboardService constructor.
+     * @param WebDashboardPresenter $presenter
      * @param WebNoticeService $noticeService
      * @param GameAccountService $gameAccountService
      */
-    public function __construct(WebNoticeService $noticeService, GameAccountService $gameAccountService)
+    public function __construct(WebDashboardPresenter $presenter, WebNoticeService $noticeService, GameAccountService $gameAccountService)
     {
+        $this->presenter = $presenter;
         $this->noticeService = $noticeService;
         $this->gameAccountService = $gameAccountService;
     }
@@ -40,9 +47,9 @@ class WebDashboardService
     /**
      * @param string $name
      * @param string $email
-     * @return Response
+     * @return InertiaResponse
      */
-    public function updateAccountSetting(string $name, string $email): Response
+    public function updateAccountSetting(string $name, string $email): InertiaResponse
     {
         /** @var GameAccount $account */
         $account = Auth::user();
@@ -63,14 +70,14 @@ class WebDashboardService
             $this->noticeService->sendInfoNotice('邮箱未作修改');
         }
 
-        return Inertia::location(route('dashboard.profile'));
+        return $this->presenter->profile();
     }
 
     /**
      * @param string $newPassword
-     * @return Response
+     * @return InertiaResponse
      */
-    public function changePassword(string $newPassword): Response
+    public function changePassword(string $newPassword): InertiaResponse
     {
         /** @var GameAccount $account */
         $account = Auth::user();
@@ -83,6 +90,6 @@ class WebDashboardService
             $this->noticeService->sendErrorNotice('您的新密码不能与老密码一样');
         }
 
-        return Inertia::location(route('dashboard.home'));
+        return $this->presenter->home();
     }
 }

@@ -5,10 +5,9 @@ namespace App\Services;
 use App\Enums\GameCustomSongType;
 use App\Models\GameAccount;
 use App\Models\GameCustomSong;
-use Illuminate\Http\Response as HttpResponse;
+use App\Presenter\WebToolsPresenter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Inertia\Inertia;
 use Inertia\Response;
 
 /**
@@ -23,11 +22,18 @@ class WebToolsSongService
     protected $noticeService;
 
     /**
+     * @var WebToolsPresenter
+     */
+    protected $presenter;
+
+    /**
      * WebToolsSongService constructor.
+     * @param WebToolsPresenter $presenter
      * @param WebNoticeService $noticeService
      */
-    public function __construct(WebNoticeService $noticeService)
+    public function __construct(WebToolsPresenter $presenter, WebNoticeService $noticeService)
     {
+        $this->presenter = $presenter;
         $this->noticeService = $noticeService;
     }
 
@@ -43,7 +49,7 @@ class WebToolsSongService
         } else {
             $data = Http::get("https://music.163.com/api/song/detail?ids=[$musicID]")->json();
             if (empty($data['songs'])) {
-                $this->noticeService->sendErrorNotice("歌曲不存在(或未找到)");
+                $this->noticeService->sendErrorNotice('歌曲不存在(或未找到)');
             } else {
                 $music = $data['songs'][0];
                 $hash = sha1("netease:{$music['id']}");
@@ -55,9 +61,9 @@ class WebToolsSongService
 
                 $s = GameCustomSong::whereHash($hash);
                 if ($s->exists()) {
-                    $this->noticeService->sendErrorNotice("歌曲 {$music['name']} 已被上传过了", "歌曲ID: $s->song_id");
+                    $this->noticeService->sendErrorNotice("歌曲 {$music['name']} 已被上传过了", "歌曲ID: {$s->value('song_id')}");
                 } else {
-                    $song = new GameCustomSong;
+                    $song = new GameCustomSong();
                     $song->song_id = $songID;
                     $song->type = GameCustomSongType::NETEASE_MUSIC;
                     $song->name = $music['name'];
@@ -74,16 +80,15 @@ class WebToolsSongService
             }
         }
 
-        $this->noticeService->loadNotices();
-        return Inertia::render('Tools/Song/NeteaseUpload');
+        return $this->presenter->uploadNetease();
     }
 
     /**
      * @param GameAccount $operator
      * @param GameCustomSong $song
-     * @return HttpResponse
+     * @return Response
      */
-    public function deleteSong(GameAccount $operator, GameCustomSong $song): HttpResponse
+    public function deleteSong(GameAccount $operator, GameCustomSong $song): Response
     {
         if ($operator->can('delete', $song)) {
             $song->delete();
@@ -92,7 +97,7 @@ class WebToolsSongService
             $this->noticeService->sendErrorNotice('删除失败');
         }
 
-        return Inertia::location(route('tools.song.list'));
+        return $this->presenter->songList();
     }
 
     /**
@@ -121,7 +126,7 @@ class WebToolsSongService
                     $this->noticeService->sendErrorNotice('上传失败', "原因: 歌曲已存在, 歌曲ID: {$song->value('song_id')}");
                 }
 
-                $song = new GameCustomSong;
+                $song = new GameCustomSong();
                 $song->song_id = $songID;
                 $song->type = GameCustomSongType::LINK;
                 $song->name = $name;
@@ -137,8 +142,7 @@ class WebToolsSongService
             }
         }
 
-        $this->noticeService->loadNotices();
-        return Inertia::render('Tools/Song/LinkUpload');
+        return $this->presenter->uploadLink();
     }
 
     /**
@@ -147,9 +151,9 @@ class WebToolsSongService
      * @param $newSongID
      * @param $newName
      * @param $newAuthorName
-     * @return HttpResponse
+     * @return Response
      */
-    public function updateSong(GameAccount $operator, GameCustomSong $song, $newSongID, $newName, $newAuthorName): HttpResponse
+    public function updateSong(GameAccount $operator, GameCustomSong $song, $newSongID, $newName, $newAuthorName): Response
     {
         if ($operator->can('edit', $song)) {
             $song->song_id = $newSongID;
@@ -162,6 +166,6 @@ class WebToolsSongService
             $this->noticeService->sendErrorNotice('编辑失败');
         }
 
-        return Inertia::location(route('tools.song.list'));
+        return $this->presenter->songList();
     }
 }
