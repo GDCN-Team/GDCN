@@ -5,11 +5,8 @@
                 <a-form-model :model="form" @submit="submit" @submit.native.prevent>
                     <a-form-model-item label="服务器">
                         <a-select v-model="form.server">
-                            <a-select-option value="www.boomlings.com/database">
+                            <a-select-option value="official">
                                 官服
-                            </a-select-option>
-                            <a-select-option value="dl.geometrydashchinese.com">
-                                官服(使用GDProxy代理)
                             </a-select-option>
                         </a-select>
                     </a-form-model-item>

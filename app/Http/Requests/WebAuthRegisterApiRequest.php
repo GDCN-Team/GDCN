@@ -20,11 +20,11 @@ class WebAuthRegisterApiRequest extends FormRequest
                 'required',
                 Rule::unique(GameAccount::class)
             ],
-            'password' => [
+            'password' => 'required',
+            'password_confirmation' => [
                 'required',
-                'same:password_confirmation'
+                'same:password'
             ],
-            'password_confirmation' => 'required',
             'email' => [
                 'required',
                 Rule::unique(GameAccount::class)

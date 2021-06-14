@@ -1,55 +1,83 @@
 <template>
-    <layout>
-        <a-modal v-model="visible" :footer="null" title="注册" @cancel="back">
-            <a-form-model :model="form" @submit="submit" @submit.native.prevent>
-                <Input :errors="errors" :form="form" icon="user" name="name" placeholder="用户名"></Input>
-                <Input :errors="errors" :form="form" icon="lock" name="password" placeholder="密码"
-                       type="password"></Input>
-                <Input :errors="errors" :form="form" icon="check" name="password_confirmation" placeholder="密码确认"
-                       type="password"></Input>
-                <Input :errors="errors" :form="form" icon="mail" name="email" placeholder="邮箱" type="email"></Input>
-                <submit-bottom :check="check" text="注册"></submit-bottom>
-            </a-form-model>
-        </a-modal>
-    </layout>
+    <a-modal :footer="null" :visible="true" title="注册" @cancel="back">
+        <a-form-model
+            :model="form"
+            @submit="form.post('/auth/register')"
+            @submit.native.prevent>
+
+            <!-- name -->
+            <a-form-model-item :help="errors.name"
+                               :validate-status="this.checkValidateStatus(errors.name, this.form)"
+                               has-feedback>
+                <a-input v-model="form.name" placeholder="用户名" required type="text">
+                    <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="user"></a-icon>
+                </a-input>
+            </a-form-model-item>
+
+            <!-- password -->
+            <a-form-model-item :help="errors.password"
+                               :validate-status="this.checkValidateStatus(errors.password, this.form)"
+                               has-feedback>
+                <a-input-password v-model="form.password" placeholder="密码" required>
+                    <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="lock"></a-icon>
+                </a-input-password>
+            </a-form-model-item>
+
+            <!-- password confirmation -->
+            <a-form-model-item :help="errors.password_confirmation"
+                               :validate-status="this.checkValidateStatus(errors.password_confirmation, this.form)"
+                               has-feedback>
+                <a-input-password v-model="form.password_confirmation" placeholder="密码确认" required>
+                    <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="lock"></a-icon>
+                </a-input-password>
+            </a-form-model-item>
+
+            <!-- email -->
+            <a-form-model-item :help="errors.email"
+                               :validate-status="this.checkValidateStatus(errors.email, this.form)"
+                               has-feedback>
+                <a-input v-model="form.email" placeholder="邮箱" required type="email">
+                    <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="mail"></a-icon>
+                </a-input>
+            </a-form-model-item>
+
+            <!-- submit -->
+            <a-form-model-item>
+                <a-button
+                    :disabled="this.form.processing"
+                    html-type="submit"
+                    type="primary">
+                    注册
+                </a-button>
+            </a-form-model-item>
+
+        </a-form-model>
+    </a-modal>
 </template>
 
 <script>
+import {back, checkValidateStatus} from "../../Helpers";
 import Layout from "../Common/Layout";
-import Input from "../Common/Form/Input";
-import SubmitBottom from "../Common/Form/SubmitBottom";
 
 export default {
     name: "Register",
-    components: {
-        Layout,
-        Input,
-        SubmitBottom
-    },
+    layout: Layout,
     props: {
         errors: Object
     },
     data: function () {
         return {
-            visible: true,
-            form: {
-                name: '',
-                password: '',
-                password_confirmation: '',
-                email: ''
-            }
+            form: this.$inertia.form({
+                name: null,
+                password: null,
+                password_confirmation: null,
+                email: null
+            })
         }
     },
     methods: {
-        back: function () {
-            window.history.go(-1);
-        },
-        check: function () {
-            return this.form.name === '' || this.form.password === '' || this.form.email === '' || this.form.password !== this.form.password_confirmation;
-        },
-        submit: function () {
-            this.$inertia.form(this.form).post('/auth/register');
-        }
+        back,
+        checkValidateStatus,
     }
 }
 </script>

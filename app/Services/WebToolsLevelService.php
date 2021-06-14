@@ -68,13 +68,8 @@ class WebToolsLevelService
 
             $request = Http::asForm()
                 ->post("http://$host/downloadGJLevel22.php", [
-                    'gameVersion' => 21,
-                    'binaryVersion' => 35,
-                    'gdw' => 0,
                     'levelID' => $levelID,
-                    'secret' => 'Wmfd2893gb7',
-                    'inc' => 1,
-                    'extras' => 0
+                    'secret' => 'Wmfd2893gb7'
                 ]);
 
             $response = $request->body();
@@ -88,14 +83,6 @@ class WebToolsLevelService
                     $this->noticeService->sendErrorNotice('错误: levelString 为空');
                 } else {
                     $query = GameAccountLink::whereHost($host);
-
-                    if ($host === 'www.boomlings.com/database') {
-                        $query->orWhere('host', 'dl.geometrydashchinese.com');
-                    }
-
-                    if ($host === 'dl.geometrydashchinese.com') {
-                        $query->orWhere('host', 'www.boomlings.com/database');
-                    }
 
                     if (!$query->whereAccount($account->id)->whereTargetUserId($levelObject[6])->exists()) {
                         $this->noticeService->sendErrorNotice('错误: 未检测到账号链接信息，请链接关卡Creator的账号');
@@ -175,8 +162,6 @@ class WebToolsLevelService
                         $request = Http::asForm()
                             ->post("http://$host/uploadGJLevel21.php", [
                                 'gameVersion' => 21,
-                                'binaryVersion' => 35,
-                                'gdw' => 0,
                                 'accountID' => $link->target_account_id,
                                 'gjp' => Hash::encode($password, Hash::$keys['account_password']),
                                 'userName' => $link->target_name,
@@ -195,10 +180,7 @@ class WebToolsLevelService
                                 'coins' => $level->coins,
                                 'requestedStars' => $level->requested_stars,
                                 'unlisted' => 0,
-                                'wt' => 0,
-                                'wt2' => 3,
-                                'extraString' => $level->extra_string,
-                                'seed' => 'v2R5VPi53f',
+                                'ldm' => $level->ldm,
                                 'seed2' => Hash::generateSeed2ForUploadLevel($levelString, true),
                                 'levelString' => $levelString,
                                 'levelInfo' => $level->level_info,

@@ -70,6 +70,7 @@
 
 <script>
 import Layout from '../Common/Layout';
+import {formatTime} from "../../Helpers";
 
 export default {
     name: "Home",
@@ -83,10 +84,7 @@ export default {
         Layout
     },
     methods: {
-        formatTime: function (time) {
-            const date = new Date(time);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-        }
+        formatTime
     }
 }
 </script>

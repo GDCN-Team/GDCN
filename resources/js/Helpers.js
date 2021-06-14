@@ -9,3 +9,16 @@ export function checkValidateStatus(error, form = {}) {
 
     return null;
 }
+
+export function back() {
+    history.back();
+}
+
+export function formatTime(time) {
+    if (!time) {
+        return '无';
+    }
+
+    const date = new Date(time);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+}

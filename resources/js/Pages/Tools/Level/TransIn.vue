@@ -1,7 +1,7 @@
 <template>
     <layout>
-        <a-modal v-model="visible" :footer="null" title="关卡搬进" @cancel="back">
-            <a-form-model :model="form" @submit="submit" @submit.native.prevent>
+        <a-modal :footer="null" :visible="true" title="关卡搬进" @cancel="back">
+            <a-form-model :model="form" @submit="form.post('/tools/level/trans:in')" @submit.native.prevent>
                 <a-form-model-item label="服务器">
                     <a-select v-model="form.server">
                         <a-select-option value="official">
@@ -10,8 +10,23 @@
                     </a-select>
                 </a-form-model-item>
 
-                <Input :errors="errors" :form="form" name="levelID" placeholder="关卡ID"></Input>
-                <submit-bottom :check="check" text="搬运"></submit-bottom>
+                <!-- level ID -->
+                <a-form-model-item :help="errors.level_id"
+                                   :validate-status="this.checkValidateStatus(errors.level_id, this.form)"
+                                   has-feedback>
+                    <a-input v-model="form.level_id" placeholder="关卡ID" required type="number"></a-input>
+                </a-form-model-item>
+
+                <!-- submit -->
+                <a-form-model-item>
+                    <a-button
+                        :disabled="this.form.processing"
+                        html-type="submit"
+                        type="primary">
+                        搬运
+                    </a-button>
+                </a-form-model-item>
+
             </a-form-model>
         </a-modal>
     </layout>
@@ -19,38 +34,25 @@
 
 <script>
 import Layout from '../Home';
-import Input from '../../Common/Form/Input';
-import SubmitBottom from "../../Common/Form/SubmitBottom";
+import {back, checkValidateStatus} from "../../../Helpers";
 
 export default {
     name: "TransIn",
-    components: {
-        Layout,
-        Input,
-        SubmitBottom
-    },
+    layout: Layout,
     props: {
         errors: Object
     },
     data() {
         return {
-            visible: true,
-            form: {
+            form: this.$inertia.form({
                 server: 'official',
-                levelID: ''
-            }
+                level_id: null
+            })
         }
     },
     methods: {
-        back: function () {
-            window.history.go(-1);
-        },
-        check: function () {
-            return this.form.server === '' || this.form.levelID === '';
-        },
-        submit: function () {
-            this.$inertia.form(this.form).post('/tools/level/trans:in');
-        }
+        back,
+        checkValidateStatus
     }
 }
 </script>

@@ -1,25 +1,55 @@
 <template>
-    <layout>
-        <a-modal v-model="visible" :footer="null" title="歌曲上传 - 外链版" @cancel="back">
-            <a-form-model :model="form" @submit="submit" @submit.native.prevent>
-                <Input :errors="errors" :form="form" name="song_id" placeholder="自定义歌曲ID">
-                    <template slot="extra">
-                        <a-button type="link" @click="autoSongID()">自动选取歌曲ID</a-button>
-                    </template>
-                </Input>
-                <Input :errors="errors" :form="form" name="name" placeholder="歌曲名"></Input>
-                <Input :errors="errors" :form="form" name="author_name" placeholder="歌手名"></Input>
-                <Input :errors="errors" :form="form" icon="download" name="link" placeholder="链接" type="url"></Input>
-                <submit-bottom :check="check" text="上传"></submit-bottom>
-            </a-form-model>
-        </a-modal>
-    </layout>
+    <a-modal :footer="null" :visible="true" title="歌曲上传 - 外链版" @cancel="back">
+        <a-form-model :model="form"
+                      @submit="form.post('/tools/song/upload:link')"
+                      @submit.native.prevent>
+
+            <!-- song ID -->
+            <a-form-model-item :help="errors.song_id"
+                               :validate-status="this.checkValidateStatus(errors.song_id, this.form)"
+                               has-feedback>
+                <a-input v-model="form.song_id" placeholder="歌曲ID" required type="number"></a-input>
+                <a-button type="link" @click="autoSongID()">自动选取歌曲ID</a-button>
+            </a-form-model-item>
+
+            <!-- name -->
+            <a-form-model-item :help="errors.name"
+                               :validate-status="this.checkValidateStatus(errors.name, this.form)"
+                               has-feedback>
+                <a-input v-model="form.name" placeholder="歌曲名" required type="text"></a-input>
+            </a-form-model-item>
+
+            <!-- author name -->
+            <a-form-model-item :help="errors.author_name"
+                               :validate-status="this.checkValidateStatus(errors.author_name, this.form)"
+                               has-feedback>
+                <a-input v-model="form.author_name" placeholder="歌手名" required type="text"></a-input>
+            </a-form-model-item>
+
+            <!-- link -->
+            <a-form-model-item :help="errors.link"
+                               :validate-status="this.checkValidateStatus(errors.link, this.form)"
+                               has-feedback>
+                <a-input v-model="form.link" placeholder="歌曲外链" required type="url"></a-input>
+            </a-form-model-item>
+
+            <!-- submit -->
+            <a-form-model-item>
+                <a-button
+                    :disabled="this.form.processing"
+                    html-type="submit"
+                    type="primary">
+                    上传
+                </a-button>
+            </a-form-model-item>
+
+        </a-form-model>
+    </a-modal>
 </template>
 
 <script>
 import Layout from '../Home';
-import Input from '../../Common/Form/Input';
-import SubmitBottom from "../../Common/Form/SubmitBottom";
+import {back, checkValidateStatus} from "../../../Helpers";
 
 export default {
     name: "LinkUpload",
@@ -27,34 +57,22 @@ export default {
         errors: Object,
         latestSongID: Number
     },
-    components: {
-        Layout,
-        Input,
-        SubmitBottom
-    },
+    layout: Layout,
     data() {
         return {
-            visible: true,
-            form: {
-                song_id: '',
-                link: '',
-                name: '',
-                author_name: ''
-            }
+            form: this.$inertia.form({
+                song_id: null,
+                link: null,
+                name: null,
+                author_name: null
+            })
         }
     },
     methods: {
-        back: function () {
-            window.history.go(-1);
-        },
-        check: function () {
-            return this.form.link === '' || this.form.name === '' || this.form.author_name === '';
-        },
-        submit: function () {
-            this.$inertia.form(this.form).post('/tools/song/upload:link');
-        },
+        back,
+        checkValidateStatus,
         autoSongID: function () {
-            window.Inertia.reload({
+            Inertia.reload({
                 only: ['latestSongID']
             });
 

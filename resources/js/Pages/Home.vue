@@ -1,17 +1,17 @@
 <template>
-    <layout class="text-center">
-        <img alt="Geometry Dash Chinese" class="w-full md:w-3/4 mx-auto" src="/storage/images/title.png">
-        <br><br>
-        <div class="w-full md:w-3/4 mx-auto">
-            <a-alert banner type="info">
-                <template v-slot:message>公告: GDCN公测! 如果您在游玩过程中遇到任何问题 请反馈给 <a href="//wpa.qq.com/msgrd?uin=2331281251">渣渣120</a>
-                </template>
-            </a-alert>
-        </div>
-        <br>
-        <a-button-group>
-            <a-button type="primary" href="//cdn.geometrydashchinese.com/download/GDCN.apk">
-                <a-icon type="android"></a-icon>
+    <img alt="Geometry Dash Chinese" class="w-full md:w-3/4 mx-auto" src="/storage/images/title.png">
+    <br><br>
+    <div class="w-full md:w-3/4 mx-auto">
+        <a-alert banner type="info">
+            <template v-slot:message>公告: GDCN公测! 如果您在游玩过程中遇到任何问题 请反馈给 <a
+                href="//wpa.qq.com/msgrd?uin=2331281251">渣渣120</a>
+            </template>
+        </a-alert>
+    </div>
+    <br>
+    <a-button-group>
+        <a-button href="//cdn.geometrydashchinese.com/download/GDCN.apk" type="primary">
+            <a-icon type="android"></a-icon>
             <span>Android</span>
         </a-button>
         <a-dropdown>
@@ -77,17 +77,14 @@
             </a-descriptions>
         </a-card>
     </div>
-    </layout>
 </template>
 
 <script>
 import Layout from './Common/Layout';
 
 export default {
-    components: {
-        Layout
-    },
-    name: "Home"
+    name: "Home",
+    layout: Layout
 }
 </script>
 

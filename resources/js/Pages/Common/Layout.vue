@@ -1,7 +1,7 @@
 <template>
     <a-layout class="h-screen">
         <a-layout-sider breakpoint="md" collapsed-width="0">
-            <a-menu :default-selected-keys="guessCurrentRoute()" mode="vertical" theme="dark">
+            <a-menu :default-selected-keys="currentRoute" mode="vertical" theme="dark">
 
                 <a-menu-item key="home">
                     <inertia-link href="/">
@@ -47,10 +47,18 @@ export default {
         this.guessCurrentRoute();
         this.loadNotices();
     },
+    data() {
+        return {
+            currentRoute: []
+        }
+    },
     methods: {
+        back: function () {
+            history.back()
+        },
         guessCurrentRoute: function () {
             const array = window.location.pathname.split("/");
-            return [array[1] || 'home'];
+            this.currentRoute = [array[1] || 'home'];
         },
         loadNotices: function () {
             const notices = this.$page.props.notices;

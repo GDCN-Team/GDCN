@@ -1,6 +1,6 @@
 <template>
     <layout :account="account" :friends="friends" :messages="messages" :user="user">
-        <a-modal v-model="visible" :footer="null" title="个人资料" @cancel="back">
+        <a-modal :footer="null" :visible="true" title="个人资料" @cancel="back">
             <a-row :gutter="[10, 10]">
                 <a-col :md="12" span="24">
                     <a-row :gutter="[10, 10]">
@@ -40,6 +40,7 @@
 
 <script>
 import Layout from './Home';
+import {back, formatTime} from "../../Helpers";
 
 export default {
     name: "Profile",
@@ -52,19 +53,9 @@ export default {
     components: {
         Layout
     },
-    data: function () {
-        return {
-            visible: true
-        }
-    },
     methods: {
-        formatTime: function (time) {
-            const date = new Date(time);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-        },
-        back: function () {
-            window.history.go(-1);
-        }
+        formatTime,
+        back
     }
 }
 </script>

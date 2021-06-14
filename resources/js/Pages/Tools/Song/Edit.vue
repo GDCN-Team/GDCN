@@ -1,11 +1,38 @@
 <template>
     <layout :songs="songs">
-        <a-modal v-model="visible" :footer="null" title="歌曲编辑" @cancel="back">
-            <a-form-model :model="form" @submit="submit" @submit.native.prevent>
-                <Input :errors="errors" :form="form" name="song_id" placeholder="自定义歌曲ID" type="number"></Input>
-                <Input :errors="errors" :form="form" name="name" placeholder="歌曲名"></Input>
-                <Input :errors="errors" :form="form" name="author_name" placeholder="歌手名"></Input>
-                <submit-bottom :check="check" text="提交"></submit-bottom>
+        <a-modal :footer="null" :visible="true" title="歌曲编辑" @cancel="back">
+            <a-form-model :model="form" @submit="form.post(`/tools/song/${this.form.id}/edit`)" @submit.native.prevent>
+                <!-- song ID -->
+                <a-form-model-item :help="errors.song_id"
+                                   :validate-status="this.checkValidateStatus(errors.song_id, this.form)"
+                                   has-feedback>
+                    <a-input v-model="form.song_id" placeholder="歌曲ID" required type="number"></a-input>
+                </a-form-model-item>
+
+                <!-- name -->
+                <a-form-model-item :help="errors.name"
+                                   :validate-status="this.checkValidateStatus(errors.name, this.form)"
+                                   has-feedback>
+                    <a-input v-model="form.name" placeholder="歌曲名" required type="text"></a-input>
+                </a-form-model-item>
+
+                <!-- author name -->
+                <a-form-model-item :help="errors.author_name"
+                                   :validate-status="this.checkValidateStatus(errors.author_name, this.form)"
+                                   has-feedback>
+                    <a-input v-model="form.author_name" placeholder="歌手名" required type="text"></a-input>
+                </a-form-model-item>
+
+                <!-- submit -->
+                <a-form-model-item>
+                    <a-button
+                        :disabled="this.form.processing"
+                        html-type="submit"
+                        type="primary">
+                        提交
+                    </a-button>
+                </a-form-model-item>
+
             </a-form-model>
         </a-modal>
     </layout>
@@ -13,42 +40,30 @@
 
 <script>
 import Layout from './List';
-import Input from '../../Common/Form/Input';
-import SubmitBottom from "../../Common/Form/SubmitBottom";
+import {back, checkValidateStatus} from "../../../Helpers";
 
 export default {
     name: "Edit",
+    layout: Layout,
     props: {
         song: Object,
         songs: Array,
         errors: Object
     },
-    components: {
-        Layout,
-        Input,
-        SubmitBottom
-    },
     data() {
         return {
             visible: true,
-            form: {
+            form: this.$inertia.form({
                 id: this.song.id,
                 song_id: this.song.song_id,
                 name: this.song.name,
                 author_name: this.song.author_name
-            }
+            })
         }
     },
     methods: {
-        back: function () {
-            window.history.go(-1);
-        },
-        check: function () {
-            return this.form.song_id === '' || this.form.name === '' || this.form.author_name === '';
-        },
-        submit: function () {
-            this.$inertia.form(this.form).post(`/tools/song/${this.form.id}/edit`);
-        }
+        back,
+        checkValidateStatus
     }
 }
 </script>

@@ -1,12 +1,47 @@
 <template>
     <layout :account="account" :friends="friends" :messages="messages" :user="user">
-        <a-modal v-model="visible" :footer="null" title="账号设置" @cancel="back">
-            <a-form-model :model="form" @submit="submit" @submit.native.prevent>
-                <Input :errors="errors" :form="form" icon="user" name="name" placeholder="用户名"></Input>
-                <Input :errors="errors" :form="form" icon="mail" name="email" placeholder="邮箱"></Input>
-                <Input :errors="errors" :form="form" icon="lock" name="password_confirmation" placeholder="密码确认"
-                       type="password"></Input>
-                <submit-bottom :check="check" text="更改"></submit-bottom>
+        <a-modal :footer="null" :visible="true" title="账号设置" @cancel="back">
+            <a-form-model :model="form"
+                          @submit="form.post('/dashboard/update-setting')"
+                          @submit.native.prevent>
+
+                <!-- name -->
+                <a-form-model-item :help="errors.name"
+                                   :validate-status="this.checkValidateStatus(errors.name, this.form)"
+                                   has-feedback>
+                    <a-input v-model="form.name" placeholder="用户名" required type="text">
+                        <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="user"></a-icon>
+                    </a-input>
+                </a-form-model-item>
+
+                <!-- email -->
+                <a-form-model-item :help="errors.email"
+                                   :validate-status="this.checkValidateStatus(errors.email, this.form)"
+                                   has-feedback>
+                    <a-input v-model="form.email" placeholder="邮箱" required type="email">
+                        <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="mail"></a-icon>
+                    </a-input>
+                </a-form-model-item>
+
+                <!-- password confirmation -->
+                <a-form-model-item :help="errors.password"
+                                   :validate-status="this.checkValidateStatus(errors.password, this.form)"
+                                   has-feedback>
+                    <a-input-password v-model="form.password" placeholder="密码确认" required>
+                        <a-icon slot="prefix" style="color:rgba(0,0,0,.25)" type="lock"></a-icon>
+                    </a-input-password>
+                </a-form-model-item>
+
+                <!-- submit -->
+                <a-form-model-item>
+                    <a-button
+                        :disabled="this.form.processing"
+                        html-type="submit"
+                        type="primary">
+                        更改
+                    </a-button>
+                </a-form-model-item>
+
             </a-form-model>
         </a-modal>
     </layout>
@@ -16,6 +51,7 @@
 import Layout from './Home';
 import Input from '../Common/Form/Input';
 import SubmitBottom from "../Common/Form/SubmitBottom";
+import {back, checkValidateStatus} from "../../Helpers";
 
 export default {
     name: "Setting",
@@ -33,24 +69,16 @@ export default {
     },
     data: function () {
         return {
-            visible: true,
-            form: {
+            form: this.$inertia.form({
                 name: this.account.name,
                 email: this.account.email,
-                password_confirmation: ''
-            }
+                password_confirmation: null
+            })
         }
     },
     methods: {
-        back: function () {
-            window.history.go(-1);
-        },
-        check: function () {
-            return this.form.name === '' || this.form.email === '' || this.form.password_confirmation === '';
-        },
-        submit: function () {
-            return this.$inertia.form(this.form).post('/dashboard/update-setting');
-        }
+        back,
+        checkValidateStatus
     }
 }
 </script>

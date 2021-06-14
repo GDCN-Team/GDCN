@@ -1,5 +1,4 @@
 <template>
-    <layout>
         <a-card title="歌曲列表">
             <a-table :columns="columns" :data-source="songs" rowKey="id">
                 <template
@@ -30,14 +29,17 @@
                     <template v-else>
                         <a-button-group>
                             <a-button :disabled="editing" :href="record.download_url" target="_blank">试听</a-button>
-                            <a-button :disabled="editing" @click="edit(record.id)">编辑</a-button>
-                            <a-popconfirm
-                                cancel-text="我手滑了"
-                                ok-text="确定"
-                                title="确定删除?"
-                                @confirm="deleteSong(record.id)">
-                                <a-button :disabled="editing">删除</a-button>
-                            </a-popconfirm>
+                            <template
+                                v-if="editableTypes.indexOf(record.type) > -1 && record.owner.id === $page.props.auth.user.id">
+                                <a-button :disabled="editing" @click="edit(record.id)">编辑</a-button>
+                                <a-popconfirm
+                                    cancel-text="我手滑了"
+                                    ok-text="确定"
+                                    title="确定删除?"
+                                    @confirm="this.$inertia.delete(`/tools/song/${record.id}`, {only: ['songs']})">
+                                    <a-button :disabled="editing">删除</a-button>
+                                </a-popconfirm>
+                            </template>
                         </a-button-group>
                     </template>
                 </template>
@@ -45,7 +47,6 @@
         </a-card>
 
         <slot></slot>
-    </layout>
 </template>
 
 <script>
@@ -54,11 +55,10 @@ import {checkValidateStatus} from '../../../Helpers';
 
 export default {
     name: "List",
-    components: {
-        Layout
-    },
+    layout: Layout,
     props: {
         songs: Array,
+        editableTypes: Array,
         errors: Object
     },
     data() {
@@ -128,11 +128,6 @@ export default {
             this.editingId = 0;
             this.cache = {};
             this.$forceUpdate();
-        },
-        deleteSong: function (id) {
-            this.$inertia.delete(`/tools/song/${id}`, {
-                only: ['songs']
-            });
         }
     }
 }

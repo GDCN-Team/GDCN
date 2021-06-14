@@ -2,6 +2,7 @@
 
 namespace App\Presenter;
 
+use App\Enums\GameCustomSongType;
 use App\Enums\GameOtherServerAliasEnum;
 use App\Models\GameAccountLink;
 use App\Models\GameCustomSong;
@@ -62,7 +63,8 @@ class WebToolsPresenter
     public function songList(): Response
     {
         return Inertia::render('Tools/Song/List', [
-            'songs' => $this->repository->getForSongList()
+            'songs' => $this->repository->getForSongList(),
+            'editableTypes' => [GameCustomSongType::LINK]
         ]);
     }
 
