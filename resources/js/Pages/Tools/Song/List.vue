@@ -1,4 +1,5 @@
 <template>
+    <layout>
         <a-card title="歌曲列表">
             <a-table :columns="columns" :data-source="songs" rowKey="id">
                 <template
@@ -47,6 +48,7 @@
         </a-card>
 
         <slot></slot>
+    </layout>
 </template>
 
 <script>
@@ -55,7 +57,9 @@ import {checkValidateStatus} from '../../../Helpers';
 
 export default {
     name: "List",
-    layout: Layout,
+    components: {
+        Layout
+    },
     props: {
         songs: Array,
         editableTypes: Array,

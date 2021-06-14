@@ -42,7 +42,9 @@ import {back, checkValidateStatus} from "../../Helpers";
 
 export default {
     name: "ChangePassword",
-    layout: Layout,
+    components: {
+        Layout
+    },
     props: {
         errors: Object,
         account: Object,

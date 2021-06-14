@@ -49,16 +49,12 @@
 
 <script>
 import Layout from './Home';
-import Input from '../Common/Form/Input';
-import SubmitBottom from "../Common/Form/SubmitBottom";
 import {back, checkValidateStatus} from "../../Helpers";
 
 export default {
     name: "Setting",
     components: {
-        Layout,
-        Input,
-        SubmitBottom
+        Layout
     },
     props: {
         errors: Object,

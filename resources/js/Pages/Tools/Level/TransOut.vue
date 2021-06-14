@@ -1,5 +1,4 @@
 <template>
-    <layout>
         <a-row :gutter="[10, 10]">
             <a-col :md="12" span="24">
                 <a-form-model :model="form" @submit="submit" @submit.native.prevent>
@@ -21,21 +20,14 @@
 
             </a-col>
         </a-row>
-    </layout>
 </template>
 
 <script>
 import Layout from '../../Common/Layout';
-import Input from '../../Common/Form/Input';
-import SubmitBottom from "../../Common/Form/SubmitBottom";
 
 export default {
     name: "TransOut",
-    components: {
-        Layout,
-        Input,
-        SubmitBottom
-    },
+    layout: Layout,
     props: {
         errors: Object
     },

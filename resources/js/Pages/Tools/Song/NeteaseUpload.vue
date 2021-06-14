@@ -11,7 +11,7 @@
                                            :validate-status="this.checkValidateStatus(errors.song_id, this.form)"
                                            has-feedback>
                             <a-input v-model="form.song_id" placeholder="歌曲ID" required type="number"></a-input>
-                            <a-row :gutter="[10, 10]" class="float-left">
+                            <a-row :gutter="[10, 10]">
                                 <a-col span="12">
                                     {{ result }}
                                 </a-col>
@@ -32,7 +32,8 @@
                             </a-col>
                             <a-col span="12">
                                 <!-- music ID -->
-                                <a-form-model-item :help="errors.music_id"
+                                <a-form-model-item v-if="form.custom_music_id"
+                                                   :help="errors.music_id"
                                                    :validate-status="this.checkValidateStatus(errors.music_id, this.form)"
                                                    has-feedback>
                                     <a-input v-model="form.music_id" placeholder="音乐ID" required
@@ -80,6 +81,7 @@
 
 <script>
 import Layout from "../../Common/Layout";
+import {checkValidateStatus} from "../../../Helpers";
 
 export default {
     name: "NeteaseUpload",
@@ -134,6 +136,7 @@ export default {
         }
     },
     methods: {
+        checkValidateStatus,
         searchMusic: function (text) {
             const that = this;
 

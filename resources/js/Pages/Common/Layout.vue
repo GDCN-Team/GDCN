@@ -43,8 +43,10 @@ export default {
             this.loadNotices()
         }
     },
-    mounted: function () {
+    beforeMount: function () {
         this.guessCurrentRoute();
+    },
+    mounted: function () {
         this.loadNotices();
     },
     data() {
