@@ -26,37 +26,44 @@ class UploadOssCommand extends Command
     protected $description = 'Upload assets to oss';
 
     /**
-     * Upload path map
-     *
-     * @var array|string[]
-     */
-    protected $map = [
-        'app.css' => 'css/app.css',
-        'manifest.js' => 'js/manifest.js',
-        'vendor.js' => 'js/vendor.js',
-        'app.js' => 'js/app.js',
-        'logo.png' => 'images/logo.png',
-        'title.png' => 'images/title.png',
-        'vendor.js.LICENSE.txt' => 'LICENSE/vendor.js.LICENSE.txt',
-        'app.js.LICENSE.txt' => 'LICENSE/app.js.LICENSE.txt'
-    ];
-
-    /**
      * Execute the console command.
      *
      * @return int
      */
     public function handle(): int
     {
-        $disk = Storage::disk('oss.cdn');
+        $this->uploadDir(public_path('resources'));
+        return 0;
+    }
 
-        foreach ($this->map as $item => $path) {
-            $itemPath = public_path('resources/' . $item);
-            $itemContent = file_get_contents($itemPath);
-
-            $disk->put('gdcn/assets/' . $path, $itemContent);
+    /**
+     * @param string $dir
+     * @return bool
+     */
+    public function uploadDir(string $dir): bool
+    {
+        $oss = Storage::disk('oss');
+        if (!is_dir($dir)) {
+            return false;
         }
 
-        return 0;
+        while (($file = readdir(opendir($dir))) !== false) {
+            if ($file == "." || $file == "..") {
+                continue;
+            }
+
+            $file = $dir . DIRECTORY_SEPARATOR . $file;
+            if (is_file($file)) {
+                $filePathParts = explode(DIRECTORY_SEPARATOR, $file);
+                $path = "static/gdcn/{$filePathParts[count($filePathParts) - 2]}/{$filePathParts[count($filePathParts) - 1]}";
+                $this->info("OriginFile: $file");
+                $this->info("UploadTo: $path");
+                $oss->put($path, file_get_contents($file));
+            } elseif (is_dir($file)) {
+                $this->uploadDir($file);
+            }
+        }
+
+        return true;
     }
 }
