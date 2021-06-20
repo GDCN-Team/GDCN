@@ -47,7 +47,8 @@ class UploadOssCommand extends Command
             return false;
         }
 
-        while (($file = readdir(opendir($dir))) !== false) {
+        $handle = opendir($dir);
+        while (($file = readdir($handle)) !== false) {
             if ($file == "." || $file == "..") {
                 continue;
             }
@@ -58,6 +59,7 @@ class UploadOssCommand extends Command
                 $path = "static/gdcn/{$filePathParts[count($filePathParts) - 2]}/{$filePathParts[count($filePathParts) - 1]}";
                 $this->info("OriginFile: $file");
                 $this->info("UploadTo: $path");
+                $this->info('');
                 $oss->put($path, file_get_contents($file));
             } elseif (is_dir($file)) {
                 $this->uploadDir($file);
