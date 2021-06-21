@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\GameCustomSongType;
+use App\Enums\Game\CustomSongType;
 use App\Models\GameAccount;
 use App\Models\GameCustomSong;
 use App\Presenter\WebToolsPresenter;
@@ -65,7 +65,7 @@ class WebToolsSongService
                 } else {
                     $song = new GameCustomSong();
                     $song->song_id = $songID;
-                    $song->type = GameCustomSongType::NETEASE_MUSIC;
+                    $song->type = CustomSongType::NETEASE_MUSIC;
                     $song->name = $music['name'];
                     $song->author_name = implode(' / ', $artists);
                     $song->size = round($music['lMusic']['size'] / 1024 / 1024, 2);
@@ -128,7 +128,7 @@ class WebToolsSongService
 
                 $song = new GameCustomSong();
                 $song->song_id = $songID;
-                $song->type = GameCustomSongType::LINK;
+                $song->type = CustomSongType::LINK;
                 $song->name = $name;
                 $song->author_name = $authorName;
                 $song->size = round(strlen($request->body()) / 1024 / 1024, 2);

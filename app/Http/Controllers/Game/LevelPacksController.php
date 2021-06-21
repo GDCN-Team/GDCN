@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers\Game;
+
+use App\Game\Helpers;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\GameLevelPackGetRequest;
+use App\Models\GameLevelPack;
+use GDCN\GDObject;
+
+/**
+ * Class LevelPacksController
+ * @package App\Http\Controllers
+ */
+class LevelPacksController extends Controller
+{
+    /**
+     * @param GameLevelPackGetRequest $request
+     * @param Helpers $helper
+     * @param HashesController $hash
+     * @return string
+     *
+     * @see http://docs.gdprogra.me/#/endpoints/getGJMapPacks21
+     */
+    public function get(GameLevelPackGetRequest $request, Helpers $helper, HashesController $hash): string
+    {
+        $data = $request->validated();
+
+        $query = GameLevelPack::all();
+        $page = $data['page'];
+
+        $packs = $query->forPage(++$page, $helper->perPage)
+            ->map(function (GameLevelPack $pack) {
+                return GDObject::merge([
+                    1 => $pack->id,
+                    2 => $pack->name,
+                    3 => $pack->levels,
+                    4 => $pack->stars,
+                    5 => $pack->coins,
+                    6 => $pack->difficulty,
+                    7 => $pack->text_color,
+                    8 => $pack->bar_color
+                ], ':');
+            })->join('|');
+
+        return "{$packs}#{$helper->generatePageHash($query->count(), $page)}#{$hash->generateLevelPackHash($query)}";
+    }
+}

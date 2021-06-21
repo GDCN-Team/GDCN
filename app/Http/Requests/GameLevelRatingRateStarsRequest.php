@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Exceptions\GameChkValidateException;
 use App\Exceptions\GameUserNotFoundException;
-use App\Http\Controllers\GameHashesController;
+use App\Http\Controllers\Game\HashesController;
 use App\Models\GameAccount;
 use App\Models\GameLevel;
 use App\Models\GameUser;
@@ -85,7 +85,7 @@ class GameLevelRatingRateStarsRequest extends GameRequest
      */
     public function validateChk(): void
     {
-        $hash = app(GameHashesController::class);
+        $hash = app(HashesController::class);
         $data = $this->validated();
 
         $hash->checkChk(

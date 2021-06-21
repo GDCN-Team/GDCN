@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\GameHashesController;
+use App\Http\Controllers\Game\HashesController;
 use App\Models\GameAccount;
 use App\Models\GameLevel;
 use Base64Url\Base64Url;
@@ -24,7 +24,7 @@ class GameCommentCommandSystemTest extends TestCase
             'game.feature.command.account_comment.prefix' => '!'
         ]);
 
-        $hash = app(GameHashesController::class);
+        $hash = app(HashesController::class);
         $content = Base64Url::encode('!test', true);
 
         $request = $this->post(
@@ -62,7 +62,7 @@ class GameCommentCommandSystemTest extends TestCase
             'game.feature.command.level_comment.prefix' => '!'
         ]);
 
-        $hash = app(GameHashesController::class);
+        $hash = app(HashesController::class);
         $content = Base64Url::encode('!test', true);
 
         $request = $this->post(

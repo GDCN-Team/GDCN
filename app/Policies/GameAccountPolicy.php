@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use App\Enums\GameAccountSettingCommentHistoryStateType;
-use App\Enums\GameAccountSettingFriendRequestStateType;
-use App\Enums\GameAccountSettingMessageStateType;
+use App\Enums\Game\AccountSettingCommentHistoryStateType;
+use App\Enums\Game\AccountSettingFriendRequestStateType;
+use App\Enums\Game\AccountSettingMessageStateType;
 use App\Models\GameAccount;
 use BenSampo\Enum\Exceptions\InvalidEnumKeyException;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -21,15 +21,15 @@ class GameAccountPolicy
     public function send_message(GameAccount $sender, GameAccount $receiver): bool
     {
         try {
-            $default = GameAccountSettingMessageStateType::fromKey('ALL');
+            $default = AccountSettingMessageStateType::fromKey('ALL');
             $mS = $receiver->setting->message_state ?? $default;
         } catch (InvalidEnumKeyException $e) {
             return false;
         }
 
-        return $mS->is(GameAccountSettingMessageStateType::ALL)
-            || ($mS->is(GameAccountSettingMessageStateType::FRIENDS) && $receiver->friend->has($sender->id))
-            || $mS->isNot(GameAccountSettingMessageStateType::NONE);
+        return $mS->is(AccountSettingMessageStateType::ALL)
+            || ($mS->is(AccountSettingMessageStateType::FRIENDS) && $receiver->friend->has($sender->id))
+            || $mS->isNot(AccountSettingMessageStateType::NONE);
     }
 
     /**
@@ -40,13 +40,13 @@ class GameAccountPolicy
     public function send_friend_request(GameAccount $sender, GameAccount $receiver): bool
     {
         try {
-            $default = GameAccountSettingFriendRequestStateType::fromKey('ALL');
+            $default = AccountSettingFriendRequestStateType::fromKey('ALL');
             $frS = $receiver->setting->friend_request_state ?? $default;
         } catch (InvalidEnumKeyException $e) {
             return false;
         }
 
-        return !$sender->friend->has($receiver->id) && $frS->is(GameAccountSettingFriendRequestStateType::ALL);
+        return !$sender->friend->has($receiver->id) && $frS->is(AccountSettingFriendRequestStateType::ALL);
     }
 
     /**
@@ -57,14 +57,14 @@ class GameAccountPolicy
     public function view_comment_history(?GameAccount $viewer, GameAccount $target): bool
     {
         try {
-            $default = GameAccountSettingCommentHistoryStateType::fromKey('ALL');
+            $default = AccountSettingCommentHistoryStateType::fromKey('ALL');
             $cS = $target->setting->comment_history_state ?? $default;
         } catch (InvalidEnumKeyException $e) {
             return false;
         }
 
-        return $cS->is(GameAccountSettingCommentHistoryStateType::ALL)
-            || ($viewer && $cS->is(GameAccountSettingCommentHistoryStateType::FRIENDS) && $target->friend->has($viewer->id))
-            || $cS->isNot(GameAccountSettingCommentHistoryStateType::NONE);
+        return $cS->is(AccountSettingCommentHistoryStateType::ALL)
+            || ($viewer && $cS->is(AccountSettingCommentHistoryStateType::FRIENDS) && $target->friend->has($viewer->id))
+            || $cS->isNot(AccountSettingCommentHistoryStateType::NONE);
     }
 }

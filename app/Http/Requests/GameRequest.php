@@ -6,7 +6,6 @@ use App\Exceptions\GameAuthenticationException;
 use App\Exceptions\GameRequestAuthorizationException;
 use App\Exceptions\GameRequestValidateException;
 use App\Exceptions\GameUserNotFoundException;
-use App\Exceptions\RequestCheckException;
 use App\Game\Helpers;
 use App\Models\GameUser;
 use Illuminate\Contracts\Validation\Validator;
@@ -15,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 /**
  * Class FriendRequest
@@ -76,11 +74,11 @@ class GameRequest extends FormRequest
     }
 
     /**
-     * @param bool $ignoreException
+     * @param bool $optional
      * @return bool
      * @throws GameAuthenticationException
      */
-    public function auth(bool $ignoreException = false): bool
+    public function auth(bool $optional = false): bool
     {
         if (!empty($this->userName) && !empty($this->password)) {
             return Auth::once(['name' => $this->userName, 'password' => $this->password]);
@@ -90,49 +88,11 @@ class GameRequest extends FormRequest
             return Auth::once(['id' => $this->accountID, 'password' => app(Helpers::class)->decodeGJP($this->gjp)]);
         }
 
-        if (!$ignoreException) {
+        if (!$optional) {
             throw new GameAuthenticationException('Authentication failed.');
         }
 
         return false;
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     * @throws RequestCheckException
-     */
-    public function check(array $data): array
-    {
-        foreach ($data as $key => $value) {
-            $str = Str::of($value);
-            $isOptionValue = $str->startsWith('?');
-            if ($isOptionValue) {
-                $value = substr($value, 1);
-            } else {
-                $checkValues[] = is_numeric($key) ? $value : $key;
-            }
-
-            if (!is_numeric($key)) {
-                $equals[$key] = $value;
-                $values[] = $key;
-            } else {
-                $values[] = $value;
-            }
-        }
-
-        $data = $this->only($values ?? []);
-        if (!$this->has($checkValues ?? [])) {
-            throw new RequestCheckException('Missing Parameters');
-        }
-
-        foreach ($equals ?? [] as $key => $value) {
-            if (empty($data[$key]) || $data[$key] !== $value) {
-                throw new RequestCheckException($data[$key] . ' Not Equal As ' . $value);
-            }
-        }
-
-        return $data;
     }
 
     /**
@@ -149,6 +109,6 @@ class GameRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator): void
     {
-        throw new GameRequestValidateException($validator->errors()->first());
+        throw new GameRequestValidateException($validator);
     }
 }

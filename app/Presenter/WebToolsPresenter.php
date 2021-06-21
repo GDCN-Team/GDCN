@@ -2,8 +2,8 @@
 
 namespace App\Presenter;
 
-use App\Enums\GameCustomSongType;
-use App\Enums\GameOtherServerAliasEnum;
+use App\Enums\Game\CustomSongType;
+use App\Enums\Game\OtherServerAliasEnum;
 use App\Models\GameAccountLink;
 use App\Models\GameCustomSong;
 use App\Repositories\GameCustomSongRepository;
@@ -51,7 +51,7 @@ class WebToolsPresenter
                 ->map(function ($link) {
                     $host = strtr($link->host, ['.' => '_']);
                     $host = Str::upper($host);
-                    $link->host = GameOtherServerAliasEnum::getValue($host);
+                    $link->host = OtherServerAliasEnum::getValue($host);
                     return $link;
                 })->toArray()
         ]);
@@ -64,7 +64,7 @@ class WebToolsPresenter
     {
         return Inertia::render('Tools/Song/List', [
             'songs' => $this->repository->getForSongList(),
-            'editableTypes' => [GameCustomSongType::LINK]
+            'editableTypes' => [CustomSongType::LINK]
         ]);
     }
 

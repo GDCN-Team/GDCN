@@ -9,8 +9,9 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\URL;
+use Inertia\Inertia;
 use Tests\TestCase;
 
 /**
@@ -72,17 +73,13 @@ class GameAccountTest extends TestCase
 
     public function test_verify(): void
     {
-        /** @var GameAccount $account */
         $account = GameAccount::factory()->createOne();
-
-        $url = URL::signedRoute('game.verification.verify', [
-            'id' => $account->id,
-            'hash' => sha1($account->email)
-        ]);
+        $url = call_user_func(VerifyEmail::$createUrlCallback, $account);
 
         $this->get($url)
-            ->assertRedirect()
-            ->assertSessionHas('notification');
+            ->assertRedirect();
+
+        $this->assertEquals(Lang::get('GameAccountEmailVerify.success'), Inertia::getShared('notices')[0]['message']);
     }
 
     public function test_login(): void

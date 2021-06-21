@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Web\Tools;
+namespace App\Http\Controllers\Game\Web\Tools;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Game\Controller;
 
 class SongController extends Controller
 {

@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Enums\ResponseCode;
+use App\Enums\Game\ResponseCode;
 use Exception;
 
 /**
@@ -16,6 +16,6 @@ class GameRequestAuthorizationException extends Exception
      */
     public function render(): int
     {
-        return is_numeric($this->message) ? $this->message : ResponseCode::AUTH_FAILED;
+        return ResponseCode::AUTH_FAILED;
     }
 }

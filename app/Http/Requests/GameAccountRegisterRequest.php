@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ResponseCode;
+use App\Enums\Game\ResponseCode;
 use App\Models\GameAccount;
 use Illuminate\Validation\Rule;
 
@@ -26,6 +26,7 @@ class GameAccountRegisterRequest extends GameRequest
                 'email',
                 Rule::unique(GameAccount::class)
             ],
+            'sID' => 'sometimes',
             'secret' => [
                 'required',
                 Rule::in('Wmfv3899gc9')
@@ -42,9 +43,9 @@ class GameAccountRegisterRequest extends GameRequest
     {
         return [
             '*.required' => ResponseCode::INVALID_REQUEST,
-            'userName.unique' => ResponseCode::ACCOUNT_REGISTER_USERNAME_IS_ALREADY_IN_USE,
-            'email.email' => ResponseCode::ACCOUNT_REGISTER_EMAIL_IS_INVALID,
-            'email.unique' => ResponseCode::ACCOUNT_REGISTER_EMAIL_IS_ALREADY_IN_USE
+            'userName.unique' => ResponseCode::REGISTER_USERNAME_NOT_UNIQUE,
+            'email.email' => ResponseCode::REGISTER_EMAIL_INVALID,
+            'email.unique' => ResponseCode::REGISTER_EMAIL_NOT_UNIQUE
         ];
     }
 }

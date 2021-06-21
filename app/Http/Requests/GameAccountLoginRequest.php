@@ -2,26 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Exceptions\GameAuthenticationException;
 use App\Models\GameAccount;
 use Illuminate\Validation\Rule;
 
 class GameAccountLoginRequest extends GameRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        try {
-            return $this->auth();
-        } catch (GameAuthenticationException $e) {
-            return false;
-        }
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

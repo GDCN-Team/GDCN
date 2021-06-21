@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\GameHashesController;
+use App\Http\Controllers\Game\HashesController;
 use App\Models\GameAccount;
 use App\Models\GameAccountComment;
 use Base64Url\Base64Url;
@@ -82,7 +82,7 @@ class GameAccountCommentTest extends TestCase
         $account = GameAccount::factory()
             ->create();
 
-        $hash = app(GameHashesController::class);
+        $hash = app(HashesController::class);
         $content = Base64Url::encode($this->faker->word, true);
 
         $request = $this->post(

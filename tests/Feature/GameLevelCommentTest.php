@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ResponseCode;
-use App\Http\Controllers\GameHashesController;
+use App\Enums\Game\ResponseCode;
+use App\Http\Controllers\Game\HashesController;
 use App\Models\GameAccount;
 use App\Models\GameAccountSetting;
 use App\Models\GameLevel;
@@ -85,7 +85,7 @@ class GameLevelCommentTest extends TestCase
         $level = GameLevel::factory()
             ->create();
 
-        $hash = app(GameHashesController::class);
+        $hash = app(HashesController::class);
         $content = Base64Url::encode($this->faker->word, true);
 
         $request = $this->post(

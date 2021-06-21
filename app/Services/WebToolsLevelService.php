@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\GameOtherServerAliasEnum;
+use App\Enums\Game\OtherServerAliasEnum;
 use App\Game\StorageManager;
 use App\Models\GameAccount;
 use App\Models\GameAccountLink;
@@ -60,7 +60,7 @@ class WebToolsLevelService
             $this->noticeService->sendErrorNotice('用户ID获取失败');
         } else {
             $serverAlias = Str::upper($serverAlias);
-            $host = GameOtherServerAliasEnum::getValue($serverAlias);
+            $host = OtherServerAliasEnum::getValue($serverAlias);
             if (empty($host)) {
                 $this->noticeService->sendErrorNotice('未知服务器');
                 return $this->presenter->levelTransIn();

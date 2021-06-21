@@ -2,7 +2,7 @@
 
 namespace App\Game\Components\Command;
 
-use App\Enums\GameLogType;
+use App\Enums\Game\LogType;
 use App\Exceptions\GameCommandArgumentNotFoundException;
 use App\Exceptions\GameCommandAuthorizationException;
 use App\Exceptions\GameCommandExecuteException;
@@ -109,7 +109,7 @@ class Base
         }
 
         if ($this->comment instanceof GameAccountComment) {
-            $logType = GameLogType::fromValue(GameLogType::DO_ACCOUNT_COMMENT_COMMAND);
+            $logType = LogType::fromValue(LogType::DO_ACCOUNT_COMMENT_COMMAND);
 
             try {
                 $this->authorize("command-{$name}-account");
@@ -118,7 +118,7 @@ class Base
             }
 
         } elseif ($this->comment instanceof GameLevelComment) {
-            $logType = GameLogType::fromValue(GameLogType::DO_LEVEL_COMMENT_COMMAND);
+            $logType = LogType::fromValue(LogType::DO_LEVEL_COMMENT_COMMAND);
 
             try {
                 $this->authorize("command-{$name}-level");

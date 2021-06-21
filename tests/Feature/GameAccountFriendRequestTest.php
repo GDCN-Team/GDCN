@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ResponseCode;
+use App\Enums\Game\ResponseCode;
 use App\Models\GameAccount;
 use App\Models\GameAccountFriendRequest;
 use App\Models\GameAccountSetting;

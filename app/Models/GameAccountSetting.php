@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Enums\GameAccountSettingCommentHistoryStateType;
-use App\Enums\GameAccountSettingFriendRequestStateType;
-use App\Enums\GameAccountSettingMessageStateType;
+use App\Enums\Game\AccountSettingCommentHistoryStateType;
+use App\Enums\Game\AccountSettingFriendRequestStateType;
+use App\Enums\Game\AccountSettingMessageStateType;
 use App\Models\GameAccount as AccountModel;
 use Database\Factories\GameAccountSettingFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,9 +20,9 @@ use Illuminate\Support\Carbon;
  * @package App\Models
  * @property int $id
  * @property int $account
- * @property GameAccountSettingMessageStateType $message_state
- * @property GameAccountSettingFriendRequestStateType $friend_request_state
- * @property GameAccountSettingCommentHistoryStateType $comment_history_state
+ * @property AccountSettingMessageStateType $message_state
+ * @property AccountSettingFriendRequestStateType $friend_request_state
+ * @property AccountSettingCommentHistoryStateType $comment_history_state
  * @property string|null $youtube
  * @property string|null $twitter
  * @property string|null $twitch
@@ -71,9 +71,9 @@ class GameAccountSetting extends Model
      * @var string[]
      */
     protected $casts = [
-        'message_state' => GameAccountSettingMessageStateType::class,
-        'friend_request_state' => GameAccountSettingFriendRequestStateType::class,
-        'comment_history_state' => GameAccountSettingCommentHistoryStateType::class
+        'message_state' => AccountSettingMessageStateType::class,
+        'friend_request_state' => AccountSettingFriendRequestStateType::class,
+        'comment_history_state' => AccountSettingCommentHistoryStateType::class
     ];
 
     /**

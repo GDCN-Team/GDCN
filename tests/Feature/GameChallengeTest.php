@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\GameHashesController;
 use App\Models\GameAccount;
 use Base64Url\Base64Url;
 use GDCN\XORCipher;

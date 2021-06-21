@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\GameHashesController;
+use App\Http\Controllers\Game\HashesController;
 use App\Models\GameAccount;
 use App\Models\GameLevel;
 use Base64Url\Base64Url;
@@ -31,7 +31,7 @@ class GameLevelTest extends TestCase
         $levelName = $this->faker->word;
         $levelDesc = Base64Url::encode($this->faker->word, true);
 
-        $hash = app(GameHashesController::class);
+        $hash = app(HashesController::class);
         $request = $this->post(
             route('game.level.upload'),
             [
@@ -104,7 +104,7 @@ class GameLevelTest extends TestCase
         $levelName = $this->faker->word;
         $levelDesc = Base64Url::encode($this->faker->word, true);
 
-        $hash = app(GameHashesController::class);
+        $hash = app(HashesController::class);
         $request = $this->post(
             route('game.level.upload'),
             [
@@ -233,7 +233,7 @@ class GameLevelTest extends TestCase
             $disk->put($storage['path'] . '/' . sha1($level->id) . '.dat', $levelString);
         });
 
-        $hash = app(GameHashesController::class);
+        $hash = app(HashesController::class);
         $rs = Str::random();
 
         $request = $this->post(

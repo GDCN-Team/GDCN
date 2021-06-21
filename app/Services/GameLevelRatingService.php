@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\Game\LevelUnRateException;
 use App\Game\Helpers;
 use App\Models\GameLevel;
 use App\Models\GameLevelRating;
@@ -36,8 +37,7 @@ class GameLevelRatingService
      */
     public function rate(GameLevel $level, int $stars, int $diff = null): bool
     {
-        $rating = $level->rating;
-        if (!$rating) {
+        if (!$rating = $level->rating) {
             $rating = new GameLevelRating;
             $rating->level = $level->id;
         }
@@ -61,9 +61,10 @@ class GameLevelRatingService
 
     /**
      * @param GameLevel $level
-     * @return bool|string|null
+     * @return bool|null
+     * @throws LevelUnRateException
      */
-    public function un_rate(GameLevel $level)
+    public function un_rate(GameLevel $level): ?bool
     {
         if (!$level->rated) {
             return false;
@@ -74,7 +75,7 @@ class GameLevelRatingService
             $this->recalculateCreatorPoints();
             return $result;
         } catch (Exception $e) {
-            return $e->getMessage();
+            throw new LevelUnRateException;
         }
     }
 

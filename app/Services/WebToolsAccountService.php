@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\GameOtherServerAliasEnum;
+use App\Enums\Game\OtherServerAliasEnum;
 use App\Models\GameAccount;
 use App\Models\GameAccountLink;
 use App\Presenter\WebToolsPresenter;
@@ -50,7 +50,7 @@ class WebToolsAccountService
         $account = Auth::user();
 
         $serverAlias = Str::upper($serverAlias);
-        $host = GameOtherServerAliasEnum::getValue($serverAlias);
+        $host = OtherServerAliasEnum::getValue($serverAlias);
         if (empty($host)) {
             $this->noticeService->sendErrorNotice('未知服务器');
             return $this->presenter->accountLink();

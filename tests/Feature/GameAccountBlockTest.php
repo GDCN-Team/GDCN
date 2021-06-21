@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ResponseCode;
+use App\Enums\Game\ResponseCode;
 use App\Models\GameAccount;
 use App\Models\GameAccountBlock;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\GameHashesController;
+use App\Http\Controllers\Game\HashesController;
 use App\Models\GameAccount;
 use App\Models\GameAccountFriend;
 use App\Models\GameLevelScore;
@@ -31,7 +31,7 @@ class GameLevelScoreTest extends TestCase
             ->create();
 
         try {
-            $hash = app(GameHashesController::class);
+            $hash = app(HashesController::class);
             $rs = Str::random();
 
             $request = $this->post(
@@ -79,7 +79,7 @@ class GameLevelScoreTest extends TestCase
         $score = GameLevelScore::factory()->create();
 
         try {
-            $hash = app(GameHashesController::class);
+            $hash = app(HashesController::class);
             $rs = Str::random();
 
             $request = $this->post(
@@ -134,7 +134,7 @@ class GameLevelScoreTest extends TestCase
         $score = GameLevelScore::factory()->create();
 
         try {
-            $hash = app(GameHashesController::class);
+            $hash = app(HashesController::class);
             $rs = Str::random();
 
             $request = $this->post(
@@ -182,7 +182,7 @@ class GameLevelScoreTest extends TestCase
         $score = GameLevelScore::factory()->create();
 
         try {
-            $hash = app(GameHashesController::class);
+            $hash = app(HashesController::class);
             $rs = Str::random();
 
             $request = $this->post(

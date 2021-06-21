@@ -16,12 +16,12 @@ use Illuminate\Support\Facades\Hash;
 class GameAccountService
 {
     /**
-     * @param $name
-     * @param $password
-     * @param $email
+     * @param string $name
+     * @param string $password
+     * @param string $email
      * @return GameAccount
      */
-    public function register($name, $password, $email): GameAccount
+    public function register(string $name, string $password, string $email): GameAccount
     {
         $account = new GameAccount;
         $account->name = $name;
@@ -35,11 +35,11 @@ class GameAccountService
 
     /**
      * @param GameAccount $account
-     * @param $newName
+     * @param string $newName
      * @return bool
      * @throws GameChangeNameSameNameException
      */
-    public function changeName(GameAccount $account, $newName): bool
+    public function changeName(GameAccount $account, string $newName): bool
     {
         if ($account->name === $newName) {
             throw new GameChangeNameSameNameException;
@@ -56,11 +56,11 @@ class GameAccountService
 
     /**
      * @param GameAccount $account
-     * @param $newPassword
+     * @param string $newPassword
      * @return bool
      * @throws GameChangePasswordSamePasswordException
      */
-    public function changePassword(GameAccount $account, $newPassword): bool
+    public function changePassword(GameAccount $account, string $newPassword): bool
     {
         if (Hash::check($newPassword, $account->password)) {
             throw new GameChangePasswordSamePasswordException;
@@ -72,11 +72,11 @@ class GameAccountService
 
     /**
      * @param GameAccount $account
-     * @param $newEmail
+     * @param string $newEmail
      * @return bool
      * @throws GameChangeEmailSameEmailException
      */
-    public function changeEmail(GameAccount $account, $newEmail): bool
+    public function changeEmail(GameAccount $account, string $newEmail): bool
     {
         if ($account->email === $newEmail) {
             throw new GameChangeEmailSameEmailException;

@@ -2,7 +2,7 @@
 
 namespace App\Game;
 
-use App\Enums\ResponseCode;
+use App\Enums\Game\ResponseCode;
 use App\Exceptions\GameCommandExecuteException;
 use App\Game\Components\Command\AccountCommentCommands;
 use App\Game\Components\Command\LevelCommentCommands;

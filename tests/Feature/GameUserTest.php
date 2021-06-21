@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Enums\GameUserListType;
+use App\Enums\Game\UserListType;
 use App\Models\GameAccount;
 use App\Models\GameAccountBlock;
 use App\Models\GameAccountFriend;
@@ -229,7 +229,7 @@ class GameUserTest extends TestCase
                 'gdw' => false,
                 'accountID' => $accounts[0]->id,
                 'gjp' => 'AgUGBgMF',
-                'type' => GameUserListType::FRIENDS,
+                'type' => UserListType::FRIENDS,
                 'secret' => 'Wmfd2893gb7'
             ]
         );
@@ -256,7 +256,7 @@ class GameUserTest extends TestCase
                 'gdw' => false,
                 'accountID' => $accounts[0]->id,
                 'gjp' => 'AgUGBgMF',
-                'type' => GameUserListType::BLOCKS,
+                'type' => UserListType::BLOCKS,
                 'secret' => 'Wmfd2893gb7'
             ]
         );

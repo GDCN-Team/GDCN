@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\GameLogType;
+use App\Enums\Game\LogType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,14 +49,14 @@ class GameLog extends Model
     /**
      * Return true if log created, return false if log exists
      *
-     * @param GameLogType $type
+     * @param LogType $type
      * @param $value
      * @param GameUser|null $user
      * @param bool $useIP
      * @param bool $alwaysNew
      * @return bool
      */
-    public function existsOrNew(GameLogType $type, $value, ?GameUser $user = null, bool $useIP = false, bool $alwaysNew = false): bool
+    public function existsOrNew(LogType $type, $value, ?GameUser $user = null, bool $useIP = false, bool $alwaysNew = false): bool
     {
         $data = [
             'type' => $type->value,

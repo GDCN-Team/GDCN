@@ -3,13 +3,14 @@
 namespace App\Providers;
 
 use App\Game\StorageManager;
-use App\Http\Controllers\GameAccountSaveDataController;
-use App\Http\Controllers\GameLevelsController;
-use App\Http\Controllers\WebToolsApiController;
+use App\Http\Controllers\Game\AccountSaveDataController;
+use App\Http\Controllers\Game\LevelsController;
+use App\Http\Controllers\Game\WebToolsApiController;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -47,18 +48,18 @@ class GameServiceProvider extends ServiceProvider
                 'game.account.verify',
                 Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
                 [
-                    'hash' => hash('sha1', $notifiable->getKey() . ':' . $notifiable->getEmailForVerification())
+                    '_' => Crypt::encryptString($notifiable->getKey() . ":" . $notifiable->getEmailForVerification()),
                 ]
             );
         });
 
-        $this->app->when(GameAccountSaveDataController::class)
+        $this->app->when(AccountSaveDataController::class)
             ->needs(StorageManager::class)
             ->give(function() {
                 return new StorageManager(config('game.storage.saveData'));
             });
 
-        $this->app->when(GameLevelsController::class)
+        $this->app->when(LevelsController::class)
             ->needs(StorageManager::class)
             ->give(function() {
                 return new StorageManager(config('game.storage.levels'));

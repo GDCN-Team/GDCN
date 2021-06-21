@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\GameLogType;
-use App\Enums\GameSpecialLevelID;
+use App\Enums\Game\LogType;
+use App\Enums\Game\SpecialLevelID;
 use App\Game\Components\Hash\Checker;
 use App\Models\GameAccount;
 use App\Models\GameDailyLevel;
@@ -46,12 +46,12 @@ class GameLevelDownloadRequest extends GameRequest
         }
 
         switch ($this->levelID) {
-            case GameSpecialLevelID::DAILY:
+            case SpecialLevelID::DAILY:
                 $daily = GameDailyLevel::query()->latest();
                 $this->feaID = $daily->id;
                 $this->level = GameLevel::whereId($daily->level)->first();
                 break;
-            case GameSpecialLevelID::WEEKLY:
+            case SpecialLevelID::WEEKLY:
                 $weekly = GameWeeklyLevel::query()->latest();
                 $this->feaID = $weekly->id + config('game.weeklyIdOffset', 100000);
                 $this->level = GameLevel::whereId($weekly->level)->first();
@@ -66,7 +66,7 @@ class GameLevelDownloadRequest extends GameRequest
         }
 
         $attributes = [
-            'type' => GameLogType::DOWNLOADED_LEVEL,
+            'type' => LogType::DOWNLOADED_LEVEL,
             'value' => $this->level->id,
             'ip' => $this->ip()
         ];
