@@ -10,32 +10,57 @@
             </a-alert>
         </div>
         <br>
-        <a-button-group class="text-center block">
-            <a-button href="//cdn.geometrydashchinese.com/download/GDCN.apk" type="primary">
+        <a-card class="w-full md:w-3/4 mx-auto" title="下载">
+            <a-button v-if="platform.match('Linux') !== null" href="//cdn.geometrydashchinese.com/download/GDCN.apk"
+                      type="primary">
                 <a-icon type="android"></a-icon>
                 <span>Android</span>
             </a-button>
-            <a-dropdown>
-                <a-button type="primary">
+            <a-button-group v-else-if="platform.match('Win') !== null">
+                <a-button href="//cdn.geometrydashchinese.com/download/GDCN.zip"
+                          type="primary">
                     <a-icon type="windows"></a-icon>
-                    <span>Windows</span>
+                    <span>Windows(无资源包)</span>
                 </a-button>
+                <a-button href="//cdn.geometrydashchinese.com/download/GDCN.zip"
+                          type="primary">
+                    <a-icon type="windows"></a-icon>
+                    <span>Windows(有资源包)</span>
+                </a-button>
+            </a-button-group>
+            <h4 v-else>哦不, 我们无法判断您的设备, 请您在下方自行选择版本下载</h4>
+            <br><br>
+            <a-collapse>
+                <a-collapse-panel header="选择其他版本">
+                    <a-button-group class="text-center block">
+                        <a-button href="//cdn.geometrydashchinese.com/download/GDCN.apk" type="primary">
+                            <a-icon type="android"></a-icon>
+                            <span>Android</span>
+                        </a-button>
+                        <a-dropdown>
+                            <a-button type="primary">
+                                <a-icon type="windows"></a-icon>
+                                <span>Windows</span>
+                            </a-button>
 
-                <a-menu slot="overlay">
-                    <a-menu-item>
-                        <a href="//cdn.geometrydashchinese.com/download/GDCN.exe">无资源包</a>
-                    </a-menu-item>
-                    <a-menu-item>
-                        <a href="//cdn.geometrydashchinese.com/download/GDCN.zip">带资源包</a>
-                    </a-menu-item>
-                </a-menu>
-            </a-dropdown>
-            <a-button disabled href="//cdn.geometrydashchinese.com/download/GDCN.ipa" type="primary">
-                <a-icon type="apple"></a-icon>
-                <span>IOS</span>
-            </a-button>
-        </a-button-group>
-        <br><br>
+                            <a-menu slot="overlay">
+                                <a-menu-item>
+                                    <a href="//cdn.geometrydashchinese.com/download/GDCN.exe">无资源包</a>
+                                </a-menu-item>
+                                <a-menu-item>
+                                    <a href="//cdn.geometrydashchinese.com/download/GDCN.zip">带资源包</a>
+                                </a-menu-item>
+                            </a-menu>
+                        </a-dropdown>
+                        <a-button disabled href="//cdn.geometrydashchinese.com/download/GDCN.ipa" type="primary">
+                            <a-icon type="apple"></a-icon>
+                            <span>IOS</span>
+                        </a-button>
+                    </a-button-group>
+                </a-collapse-panel>
+            </a-collapse>
+        </a-card>
+        <br>
         <div class="w-full md:w-3/4 mx-auto">
             <a-row :gutter="[10, 10]">
                 <a-col :md="12" :span="24">
@@ -88,6 +113,11 @@ export default {
     name: "Home",
     components: {
         Layout
+    },
+    data() {
+        return {
+            platform: navigator.platform
+        }
     }
 }
 </script>
