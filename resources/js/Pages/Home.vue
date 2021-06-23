@@ -17,7 +17,7 @@
                 <span>Android</span>
             </a-button>
             <a-button-group v-else-if="platform.match('Win') !== null">
-                <a-button href="//cdn.geometrydashchinese.com/download/GDCN.zip"
+                <a-button href="//cdn.geometrydashchinese.com/download/GDCN.exe"
                           type="primary">
                     <a-icon type="windows"></a-icon>
                     <span>Windows(无资源包)</span>
@@ -27,6 +27,7 @@
                     <a-icon type="windows"></a-icon>
                     <span>Windows(有资源包)</span>
                 </a-button>
+                <span class="pl-2">PS: 一般玩家请下载有资源包版本<br>无资源包版本需要手动导入资源包, 否则无法直接运行</span>
             </a-button-group>
             <h4 v-else>哦不, 我们无法判断您的设备, 请您在下方自行选择版本下载</h4>
             <br><br>
