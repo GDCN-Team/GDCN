@@ -59,6 +59,7 @@ return [
             'bucket' => 'gdcn',
             'endpoint' => env('ALIYUN_OSS_ENDPOINT'),
             'ssl' => true,
+            'cdnDomain' => false,
             'isCName' => false,
             'debug' => env('APP_DEBUG', false)
         ]
