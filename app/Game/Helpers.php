@@ -31,6 +31,20 @@ class Helpers
     }
 
     /**
+     * @return string[]
+     */
+    public function getDifficulties(): array
+    {
+        return [
+            10 => 'Easy',
+            20 => 'Normal',
+            30 => 'Hard',
+            40 => 'Harder',
+            50 => 'Insane'
+        ];
+    }
+
+    /**
      * @param int $total
      * @param int|null $page
      * @param int|null $perPage

@@ -30,6 +30,6 @@ class GameLevelGauntletTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("1:{$gauntlet->id}:3:{$gauntlet->levels}");
+        $request->assertSee("1:{$gauntlet->id}:3:{$gauntlet->levelIds}");
     }
 }

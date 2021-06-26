@@ -40,9 +40,23 @@ class GameLevelGauntlet extends Model
     use HasFactory;
 
     /**
+     * @return array
+     */
+    public function getLevelsAttribute(): array
+    {
+        return [
+            GameLevel::find($this->level1),
+            GameLevel::find($this->level2),
+            GameLevel::find($this->level3),
+            GameLevel::find($this->level4),
+            GameLevel::find($this->level5)
+        ];
+    }
+
+    /**
      * @return string
      */
-    public function getLevelsAttribute(): string
+    public function getLevelIdsAttribute(): string
     {
         return implode(',', [
             $this->level1,

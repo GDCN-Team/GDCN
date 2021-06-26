@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'PRC',
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -166,7 +166,6 @@ return [
          * Package Service Providers...
          */
 
-        Overtrue\LaravelLang\TranslationServiceProvider::class,
         App\Providers\GameServiceProvider::class,
 
         /*

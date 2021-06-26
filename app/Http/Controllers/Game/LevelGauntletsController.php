@@ -24,15 +24,14 @@ class LevelGauntletsController extends Controller
     {
         $request->validated();
 
-        $gauntlets = GameLevelGauntlet::all()
-            ->map(function (GameLevelGauntlet $gauntlet) {
-                return GDObject::merge([
-                    1 => $gauntlet->id,
-                    3 => $gauntlet->levels
-                ], ':');
-            })->toArray();
+        $gauntlets = GameLevelGauntlet::all();
+        $result = $gauntlets->map(function (GameLevelGauntlet $gauntlet) {
+            return GDObject::merge([
+                1 => $gauntlet->id,
+                3 => $gauntlet->levelIds
+            ], ':');
+        })->join('|');
 
-        $result = implode('|', $gauntlets);
-        return "{$result}#{$hash->generateLevelGauntletHash(GameLevelGauntlet::all())}";
+        return "$result#{$hash->generateLevelGauntletHash($gauntlets)}";
     }
 }

@@ -230,7 +230,7 @@ class HashesController extends Controller
     {
         $hash = null;
         foreach ($gauntlets as $gauntlet) {
-            $hash .= "{$gauntlet->id}{$gauntlet->levels}";
+            $hash .= "{$gauntlet->id}{$gauntlet->levelIds}";
         }
 
         $salt = $this->salts['level'];
