@@ -32,7 +32,8 @@ class UploadOssCommand extends Command
      */
     public function handle(): int
     {
-        $this->uploadDir(public_path());
+        $this->uploadDir(public_path('css'));
+        $this->uploadDir(public_path('js'));
         return 0;
     }
 
@@ -49,7 +50,7 @@ class UploadOssCommand extends Command
 
         $handle = opendir($dir);
         while (($file = readdir($handle)) !== false) {
-            if (!in_array($file, ['css', 'js'])) {
+            if (in_array($file, ['.', '..'])) {
                 continue;
             }
 
@@ -57,6 +58,8 @@ class UploadOssCommand extends Command
             if (is_file($file)) {
                 $filePathParts = explode(DIRECTORY_SEPARATOR, $file);
                 $path = "static/gdcn/{$filePathParts[count($filePathParts) - 2]}/{$filePathParts[count($filePathParts) - 1]}";
+                $this->info("$file To $path");
+                $this->info('');
                 $oss->put($path, file_get_contents($file));
             } elseif (is_dir($file)) {
                 $this->uploadDir($file);

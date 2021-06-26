@@ -53,14 +53,12 @@ return [
         ],
 
         'oss' => [
-            'driver' => 'oss',
+            'driver' => 'aliyun',
             'access_id' => env('ALIYUN_OSS_ACCESS_ID'),
             'access_key' => env('ALIYUN_OSS_ACCESS_SECRET'),
             'bucket' => 'gdcn',
             'endpoint' => env('ALIYUN_OSS_ENDPOINT'),
-            'ssl' => true,
-            'cdnDomain' => false,
-            'isCName' => false,
+            'use_ssl' => true,
             'debug' => env('APP_DEBUG', false)
         ]
 
