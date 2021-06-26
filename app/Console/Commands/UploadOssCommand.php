@@ -34,6 +34,7 @@ class UploadOssCommand extends Command
     {
         $this->uploadDir(public_path('css'));
         $this->uploadDir(public_path('js'));
+        $this->uploadDir(public_path('vendor'));
         return 0;
     }
 
