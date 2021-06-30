@@ -88,7 +88,7 @@
             <a-form-model-item :help="errors.password"
                                :validate-status="this.checkValidateStatus(errors.password, this.form)"
                                has-feedback>
-                <a-input v-model="form.password" placeholder="密码" required></a-input>
+                <a-input-password v-model="form.password" placeholder="密码" required type="password"></a-input-password>
             </a-form-model-item>
 
             <!-- submit -->
@@ -122,7 +122,8 @@ export default {
                 server: 'official',
                 songType: 'original',
                 songID: null,
-                levelID: null
+                levelID: null,
+                password: null
             })
         }
     },
