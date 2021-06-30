@@ -138,6 +138,12 @@ class ApiController extends Controller
     public function levelTransOut(TransOutApiRequest $request): InertiaResponse
     {
         $data = $request->validated();
-        return $this->levelService->transOut($data['server'], $data['levelID'], $data['songType'], $data['songID'], $data['password']);
+        return $this->levelService->transOut(
+            $data['server'],
+            $data['levelID'],
+            $data['songType'],
+            $data['songID'] ?? null,
+            $data['password']
+        );
     }
 }
