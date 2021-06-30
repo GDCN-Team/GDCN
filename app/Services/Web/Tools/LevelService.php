@@ -144,11 +144,8 @@ class LevelService
             } else {
                 $level = GameLevel::query()->findOrFail($levelID);
                 $host = app(Helpers::class)->getServerHostFromAlias($serverAlias);
-                $query = GameAccountLink::whereHost($host);
-                $query = $query->whereAccount($account->id)->whereTargetUserId($account->user->id);
-                $link = $query->first();
-
-                if (!$link || !$query->exists()) {
+                $link = GameAccountLink::whereHost($host)->whereAccount($account->id)->first();
+                if (!$link) {
                     $this->noticeService->sendErrorNotice('错误: 未检测到账号链接信息，请链接关卡Creator的账号');
                 } else {
                     $levelString = $storageManager->get(sha1($level->id) . '.dat');
