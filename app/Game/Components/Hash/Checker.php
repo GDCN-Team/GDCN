@@ -2,8 +2,9 @@
 
 namespace App\Game\Components\Hash;
 
-use App\Http\Requests\Game\Account\Comment\UploadRequest;
+use App\Http\Requests\Game\Account\Comment\UploadRequest as AccountCommentUploadRequest;
 use App\Http\Requests\Game\Item\LikeRequest;
+use App\Http\Requests\Game\Level\Comment\UploadRequest as LevelCommentUploadRequest;
 use App\Http\Requests\Game\Level\DownloadRequest;
 use App\Http\Requests\Game\Level\Rating\RateStarsRequest;
 use App\Http\Requests\Game\User\Score\UpdateRequest;
@@ -31,10 +32,10 @@ class Checker
     }
 
     /**
-     * @param UploadRequest $request
+     * @param AccountCommentUploadRequest $request
      * @throws ChkValidationException
      */
-    public static function uploadLevel(UploadRequest $request): void
+    public static function uploadLevel(AccountCommentUploadRequest $request): void
     {
         $data = $request->validated();
 
@@ -45,10 +46,10 @@ class Checker
     }
 
     /**
-     * @param UploadRequest $request
+     * @param AccountCommentUploadRequest $request
      * @throws ChkValidationException
      */
-    public static function uploadAccountComment(UploadRequest $request): void
+    public static function uploadAccountComment(AccountCommentUploadRequest $request): void
     {
         $data = $request->validated();
 
@@ -59,10 +60,10 @@ class Checker
     }
 
     /**
-     * @param UploadRequest $request
+     * @param LevelCommentUploadRequest $request
      * @throws ChkValidationException
      */
-    public static function uploadLevelComment(UploadRequest $request): void
+    public static function uploadLevelComment(LevelCommentUploadRequest $request): void
     {
         $data = $request->validated();
 

@@ -3,9 +3,8 @@
 namespace App\Providers;
 
 use App\Game\StorageManager;
-use App\Http\Controllers\Web\Tools\Web\Tools\Web\Dashboard\Web\Dashboard\Web\Auth\Game\AccountSaveDataController;
-use App\Http\Controllers\Web\Tools\Web\Tools\Web\Dashboard\Web\Dashboard\Web\Auth\Game\LevelsController;
-use App\Http\Controllers\Web\Tools\Web\Tools\Web\Dashboard\Web\Dashboard\Web\Auth\Game\WebToolsApiController;
+use App\Http\Controllers\Game\AccountSaveDataController;
+use App\Http\Controllers\Game\LevelsController;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;

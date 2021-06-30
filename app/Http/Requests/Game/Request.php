@@ -77,7 +77,7 @@ class Request extends FormRequest
     /**
      * @param bool $optional
      * @return bool
-     * @throws \App\Exceptions\Game\AuthenticationException
+     * @throws AuthenticationException
      */
     public function auth(bool $optional = false): bool
     {
@@ -97,7 +97,7 @@ class Request extends FormRequest
     }
 
     /**
-     * @throws \App\Exceptions\Game\Request\AuthorizationException
+     * @throws AuthorizationException
      */
     protected function failedAuthorization(): void
     {

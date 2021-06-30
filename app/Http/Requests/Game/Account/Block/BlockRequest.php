@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Game\Account\Block;
 
+use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
 use App\Models\GameAccount;
 use Illuminate\Validation\Rule;
@@ -12,6 +13,23 @@ use Illuminate\Validation\Rule;
  */
 class BlockRequest extends Request
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        try {
+            $this->auth();
+        } catch (AuthenticationException $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+
     /**
      * Get the validation rules that apply to the request.
      *

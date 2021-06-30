@@ -30,7 +30,7 @@ class AccountBlocksController extends Controller
     }
 
     /**
-     * @param \App\Http\Requests\Game\BlockRequest $request
+     * @param BlockRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/blockGJUser20
