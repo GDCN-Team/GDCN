@@ -73,7 +73,7 @@ Route::group([
         Route::post('/level/trans:in', [ToolsApiController::class, 'levelTransIn'])->name('trans.in.api');
 
         Route::inertia('/level/trans:out', 'Tools/Level/TransOut')->name('trans.out');
-        Route::post('/level/trans:out', [ToolsApiController::class, 'levelTransOut'])->name('trans.out');
+        Route::post('/level/trans:out', [ToolsApiController::class, 'levelTransOut'])->name('trans.out.api');
     });
 
     Route::group([
