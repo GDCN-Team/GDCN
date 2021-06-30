@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Game;
 
-use App\Enums\Game\LikeType;
-use App\Enums\Game\LogType;
+use App\Enums\Game\Log\Types;
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameChkValidateException;
-use App\Exceptions\GameUserNotFoundException;
+use App\Exceptions\Game\ChkValidateException;
+use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameItemLikeRequest;
-use App\Http\Requests\GameItemRestoreRequest;
+use App\Http\Requests\Game\Item\LikeRequest;
+use App\Http\Requests\Game\Item\RestoreRequest;
 use App\Models\GameAccountComment;
 use App\Models\GameLevel;
 use App\Models\GameLevelComment;
@@ -22,13 +21,13 @@ use App\Models\GameLog;
 class MiscController extends Controller
 {
     /**
-     * @param GameItemLikeRequest $request
+     * @param LikeRequest $request
      * @param HashesController $hash
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/likeGJItem211
      */
-    public function likeItem(GameItemLikeRequest $request, HashesController $hash): ?int
+    public function likeItem(LikeRequest $request, HashesController $hash): ?int
     {
         try {
             $data = $request->validated();
@@ -39,17 +38,17 @@ class MiscController extends Controller
             );
 
             switch ($data['type']) {
-                case LikeType::LEVEL:
+                case 1: // Level
                     $item = GameLevel::whereId($data['itemID'])->first();
-                    $logType = LogType::LIKE_LEVEL;
+                    $logType = Types::LIKE_LEVEL;
                     break;
-                case LikeType::LEVEL_COMMENT:
+                case 2: // Level Comment
                     $item = GameLevelComment::whereId($data['itemID'])->first();
-                    $logType = LogType::LIKE_LEVEL_COMMENT;
+                    $logType = Types::LIKE_LEVEL_COMMENT;
                     break;
-                case LikeType::ACCOUNT_COMMENT:
+                case 3: // Account Comment
                     $item = GameAccountComment::whereId($data['itemID'])->first();
-                    $logType = LogType::LIKE_ACCOUNT_COMMENT;
+                    $logType = Types::LIKE_ACCOUNT_COMMENT;
                     break;
                 default:
                     return ResponseCode::INVALID_REQUEST;
@@ -87,20 +86,20 @@ class MiscController extends Controller
             }
 
             return ResponseCode::FAILED;
-        } catch (GameChkValidateException $e) {
+        } catch (ChkValidateException $e) {
             return ResponseCode::CHK_CHECK_FAILED;
-        } catch (GameUserNotFoundException $e) {
+        } catch (UserNotFoundException $e) {
             return ResponseCode::USER_NOT_FOUND;
         }
     }
 
     /**
-     * @param GameItemRestoreRequest $request
+     * @param RestoreRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/restoreGJItems
      */
-    public function restoreItem(GameItemRestoreRequest $request): int
+    public function restoreItem(RestoreRequest $request): int
     {
         $request->validated();
         return ResponseCode::RESTORE_ITEM_FAILED;

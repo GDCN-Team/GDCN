@@ -2,13 +2,13 @@
 
 namespace App\Game\Components\Command;
 
-use App\Exceptions\GameCommandArgumentNotFoundException;
-use App\Exceptions\GameCommandExecuteException;
+use App\Exceptions\Game\Command\ArgumentNotFoundException;
+use App\Exceptions\Game\Command\ExecuteException;
 use App\Game\Helpers;
 use App\Models\GameDailyLevel;
 use App\Models\GameWeeklyLevel;
-use App\Services\GameLevelRatingService;
-use App\Services\GameLevelService;
+use App\Services\Game\LevelRatingService;
+use App\Services\Game\LevelService;
 use Illuminate\Support\Str;
 
 /**
@@ -25,7 +25,7 @@ class LevelCommentCommands extends Base
     {
         try {
             $stars = $stars ?: $this->argument('stars');
-        } catch (GameCommandArgumentNotFoundException $e) {
+        } catch (ArgumentNotFoundException $e) {
             return $e->getMessage();
         }
 
@@ -33,7 +33,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Stars must between 1 to 10.');
         }
 
-        return app(GameLevelRatingService::class)->rate($this->level, $stars) ? $this->success : $this->failed('Unknown Error');
+        return app(LevelRatingService::class)->rate($this->level, $stars) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -45,7 +45,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        $result = app(GameLevelRatingService::class)->un_rate($this->level);
+        $result = app(LevelRatingService::class)->un_rate($this->level);
         return $result === true ? $this->success : $this->failed($result);
     }
 
@@ -58,13 +58,13 @@ class LevelCommentCommands extends Base
     {
         try {
             $key = $key ?: $this->argument('key');
-        } catch (GameCommandArgumentNotFoundException $e) {
+        } catch (ArgumentNotFoundException $e) {
             return $e->getMessage();
         }
 
         try {
             $value = $value ?: $this->argument('value', 'val');
-        } catch (GameCommandArgumentNotFoundException $e) {
+        } catch (ArgumentNotFoundException $e) {
             return $e->getMessage();
         }
 
@@ -106,7 +106,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Score must > 0');
         }
 
-        return app(GameLevelRatingService::class)->setFeatureScore($this->level, $score) ? $this->success : $this->failed('Unknown Error');
+        return app(LevelRatingService::class)->setFeatureScore($this->level, $score) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -118,7 +118,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(GameLevelRatingService::class)->setFeatureScore($this->level, 0) ? $this->success : $this->failed('Unknown Error');
+        return app(LevelRatingService::class)->setFeatureScore($this->level, 0) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -130,7 +130,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(GameLevelRatingService::class)->setEpic($this->level, true) ? $this->success : $this->failed('Unknown Error');
+        return app(LevelRatingService::class)->setEpic($this->level, true) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -142,7 +142,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(GameLevelRatingService::class)->setEpic($this->level, false) ? $this->success : $this->failed('Unknown Error');
+        return app(LevelRatingService::class)->setEpic($this->level, false) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -154,7 +154,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(GameLevelRatingService::class)->setCoinState($this->level, true) ? $this->success : $this->failed('Unknown Error');
+        return app(LevelRatingService::class)->setCoinState($this->level, true) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -170,7 +170,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(GameLevelRatingService::class)->setCoinState($this->level, false) ? $this->success : $this->failed('Unknown Error');
+        return app(LevelRatingService::class)->setCoinState($this->level, false) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -181,11 +181,11 @@ class LevelCommentCommands extends Base
     {
         try {
             $this->checkOperatorIsLevelOwner();
-        } catch (GameCommandExecuteException $e) {
+        } catch (ExecuteException $e) {
             return $e->getMessage();
         }
 
-        return app(GameLevelService::class)->setSong($this->level, $songID) ? $this->success : $this->failed('Unknown Error');
+        return app(LevelService::class)->setSong($this->level, $songID) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**

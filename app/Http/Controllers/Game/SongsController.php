@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Game;
 
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameSongGetRequest;
-use App\Http\Requests\GameTopArtistsGetRequest;
+use App\Http\Requests\Game\Song\GetRequest;
+use App\Http\Requests\Game\Song\TopArtistsGetRequest;
 use App\Models\GameCustomSong;
 use App\Models\GameSong;
 use GDCN\GDObject;
@@ -18,12 +18,12 @@ use Illuminate\Support\Facades\Http;
 class SongsController extends Controller
 {
     /**
-     * @param GameSongGetRequest $request
+     * @param GetRequest $request
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJSongInfo
      */
-    public function get(GameSongGetRequest $request)
+    public function get(GetRequest $request)
     {
         $data = $request->validated();
         $song = $data['songID'] >= config('game.customSongIdOffset', 5000000) ? GameCustomSong::whereSongId($data['songID'])->first() : GameSong::whereId($data['songID'])->first();
@@ -54,12 +54,12 @@ class SongsController extends Controller
     }
 
     /**
-     * @param GameTopArtistsGetRequest $request
+     * @param TopArtistsGetRequest $request
      * @return string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJTopArtists
      */
-    public function getTopArtists(GameTopArtistsGetRequest $request): string
+    public function getTopArtists(TopArtistsGetRequest $request): string
     {
         $data = $request->validated();
 

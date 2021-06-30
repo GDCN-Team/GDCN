@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\WebAuthApiController;
-use App\Http\Controllers\WebDashboardApiController;
-use App\Http\Controllers\WebDashboardPageController;
-use App\Http\Controllers\WebToolsApiController;
-use App\Http\Controllers\WebToolsPageController;
+use App\Http\Controllers\Web\Auth\ApiController as AuthApiController;
+use App\Http\Controllers\Web\Dashboard\ApiController as DashboardApiController;
+use App\Http\Controllers\Web\Dashboard\PageController as DashboardPageController;
+use App\Http\Controllers\Web\Tools\ApiController as ToolsApiController;
+use App\Http\Controllers\Web\Tools\PageController as ToolsPageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,13 +28,13 @@ Route::group([
         'middleware' => 'guest'
     ], function () {
         Route::inertia('/login', 'Auth/Login')->name('login');
-        Route::post('/login', [WebAuthApiController::class, 'login'])->name('login.api');
+        Route::post('/login', [AuthApiController::class, 'login'])->name('login.api');
     });
 
     Route::inertia('/register', 'Auth/Register')->name('register');
 
-    Route::post('/register', [WebAuthApiController::class, 'register'])->name('register.api');
-    Route::get('/logout', [WebAuthApiController::class, 'logout'])->name('logout.api');
+    Route::post('/register', [AuthApiController::class, 'register'])->name('register.api');
+    Route::get('/logout', [AuthApiController::class, 'logout'])->name('logout.api');
 });
 
 Route::group([
@@ -42,13 +42,13 @@ Route::group([
     'prefix' => 'dashboard',
     'middleware' => 'auth'
 ], function () {
-    Route::get('/', [WebDashboardPageController::class, 'renderHome'])->name('home');
-    Route::get('/profile', [WebDashboardPageController::class, 'renderProfile'])->name('profile');
-    Route::get('/setting', [WebDashboardPageController::class, 'renderSetting'])->name('setting');
-    Route::get('/change-password', [WebDashboardPageController::class, 'renderPasswordChange'])->name('change-password');
+    Route::get('/', [DashboardPageController::class, 'renderHome'])->name('home');
+    Route::get('/profile', [DashboardPageController::class, 'renderProfile'])->name('profile');
+    Route::get('/setting', [DashboardPageController::class, 'renderSetting'])->name('setting');
+    Route::get('/change-password', [DashboardPageController::class, 'renderPasswordChange'])->name('change-password');
 
-    Route::post('/update-setting', [WebDashboardApiController::class, 'updateAccountSetting'])->name('setting.update.api');
-    Route::post('/change-password', [WebDashboardApiController::class, 'changePassword'])->name('password.change.api');
+    Route::post('/update-setting', [DashboardApiController::class, 'updateAccountSetting'])->name('setting.update.api');
+    Route::post('/change-password', [DashboardApiController::class, 'changePassword'])->name('password.change.api');
 });
 
 Route::group([
@@ -61,32 +61,32 @@ Route::group([
     Route::group([
         'as' => 'account.'
     ], function () {
-        Route::get('/account/link', [WebToolsPageController::class, 'renderAccountLinkPage'])->name('link');
-        Route::post('/account/link', [WebToolsApiController::class, 'linkAccount'])->name('link.api');
-        Route::post('/account/unlink', [WebToolsApiController::class, 'unlinkAccount'])->name('unlink.api');
+        Route::get('/account/link', [ToolsPageController::class, 'renderAccountLinkPage'])->name('link');
+        Route::post('/account/link', [ToolsApiController::class, 'linkAccount'])->name('link.api');
+        Route::post('/account/unlink', [ToolsApiController::class, 'unlinkAccount'])->name('unlink.api');
     });
 
     Route::group([
         'as' => 'level.'
     ], function () {
         Route::inertia('/level/trans:in', 'Tools/Level/TransIn')->name('trans.in');
-        Route::post('/level/trans:in', [WebToolsApiController::class, 'levelTransIn'])->name('trans.in.api');
+        Route::post('/level/trans:in', [ToolsApiController::class, 'levelTransIn'])->name('trans.in.api');
 
-        // Route::inertia('/level/trans:out', 'Tools/Level/TransOut')->name('trans.out');
-        // Route::post('/level/trans:out', [WebToolsApiController::class, 'levelTransOut'])->name('trans.out');
+        Route::inertia('/level/trans:out', 'Tools/Level/TransOut')->name('trans.out');
+        Route::post('/level/trans:out', [ToolsApiController::class, 'levelTransOut'])->name('trans.out');
     });
 
     Route::group([
         'as' => 'song.'
     ], function () {
-        Route::get('/song/upload:link', [WebToolsPageController::class, 'renderUploadLinkPage'])->name('upload.link');
-        Route::post('/song/upload:link', [WebToolsApiController::class, 'CustomSongUpload_Link'])->name('upload.link.api');
+        Route::get('/song/upload:link', [ToolsPageController::class, 'renderUploadLinkPage'])->name('upload.link');
+        Route::post('/song/upload:link', [ToolsApiController::class, 'CustomSongUpload_Link'])->name('upload.link.api');
 
-        Route::get('/song/upload:netease', [WebToolsPageController::class, 'renderUploadNeteasePage'])->name('upload.netease');
-        Route::post('/song/upload:netease', [WebToolsApiController::class, 'CustomSongUpload_NeteaseMusic'])->name('upload.netease.api');
+        Route::get('/song/upload:netease', [ToolsPageController::class, 'renderUploadNeteasePage'])->name('upload.netease');
+        Route::post('/song/upload:netease', [ToolsApiController::class, 'CustomSongUpload_NeteaseMusic'])->name('upload.netease.api');
 
-        Route::get('/song/list', [WebToolsPageController::class, 'renderSongListPage'])->name('list');
-        Route::post('/song/edit/{song}', [WebToolsApiController::class, 'updateSong'])->name('edit.api');
-        Route::post('/song/delete/{song}', [WebToolsApiController::class, 'deleteSong'])->name('delete.api');
+        Route::get('/song/list', [ToolsPageController::class, 'renderSongListPage'])->name('list');
+        Route::post('/song/edit/{song}', [ToolsApiController::class, 'updateSong'])->name('edit.api');
+        Route::post('/song/delete/{song}', [ToolsApiController::class, 'deleteSong'])->name('delete.api');
     });
 });

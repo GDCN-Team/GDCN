@@ -6,7 +6,7 @@ use App\Models\GameAccount;
 use App\Models\GameAccountBlock;
 use App\Repositories\Game\AccountFriendRepository;
 use App\Repositories\Game\AccountMessageRepository;
-use App\Repositories\Game\GameFriendRequestRepository;
+use App\Repositories\Game\FriendRequestRepository;
 
 /**
  * Class AccountBlockService
@@ -25,7 +25,7 @@ class AccountBlockService
     protected $messageRepository;
 
     /**
-     * @var GameFriendRequestRepository
+     * @var FriendRequestRepository
      */
     protected $friendRequestRepository;
 
@@ -33,9 +33,9 @@ class AccountBlockService
      * AccountBlockService constructor.
      * @param AccountFriendRepository $friendRepository
      * @param AccountMessageRepository $messageRepository
-     * @param GameFriendRequestRepository $friendRequestRepository
+     * @param FriendRequestRepository $friendRequestRepository
      */
-    public function __construct(AccountFriendRepository $friendRepository, AccountMessageRepository $messageRepository, GameFriendRequestRepository $friendRequestRepository)
+    public function __construct(AccountFriendRepository $friendRepository, AccountMessageRepository $messageRepository, FriendRequestRepository $friendRequestRepository)
     {
         $this->friendRepository = $friendRepository;
         $this->messageRepository = $messageRepository;

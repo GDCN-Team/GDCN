@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Game;
 
-use App\Enums\Game\AccountSettingCommentHistoryStateType;
-use App\Enums\Game\LevelCommentType;
+use App\Enums\Game\Account\Setting\CommentHistoryState;
 use App\Enums\Game\ResponseCode;
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameLevelCommentDeleteRequest;
-use App\Http\Requests\GameLevelCommentGetRequest;
-use App\Http\Requests\GameLevelCommentHistoryGetRequest;
-use App\Http\Requests\GameLevelCommentUploadRequest;
+use App\Http\Requests\Game\Level\Comment\DeleteRequest;
+use App\Http\Requests\Game\Level\Comment\GetRequest;
+use App\Http\Requests\Game\Level\Comment\HistoryGetRequest;
+use App\Http\Requests\Game\Level\Comment\UploadRequest;
 use App\Models\GameLevelComment;
 use Exception;
 use GDCN\ChkValidationException;
@@ -25,13 +24,13 @@ use Illuminate\Support\Carbon;
 class LevelCommentsController extends Controller
 {
     /**
-     * @param GameLevelCommentGetRequest $request
+     * @param GetRequest $request
      * @param Helpers $helper
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJComments21
      */
-    public function get(GameLevelCommentGetRequest $request, Helpers $helper)
+    public function get(GetRequest $request, Helpers $helper)
     {
         try {
             $data = $request->validated();
@@ -40,10 +39,10 @@ class LevelCommentsController extends Controller
             Carbon::setLocale('en');
             $query = GameLevelComment::whereLevel($data['levelID']);
             switch ($data['mode']) {
-                case LevelCommentType::RECENT:
+                case 0: // Recent
                     $query->orderByDesc('id');
                     break;
-                case LevelCommentType::MOST_LIKED:
+                case 1: // Most Liked
                     $query->orderByDesc('likes');
                     break;
                 default:
@@ -94,11 +93,11 @@ class LevelCommentsController extends Controller
     }
 
     /**
-     * @param GameLevelCommentUploadRequest $request
+     * @param UploadRequest $request
      * @param Helpers $helper
      * @return int|mixed|string
      */
-    public function upload(GameLevelCommentUploadRequest $request, Helpers $helper)
+    public function upload(UploadRequest $request, Helpers $helper)
     {
         $data = $request->validated();
 
@@ -118,13 +117,13 @@ class LevelCommentsController extends Controller
     }
 
     /**
-     * @param GameLevelCommentDeleteRequest $request
+     * @param DeleteRequest $request
      * @param Helpers $helper
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/deleteGJComment20
      */
-    public function delete(GameLevelCommentDeleteRequest $request, Helpers $helper): int
+    public function delete(DeleteRequest $request, Helpers $helper): int
     {
         try {
             return $helper->bool2result($request->comment->delete());
@@ -134,28 +133,28 @@ class LevelCommentsController extends Controller
     }
 
     /**
-     * @param GameLevelCommentHistoryGetRequest $request
+     * @param HistoryGetRequest $request
      * @param Helpers $helper
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJCommentHistory
      */
-    public function history(GameLevelCommentHistoryGetRequest $request, Helpers $helper)
+    public function history(HistoryGetRequest $request, Helpers $helper)
     {
         $data = $request->validated();
         $page = $data['page'];
 
-        if (optional($request->target->setting->comment_history_state ?? null)->is(AccountSettingCommentHistoryStateType::NONE) ?? false) {
+        if (optional($request->target->setting->comment_history_state ?? null)->is(CommentHistoryState::NONE) ?? false) {
             return ResponseCode::PERMISSION_DENIED;
         }
 
         Carbon::setLocale('en');
         $query = GameLevelComment::whereAccount($request->target->id);
         switch ($data['mode']) {
-            case LevelCommentType::RECENT:
+            case 0: // Recent
                 $query->orderByDesc('created_at');
                 break;
-            case LevelCommentType::MOST_LIKED:
+            case 1: // Most Liked
                 $query->orderByDesc('likes');
                 break;
             default:

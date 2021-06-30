@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Game;
 
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameLevelPackGetRequest;
+use App\Http\Requests\Game\Level\PackGetRequest;
 use App\Models\GameLevelPack;
 use GDCN\GDObject;
 
@@ -15,14 +15,14 @@ use GDCN\GDObject;
 class LevelPacksController extends Controller
 {
     /**
-     * @param GameLevelPackGetRequest $request
+     * @param PackGetRequest $request
      * @param Helpers $helper
      * @param HashesController $hash
      * @return string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJMapPacks21
      */
-    public function get(GameLevelPackGetRequest $request, Helpers $helper, HashesController $hash): string
+    public function get(PackGetRequest $request, Helpers $helper, HashesController $hash): string
     {
         $data = $request->validated();
 

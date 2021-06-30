@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Enums\Game\UserListType;
-use App\Exceptions\GameAuthenticationException;
-use App\Exceptions\GameUserNotFoundException;
+use App\Exceptions\Game\Request\AuthenticationException;
+use App\Exceptions\Game\UserNotFoundException;
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameUserAccessRequest;
-use App\Http\Requests\GameUserInfoGetRequest;
-use App\Http\Requests\GameUserListRequest;
-use App\Http\Requests\GameUserSearchRequest;
+use App\Http\Requests\Game\User\InfoGetRequest;
+use App\Http\Requests\Game\User\ListGetRequest;
+use App\Http\Requests\Game\User\RequestAccessRequest;
+use App\Http\Requests\Game\User\SearchRequest;
 use App\Models\GameAccount;
 use App\Models\GameAccountBlock;
 use App\Models\GameAccountFriend;
@@ -28,12 +27,12 @@ use Illuminate\Support\Str;
 class UsersController extends Controller
 {
     /**
-     * @param GameUserInfoGetRequest $request
+     * @param InfoGetRequest $request
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJUserInfo20
      */
-    public function info(GameUserInfoGetRequest $request)
+    public function info(InfoGetRequest $request)
     {
         try {
             $data = $request->validated();
@@ -151,21 +150,21 @@ class UsersController extends Controller
             }
 
             return GDObject::merge($userInfo, ':');
-        } catch (GameAuthenticationException $e) {
+        } catch (AuthenticationException $e) {
             return ResponseCode::LOGIN_FAILED;
-        } catch (GameUserNotFoundException $e) {
+        } catch (UserNotFoundException $e) {
             return ResponseCode::USER_NOT_FOUND;
         }
     }
 
     /**
-     * @param GameUserSearchRequest $request
+     * @param SearchRequest $request
      * @param Helpers $helper
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJUsers20
      */
-    public function search(GameUserSearchRequest $request, Helpers $helper)
+    public function search(SearchRequest $request, Helpers $helper)
     {
         $data = $request->validated();
         $query = is_numeric($data['str']) ? GameUser::whereId($data['str']) : GameUser::query()
@@ -201,12 +200,12 @@ class UsersController extends Controller
     }
 
     /**
-     * @param GameUserAccessRequest $request
+     * @param RequestAccessRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/requestUserAccess
      */
-    public function requestAccess(GameUserAccessRequest $request): int
+    public function requestAccess(RequestAccessRequest $request): int
     {
         /** @var GameAccount $account */
         $account = $request->user();
@@ -215,16 +214,16 @@ class UsersController extends Controller
     }
 
     /**
-     * @param GameUserListRequest $request
+     * @param ListGetRequest $request
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJUserList20
      */
-    public function list(GameUserListRequest $request)
+    public function list(ListGetRequest $request)
     {
         $data = $request->validated();
         switch ($data['type']) {
-            case UserListType::FRIENDS:
+            case 0: // Friends
                 $query = GameAccountFriend::query()
                     ->orWhere([
                         'account' => $data['accountID'],
@@ -260,7 +259,7 @@ class UsersController extends Controller
                             41 => $new ?? false
                         ], ':');
                     })->join('|');
-            case UserListType::BLOCKS:
+            case 1: // Blocks
                 $query = GameAccountBlock::whereAccount($data['accountID']);
                 if ($query->count() <= 0) {
                     return ResponseCode::EMPTY_RESULT;

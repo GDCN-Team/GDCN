@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Enums\Game\CustomSongType;
+use App\Enums\Web\Tools\Song\Types;
 use App\Models\GameAccount;
 use App\Models\GameCustomSong;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -23,7 +23,7 @@ class GameCustomSongPolicy
             return $this->deny('您不是歌曲上传者');
         }
 
-        if ($song->type === CustomSongType::NETEASE_MUSIC) {
+        if ($song->type === Types::NETEASE_MUSIC) {
             return $this->deny('该歌曲不可编辑');
         }
 

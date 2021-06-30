@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\ResponseCode;
 use App\Game\StorageManager;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameAccountSaveDataGetUrlRequest;
-use App\Http\Requests\GameAccountSaveDataLoadRequest;
-use App\Http\Requests\GameAccountSaveDataSaveRequest;
+use App\Http\Requests\Game\Account\SaveData\GetUrlRequest;
+use App\Http\Requests\Game\Account\SaveData\LoadRequest;
+use App\Http\Requests\Game\Account\SaveData\SaveRequest;
 
 /**
  * Class AccountSaveDataController
@@ -30,21 +30,21 @@ class AccountSaveDataController extends Controller
     }
 
     /**
-     * @param GameAccountSaveDataGetUrlRequest $request
+     * @param GetUrlRequest $request
      * @return string
      *
      * @return http://docs.gdprogra.me/#/endpoints/getAccountURL
      */
-    public function getUrl(GameAccountSaveDataGetUrlRequest $request): string
+    public function getUrl(GetUrlRequest $request): string
     {
         return $request->getHost();
     }
 
     /**
-     * @param GameAccountSaveDataSaveRequest $request
+     * @param SaveRequest $request
      * @return int
      */
-    public function save(GameAccountSaveDataSaveRequest $request): int
+    public function save(SaveRequest $request): int
     {
         $data = $request->validated();
         $this->storageManager->put(sha1($request->user()->id) . '.dat', $data['saveData']);
@@ -52,10 +52,10 @@ class AccountSaveDataController extends Controller
     }
 
     /**
-     * @param GameAccountSaveDataLoadRequest $request
+     * @param LoadRequest $request
      * @return int|string
      */
-    public function load(GameAccountSaveDataLoadRequest $request)
+    public function load(LoadRequest $request)
     {
         $data = $request->validated();
         $saveData = $this->storageManager->get(sha1($request->user()->id) . '.dat');

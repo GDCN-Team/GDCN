@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\LevelScoreType;
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameAuthenticationException;
+use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameLevelScoreRequest;
+use App\Http\Requests\Game\Level\ScoreGetRequest;
 use App\Models\GameAccount;
 use App\Models\GameLevelScore;
 use GDCN\GDObject;
@@ -19,12 +19,12 @@ use Illuminate\Support\Carbon;
 class LevelScoresController extends Controller
 {
     /**
-     * @param GameLevelScoreRequest $request
+     * @param ScoreGetRequest $request
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJLevelScores211
      */
-    public function get(GameLevelScoreRequest $request)
+    public function get(ScoreGetRequest $request)
     {
         $data = $request->validated();
 
@@ -36,7 +36,7 @@ class LevelScoresController extends Controller
                         $hash->generateUploadLevelScoreChk($data['accountID'], $data['levelID'], $data['percent'], $data['s3'], $data['s2'], $data['s8'], $data['s4'], $data['s6'], $data['s9'], $data['s10'], $data['s7']),
                         $hash->decodeChk($data['chk'], $hash->keys['level_score'])
                     );
-                } catch (GameChkValidateException $e) {
+                } catch (ChkValidateException $e) {
                     dd($e);
                     return ResponseCode::CHK_CHECK_FAILED;
                 }
@@ -56,7 +56,7 @@ class LevelScoresController extends Controller
 
         $query = GameLevelScore::query();
         switch ($data['type']) {
-            case LevelScoreType::FRIENDS:
+            case 0: // Friends
                 Carbon::setLocale('en');
 
                 try {
@@ -64,7 +64,7 @@ class LevelScoresController extends Controller
 
                     /** @var GameAccount $account */
                     $account = $request->user();
-                } catch (GameAuthenticationException $e) {
+                } catch (AuthenticationException $e) {
                     return ResponseCode::LOGIN_FAILED;
                 }
 
@@ -72,11 +72,11 @@ class LevelScoresController extends Controller
                     ->orderByDesc('created_at')
                     ->whereIn('account', $account->friends->pluck('id'));
                 break;
-            case LevelScoreType::TOP:
+            case 1: // Top
                 $query->orderByDesc('attempts')
                     ->orderByDesc('created_at');
                 break;
-            case LevelScoreType::WEEK:
+            case 2: // Week
                 $time = Carbon::now()
                     ->subWeek();
 

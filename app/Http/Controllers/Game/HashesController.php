@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Game;
 
-use App\Exceptions\GameChkValidateException;
+use App\Exceptions\Game\ChkValidateException;
 use App\Http\Controllers\Controller;
 use App\Models\GameAccount;
 use App\Models\GameAccountComment;
@@ -325,12 +325,12 @@ class HashesController extends Controller
     /**
      * @param $known_string
      * @param $user_string
-     * @throws GameChkValidateException
+     * @throws ChkValidateException
      */
     public function checkChk($known_string, $user_string): void
     {
         if (!hash_equals($known_string, $user_string)) {
-            throw new GameChkValidateException($known_string . ' not equal as ' . $user_string);
+            throw new ChkValidateException($known_string . ' not equal as ' . $user_string);
         }
     }
 

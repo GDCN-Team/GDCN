@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameUserNotFoundException;
-use App\Exceptions\InvalidArgumentException;
+use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameChallengeGetRequest;
+use App\Http\Requests\Game\Challenge\GetRequest;
 use App\Models\GameChallenge;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
@@ -29,13 +29,13 @@ class ChallengesController extends Controller
     ];
 
     /**
-     * @param GameChallengeGetRequest $request
+     * @param GetRequest $request
      * @param HashesController $hash
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJChallenges
      */
-    public function get(GameChallengeGetRequest $request, HashesController $hash)
+    public function get(GetRequest $request, HashesController $hash)
     {
         try {
             $data = $request->validated();
@@ -106,7 +106,7 @@ class ChallengesController extends Controller
 
             $random = Str::random(5);
             return "{$random}{$result}|{$hash->generateChallengeHash($result)}";
-        } catch (GameUserNotFoundException $e) {
+        } catch (UserNotFoundException $e) {
             return ResponseCode::USER_NOT_FOUND;
         } catch (InvalidArgumentException $e) {
             return ResponseCode::UNHANDLED_EXCEPTION;

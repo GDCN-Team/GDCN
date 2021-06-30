@@ -2,14 +2,12 @@
 
 namespace App\Presenter;
 
-use App\Enums\Game\CustomSongType;
-use App\Enums\Game\OtherServerAliasEnum;
+use App\Enums\Web\Tools\Song\Types;
 use App\Models\GameAccountLink;
 use App\Models\GameCustomSong;
-use App\Repositories\GameCustomSongRepository;
-use App\Services\WebNoticeService;
+use App\Repositories\Game\CustomSongRepository;
+use App\Services\Web\NoticeService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,21 +18,21 @@ use Inertia\Response;
 class WebToolsPresenter
 {
     /**
-     * @var WebNoticeService
+     * @var NoticeService
      */
     protected $noticeService;
 
     /**
-     * @var GameCustomSongRepository
+     * @var CustomSongRepository
      */
     protected $repository;
 
     /**
      * WebToolsPresenter constructor.
-     * @param WebNoticeService $noticeService
-     * @param GameCustomSongRepository $repository
+     * @param NoticeService $noticeService
+     * @param CustomSongRepository $repository
      */
-    public function __construct(WebNoticeService $noticeService, GameCustomSongRepository $repository)
+    public function __construct(NoticeService $noticeService, CustomSongRepository $repository)
     {
         $this->noticeService = $noticeService;
         $this->repository = $repository;
@@ -47,13 +45,7 @@ class WebToolsPresenter
     {
         return Inertia::render('Tools/Account/Link', [
             'links' => GameAccountLink::whereAccount(Auth::id())
-                ->get(['id', 'host', 'target_name'])
-                ->map(function ($link) {
-                    $host = strtr($link->host, ['.' => '_']);
-                    $host = Str::upper($host);
-                    $link->host = OtherServerAliasEnum::getValue($host);
-                    return $link;
-                })->toArray()
+                ->get(['id', 'target_name'])
         ]);
     }
 
@@ -64,7 +56,7 @@ class WebToolsPresenter
     {
         return Inertia::render('Tools/Song/List', [
             'songs' => $this->repository->getForSongList(),
-            'editableTypes' => [CustomSongType::LINK]
+            'editableTypes' => [Types::LINK]
         ]);
     }
 
@@ -108,5 +100,13 @@ class WebToolsPresenter
     public function levelTransIn(): Response
     {
         return Inertia::render('Tools/Level/TransIn');
+    }
+
+    /**
+     * @return Response
+     */
+    public function levelTransOut(): Response
+    {
+        return Inertia::render('Tools/Level/TransOut');
     }
 }

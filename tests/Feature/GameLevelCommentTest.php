@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\Game\ResponseCode;
-use App\Http\Controllers\Game\HashesController;
+use App\Http\Controllers\Web\Tools\Web\Tools\Web\Dashboard\Web\Dashboard\Web\Auth\Game\HashesController;
 use App\Models\GameAccount;
 use App\Models\GameAccountSetting;
 use App\Models\GameLevel;

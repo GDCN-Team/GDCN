@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Game;
 
-use App\Enums\Game\LevelSearchSpecialDiffFilter;
-use App\Enums\Game\LevelSearchType;
-use App\Enums\Game\LogType;
+use App\Enums\Game\Log\Types;
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameAuthenticationException;
-use App\Exceptions\GameUserNotFoundException as GameUserNotFoundExceptionAlias;
+use App\Exceptions\Game\Request\AuthenticationException;
+use App\Exceptions\Game\UserNotFoundException as GameUserNotFoundExceptionAlias;
 use App\Game\Helpers;
 use App\Game\StorageManager;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameDailyLevelGetRequest;
-use App\Http\Requests\GameLevelDeleteRequest;
-use App\Http\Requests\GameLevelDownloadRequest;
-use App\Http\Requests\GameLevelReportRequest;
-use App\Http\Requests\GameLevelSearchRequest;
-use App\Http\Requests\GameLevelUpdateDescRequest;
-use App\Http\Requests\GameLevelUploadRequest;
+use App\Http\Requests\Game\Level\DailyGetRequest;
+use App\Http\Requests\Game\Level\DeleteRequest;
+use App\Http\Requests\Game\Level\DownloadRequest;
+use App\Http\Requests\Game\Level\ReportRequest;
+use App\Http\Requests\Game\Level\SearchRequest;
+use App\Http\Requests\Game\Level\UpdateDescRequest;
+use App\Http\Requests\Game\Level\UploadRequest;
 use App\Models\GameCustomSong;
 use App\Models\GameDailyLevel;
 use App\Models\GameLevel;
@@ -56,12 +54,12 @@ class LevelsController extends Controller
     /**
      * Upload Level
      *
-     * @param GameLevelUploadRequest $request
+     * @param UploadRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/uploadGJLevel21
      */
-    public function upload(GameLevelUploadRequest $request): int
+    public function upload(UploadRequest $request): int
     {
         try {
             $data = $request->validated();
@@ -106,14 +104,14 @@ class LevelsController extends Controller
     }
 
     /**
-     * @param GameLevelSearchRequest $request
+     * @param SearchRequest $request
      * @param Helpers $helper
      * @param HashesController $hash
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJLevels21
      */
-    public function search(GameLevelSearchRequest $request, Helpers $helper, HashesController $hash)
+    public function search(SearchRequest $request, Helpers $helper, HashesController $hash)
     {
         try {
             $data = $request->validated();
@@ -131,7 +129,7 @@ class LevelsController extends Controller
             }
 
             if (!empty($data['featured'])) {
-                $data['type'] = LevelSearchType::FEATURED;
+                $data['type'] = 6;
             }
 
             if (!empty($data['original'])) {
@@ -139,7 +137,7 @@ class LevelsController extends Controller
             }
 
             if (!empty($data['epic'])) {
-                $data['type'] = LevelSearchType::HALL_OF_FAME;
+                $data['type'] = 16;
             }
 
             if (!empty($data['song'])) {
@@ -173,13 +171,13 @@ class LevelsController extends Controller
 
             if (!empty($data['diff']) && $data['diff'] !== '-') {
                 switch ($data['diff']) {
-                    case LevelSearchSpecialDiffFilter::NA:
+                    case -1: // N/A
                         $query->whereDoesntHave('rating', function (Builder $query) {
                             $query->where('difficulty', '!=', 0);
                             $query->where('stars', '!=', 0);
                         });
                         break;
-                    case LevelSearchSpecialDiffFilter::DEMON:
+                    case -2: // Demon
                         $query->whereHas('rating', function (Builder $query) use ($helper, $data) {
                             $query->where('demon', true);
 
@@ -189,7 +187,7 @@ class LevelsController extends Controller
                             }
                         });
                         break;
-                    case LevelSearchSpecialDiffFilter::AUTO:
+                    case -3: // Auto
                         $query->whereHas('rating', function (Builder $query) {
                             $query->where('auto', true);
                         });
@@ -206,48 +204,48 @@ class LevelsController extends Controller
             }
 
             switch ($data['type']) {
-                case LevelSearchType::SEARCH:
+                case 0: // Search
                     is_numeric($data['str']) ? $query->find($data['str']) : $query->where('name', 'LIKE', '%' . $data['str'] . '%');
                     break;
-                case LevelSearchType::MOST_DOWNLOADED:
+                case 1: // Most Downloaded
                     $query->orderByDesc('downloads');
                     break;
-                case LevelSearchType::MOST_LIKED:
+                case 2: // Most Liked
                     $query->orderByDesc('likes');
                     break;
-                case LevelSearchType::TRENDING:
+                case 3: // Trending
                     $query->where('created_at', '>', Carbon::rawParse('last week'));
                     $query->orderByDesc('likes');
                     break;
-                case LevelSearchType::RECENT:
+                case 4: // Recent
                     $query->orderByDesc('created_at');
                     break;
-                case LevelSearchType::USER:
+                case 5: // User's levels
                     $query->where('user', $data['str']);
                     break;
-                case LevelSearchType::FEATURED:
+                case 6: // Featured
                     $query->whereHas('rating', function (Builder $query) {
                         $query->where('featured_score', '>', 0);
                     });
                     break;
-                case LevelSearchType::MAGIC:
+                case 7: // Magic
                     $query->where('objects', '>', 9999);
                     break;
-                case LevelSearchType::PACK:
+                case 10: // Level list
                     $query->whereIn('id', $data['str']);
                     break;
-                case LevelSearchType::AWARDED:
+                case 11: // Awarded
                     $query->whereHas('rating', function (Builder $query) {
                         $query->where('stars', '>', 0);
                     });
                     break;
-                case LevelSearchType::FOLLOWED:
+                case 12: // Followed
                     $query->whereIn('user', explode(',', $data['followed']));
                     break;
-                case LevelSearchType::FRIENDS:
+                case 13: // Friends
                     try {
                         $request->auth();
-                    } catch (GameAuthenticationException $e) {
+                    } catch (AuthenticationException $e) {
                         return ResponseCode::LOGIN_FAILED;
                     }
 
@@ -255,7 +253,7 @@ class LevelsController extends Controller
                         $query->whereIn('uuid', $request->user()->friends->pluck('id'));
                     });
                     break;
-                case LevelSearchType::HALL_OF_FAME:
+                case 16: // Hall Of Fame
                     $query->whereHas('rating', function (Builder $query) {
                         $query->where('epic', true);
                     });
@@ -326,13 +324,13 @@ class LevelsController extends Controller
     }
 
     /**
-     * @param GameLevelDownloadRequest $request
+     * @param DownloadRequest $request
      * @param HashesController $hash
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/downloadGJLevel22
      */
-    public function download(GameLevelDownloadRequest $request, HashesController $hash)
+    public function download(DownloadRequest $request, HashesController $hash)
     {
         try {
             $request->validateChk();
@@ -393,12 +391,12 @@ class LevelsController extends Controller
     }
 
     /**
-     * @param GameLevelDeleteRequest $request
+     * @param DeleteRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/deleteGJLevelUser20
      */
-    public function delete(GameLevelDeleteRequest $request): int
+    public function delete(DeleteRequest $request): int
     {
         try {
             if ($request->level->delete()) {
@@ -413,12 +411,12 @@ class LevelsController extends Controller
     }
 
     /**
-     * @param GameDailyLevelGetRequest $request
+     * @param DailyGetRequest $request
      * @return string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJDailyLevel
      */
-    public function getDaily(GameDailyLevelGetRequest $request): string
+    public function getDaily(DailyGetRequest $request): string
     {
         $data = $request->validated();
 
@@ -442,16 +440,16 @@ class LevelsController extends Controller
     }
 
     /**
-     * @param GameLevelReportRequest $request
+     * @param ReportRequest $request
      * @param GameLog $log
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/reportGJLevel
      */
-    public function report(GameLevelReportRequest $request, GameLog $log): int
+    public function report(ReportRequest $request, GameLog $log): int
     {
         $data = $request->validated();
-        if ($log->existsOrNew(LogType::fromValue(LogType::REPORT_LEVEL), $data['levelID'], null, true)) {
+        if ($log->existsOrNew(Types::fromValue(Types::REPORT_LEVEL), $data['levelID'], null, true)) {
             $report = GameLevelReport::query()
                 ->firstOrCreate([
                     'level' => $data['levelID']
@@ -465,13 +463,13 @@ class LevelsController extends Controller
     }
 
     /**
-     * @param GameLevelUpdateDescRequest $request
+     * @param UpdateDescRequest $request
      * @param Helpers $helper
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/updateGJDesc20
      */
-    public function updateDesc(GameLevelUpdateDescRequest $request, Helpers $helper): int
+    public function updateDesc(UpdateDescRequest $request, Helpers $helper): int
     {
         $data = $request->validated();
 

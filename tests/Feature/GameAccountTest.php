@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Exceptions\InvalidArgumentException;
+use App\Exceptions\Game\InvalidArgumentException;
 use App\Models\GameAccount;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Notifications\VerifyEmail;

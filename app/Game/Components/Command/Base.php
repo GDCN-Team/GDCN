@@ -2,10 +2,10 @@
 
 namespace App\Game\Components\Command;
 
-use App\Enums\Game\LogType;
-use App\Exceptions\GameCommandArgumentNotFoundException;
-use App\Exceptions\GameCommandAuthorizationException;
-use App\Exceptions\GameCommandExecuteException;
+use App\Enums\Game\Log\Types;
+use App\Exceptions\Game\Command\ArgumentNotFoundException;
+use App\Exceptions\Game\Command\AuthorizationException;
+use App\Exceptions\Game\Command\ExecuteException;
 use App\Models\GameAccount;
 use App\Models\GameAccountComment;
 use App\Models\GameLevel;
@@ -63,12 +63,12 @@ class Base
      * @param GameAccount $operator
      * @param GameAccountComment|GameLevelComment $comment
      * @param array $arguments
-     * @throws GameCommandExecuteException
+     * @throws ExecuteException
      */
     public function __construct(GameAccount $operator, $comment, array $arguments)
     {
         if (!$comment instanceof GameAccountComment && !$comment instanceof GameLevelComment) {
-            throw new GameCommandExecuteException('Comment must be account comment or level comment.');
+            throw new ExecuteException('Comment must be account comment or level comment.');
         }
 
         $this->operator = $operator;
@@ -78,56 +78,56 @@ class Base
         try {
             $this->level = $comment instanceof GameLevelComment ? GameLevel::whereId($comment->level)->firstOrFail() : null;
         } catch (ModelNotFoundException $e) {
-            throw new GameCommandExecuteException('Level not found.');
+            throw new ExecuteException('Level not found.');
         }
     }
 
     /**
      * @param $flag
-     * @throws GameCommandAuthorizationException
+     * @throws AuthorizationException
      */
     public function authorize($flag): void
     {
         if (!in_array($flag, config('game.default_permissions'), true) && !optional($this->operator->permission)->can($flag)) {
-            throw new GameCommandAuthorizationException("Permission denied.");
+            throw new AuthorizationException("Permission denied.");
         }
     }
 
     /**
      * @param $name
      * @return mixed
-     * @throws GameCommandExecuteException
+     * @throws ExecuteException
      */
     public function execute($name)
     {
         if (!method_exists($this, $name)) {
-            throw new GameCommandExecuteException('Command not found.');
+            throw new ExecuteException('Command not found.');
         }
 
         if (in_array($name, $this->dontExecute, true)) {
-            throw new GameCommandExecuteException("Command {$name} are not allow to execute.");
+            throw new ExecuteException("Command {$name} are not allow to execute.");
         }
 
         if ($this->comment instanceof GameAccountComment) {
-            $logType = LogType::fromValue(LogType::DO_ACCOUNT_COMMENT_COMMAND);
+            $logType = Types::fromValue(Types::DO_ACCOUNT_COMMENT_COMMAND);
 
             try {
                 $this->authorize("command-{$name}-account");
-            } catch (GameCommandAuthorizationException $e) {
+            } catch (AuthorizationException $e) {
                 return $e->getMessage();
             }
 
         } elseif ($this->comment instanceof GameLevelComment) {
-            $logType = LogType::fromValue(LogType::DO_LEVEL_COMMENT_COMMAND);
+            $logType = Types::fromValue(Types::DO_LEVEL_COMMENT_COMMAND);
 
             try {
                 $this->authorize("command-{$name}-level");
-            } catch (GameCommandAuthorizationException $e) {
+            } catch (AuthorizationException $e) {
                 return $e->getMessage();
             }
 
         } else {
-            throw new GameCommandExecuteException('Comment must be account comment or level comment.');
+            throw new ExecuteException('Comment must be account comment or level comment.');
         }
 
         // Create log
@@ -159,7 +159,7 @@ class Base
     /**
      * @param mixed ...$names
      * @return mixed
-     * @throws GameCommandArgumentNotFoundException
+     * @throws ArgumentNotFoundException
      */
     public function argument(...$names)
     {
@@ -172,17 +172,17 @@ class Base
         }
 
         $arg = implode(' or ', $args ?? []);
-        throw new GameCommandArgumentNotFoundException("Argument {$arg} not found.");
+        throw new ArgumentNotFoundException("Argument {$arg} not found.");
     }
 
     /**
      * @return GameLevel|bool|null
-     * @throws GameCommandExecuteException
+     * @throws ExecuteException
      */
     public function checkOperatorIsLevelOwner()
     {
         if (!$this->level) {
-            throw new GameCommandExecuteException('Command type must be level.');
+            throw new ExecuteException('Command type must be level.');
         }
 
         return $this->level->creator->is($this->operator->user);

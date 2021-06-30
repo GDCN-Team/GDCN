@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameAuthenticationException;
+use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameAccountFriendRemoveRequest;
+use App\Http\Requests\Game\Account\Friend\Request\RemoveRequest;
 use App\Models\GameAccountFriend;
 
 /**
@@ -15,13 +15,13 @@ use App\Models\GameAccountFriend;
 class AccountFriendsController extends Controller
 {
     /**
-     * @param GameAccountFriendRemoveRequest $request
+     * @param RemoveRequest $request
      * @param GameAccountFriend $friend
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/removeGJFriend20
      */
-    public function remove(GameAccountFriendRemoveRequest $request, GameAccountFriend $friend): int
+    public function remove(RemoveRequest $request, GameAccountFriend $friend): int
     {
         try {
             $data = $request->validated();
@@ -29,7 +29,7 @@ class AccountFriendsController extends Controller
 
             $friend->findEach($data['accountID'], $data['targetAccountID'])->delete();
             return ResponseCode::OK;
-        } catch (GameAuthenticationException $e) {
+        } catch (AuthenticationException $e) {
             return ResponseCode::LOGIN_FAILED;
         }
     }

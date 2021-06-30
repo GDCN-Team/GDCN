@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameAccountSettingUpdateRequest;
+use App\Http\Requests\Game\Account\Setting\UpdateRequest;
 use App\Models\GameAccountSetting;
 
 /**
@@ -14,12 +14,12 @@ use App\Models\GameAccountSetting;
 class AccountSettingsController extends Controller
 {
     /**
-     * @param GameAccountSettingUpdateRequest $request
+     * @param UpdateRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/updateGJAccSettings20
      */
-    public function update(GameAccountSettingUpdateRequest $request): int
+    public function update(UpdateRequest $request): int
     {
         $data = $request->validated();
         GameAccountSetting::query()

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Exceptions\InvalidArgumentException;
+use App\Exceptions\Game\InvalidArgumentException;
 use App\Game\AccountFriendRequestsManager;
 use App\Game\AccountFriendsManager;
 use App\Game\AccountMessagesManager;

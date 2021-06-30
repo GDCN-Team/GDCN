@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Game;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameLevelGauntletGetRequest;
+use App\Http\Requests\Game\Level\GauntletGetRequest;
 use App\Models\GameLevelGauntlet;
 use GDCN\GDObject;
 
@@ -14,13 +14,13 @@ use GDCN\GDObject;
 class LevelGauntletsController extends Controller
 {
     /**
-     * @param GameLevelGauntletGetRequest $request
+     * @param GauntletGetRequest $request
      * @param HashesController $hash
      * @return string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJGauntlets21
      */
-    public function get(GameLevelGauntletGetRequest $request, HashesController $hash): string
+    public function get(GauntletGetRequest $request, HashesController $hash): string
     {
         $request->validated();
 

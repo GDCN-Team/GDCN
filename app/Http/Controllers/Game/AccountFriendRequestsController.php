@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameAuthenticationException;
+use App\Exceptions\Game\Request\AuthenticationException;
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameAccountFriendRequestAcceptRequest;
-use App\Http\Requests\GameAccountFriendRequestDeleteRequest;
-use App\Http\Requests\GameAccountFriendRequestGetRequest;
-use App\Http\Requests\GameAccountFriendRequestReadRequest;
-use App\Http\Requests\GameAccountFriendRequestUploadRequest;
+use App\Http\Requests\Game\Account\Friend\Request\AcceptRequest;
+use App\Http\Requests\Game\Account\Friend\Request\DeleteRequest;
+use App\Http\Requests\Game\Account\Friend\Request\GetRequest;
+use App\Http\Requests\Game\Account\Friend\Request\ReadRequest;
+use App\Http\Requests\Game\Account\Friend\Request\UploadRequest;
 use App\Models\GameAccount;
 use App\Models\GameAccountFriendRequest;
 use Exception;
@@ -26,12 +26,12 @@ use Illuminate\Validation\ValidationException;
 class AccountFriendRequestsController extends Controller
 {
     /**
-     * @param GameAccountFriendRequestUploadRequest $request
+     * @param UploadRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/uploadFriendRequest20
      */
-    public function upload(GameAccountFriendRequestUploadRequest $request): int
+    public function upload(UploadRequest $request): int
     {
         try {
             $data = $request->validated();
@@ -57,7 +57,7 @@ class AccountFriendRequestsController extends Controller
                 ]);
 
             return ResponseCode::OK;
-        } catch (GameAuthenticationException $e) {
+        } catch (AuthenticationException $e) {
             return ResponseCode::LOGIN_FAILED;
         } catch (AuthorizationException $e) {
             return ResponseCode::PERMISSION_DENIED;
@@ -65,13 +65,13 @@ class AccountFriendRequestsController extends Controller
     }
 
     /**
-     * @param GameAccountFriendRequestDeleteRequest $request
+     * @param DeleteRequest $request
      * @param GameAccountFriendRequest $friendRequest
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/deleteGJFriendRequests20
      */
-    public function delete(GameAccountFriendRequestDeleteRequest $request, GameAccountFriendRequest $friendRequest): int
+    public function delete(DeleteRequest $request, GameAccountFriendRequest $friendRequest): int
     {
         try {
             $data = $request->validated();
@@ -99,19 +99,19 @@ class AccountFriendRequestsController extends Controller
                 return ResponseCode::ACCOUNT_NOT_FOUND;
             }
 
-        } catch (GameAuthenticationException $e) {
+        } catch (AuthenticationException $e) {
             return ResponseCode::LOGIN_FAILED;
         }
     }
 
     /**
-     * @param GameAccountFriendRequestGetRequest $request
+     * @param GetRequest $request
      * @param Helpers $helper
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJFriendRequests20
      */
-    public function get(GameAccountFriendRequestGetRequest $request, Helpers $helper)
+    public function get(GetRequest $request, Helpers $helper)
     {
         try {
             $data = $request->validated();
@@ -158,18 +158,18 @@ class AccountFriendRequestsController extends Controller
 
             $result = implode('|', $requests);
             return "{$result}#{$helper->generatePageHash($count, $page)}";
-        } catch (GameAuthenticationException $e) {
+        } catch (AuthenticationException $e) {
             return ResponseCode::LOGIN_FAILED;
         }
     }
 
     /**
-     * @param GameAccountFriendRequestReadRequest $request
+     * @param ReadRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/readGJFriendRequest20
      */
-    public function read(GameAccountFriendRequestReadRequest $request): int
+    public function read(ReadRequest $request): int
     {
         try {
             $data = $request->validated();
@@ -193,18 +193,18 @@ class AccountFriendRequestsController extends Controller
 
         } catch (ValidationException $e) {
             return ResponseCode::REQUEST_CHECK_FAILED;
-        } catch (GameAuthenticationException $e) {
+        } catch (AuthenticationException $e) {
             return ResponseCode::LOGIN_FAILED;
         }
     }
 
     /**
-     * @param GameAccountFriendRequestAcceptRequest $request
+     * @param AcceptRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/acceptGJFriendRequest20
      */
-    public function accept(GameAccountFriendRequestAcceptRequest $request): int
+    public function accept(AcceptRequest $request): int
     {
         try {
             $data = $request->validated();
@@ -227,7 +227,7 @@ class AccountFriendRequestsController extends Controller
             }
 
             return ResponseCode::FAILED;
-        } catch (GameAuthenticationException $e) {
+        } catch (AuthenticationException $e) {
             return ResponseCode::LOGIN_FAILED;
         } catch (AuthorizationException $e) {
             return ResponseCode::PERMISSION_DENIED;

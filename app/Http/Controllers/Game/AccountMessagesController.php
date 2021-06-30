@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\ResponseCode;
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameAccountMessageDeleteRequest;
-use App\Http\Requests\GameAccountMessageDownloadRequest;
-use App\Http\Requests\GameAccountMessageGetRequest;
-use App\Http\Requests\GameAccountMessageSendRequest;
+use App\Http\Requests\Game\Account\Message\DeleteRequest;
+use App\Http\Requests\Game\Account\Message\DownloadRequest;
+use App\Http\Requests\Game\Account\Message\GetRequest;
+use App\Http\Requests\Game\Account\Message\SendRequest;
 use App\Models\GameAccount;
 use App\Models\GameAccountMessage;
 use Exception;
@@ -24,12 +24,12 @@ use Illuminate\Support\Carbon;
 class AccountMessagesController extends Controller
 {
     /**
-     * @param GameAccountMessageSendRequest $request
+     * @param SendRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/uploadGJMessage20
      */
-    public function send(GameAccountMessageSendRequest $request): int
+    public function send(SendRequest $request): int
     {
         $data = $request->validated();
 
@@ -58,13 +58,13 @@ class AccountMessagesController extends Controller
     }
 
     /**
-     * @param GameAccountMessageGetRequest $request
+     * @param GetRequest $request
      * @param Helpers $helper
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJMessages20
      */
-    public function get(GameAccountMessageGetRequest $request, Helpers $helper)
+    public function get(GetRequest $request, Helpers $helper)
     {
         Carbon::setLocale('en');
         $data = $request->validated();
@@ -103,12 +103,12 @@ class AccountMessagesController extends Controller
     }
 
     /**
-     * @param GameAccountMessageDeleteRequest $request
+     * @param DeleteRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/deleteGJMessages20
      */
-    public function delete(GameAccountMessageDeleteRequest $request): int
+    public function delete(DeleteRequest $request): int
     {
         foreach ($request->messages as $message) {
             try {
@@ -126,12 +126,12 @@ class AccountMessagesController extends Controller
     }
 
     /**
-     * @param GameAccountMessageDownloadRequest $request
+     * @param DownloadRequest $request
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/downloadGJMessageo20
      */
-    public function download(GameAccountMessageDownloadRequest $request)
+    public function download(DownloadRequest $request)
     {
         $data = $request->validated();
 

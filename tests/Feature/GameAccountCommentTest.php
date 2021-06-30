@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\Game\HashesController;
+use App\Http\Controllers\Web\Tools\Web\Tools\Web\Dashboard\Web\Dashboard\Web\Auth\Game\HashesController;
 use App\Models\GameAccount;
 use App\Models\GameAccountComment;
 use Base64Url\Base64Url;

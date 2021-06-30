@@ -74,10 +74,6 @@ export default {
             }),
             columns: [
                 {
-                    title: '服务器',
-                    dataIndex: 'host'
-                },
-                {
                     title: '用户名',
                     dataIndex: 'target_name'
                 },

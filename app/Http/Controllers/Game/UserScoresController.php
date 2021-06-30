@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameAuthenticationException;
-use App\Exceptions\GameChkValidateException;
-use App\Exceptions\GameUserNotFoundException;
+use App\Exceptions\Game\ChkValidateException;
+use App\Exceptions\Game\Request\AuthenticationException;
+use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameUserScoreGetRequest;
-use App\Http\Requests\GameUserScoreUpdateRequest;
+use App\Http\Requests\Game\User\Score\GetRequest;
+use App\Http\Requests\Game\User\Score\UpdateRequest;
 use App\Models\GameAccount;
 use App\Models\GameUserScore;
 use GDCN\GDObject;
@@ -22,13 +22,13 @@ use Illuminate\Validation\ValidationException;
 class UserScoresController extends Controller
 {
     /**
-     * @param GameUserScoreUpdateRequest $request
+     * @param UpdateRequest $request
      * @param HashesController $hash
      * @return HigherOrderBuilderProxy|int|mixed
      *
      * @see http://docs.gdprogra.me/#/endpoints/updateGJUserScore22
      */
-    public function update(GameUserScoreUpdateRequest $request, HashesController $hash)
+    public function update(UpdateRequest $request, HashesController $hash)
     {
         $data = $request->validated();
 
@@ -37,13 +37,13 @@ class UserScoresController extends Controller
                 $hash->generateUploadUserScoreChk($data['accountID'] ?? 0, $data['userCoins'], $data['demons'], $data['stars'], $data['coins'], $data['iconType'], $data['icon'], $data['diamonds'], $data['accIcon'], $data['accShip'], $data['accBall'], $data['accBird'], $data['accDart'], $data['accRobot'], $data['accGlow'], $data['accSpider'], $data['accExplosion']),
                 $hash->decodeChk($data['seed2'], $hash->keys['user'])
             );
-        } catch (GameChkValidateException $e) {
+        } catch (ChkValidateException $e) {
             return ResponseCode::CHK_CHECK_FAILED;
         }
 
         try {
             $user = $request->getGameUser();
-        } catch (GameUserNotFoundException $e) {
+        } catch (UserNotFoundException $e) {
             return ResponseCode::USER_NOT_FOUND;
         }
 
@@ -78,12 +78,12 @@ class UserScoresController extends Controller
     }
 
     /**
-     * @param GameUserScoreGetRequest $request
+     * @param GetRequest $request
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJScores20
      */
-    public function get(GameUserScoreGetRequest $request)
+    public function get(GetRequest $request)
     {
         try {
             $top = 0;
@@ -99,7 +99,7 @@ class UserScoresController extends Controller
                     try {
                         $request->auth();
                         $account = $request->user();
-                    } catch (GameAuthenticationException $e) {
+                    } catch (AuthenticationException $e) {
                         return ResponseCode::LOGIN_FAILED;
                     }
 

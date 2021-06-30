@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameAuthenticationException;
-use App\Exceptions\InvalidArgumentException;
+use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameAccountLoginRequest;
-use App\Http\Requests\GameAccountRegisterRequest;
-use App\Http\Requests\GameRequest;
+use App\Http\Requests\Game\Account\LoginRequest;
+use App\Http\Requests\Game\Account\RegisterRequest;
+use App\Http\Requests\Game\Request;
 use App\Models\GameAccount;
-use App\Services\WebNoticeService;
+use App\Services\Web\NoticeService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Crypt;
@@ -25,26 +25,26 @@ use Illuminate\Support\Facades\Redirect;
 class AccountsController extends Controller
 {
     /**
-     * @var WebNoticeService
+     * @var NoticeService
      */
     protected $noticeService;
 
     /**
      * AccountsController constructor.
-     * @param WebNoticeService $noticeService
+     * @param NoticeService $noticeService
      */
-    public function __construct(WebNoticeService $noticeService)
+    public function __construct(NoticeService $noticeService)
     {
         $this->noticeService = $noticeService;
     }
 
     /**
-     * @param GameAccountRegisterRequest $request
+     * @param RegisterRequest $request
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/accounts/registerGJAccount
      */
-    public function register(GameAccountRegisterRequest $request): int
+    public function register(RegisterRequest $request): int
     {
         /**
          * -1: Something went wrong
@@ -71,10 +71,10 @@ class AccountsController extends Controller
     }
 
     /**
-     * @param GameRequest $request
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function verify(GameRequest $request): RedirectResponse
+    public function verify(Request $request): RedirectResponse
     {
         if ($hash = $request->get('_')) {
             [$accountID, $email] = explode(':', Crypt::decryptString($hash));
@@ -96,13 +96,13 @@ class AccountsController extends Controller
     }
 
     /**
-     * @param GameAccountLoginRequest $request
+     * @param LoginRequest $request
      * @return int|string
      *
-     * @throws GameAuthenticationException
+     * @throws AuthenticationException
      * @see http://docs.gdprogra.me/#/endpoints/accounts/loginGJAccount
      */
-    public function login(GameAccountLoginRequest $request)
+    public function login(LoginRequest $request)
     {
         $data = $request->validated();
         $request->auth();

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Game;
 
-use App\Enums\Game\LevelRatingSuggestionType;
+use App\Enums\Game\Level\Rating\SuggestionType;
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameChkValidateException;
+use App\Exceptions\Game\ChkValidateException;
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameLevelRatingRateDemonRequest;
-use App\Http\Requests\GameLevelRatingRateStarsRequest;
-use App\Http\Requests\GameLevelRatingSuggestStarsRequest;
+use App\Http\Requests\Game\Level\Rating\RateDemonRequest;
+use App\Http\Requests\Game\Level\Rating\RateStarsRequest;
+use App\Http\Requests\Game\Level\Rating\SuggestStarsRequest;
 use App\Models\GameLevelRatingSuggestion;
 
 /**
@@ -19,19 +19,19 @@ use App\Models\GameLevelRatingSuggestion;
 class LevelRatingController extends Controller
 {
     /**
-     * @param GameLevelRatingSuggestStarsRequest $request
+     * @param SuggestStarsRequest $request
      * @param Helpers $helper
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/suggestGJStars
      */
-    public function suggest(GameLevelRatingSuggestStarsRequest $request, Helpers $helper): int
+    public function suggest(SuggestStarsRequest $request, Helpers $helper): int
     {
         $data = $request->validated();
 
         GameLevelRatingSuggestion::query()
             ->updateOrCreate([
-                'type' => LevelRatingSuggestionType::SUGGEST,
+                'type' => SuggestionType::SUGGEST,
                 'user' => $request->account->user->id,
                 'level' => $data['levelID']
             ], [
@@ -41,7 +41,7 @@ class LevelRatingController extends Controller
 
         if (config('game.feature.auto_rate.suggest.enabled')) {
             $query = GameLevelRatingSuggestion::query()
-                ->whereType(LevelRatingSuggestionType::SUGGEST)
+                ->whereType(SuggestionType::SUGGEST)
                 ->whereLevel($data['levelID']);
 
             if ($query->count() >= config('game.feature.auto_rate.suggest.least_suggest', 10)) {
@@ -65,13 +65,13 @@ class LevelRatingController extends Controller
     }
 
     /**
-     * @param GameLevelRatingRateStarsRequest $request
+     * @param RateStarsRequest $request
      * @param Helpers $helper
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/rateGJStars211
      */
-    public function rate(GameLevelRatingRateStarsRequest $request, Helpers $helper): int
+    public function rate(RateStarsRequest $request, Helpers $helper): int
     {
         try {
             $data = $request->validated();
@@ -79,7 +79,7 @@ class LevelRatingController extends Controller
 
             GameLevelRatingSuggestion::query()
                 ->firstOrCreate([
-                    'type' => LevelRatingSuggestionType::RATE,
+                    'type' => SuggestionType::RATE,
                     'user' => $request->user->id,
                     'level' => $data['levelID']
                 ], [
@@ -94,7 +94,7 @@ class LevelRatingController extends Controller
                 }
 
                 $query = GameLevelRatingSuggestion::query()
-                    ->whereType(LevelRatingSuggestionType::RATE)
+                    ->whereType(SuggestionType::RATE)
                     ->whereLevel($data['levelID']);
 
                 if ($query->count() >= config('game.feature.auto_rate.rate.least_suggest', 10)) {
@@ -117,25 +117,25 @@ class LevelRatingController extends Controller
             }
 
             return ResponseCode::OK;
-        } catch (GameChkValidateException $e) {
+        } catch (ChkValidateException $e) {
             return ResponseCode::CHK_CHECK_FAILED;
         }
     }
 
     /**
-     * @param GameLevelRatingRateDemonRequest $request
+     * @param RateDemonRequest $request
      * @param Helpers $helper
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/rateGJDemon21
      */
-    public function demon(GameLevelRatingRateDemonRequest $request, Helpers $helper): int
+    public function demon(RateDemonRequest $request, Helpers $helper): int
     {
         $data = $request->validated();
 
         GameLevelRatingSuggestion::query()
             ->firstOrCreate([
-                'type' => LevelRatingSuggestionType::DEMON,
+                'type' => SuggestionType::DEMON,
                 'user' => $request->user->id,
                 'level' => $data['levelID']
             ], [
@@ -150,7 +150,7 @@ class LevelRatingController extends Controller
             }
 
             $query = GameLevelRatingSuggestion::query()
-                ->whereType(LevelRatingSuggestionType::DEMON)
+                ->whereType(SuggestionType::DEMON)
                 ->whereLevel($data['levelID']);
 
             if ($query->count() >= config('game.feature.auto_rate.demon.least_suggest', 10)) {

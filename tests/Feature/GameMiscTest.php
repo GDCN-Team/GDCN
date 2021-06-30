@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Enums\Game\LikeType;
 use App\Enums\Game\ResponseCode;
 use App\Models\GameAccount;
 use App\Models\GameAccountComment;
@@ -35,7 +34,7 @@ class GameMiscTest extends TestCase
             self::fail($e->getMessage());
         }
 
-        $this->test_like($user, $level, LikeType::LEVEL, false);
+        $this->test_like($user, $level, 1, false);
     }
 
     /**
@@ -116,7 +115,7 @@ class GameMiscTest extends TestCase
             self::fail($e->getMessage());
         }
 
-        $this->test_like($user, $level, LikeType::LEVEL, false, true);
+        $this->test_like($user, $level, 1, false, true);
     }
 
     public function test_like_level(): void
@@ -130,7 +129,7 @@ class GameMiscTest extends TestCase
             self::fail($e->getMessage());
         }
 
-        $this->test_like($user, $level, LikeType::LEVEL, true);
+        $this->test_like($user, $level, 1, true);
     }
 
     public function test_like_level_with_account(): void
@@ -144,7 +143,7 @@ class GameMiscTest extends TestCase
             self::fail($e->getMessage());
         }
 
-        $this->test_like($user, $level, LikeType::LEVEL, true, true);
+        $this->test_like($user, $level, 1, true, true);
     }
 
     public function test_dislike_level_comment(): void
@@ -152,7 +151,7 @@ class GameMiscTest extends TestCase
         /** @var GameLevelComment $comment */
         $comment = GameLevelComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, LikeType::LEVEL_COMMENT, false);
+        $this->test_like($comment->sender->user, $comment, 2, false);
     }
 
     public function test_dislike_level_comment_with_account(): void
@@ -160,7 +159,7 @@ class GameMiscTest extends TestCase
         /** @var GameLevelComment $comment */
         $comment = GameLevelComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, LikeType::LEVEL_COMMENT, false, true);
+        $this->test_like($comment->sender->user, $comment, 2, false, true);
     }
 
     public function test_like_level_comment(): void
@@ -168,7 +167,7 @@ class GameMiscTest extends TestCase
         /** @var GameLevelComment $comment */
         $comment = GameLevelComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, LikeType::LEVEL_COMMENT, true);
+        $this->test_like($comment->sender->user, $comment, 2, true);
     }
 
     public function test_like_level_comment_with_account(): void
@@ -176,7 +175,7 @@ class GameMiscTest extends TestCase
         /** @var GameLevelComment $comment */
         $comment = GameLevelComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, LikeType::LEVEL_COMMENT, true, true);
+        $this->test_like($comment->sender->user, $comment, 2, true, true);
     }
 
     public function test_dislike_account_comment(): void
@@ -184,7 +183,7 @@ class GameMiscTest extends TestCase
         /** @var GameAccountComment $comment */
         $comment = GameAccountComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, LikeType::ACCOUNT_COMMENT, false);
+        $this->test_like($comment->sender->user, $comment, 3, false);
     }
 
     public function test_dislike_account_comment_with_account(): void
@@ -192,7 +191,7 @@ class GameMiscTest extends TestCase
         /** @var GameAccountComment $comment */
         $comment = GameAccountComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, LikeType::ACCOUNT_COMMENT, false, true);
+        $this->test_like($comment->sender->user, $comment, 3, false, true);
     }
 
     public function test_like_account_comment(): void
@@ -200,7 +199,7 @@ class GameMiscTest extends TestCase
         /** @var GameAccountComment $comment */
         $comment = GameAccountComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, LikeType::ACCOUNT_COMMENT, true);
+        $this->test_like($comment->sender->user, $comment, 3, true);
     }
 
     public function test_like_account_comment_with_account(): void
@@ -208,7 +207,7 @@ class GameMiscTest extends TestCase
         /** @var GameAccountComment $comment */
         $comment = GameAccountComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, LikeType::ACCOUNT_COMMENT, true, true);
+        $this->test_like($comment->sender->user, $comment, 3, true, true);
     }
 
     public function test_restore_items(): void

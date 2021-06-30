@@ -2,13 +2,11 @@
 
 namespace App\Game\Components\Hash;
 
-use App\Http\Requests\GameAccountCommentUploadRequest;
-use App\Http\Requests\GameItemLikeRequest;
-use App\Http\Requests\GameLevelCommentUploadRequest;
-use App\Http\Requests\GameLevelDownloadRequest;
-use App\Http\Requests\GameLevelRatingRateStarsRequest;
-use App\Http\Requests\GameLevelUploadRequest;
-use App\Http\Requests\GameUserScoreUpdateRequest;
+use App\Http\Requests\Game\Account\Comment\UploadRequest;
+use App\Http\Requests\Game\Item\LikeRequest;
+use App\Http\Requests\Game\Level\DownloadRequest;
+use App\Http\Requests\Game\Level\Rating\RateStarsRequest;
+use App\Http\Requests\Game\User\Score\UpdateRequest;
 use GDCN\ChkValidationException;
 use GDCN\Hash;
 
@@ -19,10 +17,10 @@ use GDCN\Hash;
 class Checker
 {
     /**
-     * @param GameLevelDownloadRequest $request
+     * @param DownloadRequest $request
      * @throws ChkValidationException
      */
-    public static function downloadLevel(GameLevelDownloadRequest $request): void
+    public static function downloadLevel(DownloadRequest $request): void
     {
         $data = $request->validated();
 
@@ -33,10 +31,10 @@ class Checker
     }
 
     /**
-     * @param GameLevelUploadRequest $request
+     * @param UploadRequest $request
      * @throws ChkValidationException
      */
-    public static function uploadLevel(GameLevelUploadRequest $request): void
+    public static function uploadLevel(UploadRequest $request): void
     {
         $data = $request->validated();
 
@@ -47,10 +45,10 @@ class Checker
     }
 
     /**
-     * @param GameAccountCommentUploadRequest $request
+     * @param UploadRequest $request
      * @throws ChkValidationException
      */
-    public static function uploadAccountComment(GameAccountCommentUploadRequest $request): void
+    public static function uploadAccountComment(UploadRequest $request): void
     {
         $data = $request->validated();
 
@@ -61,10 +59,10 @@ class Checker
     }
 
     /**
-     * @param GameLevelCommentUploadRequest $request
+     * @param UploadRequest $request
      * @throws ChkValidationException
      */
-    public static function uploadLevelComment(GameLevelCommentUploadRequest $request): void
+    public static function uploadLevelComment(UploadRequest $request): void
     {
         $data = $request->validated();
 
@@ -75,10 +73,10 @@ class Checker
     }
 
     /**
-     * @param GameItemLikeRequest $request
+     * @param LikeRequest $request
      * @throws ChkValidationException
      */
-    public static function like(GameItemLikeRequest $request): void
+    public static function like(LikeRequest $request): void
     {
         $data = $request->validated();
 
@@ -89,10 +87,10 @@ class Checker
     }
 
     /**
-     * @param GameLevelRatingRateStarsRequest $request
+     * @param RateStarsRequest $request
      * @throws ChkValidationException
      */
-    public static function rate(GameLevelRatingRateStarsRequest $request): void
+    public static function rate(RateStarsRequest $request): void
     {
         $data = $request->validated();
 
@@ -103,10 +101,10 @@ class Checker
     }
 
     /**
-     * @param GameUserScoreUpdateRequest $request
+     * @param UpdateRequest $request
      * @throws ChkValidationException
      */
-    public static function uploadUserScore(GameUserScoreUpdateRequest $request): void
+    public static function uploadUserScore(UpdateRequest $request): void
     {
         $data = $request->validated();
 

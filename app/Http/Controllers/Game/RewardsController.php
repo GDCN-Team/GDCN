@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Enums\Game\RewardType;
-use App\Exceptions\GameUserNotFoundException;
+use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameRewardGetRequest;
+use App\Http\Requests\Game\Reward\GetRequest;
 use App\Models\GameUserScore;
 use Exception;
 use Illuminate\Support\Str;
@@ -18,13 +17,13 @@ use Illuminate\Support\Str;
 class RewardsController extends Controller
 {
     /**
-     * @param GameRewardGetRequest $request
+     * @param GetRequest $request
      * @param HashesController $hash
      * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJRewards
      */
-    public function get(GameRewardGetRequest $request, HashesController $hash)
+    public function get(GetRequest $request, HashesController $hash)
     {
         try {
             $data = $request->validated();
@@ -106,16 +105,16 @@ class RewardsController extends Controller
             }
 
             switch ($data['rewardType']) {
-                case RewardType::GET:
+                case 0: // Get States
                     break;
-                case RewardType::OPEN_SMALL:
+                case 1: // Open Small Chest
                     $chest1time = config('game.reward.small.wait', 3600);
 
                     $userScore->chest1time = now();
                     $userScore->chest1count++;
                     $userScore->save();
                     break;
-                case RewardType::OPEN_BIG:
+                case 2: // Open Big Chest
                     $chest2time = config('game.reward.big.wait', 14400);
 
                     $userScore->chest2time = now();
@@ -152,7 +151,7 @@ class RewardsController extends Controller
             $rewardHash = $hash->generateRewardHash($rewardResult);
             $randomString = Str::random(5);
             return "{$randomString}{$rewardResult}|{$rewardHash}";
-        } catch (GameUserNotFoundException $e) {
+        } catch (UserNotFoundException $e) {
             return ResponseCode::USER_NOT_FOUND;
         }
     }

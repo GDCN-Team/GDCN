@@ -3,7 +3,8 @@
 namespace App\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\GameCommandExecuteException;
+use App\Exceptions\Game\Command\ExecuteException;
+use App\Exceptions\Web\Tools\UnknownServerException;
 use App\Game\Components\Command\AccountCommentCommands;
 use App\Game\Components\Command\LevelCommentCommands;
 use App\Models\GameAccountComment;
@@ -57,7 +58,7 @@ class Helpers
         }
 
         $offset = max(0, $perPage * --$page);
-        return "{$total}:{$offset}:{$perPage}";
+        return "$total:$offset:$perPage";
     }
 
     /**
@@ -193,7 +194,7 @@ class Helpers
             try {
                 $command = new $class($comment->sender, $comment, $arguments);
                 $result = $command->execute($name);
-            } catch (GameCommandExecuteException $e) {
+            } catch (ExecuteException $e) {
                 return null;
             }
 
@@ -239,7 +240,7 @@ class Helpers
      */
     public function bool2result($flag): int
     {
-        return (bool)$flag ? ResponseCode::OK : ResponseCode::FAILED;
+        return $flag ? ResponseCode::OK : ResponseCode::FAILED;
     }
 
     /**
@@ -260,6 +261,21 @@ class Helpers
             case 3:
             default:
                 return 0;
+        }
+    }
+
+    /**
+     * @param string $alias
+     * @return string|null
+     * @throws \App\Exceptions\Game\UnknownServerException
+     */
+    public function getServerHostFromAlias(string $alias): ?string
+    {
+        switch ($alias) {
+            case 'official':
+                return 'dl.geometrydashchinese.com';
+            default:
+                throw new UnknownServerException;
         }
     }
 }

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\ResponseCode;
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GameAccountCommentDeleteRequest;
-use App\Http\Requests\GameAccountCommentGetRequest;
-use App\Http\Requests\GameAccountCommentUploadRequest;
+use App\Http\Requests\Game\Account\Comment\DeleteRequest;
+use App\Http\Requests\Game\Account\Comment\GetRequest;
+use App\Http\Requests\Game\Account\Comment\UploadRequest;
 use App\Models\GameAccountComment;
 use Exception;
 use GDCN\ChkValidationException;
@@ -21,13 +21,13 @@ use Illuminate\Support\Carbon;
 class AccountCommentsController extends Controller
 {
     /**
-     * @param GameAccountCommentGetRequest $request
+     * @param GetRequest $request
      * @param Helpers $helper
      * @return string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJAccountComments20
      */
-    public function get(GameAccountCommentGetRequest $request, Helpers $helper): string
+    public function get(GetRequest $request, Helpers $helper): string
     {
         Carbon::setLocale('en');
 
@@ -57,13 +57,13 @@ class AccountCommentsController extends Controller
     }
 
     /**
-     * @param GameAccountCommentUploadRequest $request
+     * @param UploadRequest $request
      * @param Helpers $helper
      * @return int|mixed|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/uploadGJAccComment20
      */
-    public function upload(GameAccountCommentUploadRequest $request, Helpers $helper)
+    public function upload(UploadRequest $request, Helpers $helper)
     {
         $data = $request->validated();
 
@@ -82,13 +82,13 @@ class AccountCommentsController extends Controller
     }
 
     /**
-     * @param GameAccountCommentDeleteRequest $request
+     * @param DeleteRequest $request
      * @param Helpers $helper
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/deleteGJAccComment20
      */
-    public function delete(GameAccountCommentDeleteRequest $request, Helpers $helper): int
+    public function delete(DeleteRequest $request, Helpers $helper): int
     {
         try {
             return $helper->bool2result($request->comment->delete());
