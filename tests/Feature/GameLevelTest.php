@@ -80,6 +80,8 @@ class GameLevelTest extends TestCase
 
     public function test_upload_use_account(): void
     {
+        Storage::fake('oss');
+
         /** @var GameAccount $account */
         $account = GameAccount::factory()->create();
         Storage::fake('oss');
@@ -142,6 +144,8 @@ class GameLevelTest extends TestCase
 
     public function test_get(): void
     {
+        Storage::fake('oss');
+
         /** @var GameLevel $level */
         $level = GameLevel::factory()->create();
 
@@ -175,6 +179,8 @@ class GameLevelTest extends TestCase
 
     public function test_download(): void
     {
+        Storage::fake('oss');
+
         /** @var GameLevel $level */
         $level = GameLevel::factory()->create();
         $levelString = Str::random();
@@ -202,6 +208,8 @@ class GameLevelTest extends TestCase
 
     public function test_download_use_chk(): void
     {
+        Storage::fake('oss');
+
         /** @var GameAccount $account */
         $account = GameAccount::factory()->create();
 
@@ -240,6 +248,8 @@ class GameLevelTest extends TestCase
 
     public function test_delete(): void
     {
+        Storage::fake('oss');
+
         /** @var GameLevel $level */
         $level = GameLevel::factory()->create();
 
@@ -271,6 +281,8 @@ class GameLevelTest extends TestCase
 
     public function test_report(): void
     {
+        Storage::fake('oss');
+
         /** @var GameLevel $level */
         $level = GameLevel::factory()->create();
 

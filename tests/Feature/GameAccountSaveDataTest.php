@@ -19,6 +19,8 @@ class GameAccountSaveDataTest extends TestCase
 
     public function test_get_url(): void
     {
+        Storage::fake('oss');
+
         /** @var GameAccount $account */
         $account = GameAccount::factory()->createOne();
 
@@ -41,7 +43,7 @@ class GameAccountSaveDataTest extends TestCase
 
     public function test_save(): void
     {
-        Storage::fake('oss');
+        $storage = Storage::fake('oss');
 
         /** @var GameAccount $account */
         $account = GameAccount::factory()->createOne();
@@ -65,6 +67,8 @@ class GameAccountSaveDataTest extends TestCase
 
     public function test_load(): void
     {
+        Storage::fake('oss');
+
         /** @var GameAccount $account */
         $account = GameAccount::factory()->createOne();
 

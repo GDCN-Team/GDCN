@@ -7,6 +7,7 @@ use App\Models\GameDailyLevel;
 use App\Models\GameWeeklyLevel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -19,6 +20,8 @@ class GameLevelDailyTest extends TestCase
 
     public function test_get(): void
     {
+        Storage::fake('oss');
+
         /** @var GameDailyLevel $daily */
         $daily = GameDailyLevel::factory()->create();
 
@@ -44,6 +47,8 @@ class GameLevelDailyTest extends TestCase
 
     public function test_get_use_account(): void
     {
+        Storage::fake('oss');
+
         /** @var GameAccount $account */
         $account = GameAccount::factory()->create();
 
@@ -71,6 +76,8 @@ class GameLevelDailyTest extends TestCase
 
     public function test_get_weekly(): void
     {
+        Storage::fake('oss');
+
         /** @var GameWeeklyLevel $weekly */
         $weekly = GameWeeklyLevel::factory()->create();
 
@@ -96,6 +103,8 @@ class GameLevelDailyTest extends TestCase
 
     public function test_get_weekly_use_account(): void
     {
+        Storage::fake('oss');
+
         /** @var GameAccount $account */
         $account = GameAccount::factory()->create();
 

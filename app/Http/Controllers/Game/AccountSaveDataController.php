@@ -10,7 +10,6 @@ use App\Http\Requests\Game\Account\SaveData\SaveRequest;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -29,7 +28,7 @@ class AccountSaveDataController extends Controller
      */
     public function __construct()
     {
-        $this->storage = App::environment('testing') ? Storage::fake('oss') : Storage::disk('oss');
+        $this->storage = Storage::disk('oss');
     }
 
     /**

@@ -31,7 +31,6 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -51,7 +50,7 @@ class LevelsController extends Controller
      */
     public function __construct()
     {
-        $this->storage = App::environment('testing') ? Storage::fake('oss') : Storage::disk('oss');
+        $this->storage = Storage::disk('oss');
     }
 
     /**
