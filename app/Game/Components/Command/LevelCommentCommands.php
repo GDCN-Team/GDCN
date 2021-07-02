@@ -4,6 +4,7 @@ namespace App\Game\Components\Command;
 
 use App\Exceptions\Game\Command\ArgumentNotFoundException;
 use App\Exceptions\Game\Command\ExecuteException;
+use App\Exceptions\Game\Level\UnRateException;
 use App\Game\Helpers;
 use App\Models\GameDailyLevel;
 use App\Models\GameWeeklyLevel;
@@ -38,6 +39,7 @@ class LevelCommentCommands extends Base
 
     /**
      * @return string
+     * @throws UnRateException
      */
     protected function unrate(): string
     {

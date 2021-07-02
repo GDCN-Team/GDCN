@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Game;
 
-use App\Enums\Game\LevelScoreType;
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Controllers\Controller;

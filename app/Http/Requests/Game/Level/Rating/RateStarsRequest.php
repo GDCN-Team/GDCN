@@ -83,7 +83,7 @@ class RateStarsRequest extends Request
     }
 
     /**
-     * @throws \App\Exceptions\Game\ChkValidateException
+     * @throws ChkValidateException
      */
     public function validateChk(): void
     {

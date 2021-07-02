@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\GameLevel;
-use App\Models\GameLog;
 use App\Models\GameUser;
 use Illuminate\Auth\Access\HandlesAuthorization;
 

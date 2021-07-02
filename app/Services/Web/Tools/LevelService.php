@@ -120,12 +120,13 @@ class LevelService
     }
 
     /**
-     * @param $host
+     * @param $serverAlias
      * @param $levelID
      * @param $songType
      * @param null $songID
      * @param $password
      * @return Response
+     * @throws UnknownServerException
      */
     public function transOut($serverAlias, $levelID, $songType, $songID, $password): Response
     {
