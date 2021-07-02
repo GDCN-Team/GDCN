@@ -2,9 +2,6 @@
 
 namespace App\Providers;
 
-use App\Game\StorageManager;
-use App\Http\Controllers\Game\AccountSaveDataController;
-use App\Http\Controllers\Game\LevelsController;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
@@ -51,17 +48,5 @@ class GameServiceProvider extends ServiceProvider
                 ]
             );
         });
-
-        $this->app->when(AccountSaveDataController::class)
-            ->needs(StorageManager::class)
-            ->give(function() {
-                return new StorageManager(config('game.storage.saveData'));
-            });
-
-        $this->app->when(LevelsController::class)
-            ->needs(StorageManager::class)
-            ->give(function() {
-                return new StorageManager(config('game.storage.levels'));
-            });
     }
 }

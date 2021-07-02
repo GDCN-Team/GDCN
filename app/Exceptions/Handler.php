@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Game\Request\AuthenticationException;
+use App\Exceptions\Game\Request\ValidateException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -17,7 +19,9 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        ValidateException::class,
+        AuthenticationException::class,
+        AuthenticationException::class
     ];
 
     /**
@@ -38,7 +42,7 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            !config('app.debug') ?: dd($e);
+
         });
     }
 }

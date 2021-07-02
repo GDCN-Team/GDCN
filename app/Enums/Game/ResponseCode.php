@@ -53,7 +53,7 @@ final class ResponseCode extends Enum
     public const AUTH_FAILED = self::FAILED;
     public const DELETE_FAILED = self::FAILED;
 
-    public const SAVE_DATA_EMPTY = self::FAILED;
+    public const SAVE_DATA_NOT_FOUND = self::FAILED;
     public const CHALLENGE_NOT_ENOUGH = self::FAILED;
 
     // Account login

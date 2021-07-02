@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Game\StorageManager;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Account\SaveData\GetUrlRequest;
 use App\Http\Requests\Game\Account\SaveData\LoadRequest;
 use App\Http\Requests\Game\Account\SaveData\SaveRequest;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class AccountSaveDataController
@@ -16,17 +19,16 @@ use App\Http\Requests\Game\Account\SaveData\SaveRequest;
 class AccountSaveDataController extends Controller
 {
     /**
-     * @var StorageManager
+     * @var FilesystemAdapter|Filesystem
      */
-    protected $storageManager;
+    protected FilesystemAdapter|Filesystem $storage;
 
     /**
      * AccountSaveDataController constructor.
-     * @param StorageManager $storageManager
      */
-    public function __construct(StorageManager $storageManager)
+    public function __construct()
     {
-        $this->storageManager = $storageManager;
+        $this->storage = Storage::disk('oss');
     }
 
     /**
@@ -47,7 +49,7 @@ class AccountSaveDataController extends Controller
     public function save(SaveRequest $request): int
     {
         $data = $request->validated();
-        $this->storageManager->put(sha1($request->user()->id) . '.dat', $data['saveData']);
+        $this->storage->put("gdcn/saveData/{$data['userName']}.dat", $data['saveData']);
         return ResponseCode::OK;
     }
 
@@ -55,15 +57,14 @@ class AccountSaveDataController extends Controller
      * @param LoadRequest $request
      * @return int|string
      */
-    public function load(LoadRequest $request)
+    public function load(LoadRequest $request): int|string
     {
-        $data = $request->validated();
-        $saveData = $this->storageManager->get(sha1($request->user()->id) . '.dat');
-
-        if (!empty($saveData)) {
-            return "{$saveData};{$data['gameVersion']};{$data['binaryVersion']};{$saveData}";
+        try {
+            $data = $request->validated();
+            $saveData = $this->storage->get("gdcn/saveData/{$data['userName']}.dat");
+            return "$saveData;{$data['gameVersion']};{$data['binaryVersion']};$saveData";
+        } catch (FileNotFoundException) {
+            return ResponseCode::SAVE_DATA_NOT_FOUND;
         }
-
-        return ResponseCode::SAVE_DATA_EMPTY;
     }
 }

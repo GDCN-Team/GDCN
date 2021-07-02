@@ -4,7 +4,6 @@ namespace App\Services\Web\Tools;
 
 use App\Exceptions\Web\Tools\UnknownServerException;
 use App\Game\Helpers;
-use App\Game\StorageManager;
 use App\Models\GameAccount;
 use App\Models\GameAccountLink;
 use App\Models\GameLevel;
@@ -12,12 +11,13 @@ use App\Presenter\WebToolsPresenter;
 use App\Services\Web\NoticeService;
 use GDCN\GDObject;
 use GDCN\Hash;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Response;
 use function app;
-use function config;
 
 /**
  * Class LevelService
@@ -53,9 +53,6 @@ class LevelService
      */
     public function transIn($serverAlias, $levelID): Response
     {
-        $storages = config('game.storage.levels');
-        $storageManager = new StorageManager($storages);
-
         /** @var GameAccount $account */
         $account = Auth::user();
         if (empty($account->user->id)) {
@@ -63,7 +60,7 @@ class LevelService
         } else {
             try {
                 $host = app(Helpers::class)->getServerHostFromAlias($serverAlias);
-            } catch (UnknownServerException $e) {
+            } catch (UnknownServerException) {
                 $this->noticeService->sendErrorNotice('未知服务器');
                 return $this->presenter->levelTransIn();
             }
@@ -111,7 +108,7 @@ class LevelService
                         if (!$level->save()) {
                             $this->noticeService->sendErrorNotice('未知错误');
                         } else {
-                            $storageManager->put(sha1($level->id) . ' . dat', $levelObject[4]);
+                            Storage::disk('oss')->put("gdcn/levels/$level->id.dat", $levelObject[4]);
                             $this->noticeService->sendSuccessNotice('搬运成功!', "关卡ID: $level->id");
                         }
                     }
@@ -132,9 +129,6 @@ class LevelService
      */
     public function transOut($serverAlias, $levelID, $songType, $songID, $password): Response
     {
-        $storages = config('game.storage.levels');
-        $storageManager = new StorageManager($storages);
-
         try {
             /** @var GameAccount $account */
             $account = Auth::user();
@@ -148,10 +142,9 @@ class LevelService
                 if (!$link) {
                     $this->noticeService->sendErrorNotice('错误: 未检测到账号链接信息，请链接关卡Creator的账号');
                 } else {
-                    $levelString = $storageManager->get(sha1($level->id) . '.dat');
-                    if (empty($levelString)) {
-                        $this->noticeService->sendErrorNotice('错误: levelString 为空');
-                    } else {
+                    try {
+                        $levelString = Storage::disk('oss')->get("gdcn/levels/$level->id.dat");
+
                         switch ($songType) {
                             case 'audioTrack':
                                 $level->audio_track = $songID;
@@ -197,10 +190,12 @@ class LevelService
                         } else {
                             $this->noticeService->sendSuccessNotice('上传成功!', "关卡ID: $response");
                         }
+                    } catch (FileNotFoundException) {
+                        $this->noticeService->sendErrorNotice('错误: levelString 丢失');
                     }
                 }
             }
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             $this->noticeService->sendErrorNotice('关卡不存在（或未找到）');
         }
 

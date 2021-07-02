@@ -23,9 +23,7 @@ class GameLevelTest extends TestCase
 
     public function test_upload(): void
     {
-        $this->fake(function ($storage) {
-            Storage::fake($storage['disk']);
-        });
+        Storage::fake('oss');
 
         $levelString = Str::random();
         $levelName = $this->faker->word;
@@ -69,9 +67,7 @@ class GameLevelTest extends TestCase
         );
 
         $response = $request->getContent();
-        $this->fake(function ($storage) use ($response) {
-            Storage::disk($storage['disk'])->assertExists($storage['path'] . '/' . sha1($response) . '.dat');
-        });
+        Storage::disk('oss')->assertExists("gdcn/levels/$response.dat");
 
         $request->assertOk();
         $this->assertDatabaseHas('game_levels', [
@@ -81,24 +77,11 @@ class GameLevelTest extends TestCase
         ]);
     }
 
-    public function fake(callable $callback): void
-    {
-        $storages = config('game.storage.levels');
-        foreach ($storages as $storage) {
-            if (!empty($storage['disk']) && !empty($storage['path'])) {
-                $callback($storage);
-            }
-        }
-    }
-
     public function test_upload_use_account(): void
     {
         /** @var GameAccount $account */
         $account = GameAccount::factory()->create();
-
-        $this->fake(function ($storage) {
-            Storage::fake($storage['disk']);
-        });
+        Storage::fake('oss');
 
         $levelString = Str::random();
         $levelName = $this->faker->word;
@@ -143,9 +126,7 @@ class GameLevelTest extends TestCase
 
         $request->assertOk();
         $response = $request->getContent();
-        $this->fake(function ($storage) use ($response) {
-            Storage::disk($storage['disk'])->assertExists($storage['path'] . '/' . sha1($response) . '.dat');
-        });
+        Storage::disk('oss')->assertExists("gdcn/levels/$response.dat");
 
         $this->assertDatabaseHas(
             'game_levels',
@@ -193,13 +174,9 @@ class GameLevelTest extends TestCase
     {
         /** @var GameLevel $level */
         $level = GameLevel::factory()->create();
-
         $levelString = Str::random();
-        $this->fake(function ($storage) use ($levelString, $level) {
-            $disk = Storage::fake($storage['disk']);
-            $disk->put($storage['path'] . '/' . sha1($level->id) . '.dat', $levelString);
-        });
 
+        Storage::fake('oss')->put("gdcn/levels/$level->id.dat", $levelString);
         $request = $this->post(
             route('game.level.download'),
             [
@@ -228,10 +205,7 @@ class GameLevelTest extends TestCase
         $level = GameLevel::factory()->create();
 
         $levelString = Str::random();
-        $this->fake(function ($storage) use ($levelString, $level) {
-            $disk = Storage::fake($storage['disk']);
-            $disk->put($storage['path'] . '/' . sha1($level->id) . '.dat', $levelString);
-        });
+        Storage::fake('oss')->put("gdcn/levels/$level->id.dat", $levelString);
 
         $hash = app(HashesController::class);
         $rs = Str::random();
@@ -265,10 +239,7 @@ class GameLevelTest extends TestCase
         $level = GameLevel::factory()->create();
 
         $levelString = Str::random();
-        $this->fake(function ($storage) use ($levelString, $level) {
-            $disk = Storage::fake($storage['disk']);
-            $disk->put($storage['path'] . '/' . sha1($level->id) . '.dat', $levelString);
-        });
+        Storage::fake('oss')->put("gdcn/levels/$level->id.dat", $levelString);
 
         $request = $this->post(
             route('game.level.delete'),
@@ -284,9 +255,7 @@ class GameLevelTest extends TestCase
         );
 
         $request->assertOk();
-        $this->fake(function ($storage) use ($level) {
-            Storage::disk($storage['disk'])->assertMissing($storage['path'] . '/' . sha1($level->id) . '.dat');
-        });
+        Storage::fake('oss')->assertMissing("gdcn/levels/$level->id.dat");
 
         $this->assertDeleted(
             $level->getTable(),

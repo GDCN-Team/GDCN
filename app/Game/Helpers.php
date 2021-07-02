@@ -267,7 +267,7 @@ class Helpers
     /**
      * @param string $alias
      * @return string|null
-     * @throws \App\Exceptions\Game\UnknownServerException
+     * @throws UnknownServerException
      */
     public function getServerHostFromAlias(string $alias): ?string
     {

@@ -39,9 +39,7 @@ class GameAccountSaveDataTest extends TestCase
 
     public function test_save(): void
     {
-        $this->fake(function ($storage) {
-            Storage::fake($storage['disk']);
-        });
+        Storage::fake('oss');
 
         /** @var GameAccount $account */
         $account = GameAccount::factory()->createOne();
@@ -60,19 +58,7 @@ class GameAccountSaveDataTest extends TestCase
         );
 
         $request->assertOk();
-        $this->fake(function ($storage) use ($account) {
-            Storage::disk($storage['disk'])->assertExists($storage['path'] . '/' . sha1($account->id) . '.dat');
-        });
-    }
-
-    public function fake(callable $callback): void
-    {
-        $storages = config('game.storage.saveData');
-        foreach ($storages as $storage) {
-            if (!empty($storage['disk']) && !empty($storage['path'])) {
-                $callback($storage);
-            }
-        }
+        Storage::disk('oss')->assertExists("gdcn/saveData/$account->name.dat");
     }
 
     public function test_load(): void
@@ -81,9 +67,7 @@ class GameAccountSaveDataTest extends TestCase
         $account = GameAccount::factory()->createOne();
 
         $content = Str::random();
-        $this->fake(function ($storage) use ($content, $account) {
-            Storage::fake($storage['disk'])->put($storage['path'] . '/' . sha1($account->id) . '.dat', $content);
-        });
+        Storage::fake('oss')->put("gdcn/saveData/$account->name.dat", $content);
 
         $request = $this->post(
             route('game.account.data.load'),
@@ -98,6 +82,6 @@ class GameAccountSaveDataTest extends TestCase
         );
 
         $request->assertOk();
-        self::assertEquals("{$content};21;35;{$content}", $request->getContent());
+        self::assertEquals("$content;21;35;$content", $request->getContent());
     }
 }

@@ -86,22 +86,6 @@ return [
         ],
         'mode' => 'round'
     ],
-    'storage' => [
-        'saveData' => [
-            [
-                'disk' => 'oss',
-                'path' => 'gdcn/saveData',
-                'async' => true // this will run as dispatch
-            ]
-        ],
-        'levels' => [
-            [
-                'disk' => 'oss',
-                'path' => 'gdcn/levels',
-                'async' => true
-            ]
-        ]
-    ],
     'spamWords' => [
         'fuck', // comment will mark as spam when content contained 'fuck'
         'shit'

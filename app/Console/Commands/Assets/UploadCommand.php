@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Assets;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use function public_path;
 
 /**
- * Class UploadOssCommand
+ * Class UploadCommand
  * @package App\Console\Commands
  */
-class UploadOssCommand extends Command
+class UploadCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'upload:assets';
+    protected $signature = 'assets:upload';
 
     /**
      * The console command description.

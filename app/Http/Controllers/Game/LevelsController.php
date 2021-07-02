@@ -7,7 +7,6 @@ use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\Request\AuthenticationException;
 use App\Exceptions\Game\UserNotFoundException as GameUserNotFoundExceptionAlias;
 use App\Game\Helpers;
-use App\Game\StorageManager;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Level\DailyGetRequest;
 use App\Http\Requests\Game\Level\DeleteRequest;
@@ -27,8 +26,12 @@ use App\Models\GameWeeklyLevel;
 use Exception;
 use GDCN\ChkValidationException;
 use GDCN\GDObject;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -38,17 +41,16 @@ use Illuminate\Validation\ValidationException;
 class LevelsController extends Controller
 {
     /**
-     * @var StorageManager
+     * @var FilesystemAdapter|Filesystem
      */
-    protected $storageManager;
+    protected FilesystemAdapter|Filesystem $storage;
 
     /**
      * LevelsController constructor.
-     * @param StorageManager $storageManager
      */
-    public function __construct(StorageManager $storageManager)
+    public function __construct()
     {
-        $this->storageManager = $storageManager;
+        $this->storage = Storage::disk('oss');
     }
 
     /**
@@ -96,9 +98,9 @@ class LevelsController extends Controller
                 return ResponseCode::LEVEL_UPLOAD_FAILED;
             }
 
-            $this->storageManager->put(sha1($level->id) . '.dat', $data['levelString']);
+            $this->storage->put("gdcn/levels/$level->id.dat", $data['levelString']);
             return $level->id ?? ResponseCode::LEVEL_UPLOAD_FAILED;
-        } catch (GameUserNotFoundExceptionAlias $e) {
+        } catch (GameUserNotFoundExceptionAlias) {
             return ResponseCode::USER_NOT_FOUND;
         }
     }
@@ -338,8 +340,9 @@ class LevelsController extends Controller
             return ResponseCode::CHK_CHECK_FAILED;
         }
 
-        $levelString = $this->storageManager->get(sha1($request->level->id) . '.dat');
-        if (!$levelString) {
+        try {
+            $levelString = $this->storage->get("gdcn/levels/{$request->level->id}.dat");
+        } catch (FileNotFoundException) {
             return ResponseCode::DOWNLOAD_LEVEL_MISSING_LEVEL_STRING;
         }
 
