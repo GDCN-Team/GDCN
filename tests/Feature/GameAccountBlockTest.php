@@ -29,8 +29,7 @@ class GameAccountBlockTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'targetAccountID' => $accounts[1]->id,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         self::assertEqualsIgnoringCase(
@@ -43,8 +42,7 @@ class GameAccountBlockTest extends TestCase
             [
                 'account' => $accounts[0]->id,
                 'target_account' => $accounts[1]->id
-            ]
-        );
+            ])->dump();
     }
 
     public function test_unblock(): void
@@ -63,8 +61,7 @@ class GameAccountBlockTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'targetAccountID' => $block->target_account,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         self::assertEqualsIgnoringCase(

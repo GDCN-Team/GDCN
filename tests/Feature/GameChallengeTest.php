@@ -29,8 +29,7 @@ class GameChallengeTest extends TestCase
                 'world' => false,
                 'secret' => 'Wmfd2893gb7',
                 'chk' => 'Test_AAgMAQYF' // 114514
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $response = $request->getContent();
@@ -63,8 +62,7 @@ class GameChallengeTest extends TestCase
                 'world' => false,
                 'secret' => 'Wmfd2893gb7',
                 'chk' => 'Test_AAgMAQYF' // 114514
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $response = $request->getContent();

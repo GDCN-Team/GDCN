@@ -35,8 +35,7 @@ class GameAccountCommentTest extends TestCase
                 'page' => 0,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("2~{$comment->content}");
@@ -66,8 +65,7 @@ class GameAccountCommentTest extends TestCase
                 'page' => 1,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $response = $request->getContent();
@@ -98,8 +96,7 @@ class GameAccountCommentTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'cType' => 1,
                 'chk' => $hash->generateUploadAccountCommentChk($account->name, $content, true)
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDatabaseHas(
@@ -107,8 +104,7 @@ class GameAccountCommentTest extends TestCase
             [
                 'account' => $account->id,
                 'content' => $content
-            ]
-        );
+            ])->dump();
     }
 
     public function test_delete(): void
@@ -128,8 +124,7 @@ class GameAccountCommentTest extends TestCase
                 'commentID' => $comment->id,
                 'secret' => 'Wmfd2893gb7',
                 'cType' => '1'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDeleted($comment);

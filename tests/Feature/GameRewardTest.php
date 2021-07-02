@@ -33,8 +33,7 @@ class GameRewardTest extends TestCase
                     'chk' => '5nlqVBAgFDQMB', // 114514
                     'r1' => 0,
                     'r2' => 0
-                ]
-            );
+                ])->dump();
         } catch (Exception $e) {
             self::fail(
                 $e->getMessage()
@@ -74,8 +73,7 @@ class GameRewardTest extends TestCase
                     'chk' => '5nlqVBAgFDQMB', // 114514
                     'r1' => 0,
                     'r2' => 0
-                ]
-            );
+                ])->dump();
 
             $request->assertOk();
         } catch (Exception $e) {

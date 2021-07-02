@@ -38,8 +38,7 @@ class GameLevelCommentTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'mode' => 0,
                 'levelID' => $comment->level
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("2~{$comment->content}~3~{$comment->sender->user->id}~4~{$comment->likes}");
@@ -65,8 +64,7 @@ class GameLevelCommentTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'mode' => 0,
                 'levelID' => $level->id
-            ]
-        );
+            ])->dump();
         $request->assertOk();
 
         $response = $request->getContent();
@@ -102,8 +100,7 @@ class GameLevelCommentTest extends TestCase
                 'levelID' => $level->id,
                 'percent' => 0,
                 'chk' => $hash->generateUploadLevelCommentChk($account->name, $content, $level->id, 0, true)
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDatabaseHas(
@@ -111,8 +108,7 @@ class GameLevelCommentTest extends TestCase
             [
                 'level' => $level->id,
                 'content' => $content
-            ]
-        );
+            ])->dump();
     }
 
     public function test_delete(): void
@@ -131,8 +127,7 @@ class GameLevelCommentTest extends TestCase
                 'commentID' => $comment->id,
                 'secret' => 'Wmfd2893gb7',
                 'levelID' => $comment->level
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDeleted(
@@ -158,8 +153,7 @@ class GameLevelCommentTest extends TestCase
                 'mode' => 0,
                 'userID' => $comment->sender->user->id,
                 'count' => 25
-            ]
-        );
+            ])->dump();
 
         $request->assertSee("1~{$comment->level}~2~{$comment->content}");
     }
@@ -181,8 +175,7 @@ class GameLevelCommentTest extends TestCase
                 'mode' => 1,
                 'userID' => $comment->sender->user->id,
                 'count' => 25
-            ]
-        );
+            ])->dump();
 
         $request->assertSee("1~{$comment->level}~2~{$comment->content}");
     }
@@ -211,8 +204,7 @@ class GameLevelCommentTest extends TestCase
                 'mode' => 1,
                 'userID' => $comment->sender->user->id,
                 'count' => 25
-            ]
-        );
+            ])->dump();
 
         self::assertEqualsIgnoringCase(
             ResponseCode::PERMISSION_DENIED,

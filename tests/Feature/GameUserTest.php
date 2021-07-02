@@ -32,8 +32,7 @@ class GameUserTest extends TestCase
                 'uuid' => 0,
                 'targetAccountID' => $account->id,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$account->name}");
@@ -53,8 +52,7 @@ class GameUserTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'targetAccountID' => $account->id,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$account->name}");
@@ -76,8 +74,7 @@ class GameUserTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'targetAccountID' => $accounts[0]->id,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$accounts[0]->name}");
@@ -98,8 +95,7 @@ class GameUserTest extends TestCase
                 'total' => 0,
                 'page' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$account->name}");
@@ -120,8 +116,7 @@ class GameUserTest extends TestCase
                 'total' => 0,
                 'page' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$account->name}");
@@ -142,8 +137,7 @@ class GameUserTest extends TestCase
                 'total' => 0,
                 'page' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$account->name}");
@@ -175,8 +169,7 @@ class GameUserTest extends TestCase
                 'accountID' => $account->id,
                 'gjp' => 'AgUGBgMF',
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         self::assertEquals(
@@ -198,8 +191,7 @@ class GameUserTest extends TestCase
                 'accountID' => $account->id,
                 'gjp' => 'AgUGBgMF',
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         self::assertEquals(
@@ -230,8 +222,7 @@ class GameUserTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'type' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$accounts[1]->name}:2:{$accounts[1]->user->id}");
@@ -257,8 +248,7 @@ class GameUserTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'type' => 1,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$accounts[1]->name}:2:{$accounts[1]->user->id}");

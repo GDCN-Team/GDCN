@@ -57,8 +57,7 @@ class GameLevelScoreTest extends TestCase
                     's9' => 5819,
                     's10' => 0,
                     'chk' => $hash->generateUploadLevelScoreChk($friend->account, $score->level, 0, 0, 0, 1482, 4, 0, 0, $rs, true)
-                ]
-            );
+                ])->dump();
         } catch (Exception $e) {
             self::fail($e->getMessage());
         }
@@ -105,8 +104,7 @@ class GameLevelScoreTest extends TestCase
                     's9' => 5819,
                     's10' => 0,
                     'chk' => $hash->generateUploadLevelScoreChk($score->account, $score->level, 98, 0, 0, 1482, 4, 0, 0, $rs, true)
-                ]
-            );
+                ])->dump();
         } catch (Exception $e) {
             self::fail($e->getMessage());
         }
@@ -124,8 +122,7 @@ class GameLevelScoreTest extends TestCase
             [
                 'account' => $account->id,
                 'percent' => 98
-            ]
-        );
+            ])->dump();
     }
 
     public function test_get_top(): void
@@ -160,8 +157,7 @@ class GameLevelScoreTest extends TestCase
                     's9' => 5819,
                     's10' => 0,
                     'chk' => $hash->generateUploadLevelScoreChk($score->account, $score->level, 0, 0, 0, 1482, 4, 0, 0, $rs, true)
-                ]
-            );
+                ])->dump();
         } catch (Exception $e) {
             self::fail($e->getMessage());
         }
@@ -208,8 +204,7 @@ class GameLevelScoreTest extends TestCase
                     's9' => 5819,
                     's10' => 0,
                     'chk' => $hash->generateUploadLevelScoreChk($score->account, $score->level, 0, 0, 0, 1482, 4, 0, 0, $rs, true)
-                ]
-            );
+                ])->dump();
         } catch (Exception $e) {
             self::fail($e->getMessage());
         }

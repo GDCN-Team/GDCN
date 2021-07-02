@@ -82,8 +82,7 @@ class GameMiscTest extends TestCase
             [
                 'id' => $item->id,
                 'likes' => ($item->likes ?? 0) + ($like ? 1 : -1)
-            ]
-        );
+            ])->dump();
     }
 
     /**
@@ -217,8 +216,7 @@ class GameMiscTest extends TestCase
             [
                 'udid' => 'S' . mt_rand(),
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         self::assertEqualsIgnoringCase(

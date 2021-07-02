@@ -29,7 +29,7 @@ class GameAccountSaveDataTest extends TestCase
                 'type' => 1,
                 'secret' => 'Wmfd2893gb7'
             ]
-        );
+        )->dump();
 
         $request->assertOk();
         self::assertEquals(
@@ -55,8 +55,7 @@ class GameAccountSaveDataTest extends TestCase
                 'gdw' => false,
                 'saveData' => Str::random(),
                 'secret' => 'Wmfv3899gc9'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         Storage::disk('oss')->assertExists("gdcn/saveData/$account->name.dat");
@@ -79,8 +78,7 @@ class GameAccountSaveDataTest extends TestCase
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         self::assertEquals("$content;21;35;$content", $request->getContent());

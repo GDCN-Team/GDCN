@@ -63,8 +63,7 @@ class GameLevelTest extends TestCase
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $response = $request->getContent();
         Storage::disk('oss')->assertExists("gdcn/levels/$response.dat");
@@ -121,8 +120,7 @@ class GameLevelTest extends TestCase
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $response = $request->getContent();
@@ -134,8 +132,7 @@ class GameLevelTest extends TestCase
                 'id' => $response,
                 'name' => $levelName,
                 'desc' => $levelDesc
-            ]
-        );
+            ])->dump();
     }
 
     public function test_get(): void
@@ -163,8 +160,7 @@ class GameLevelTest extends TestCase
                 'coins' => false,
                 'epic' => false,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$level->id}:2:{$level->name}:3:{$level->desc}");
@@ -189,8 +185,7 @@ class GameLevelTest extends TestCase
                 'inc' => 0,
                 'extras' => 0,
                 'secret' => 'Wmfd2893gb7',
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$level->id}:2:{$level->name}:3:{$level->desc}:4:{$levelString}");
@@ -226,8 +221,7 @@ class GameLevelTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'rs' => $rs,
                 'chk' => $hash->encodeChk($hash->generateDownloadLevelChk($level->id, 0, $rs, $account->id, $account->user->udid, $account->user->uuid), $hash->keys['level_seed'])
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$level->id}:2:{$level->name}:3:{$level->desc}");
@@ -251,8 +245,7 @@ class GameLevelTest extends TestCase
                 'udid' => $level->creator->udid,
                 'levelID' => $level->id,
                 'secret' => 'Wmfv2898gc9'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         Storage::fake('oss')->assertMissing("gdcn/levels/$level->id.dat");
@@ -273,8 +266,7 @@ class GameLevelTest extends TestCase
             [
                 'levelID' => $level->id,
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDatabaseHas(
@@ -282,7 +274,6 @@ class GameLevelTest extends TestCase
             [
                 'level' => $level->id,
                 'times' => 1
-            ]
-        );
+            ])->dump();
     }
 }

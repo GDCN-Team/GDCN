@@ -36,8 +36,7 @@ class GameAccountMessageTest extends TestCase
                 'subject' => $this->faker->word,
                 'body' => Base64Url::encode($this->faker->word, true),
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDatabaseHas(
@@ -45,8 +44,7 @@ class GameAccountMessageTest extends TestCase
             [
                 'account' => $accounts[0]->id,
                 'to_account' => $accounts[1]->id
-            ]
-        );
+            ])->dump();
     }
 
     public function test_upload_use_friend_policy(): void
@@ -80,8 +78,7 @@ class GameAccountMessageTest extends TestCase
                 'subject' => $this->faker->word,
                 'body' => Base64Url::encode($this->faker->word, true),
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDatabaseHas(
@@ -89,8 +86,7 @@ class GameAccountMessageTest extends TestCase
             [
                 'account' => $accounts[0]->id,
                 'to_account' => $accounts[1]->id
-            ]
-        );
+            ])->dump();
     }
 
     public function test_upload_use_none_policy(): void
@@ -119,8 +115,7 @@ class GameAccountMessageTest extends TestCase
                 'subject' => $this->faker->word,
                 'body' => Base64Url::encode($this->faker->word, true),
                 'secret' => 'Wmfd2893gb7'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         self::assertEqualsIgnoringCase(ResponseCode::FAILED, $request->getContent());
@@ -143,8 +138,7 @@ class GameAccountMessageTest extends TestCase
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'getSent' => false
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$message->id}:2:{$message->account}");
@@ -167,8 +161,7 @@ class GameAccountMessageTest extends TestCase
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'getSent' => false
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $response = $request->getContent();
@@ -195,8 +188,7 @@ class GameAccountMessageTest extends TestCase
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'getSent' => true
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$message->id}:2:{$message->to_account}");
@@ -218,8 +210,7 @@ class GameAccountMessageTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'isSender' => false,
                 'messageID' => $message->id
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDeleted(
@@ -244,8 +235,7 @@ class GameAccountMessageTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'isSender' => true,
                 'messageID' => $message->id
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDeleted(
@@ -276,8 +266,7 @@ class GameAccountMessageTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'isSender' => true,
                 'messages' => "{$messages[0]->id},{$messages[1]->id}"
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         foreach ($messages as $message) {
@@ -310,8 +299,7 @@ class GameAccountMessageTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'isSender' => true,
                 'messages' => "{$messages[0]->id},{$messages[1]->id}"
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         foreach ($messages as $message) {
@@ -338,8 +326,7 @@ class GameAccountMessageTest extends TestCase
                 'messageID' => $message->id,
                 'secret' => 'Wmfd2893gb7',
                 'isSender' => false
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$message->id}:2:{$message->account}");
@@ -349,8 +336,7 @@ class GameAccountMessageTest extends TestCase
             [
                 'id' => $message->id,
                 'readed' => true
-            ]
-        );
+            ])->dump();
     }
 
     public function test_download_from_other(): void
@@ -369,8 +355,7 @@ class GameAccountMessageTest extends TestCase
                 'messageID' => $message->id,
                 'secret' => 'Wmfd2893gb7',
                 'isSender' => true
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $request->assertSee("1:{$message->id}:2:{$message->to_account}");
@@ -380,7 +365,6 @@ class GameAccountMessageTest extends TestCase
             [
                 'id' => $message->id,
                 'readed' => true
-            ]
-        );
+            ])->dump();
     }
 }

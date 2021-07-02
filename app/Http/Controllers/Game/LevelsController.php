@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\Log\Types;
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\Request\AuthenticationException;
-use App\Exceptions\Game\UserNotFoundException as GameUserNotFoundExceptionAlias;
+use App\Exceptions\Game\UserNotFoundException;
 use App\Game\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Level\DailyGetRequest;
@@ -100,7 +100,7 @@ class LevelsController extends Controller
 
             $this->storage->put("gdcn/levels/$level->id.dat", $data['levelString']);
             return $level->id ?? ResponseCode::LEVEL_UPLOAD_FAILED;
-        } catch (GameUserNotFoundExceptionAlias) {
+        } catch (UserNotFoundException) {
             return ResponseCode::USER_NOT_FOUND;
         }
     }

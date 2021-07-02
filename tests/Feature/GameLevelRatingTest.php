@@ -46,8 +46,7 @@ class GameLevelRatingTest extends TestCase
                 'stars' => 8,
                 'feature' => false,
                 'secret' => 'Wmfp3879gc3'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDatabaseHas(
@@ -55,8 +54,7 @@ class GameLevelRatingTest extends TestCase
             [
                 'level' => $level->id,
                 'stars' => 8
-            ]
-        );
+            ])->dump();
     }
 
     public function test_rate(): void
@@ -93,8 +91,7 @@ class GameLevelRatingTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'rs' => $rs,
                 'chk' => Hash::generateChkForRate($level->id, 8, $rs, $account->id, $udid, 0, true)
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDatabaseHas(
@@ -102,8 +99,7 @@ class GameLevelRatingTest extends TestCase
             [
                 'level' => $level->id,
                 'difficulty' => 50
-            ]
-        );
+            ])->dump();
     }
 
     public function test_demon(): void
@@ -135,8 +131,7 @@ class GameLevelRatingTest extends TestCase
                 'levelID' => $level->id,
                 'rating' => 1,
                 'secret' => 'Wmfp3879gc3'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         $this->assertDatabaseHas(
@@ -144,7 +139,6 @@ class GameLevelRatingTest extends TestCase
             [
                 'level' => $level->id,
                 'demon_difficulty' => 3
-            ]
-        );
+            ])->dump();
     }
 }

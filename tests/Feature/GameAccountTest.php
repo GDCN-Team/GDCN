@@ -36,8 +36,7 @@ class GameAccountTest extends TestCase
                 'password' => 123456,
                 'email' => $email,
                 'secret' => 'Wmfv3899gc9'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         Event::assertDispatched(Registered::class);
@@ -46,8 +45,7 @@ class GameAccountTest extends TestCase
             [
                 'name' => $name,
                 'email' => $email
-            ]
-        );
+            ])->dump();
     }
 
     public function test_send_verify_email(): void
@@ -95,8 +93,7 @@ class GameAccountTest extends TestCase
                 'password' => 123456,
                 'udid' => 'S' . mt_rand(),
                 'secret' => 'Wmfv3899gc9'
-            ]
-        );
+            ])->dump();
 
         $request->assertOk();
         self::assertEquals("{$account->id},{$account->user->id}", $request->getContent());
