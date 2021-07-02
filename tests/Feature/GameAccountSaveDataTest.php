@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\GameAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -32,7 +33,7 @@ class GameAccountSaveDataTest extends TestCase
 
         $request->assertOk();
         self::assertEquals(
-            request()->getHost(),
+            Request::getHost(),
             $request->getContent()
         );
     }
