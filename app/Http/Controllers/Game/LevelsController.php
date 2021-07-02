@@ -113,7 +113,7 @@ class LevelsController extends Controller
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJLevels21
      */
-    public function search(SearchRequest $request, Helpers $helper, HashesController $hash)
+    public function search(SearchRequest $request, Helpers $helper, HashesController $hash): int|string
     {
         try {
             $data = $request->validated();
@@ -247,7 +247,7 @@ class LevelsController extends Controller
                 case 13: // Friends
                     try {
                         $request->auth();
-                    } catch (AuthenticationException $e) {
+                    } catch (AuthenticationException) {
                         return ResponseCode::LOGIN_FAILED;
                     }
 
@@ -268,36 +268,34 @@ class LevelsController extends Controller
             $page = $data['page'];
 
             $levels = $query->forPage(++$page, $helper->perPage)->get();
-            $result = $levels->map(function (GameLevel $level) {
-                return GDObject::merge([
-                    1 => $level->id,
-                    2 => $level->name,
-                    3 => $level->desc,
-                    5 => $level->version,
-                    6 => $level->user,
-                    8 => ($level->rating->difficulty ?? 0) > 0 ? 10 : 0,
-                    9 => $level->rating->difficulty ?? 0,
-                    10 => $level->downloads,
-                    12 => $level->audio_track,
-                    13 => $level->game_version,
-                    14 => $level->likes,
-                    15 => $level->length,
-                    17 => $level->rating->demon ?? 0,
-                    18 => $level->rating->stars ?? 0,
-                    19 => $level->rating->featured_score ?? 0,
-                    25 => $level->rating->auto ?? 0,
-                    30 => $level->original,
-                    31 => $level->two_player,
-                    35 => $level->song,
-                    36 => $level->extra_string,
-                    37 => $level->coins,
-                    38 => $level->rating->coin_verified ?? 0,
-                    39 => $level->requested_stars,
-                    42 => $level->rating->epic ?? 0,
-                    43 => $level->rating->demon_difficulty ?? 0,
-                    45 => $level->objects
-                ], ':');
-            })->join('|');
+            $result = $levels->map(fn(GameLevel $level) => GDObject::merge([
+                1 => $level->id,
+                2 => $level->name,
+                3 => $level->desc,
+                5 => $level->version,
+                6 => $level->user,
+                8 => ($level->rating->difficulty ?? 0) > 0 ? 10 : 0,
+                9 => $level->rating->difficulty ?? 0,
+                10 => $level->downloads,
+                12 => $level->audio_track,
+                13 => $level->game_version,
+                14 => $level->likes,
+                15 => $level->length,
+                17 => $level->rating->demon ?? 0,
+                18 => $level->rating->stars ?? 0,
+                19 => $level->rating->featured_score ?? 0,
+                25 => $level->rating->auto ?? 0,
+                30 => $level->original,
+                31 => $level->two_player,
+                35 => $level->song,
+                36 => $level->extra_string,
+                37 => $level->coins,
+                38 => $level->rating->coin_verified ?? 0,
+                39 => $level->requested_stars,
+                42 => $level->rating->epic ?? 0,
+                43 => $level->rating->demon_difficulty ?? 0,
+                45 => $level->objects
+            ], ':'))->join('|');
 
             $users = $query->pluck('user')
                 ->map(function ($userID) {
@@ -320,7 +318,7 @@ class LevelsController extends Controller
                 })->join('~:~');
 
             return "$result#$users#$songs#{$helper->generatePageHash($count, $page)}#{$hash->generateLevelListHash($query->get())}";
-        } catch (ValidationException $e) {
+        } catch (ValidationException) {
             return ResponseCode::REQUEST_CHECK_FAILED;
         }
     }
@@ -332,11 +330,11 @@ class LevelsController extends Controller
      *
      * @see http://docs.gdprogra.me/#/endpoints/downloadGJLevel22
      */
-    public function download(DownloadRequest $request, HashesController $hash)
+    public function download(DownloadRequest $request, HashesController $hash): int|string
     {
         try {
             $request->validateChk();
-        } catch (ChkValidationException $e) {
+        } catch (ChkValidationException) {
             return ResponseCode::CHK_CHECK_FAILED;
         }
 
@@ -390,7 +388,7 @@ class LevelsController extends Controller
         $levelStringHash = $hash->generateLevelStringHash($levelString);
         $levelHash = $hash->generateLevelHash($levelInfo[6], $levelInfo[18], $levelInfo[17], $levelInfo[1], $levelInfo[38], $levelInfo[19], $request->level->password, $levelInfo[41] ?? 0);
 
-        return "{$levelResult}#{$levelStringHash}#{$levelHash}#{$moreHash}";
+        return "$levelResult#$levelStringHash#$levelHash#$moreHash";
     }
 
     /**
@@ -403,12 +401,12 @@ class LevelsController extends Controller
     {
         try {
             if ($request->level->delete()) {
-                $this->storageManager->delete(sha1($request->level->id) . '.dat');
+                $this->storage->delete("gdcn/levels/{$request->level->id}.dat");
                 return ResponseCode::OK;
             }
 
             return ResponseCode::DELETE_FAILED;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return ResponseCode::DELETE_FAILED;
         }
     }
@@ -439,7 +437,7 @@ class LevelsController extends Controller
             $seconds = Carbon::rawParse('tomorrow')->diffInSeconds();
         }
 
-        return "{$feaID}|{$seconds}";
+        return "$feaID|$seconds";
     }
 
     /**
