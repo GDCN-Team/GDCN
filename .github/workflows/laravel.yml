@@ -25,4 +25,4 @@ jobs:
       - name: Directory Permissions
         run: chmod -R 777 storage bootstrap/cache
       - name: Execute tests (Unit and Feature tests) via artisan
-        run: artisan test --parallel
+        run: php artisan test --parallel
