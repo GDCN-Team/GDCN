@@ -26,8 +26,10 @@ class GameLevelGauntletTest extends TestCase
                 'binaryVersion' => 35,
                 'gdw' => false,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("1:{$gauntlet->id}:3:{$gauntlet->levelIds}");
     }

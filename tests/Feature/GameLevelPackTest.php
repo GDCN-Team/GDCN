@@ -27,8 +27,10 @@ class GameLevelPackTest extends TestCase
                 'gdw' => false,
                 'page' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("1:{$pack->id}:2:{$pack->name}:3:{$pack->levels}");
     }

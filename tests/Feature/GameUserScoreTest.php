@@ -53,8 +53,10 @@ class GameUserScoreTest extends TestCase
                 'accExplosion' => 0,
                 'seed' => Str::random(),
                 'seed2' => 'AFAKDwIAVAJUBl1UVFUFDgILA1IODQUHAAsDU1EECwQDDwUMDVEBCQ=='
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas('game_user_scores', [
             'user' => $request->getContent()
@@ -100,8 +102,10 @@ class GameUserScoreTest extends TestCase
                     XORCipher::cipher(
                         sha1("{$account->id}0000000000000000xI35fsAapCRg"),
                         85271), true)
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         self::assertEquals(
             $account->id,
@@ -129,8 +133,10 @@ class GameUserScoreTest extends TestCase
                 'type' => 'top',
                 'count' => 100,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }
@@ -155,8 +161,10 @@ class GameUserScoreTest extends TestCase
                 'type' => 'top',
                 'count' => 100,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("16:{$account->id}");
     }
@@ -187,8 +195,10 @@ class GameUserScoreTest extends TestCase
                 'type' => 'friends',
                 'count' => 100,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("16:{$friend->account}");
     }
@@ -210,8 +220,10 @@ class GameUserScoreTest extends TestCase
                 'type' => 'relative',
                 'count' => 50,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }
@@ -237,8 +249,10 @@ class GameUserScoreTest extends TestCase
                 'type' => 'relative',
                 'count' => 50,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }
@@ -259,8 +273,10 @@ class GameUserScoreTest extends TestCase
                 'type' => 'creators',
                 'count' => 100,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }
@@ -286,8 +302,10 @@ class GameUserScoreTest extends TestCase
                 'type' => 'creators',
                 'count' => 100,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }

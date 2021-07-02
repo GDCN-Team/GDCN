@@ -76,13 +76,15 @@ class GameMiscTest extends TestCase
             route('game.item.like'),
             $data);
 
+        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             $item->getTable(),
             [
                 'id' => $item->id,
                 'likes' => ($item->likes ?? 0) + ($like ? 1 : -1)
-            ])->dump();
+            ]
+        );
     }
 
     /**
@@ -216,8 +218,10 @@ class GameMiscTest extends TestCase
             [
                 'udid' => 'S' . mt_rand(),
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         self::assertEqualsIgnoringCase(
             ResponseCode::RESTORE_ITEM_FAILED,

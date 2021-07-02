@@ -35,8 +35,10 @@ class GameAccountCommentTest extends TestCase
                 'page' => 0,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("2~{$comment->content}");
         $request->assertSee("4~{$comment->likes}");
@@ -65,8 +67,10 @@ class GameAccountCommentTest extends TestCase
                 'page' => 1,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $left = explode('#', $response)[0];
@@ -96,15 +100,18 @@ class GameAccountCommentTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'cType' => 1,
                 'chk' => $hash->generateUploadAccountCommentChk($account->name, $content, true)
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_comments',
             [
                 'account' => $account->id,
                 'content' => $content
-            ])->dump();
+            ]
+        );
     }
 
     public function test_delete(): void
@@ -124,8 +131,10 @@ class GameAccountCommentTest extends TestCase
                 'commentID' => $comment->id,
                 'secret' => 'Wmfd2893gb7',
                 'cType' => '1'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $this->assertDeleted($comment);
     }

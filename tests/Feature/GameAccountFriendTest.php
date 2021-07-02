@@ -26,8 +26,10 @@ class GameAccountFriendTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'targetAccountID' => $friend->account,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         self::assertEqualsIgnoringCase(
             ResponseCode::OK,

@@ -32,8 +32,10 @@ class GameLevelDailyTest extends TestCase
                 'uuid' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'weekly' => false
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $time = Carbon::rawParse('tomorrow')->diffInSeconds();
 
@@ -58,8 +60,10 @@ class GameLevelDailyTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'secret' => 'Wmfd2893gb7',
                 'weekly' => false
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $time = Carbon::rawParse('tomorrow')->diffInSeconds();
         $request->assertSee("$daily->id|$time");
@@ -80,8 +84,10 @@ class GameLevelDailyTest extends TestCase
                 'uuid' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'weekly' => true
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $time = Carbon::rawParse('next monday')->diffInSeconds();
 
@@ -106,8 +112,10 @@ class GameLevelDailyTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'secret' => 'Wmfd2893gb7',
                 'weekly' => true
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $time = Carbon::rawParse('next monday')->diffInSeconds();
 

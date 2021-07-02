@@ -37,8 +37,10 @@ class GameAccountSettingTest extends TestCase
                 'twitter' => $twitter,
                 'twitch' => $twitch,
                 'secret' => 'Wmfv3899gc9'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_settings',
@@ -50,6 +52,7 @@ class GameAccountSettingTest extends TestCase
                 'youtube' => $yt,
                 'twitter' => $twitter,
                 'twitch' => $twitch
-            ])->dump();
+            ]
+        );
     }
 }

@@ -34,15 +34,18 @@ class GameAccountFriendRequestTest extends TestCase
                 'toAccountID' => $accounts[1]->id,
                 'comment' => Base64Url::encode($this->faker->word, true),
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_friend_requests',
             [
                 'account' => $accounts[0]->id,
                 'to_account' => $accounts[1]->id
-            ])->dump();
+            ]
+        );
     }
 
     public function test_send_use_none_policy(): void
@@ -74,8 +77,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'toAccountID' => $accounts[1]->id,
                 'comment' => Base64Url::encode($this->faker->word, true),
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         self::assertEqualsIgnoringCase(ResponseCode::FAILED, $request->getContent());
     }
@@ -96,8 +101,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'targetAccountID' => $friendRequest->to_account,
                 'isSender' => true,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $this->assertDeleted(
             $friendRequest->getTable(),
@@ -121,8 +128,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'targetAccountID' => $friendRequest->account,
                 'isSender' => false,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $this->assertDeleted(
             $friendRequest->getTable(),
@@ -153,8 +162,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'isSender' => true,
                 'secret' => 'Wmfd2893gb7',
                 'accounts' => "{$friendRequests[0]->to_account},{$friendRequests[1]->to_account}"
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         foreach ($friendRequests as $friendRequest) {
             $this->assertDeleted(
@@ -186,8 +197,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'isSender' => false,
                 'secret' => 'Wmfd2893gb7',
                 'accounts' => "{$friendRequests[0]->account},{$friendRequests[1]->account}"
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         foreach ($friendRequests as $friendRequest) {
             $this->assertDeleted(
@@ -214,8 +227,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'getSent' => false
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $left = explode('#', $response)[0];
@@ -248,8 +263,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'getSent' => false
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $left = explode('#', $response)[0];
@@ -275,8 +292,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'getSent' => true
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee("32:{$friendRequest->id}:35:{$friendRequest->comment}");
     }
@@ -296,8 +315,10 @@ class GameAccountFriendRequestTest extends TestCase
                 'gjp' => 'AgUGBgMF',
                 'requestID' => $friendRequest->id,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         self::assertEquals(
             '1',
@@ -321,14 +342,17 @@ class GameAccountFriendRequestTest extends TestCase
                 'targetAccountID' => $friendRequest->account,
                 'requestID' => $friendRequest->id,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_friends',
             [
                 'account' => $friendRequest->account,
                 'target_account' => $friendRequest->to_account
-            ])->dump();
+            ]
+        );
     }
 }

@@ -17,8 +17,10 @@ class GameSongTest extends TestCase
             [
                 'songID' => 1,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee('1~|~');
     }
@@ -36,8 +38,10 @@ class GameSongTest extends TestCase
                 'page' => 0,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7'
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee('4:');
     }

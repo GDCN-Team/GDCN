@@ -40,8 +40,10 @@ class GameCommentCommandSystemTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'cType' => 1,
                 'chk' => $hash->generateUploadAccountCommentChk($account->name, $content, true)
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee('worked!');
     }
@@ -78,8 +80,10 @@ class GameCommentCommandSystemTest extends TestCase
                 'levelID' => $level->id,
                 'percent' => 0,
                 'chk' => $hash->generateUploadLevelCommentChk($account->name, $content, $level->id, 0, true)
-            ])->dump();
+            ]
+        );
 
+        $request->dump();
         $request->assertOk();
         $request->assertSee('worked!');
     }
