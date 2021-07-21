@@ -4,13 +4,12 @@ namespace App\Services\Web\Tools;
 
 use App\Exceptions\Web\Tools\UnknownServerException;
 use App\Game\Helpers;
-use App\Models\GameAccount;
-use App\Models\GameAccountLink;
-use App\Models\GameLevel;
-use App\Presenter\WebToolsPresenter;
+use App\Models\Game\Account;
+use App\Models\Game\Account\Link;
+use App\Models\Game\Level;
+use App\Presenter\Web\ToolsPresenter;
 use App\Services\Web\NoticeService;
 use GDCN\GDObject;
-use GDCN\Hash;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
@@ -31,16 +30,16 @@ class LevelService
     protected $noticeService;
 
     /**
-     * @var WebToolsPresenter
+     * @var ToolsPresenter
      */
     protected $presenter;
 
     /**
      * LevelService constructor.
-     * @param WebToolsPresenter $presenter
+     * @param ToolsPresenter $presenter
      * @param NoticeService $noticeService
      */
-    public function __construct(WebToolsPresenter $presenter, NoticeService $noticeService)
+    public function __construct(ToolsPresenter $presenter, NoticeService $noticeService)
     {
         $this->presenter = $presenter;
         $this->noticeService = $noticeService;
@@ -53,7 +52,7 @@ class LevelService
      */
     public function transIn($serverAlias, $levelID): Response
     {
-        /** @var GameAccount $account */
+        /** @var Account $account */
         $account = Auth::user();
         if (empty($account->user->id)) {
             $this->noticeService->sendErrorNotice('用户ID获取失败');
@@ -81,12 +80,12 @@ class LevelService
                 if (empty($levelObject[4])) {
                     $this->noticeService->sendErrorNotice('错误: levelString 为空');
                 } else {
-                    $query = GameAccountLink::whereHost($host);
+                    $query = Link::whereHost($host);
 
                     if (!$query->whereAccount($account->id)->whereTargetUserId($levelObject[6])->exists()) {
                         $this->noticeService->sendErrorNotice('错误: 未检测到账号链接信息，请链接关卡Creator的账号');
                     } else {
-                        $level = new GameLevel();
+                        $level = new Level();
                         $level->original = $levelObject[1];
                         $level->user = $account->user->id;
                         $level->game_version = $levelObject[13];
@@ -131,15 +130,15 @@ class LevelService
     public function transOut($serverAlias, $levelID, $songType, $songID, $password): Response
     {
         try {
-            /** @var GameAccount $account */
+            /** @var Account $account */
             $account = Auth::user();
 
             if (empty($account->user->id)) {
                 $this->noticeService->sendErrorNotice('用户ID获取失败');
             } else {
-                $level = GameLevel::query()->findOrFail($levelID);
+                $level = Level::query()->findOrFail($levelID);
                 $host = app(Helpers::class)->getServerHostFromAlias($serverAlias);
-                $link = GameAccountLink::whereHost($host)->whereAccount($account->id)->first();
+                $link = Link::whereHost($host)->whereAccount($account->id)->first();
                 if (!$link) {
                     $this->noticeService->sendErrorNotice('错误: 未检测到账号链接信息，请链接关卡Creator的账号');
                 } else {

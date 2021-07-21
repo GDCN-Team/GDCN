@@ -6,11 +6,10 @@ use App\Enums\Game\Log\Types;
 use App\Exceptions\Game\Command\ArgumentNotFoundException;
 use App\Exceptions\Game\Command\AuthorizationException;
 use App\Exceptions\Game\Command\ExecuteException;
-use App\Models\GameAccount;
-use App\Models\GameAccountComment;
-use App\Models\GameLevel;
-use App\Models\GameLevelComment;
-use App\Models\GameLog;
+use App\Models\Game\Account;
+use App\Models\Game\Account\Comment;
+use App\Models\Game\Level;
+use App\Models\Game\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Request;
 use Throwable;
@@ -27,17 +26,17 @@ class Base
     protected $success = 'Success!';
 
     /**
-     * @var GameAccount
+     * @var Account
      */
     protected $operator;
 
     /**
-     * @var GameLevel|null
+     * @var Level|null
      */
     protected $level;
 
     /**
-     * @var GameAccountComment|GameLevelComment
+     * @var Comment|Comment
      */
     protected $comment;
 
@@ -60,14 +59,14 @@ class Base
 
     /**
      * Base constructor.
-     * @param GameAccount $operator
-     * @param GameAccountComment|GameLevelComment $comment
+     * @param Account $operator
+     * @param Comment|Comment $comment
      * @param array $arguments
      * @throws ExecuteException
      */
-    public function __construct(GameAccount $operator, $comment, array $arguments)
+    public function __construct(Account $operator, $comment, array $arguments)
     {
-        if (!$comment instanceof GameAccountComment && !$comment instanceof GameLevelComment) {
+        if (!$comment instanceof Comment && !$comment instanceof Comment) {
             throw new ExecuteException('Comment must be account comment or level comment.');
         }
 
@@ -76,7 +75,7 @@ class Base
         $this->arguments = $arguments;
 
         try {
-            $this->level = $comment instanceof GameLevelComment ? GameLevel::whereId($comment->level)->firstOrFail() : null;
+            $this->level = $comment instanceof Comment ? Level::whereId($comment->level)->firstOrFail() : null;
         } catch (ModelNotFoundException $e) {
             throw new ExecuteException('Level not found.');
         }
@@ -89,7 +88,7 @@ class Base
     public function authorize($flag): void
     {
         if (!in_array($flag, config('game.default_permissions'), true) && !optional($this->operator->permission)->can($flag)) {
-            throw new AuthorizationException("Permission denied.");
+            throw new AuthorizationException('Permission denied.');
         }
     }
 
@@ -108,7 +107,7 @@ class Base
             throw new ExecuteException("Command {$name} are not allow to execute.");
         }
 
-        if ($this->comment instanceof GameAccountComment) {
+        if ($this->comment instanceof Comment) {
             $logType = Types::fromValue(Types::DO_ACCOUNT_COMMENT_COMMAND);
 
             try {
@@ -117,7 +116,7 @@ class Base
                 return $e->getMessage();
             }
 
-        } elseif ($this->comment instanceof GameLevelComment) {
+        } elseif ($this->comment instanceof Comment) {
             $logType = Types::fromValue(Types::DO_LEVEL_COMMENT_COMMAND);
 
             try {
@@ -131,7 +130,7 @@ class Base
         }
 
         // Create log
-        GameLog::query()
+        Log::query()
             ->insert([
                 'type' => $logType,
                 'value' => $name,
@@ -176,7 +175,7 @@ class Base
     }
 
     /**
-     * @return GameLevel|bool|null
+     * @return Level|bool|null
      * @throws ExecuteException
      */
     public function checkOperatorIsLevelOwner()

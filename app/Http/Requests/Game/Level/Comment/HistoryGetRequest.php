@@ -3,15 +3,15 @@
 namespace App\Http\Requests\Game\Level\Comment;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameUser;
+use App\Models\Game\Account;
+use App\Models\Game\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 
 class HistoryGetRequest extends Request
 {
     /**
-     * @var GameAccount
+     * @var Account
      */
     public $target;
 
@@ -27,7 +27,7 @@ class HistoryGetRequest extends Request
         }
 
         try {
-            $this->target = GameAccount::whereId(GameUser::whereId($this->userID)->value('uuid'))->firstOrFail();
+            $this->target = Account::whereId(User::whereId($this->userID)->value('uuid'))->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return false;
         }
@@ -58,7 +58,7 @@ class HistoryGetRequest extends Request
             ],
             'userID' => [
                 'required',
-                Rule::exists(GameUser::class, 'id')
+                Rule::exists(User::class, 'id')
             ],
             'count' => [
                 'sometimes',

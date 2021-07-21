@@ -4,7 +4,7 @@ namespace App\Http\Requests\Game\Account\Setting;
 
 use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class UpdateRequest extends Request
@@ -33,7 +33,7 @@ class UpdateRequest extends Request
         return [
             'accountID' => [
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'mS' => [

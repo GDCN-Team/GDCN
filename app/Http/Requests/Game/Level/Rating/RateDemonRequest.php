@@ -2,23 +2,16 @@
 
 namespace App\Http\Requests\Game\Level\Rating;
 
-use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameLevel;
-use App\Models\GameUser;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 
 class RateDemonRequest extends Request
 {
     /**
-     * @var GameUser
-     */
-    public $user;
-
-    /**
-     * @var GameLevel
+     * @var Level
      */
     public $level;
 
@@ -34,9 +27,8 @@ class RateDemonRequest extends Request
         }
 
         try {
-            $this->user = $this->getGameUser();
-            $this->level = GameLevel::whereId($this->levelID)->firstOrFail();
-        } catch (UserNotFoundException | ModelNotFoundException $e) {
+            $this->level = Level::whereId($this->levelID)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
             return false;
         }
 
@@ -57,14 +49,14 @@ class RateDemonRequest extends Request
             'accountID' => [
                 'sometimes',
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'udid' => 'required_without_all:accountID,gjp',
             'uuid' => 'required_with:udid',
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ],
             'rating' => [
                 'required',

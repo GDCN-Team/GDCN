@@ -2,5 +2,9 @@
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
     "/js/manifest.js": "/js/manifest.js",
-    "/js/vendor.js": "/js/vendor.js"
+    "/js/vendor.js": "/js/vendor.js",
+    "/js/proxy.js": "/js/proxy.js",
+    "/css/proxy.css": "/css/proxy.css",
+    "/js/ngproxy.js": "/js/ngproxy.js",
+    "/css/ngproxy.css": "/css/ngproxy.css"
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\Level;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class SearchRequest extends Request
@@ -22,7 +22,7 @@ class SearchRequest extends Request
             'accountID' => [
                 'sometimes',
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'type' => [

@@ -2,23 +2,16 @@
 
 namespace App\Http\Requests\Game\Level;
 
-use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameLevel;
-use App\Models\GameUser;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 
 class DeleteRequest extends Request
 {
     /**
-     * @var GameUser
-     */
-    public $user;
-
-    /**
-     * @var GameLevel
+     * @var Level
      */
     public $level;
 
@@ -34,14 +27,8 @@ class DeleteRequest extends Request
         }
 
         try {
-            $this->level = GameLevel::whereId($this->levelID)->firstOrFail();
+            $this->level = Level::whereId($this->levelID)->firstOrFail();
         } catch (ModelNotFoundException $e) {
-            return false;
-        }
-
-        try {
-            $this->user = $this->getGameUser();
-        } catch (UserNotFoundException $e) {
             return false;
         }
 
@@ -66,14 +53,14 @@ class DeleteRequest extends Request
             'accountID' => [
                 'sometimes',
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'uuid' => 'required_without_all:accountID,gjp',
             'udid' => 'required_with:uuid',
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ],
             'secret' => [
                 'required',

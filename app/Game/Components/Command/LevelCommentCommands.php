@@ -6,9 +6,9 @@ use App\Exceptions\Game\Command\ArgumentNotFoundException;
 use App\Exceptions\Game\Command\ExecuteException;
 use App\Exceptions\Game\Level\UnRateException;
 use App\Game\Helpers;
-use App\Models\GameDailyLevel;
-use App\Models\GameWeeklyLevel;
-use App\Services\Game\LevelRatingService;
+use App\Models\Game\Level\Daily;
+use App\Models\Game\Level\Weekly;
+use App\Services\Game\Level\RatingService;
 use App\Services\Game\LevelService;
 use Illuminate\Support\Str;
 
@@ -34,7 +34,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Stars must between 1 to 10.');
         }
 
-        return app(LevelRatingService::class)->rate($this->level, $stars) ? $this->success : $this->failed('Unknown Error');
+        return app(RatingService::class)->rate($this->level, $stars) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -47,7 +47,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        $result = app(LevelRatingService::class)->un_rate($this->level);
+        $result = app(RatingService::class)->un_rate($this->level);
         return $result === true ? $this->success : $this->failed($result);
     }
 
@@ -105,10 +105,10 @@ class LevelCommentCommands extends Base
         }
 
         if ($score <= 0) {
-            return $this->failed('Score must > 0');
+            return $this->failed('UserScore must > 0');
         }
 
-        return app(LevelRatingService::class)->setFeatureScore($this->level, $score) ? $this->success : $this->failed('Unknown Error');
+        return app(RatingService::class)->setFeatureScore($this->level, $score) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -120,7 +120,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(LevelRatingService::class)->setFeatureScore($this->level, 0) ? $this->success : $this->failed('Unknown Error');
+        return app(RatingService::class)->setFeatureScore($this->level, 0) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -132,7 +132,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(LevelRatingService::class)->setEpic($this->level, true) ? $this->success : $this->failed('Unknown Error');
+        return app(RatingService::class)->setEpic($this->level, true) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -144,7 +144,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(LevelRatingService::class)->setEpic($this->level, false) ? $this->success : $this->failed('Unknown Error');
+        return app(RatingService::class)->setEpic($this->level, false) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -156,7 +156,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(LevelRatingService::class)->setCoinState($this->level, true) ? $this->success : $this->failed('Unknown Error');
+        return app(RatingService::class)->setCoinState($this->level, true) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -172,7 +172,7 @@ class LevelCommentCommands extends Base
             return $this->failed('Level isn\'t rated.');
         }
 
-        return app(LevelRatingService::class)->setCoinState($this->level, false) ? $this->success : $this->failed('Unknown Error');
+        return app(RatingService::class)->setCoinState($this->level, false) ? $this->success : $this->failed('Unknown Error');
     }
 
     /**
@@ -195,11 +195,11 @@ class LevelCommentCommands extends Base
      */
     public function daily(): string
     {
-        $lastDailyTime = GameDailyLevel::query()
+        $lastDailyTime = Daily::query()
             ->latest()
             ->value('time');
 
-        $daily = new GameDailyLevel;
+        $daily = new Daily();
         $daily->level = $this->level->id;
         $daily->time = !empty($lastDailyTime) ? ($lastDailyTime + 86400) : strtotime('tomorrow 00:00:00');
         $daily->save();
@@ -212,11 +212,11 @@ class LevelCommentCommands extends Base
      */
     public function weekly(): string
     {
-        $lastWeeklyTime = GameWeeklyLevel::query()
+        $lastWeeklyTime = Weekly::query()
             ->latest()
             ->value('time');
 
-        $weekly = new GameWeeklyLevel;
+        $weekly = new Weekly();
         $weekly->level = $this->level->id;
         $weekly->time = !empty($lastWeeklyTime) ? ($lastWeeklyTime + 604800) : strtotime('next monday 00:00:00');
         $weekly->save();

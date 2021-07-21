@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\ChkValidateException;
 use App\Exceptions\Game\Request\AuthenticationException;
-use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\User\Score\GetRequest;
 use App\Http\Requests\Game\User\Score\UpdateRequest;
-use App\Models\GameAccount;
-use App\Models\GameUserScore;
+use App\Models\Game\Account;
+use App\Models\Game\UserScore;
 use GDCN\GDObject;
 use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Validation\ValidationException;
@@ -41,9 +40,8 @@ class UserScoresController extends Controller
             return ResponseCode::CHK_CHECK_FAILED;
         }
 
-        try {
-            $user = $request->getGameUser();
-        } catch (UserNotFoundException $e) {
+        $user = $request->user;
+        if (!$user) {
             return ResponseCode::USER_NOT_FOUND;
         }
 
@@ -88,7 +86,7 @@ class UserScoresController extends Controller
         try {
             $top = 0;
             $data = $request->validated();
-            $query = GameUserScore::query();
+            $query = UserScore::query();
 
             switch ($data['type']) {
                 case 'top':
@@ -104,7 +102,7 @@ class UserScoresController extends Controller
                     }
 
                     $friends = $account->friends
-                        ->map(function (GameAccount $friend) {
+                        ->map(function (Account $friend) {
                             return $friend->user->id;
                         })->toArray();
 
@@ -135,7 +133,7 @@ class UserScoresController extends Controller
             return $query->with('owner')
                 ->take($data['count'])
                 ->get()
-                ->map(function (GameUserScore $score) use ($top) {
+                ->map(function (UserScore $score) use ($top) {
                     return GDObject::merge([
                         1 => $score->owner->name,
                         2 => $score->owner->id,

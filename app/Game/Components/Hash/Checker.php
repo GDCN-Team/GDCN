@@ -9,7 +9,6 @@ use App\Http\Requests\Game\Level\DownloadRequest;
 use App\Http\Requests\Game\Level\Rating\RateStarsRequest;
 use App\Http\Requests\Game\User\Score\UpdateRequest;
 use GDCN\ChkValidationException;
-use GDCN\Hash;
 
 /**
  * Class Checker

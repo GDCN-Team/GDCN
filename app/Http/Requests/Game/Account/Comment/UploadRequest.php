@@ -2,13 +2,10 @@
 
 namespace App\Http\Requests\Game\Account\Comment;
 
-use App\Exceptions\Game\Request\AuthenticationException;
-use App\Game\Components\Hash\Checker;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use GDCN\ChkValidationException;
 use Illuminate\Validation\Rule;
-use function app;
 
 /**
  * Class UploadRequest
@@ -16,18 +13,9 @@ use function app;
  */
 class UploadRequest extends Request
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
+    public function authorize()
     {
-        try {
-            return $this->auth();
-        } catch (AuthenticationException $e) {
-            return false;
-        }
+        $this->validateAccountGJP();
     }
 
     /**
@@ -41,30 +29,13 @@ class UploadRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
+            'accountID' => Rule::exists(Account::class, 'id'),
             'gjp' => 'required_with:accountID',
             'userName' => 'required',
             'comment' => 'required',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'cType' => [
-                'required',
-                Rule::in(1)
-            ],
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'cType' => Rule::in(1),
             'chk' => 'required'
         ];
-    }
-
-    /**
-     * @throws ChkValidationException
-     */
-    public function validateChk(): void
-    {
-        app(Checker::class)->uploadAccountComment($this);
     }
 }

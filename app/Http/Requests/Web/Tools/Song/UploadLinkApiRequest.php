@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Web\Tools\Song;
 
-use App\Models\GameCustomSong;
+use App\Models\Game\CustomSong;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,14 +18,14 @@ class UploadLinkApiRequest extends FormRequest
         return [
             'song_id' => [
                 'required',
-                Rule::unique(GameCustomSong::class)
+                Rule::unique(CustomSong::class)
             ],
             'name' => 'required',
             'author_name' => 'required',
             'link' => [
                 'required',
                 'active_url',
-                Rule::unique(GameCustomSong::class, 'download_url')
+                Rule::unique(CustomSong::class, 'download_url')
             ]
         ];
     }

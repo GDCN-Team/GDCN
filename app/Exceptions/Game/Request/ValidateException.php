@@ -24,7 +24,7 @@ class ValidateException extends Exception
     public function __construct(Validator $validator)
     {
         $this->validator = $validator;
-        parent::__construct('Request Validate Failed!');
+        parent::__construct();
     }
 
     /**

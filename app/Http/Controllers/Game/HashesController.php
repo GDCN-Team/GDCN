@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Game;
 
 use App\Exceptions\Game\ChkValidateException;
 use App\Http\Controllers\Controller;
-use App\Models\GameAccount;
-use App\Models\GameAccountComment;
-use App\Models\GameLevel;
-use App\Models\GameLevelComment;
-use App\Models\GameUser;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
+use App\Models\Game\Level\Comment;
+use App\Models\Game\User;
 use Base64Url\Base64Url;
 use GDCN\XORCipher;
 use Illuminate\Database\Eloquent\Collection;
@@ -249,10 +248,10 @@ class HashesController extends Controller
     }
 
     /**
-     * @param int|GameUser $user
+     * @param int|User $user
      * @param int $stars
      * @param bool $demon
-     * @param int|GameLevel $level
+     * @param int|Level $level
      * @param bool $coinVerified
      * @param int $featuredScore
      * @param int $password
@@ -278,11 +277,11 @@ class HashesController extends Controller
 
     /**
      * @param mixed $special
-     * @param int|GameLevel|GameLevelComment|GameAccountComment $item
+     * @param int|Level|Comment|Comment $item
      * @param bool $like
      * @param int $type
      * @param string $rs
-     * @param int|GameAccount $account
+     * @param int|Account $account
      * @param string $udid
      * @param string $uuid
      * @return false|string
@@ -296,7 +295,7 @@ class HashesController extends Controller
     }
 
     /**
-     * @param GameLevel[]|Collection $levels
+     * @param Level[]|Collection $levels
      * @return false|string
      */
     public function generateLevelListHash($levels)

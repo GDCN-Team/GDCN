@@ -4,20 +4,20 @@ namespace App\Http\Requests\Game\Level\Rating;
 
 use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameLevel;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 
 class SuggestStarsRequest extends Request
 {
     /**
-     * @var GameAccount
+     * @var Account
      */
     public $account;
 
     /**
-     * @var GameLevel
+     * @var Level
      */
     public $level;
 
@@ -35,7 +35,7 @@ class SuggestStarsRequest extends Request
         try {
             $this->auth();
             $this->account = $this->user();
-            $this->level = GameLevel::whereId($this->levelID)->firstOrFail();
+            $this->level = Level::whereId($this->levelID)->firstOrFail();
         } catch (AuthenticationException | ModelNotFoundException $e) {
             return false;
         }
@@ -56,12 +56,12 @@ class SuggestStarsRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ],
             'stars' => [
                 'required',

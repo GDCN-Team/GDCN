@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\GameAccount;
-use App\Models\GameAccountPermissionGroup;
-use App\Models\GameContest;
+use App\Models\Game\Account;
+use App\Models\Game\Account\Permission\Group;
+use App\Models\Game\Contest;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Artisan;
 */
 
 Artisan::command('game:permission.group.create {name} {mod_level} {comment_color=255,255,255}', function($name, $mod_level, $comment_color) {
-    $groupID = GameAccountPermissionGroup::query()
+    $groupID = Group::query()
         ->insertGetId([
             'name' => $name,
             'mod_level' => $mod_level,
@@ -28,12 +28,12 @@ Artisan::command('game:permission.group.create {name} {mod_level} {comment_color
 });
 
 Artisan::command('game:contest.create {name} {desc} {owner} {expired_at}', function ($name, $desc, $owner, $expired_at) {
-    $ownerAccountID = GameAccount::whereName($owner)->value('id');
+    $ownerAccountID = Account::whereName($owner)->value('id');
 
     $time = strtotime($expired_at);
     $expired_at = date('Y-m-d G:i:s', $time);
 
-    $contest = new GameContest();
+    $contest = new Contest();
     $contest->name = $name;
     $contest->desc = $desc;
     $contest->expired_at = $expired_at;

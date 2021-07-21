@@ -5,8 +5,8 @@ namespace App\Services\Web;
 use App\Exceptions\Game\Account\Setting\EmailChangeException;
 use App\Exceptions\Game\Account\Setting\NameChangeException;
 use App\Exceptions\Game\Account\Setting\PasswordChangeException;
-use App\Models\GameAccount;
-use App\Presenter\WebDashboardPresenter;
+use App\Models\Game\Account;
+use App\Presenter\Web\DashboardPresenter;
 use App\Services\Game\AccountService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Response as InertiaResponse;
@@ -28,17 +28,17 @@ class DashboardService
     protected $gameAccountService;
 
     /**
-     * @var WebDashboardPresenter
+     * @var DashboardPresenter
      */
     protected $presenter;
 
     /**
      * DashboardService constructor.
-     * @param WebDashboardPresenter $presenter
+     * @param DashboardPresenter $presenter
      * @param NoticeService $noticeService
      * @param AccountService $gameAccountService
      */
-    public function __construct(WebDashboardPresenter $presenter, NoticeService $noticeService, AccountService $gameAccountService)
+    public function __construct(DashboardPresenter $presenter, NoticeService $noticeService, AccountService $gameAccountService)
     {
         $this->presenter = $presenter;
         $this->noticeService = $noticeService;
@@ -52,7 +52,7 @@ class DashboardService
      */
     public function updateAccountSetting(string $name, string $email): InertiaResponse
     {
-        /** @var GameAccount $account */
+        /** @var Account $account */
         $account = Auth::user();
 
         try {
@@ -80,7 +80,7 @@ class DashboardService
      */
     public function changePassword(string $newPassword): InertiaResponse
     {
-        /** @var GameAccount $account */
+        /** @var Account $account */
         $account = Auth::user();
 
         try {

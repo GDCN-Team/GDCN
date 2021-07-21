@@ -11,11 +11,11 @@ use App\Http\Requests\Game\User\InfoGetRequest;
 use App\Http\Requests\Game\User\ListGetRequest;
 use App\Http\Requests\Game\User\RequestAccessRequest;
 use App\Http\Requests\Game\User\SearchRequest;
-use App\Models\GameAccount;
-use App\Models\GameAccountBlock;
-use App\Models\GameAccountFriend;
-use App\Models\GameUser;
-use App\Models\GameUserScore;
+use App\Models\Game\Account;
+use App\Models\Game\Account\Block;
+use App\Models\Game\Account\Friend;
+use App\Models\Game\User;
+use App\Models\Game\UserScore;
 use GDCN\GDObject;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
@@ -39,14 +39,18 @@ class UsersController extends Controller
             $request->auth(true);
 
             try {
-                $viewer = $request->getGameUser();
-                $target = GameAccount::whereId($data['targetAccountID'])->firstOrFail();
+                $viewer = $request->user;
+                if (!$viewer) {
+                    return ResponseCode::USER_NOT_FOUND;
+                }
+
+                $target = Account::whereId($data['targetAccountID'])->firstOrFail();
             } catch (ModelNotFoundException $e) {
                 return ResponseCode::ACCOUNT_NOT_FOUND;
             }
 
             $viewerAccountID = $viewer->account->id ?? 0;
-            $globalRank = GameUserScore::query()->where('stars', '<=', $target->user->score->stars ?? 0)->count();
+            $globalRank = UserScore::query()->where('stars', '<=', $target->user->score->stars ?? 0)->count();
 
             if ($viewerAccountID !== $data['targetAccountID'] && !empty($viewerAccountID)) {
                 if ($target->friend->has($viewerAccountID)) {
@@ -167,7 +171,7 @@ class UsersController extends Controller
     public function search(SearchRequest $request, Helpers $helper)
     {
         $data = $request->validated();
-        $query = is_numeric($data['str']) ? GameUser::whereId($data['str']) : GameUser::query()
+        $query = is_numeric($data['str']) ? User::whereId($data['str']) : User::query()
             ->where('name', 'LIKE', '%' . $data['str'] . '%');
 
         $count = $query->count();
@@ -178,7 +182,7 @@ class UsersController extends Controller
         $users = $query->forPage(++$data['page'], $helper->perPage)
             ->with('score')
             ->get()
-            ->map(function (GameUser $user) {
+            ->map(function (User $user) {
                 return GDObject::merge([
                     1 => $user->name,
                     2 => $user->id,
@@ -207,7 +211,7 @@ class UsersController extends Controller
      */
     public function requestAccess(RequestAccessRequest $request): int
     {
-        /** @var GameAccount $account */
+        /** @var Account $account */
         $account = $request->user();
 
         return $account->permission->mod_level ?? ResponseCode::FAILED;
@@ -224,7 +228,7 @@ class UsersController extends Controller
         $data = $request->validated();
         switch ($data['type']) {
             case 0: // Friends
-                $query = GameAccountFriend::query()
+                $query = Friend::query()
                     ->orWhere([
                         'account' => $data['accountID'],
                         'target_account' => $data['accountID']
@@ -236,13 +240,13 @@ class UsersController extends Controller
                 }
 
                 return $query->get()
-                    ->map(function (GameAccountFriend $friend) use ($data) {
+                    ->map(function (Friend $friend) use ($data) {
                         $accountID = ($friend->account === (int)$data['accountID'] ? $friend->target_account : $friend->account);
                         $new = $friend->account === $accountID ? !$friend->new = false : !$friend->target_new = false;
                         $friend->save();
 
                         try {
-                            $account = GameAccount::whereId($accountID)->firstOrFail();
+                            $account = Account::whereId($accountID)->firstOrFail();
                         } catch (ModelNotFoundException $e) {
                             return ResponseCode::ACCOUNT_NOT_FOUND;
                         }
@@ -260,17 +264,17 @@ class UsersController extends Controller
                         ], ':');
                     })->join('|');
             case 1: // Blocks
-                $query = GameAccountBlock::whereAccount($data['accountID']);
+                $query = Block::whereAccount($data['accountID']);
                 if ($query->count() <= 0) {
                     return ResponseCode::EMPTY_RESULT;
                 }
 
                 return $query->get()
-                    ->map(function (GameAccountBlock $block) use ($data) {
+                    ->map(function (Block $block) use ($data) {
 
                         try {
                             $accountID = ($block->account === (int)$data['accountID']) ? $block->target_account : $block->account;
-                            $account = GameAccount::whereId($accountID)->firstOrFail();
+                            $account = Account::whereId($accountID)->firstOrFail();
                         } catch (ModelNotFoundException $e) {
                             return ResponseCode::ACCOUNT_NOT_FOUND;
                         }

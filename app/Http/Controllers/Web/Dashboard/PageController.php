@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Web\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Presenter\WebDashboardPresenter;
+use App\Presenter\Web\DashboardPresenter;
 use Inertia\Response;
 
 /**
@@ -13,15 +13,15 @@ use Inertia\Response;
 class PageController extends Controller
 {
     /**
-     * @var WebDashboardPresenter
+     * @var DashboardPresenter
      */
     protected $presenter;
 
     /**
      * WebDashboardPageController constructor.
-     * @param WebDashboardPresenter $presenter
+     * @param DashboardPresenter $presenter
      */
-    public function __construct(WebDashboardPresenter $presenter)
+    public function __construct(DashboardPresenter $presenter)
     {
         $this->presenter = $presenter;
     }

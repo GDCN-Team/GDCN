@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\Account\SaveData;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class GetUrlRequest extends Request
@@ -18,7 +18,7 @@ class GetUrlRequest extends Request
         return [
             'accountID' => [
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'type' => [
                 'required',

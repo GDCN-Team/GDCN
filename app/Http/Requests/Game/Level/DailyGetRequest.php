@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\Level;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class DailyGetRequest extends Request
@@ -22,7 +22,7 @@ class DailyGetRequest extends Request
             'accountID' => [
                 'sometimes',
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'secret' => [

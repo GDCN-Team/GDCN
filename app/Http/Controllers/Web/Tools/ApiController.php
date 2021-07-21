@@ -10,8 +10,8 @@ use App\Http\Requests\Web\Tools\Level\TransOutApiRequest;
 use App\Http\Requests\Web\Tools\Song\UpdateApiRequest;
 use App\Http\Requests\Web\Tools\Song\UploadLinkApiRequest;
 use App\Http\Requests\Web\Tools\Song\UploadNeteaseApiRequest;
-use App\Models\GameAccount;
-use App\Models\GameCustomSong;
+use App\Models\Game\Account;
+use App\Models\Game\CustomSong;
 use App\Services\Web\Tools\AccountService;
 use App\Services\Web\Tools\LevelService;
 use App\Services\Web\Tools\SongService;
@@ -93,23 +93,23 @@ class ApiController extends Controller
     }
 
     /**
-     * @param GameCustomSong $song
+     * @param CustomSong $song
      * @return InertiaResponse
      */
-    public function deleteSong(GameCustomSong $song): InertiaResponse
+    public function deleteSong(CustomSong $song): InertiaResponse
     {
-        /** @var GameAccount $account */
+        /** @var Account $account */
         $account = Auth::user();
 
         return $this->songService->deleteSong($account, $song);
     }
 
     /**
-     * @param GameCustomSong $song
+     * @param CustomSong $song
      * @param UpdateApiRequest $request
      * @return InertiaResponse
      */
-    public function updateSong(GameCustomSong $song, UpdateApiRequest $request): InertiaResponse
+    public function updateSong(CustomSong $song, UpdateApiRequest $request): InertiaResponse
     {
         $data = $request->validated();
         return $this->songService->updateSong(

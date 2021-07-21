@@ -2,7 +2,7 @@
 
 namespace App\Services\Game;
 
-use App\Models\GameLevel;
+use App\Models\Game\Level;
 
 /**
  * Class LevelService
@@ -11,11 +11,11 @@ use App\Models\GameLevel;
 class LevelService
 {
     /**
-     * @param GameLevel $level
+     * @param Level $level
      * @param int $songID
      * @return bool
      */
-    public function setSong(GameLevel $level, int $songID): bool
+    public function setSong(Level $level, int $songID): bool
     {
         $level->song = $songID;
         return $level->save();

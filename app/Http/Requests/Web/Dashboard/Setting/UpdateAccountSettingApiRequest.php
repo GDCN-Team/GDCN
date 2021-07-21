@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Web\Dashboard\Setting;
 
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -21,11 +21,11 @@ class UpdateAccountSettingApiRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                Rule::unique(GameAccount::class)->ignore($accountID)
+                Rule::unique(Account::class)->ignore($accountID)
             ],
             'email' => [
                 'required',
-                Rule::unique(GameAccount::class)->ignore($accountID)
+                Rule::unique(Account::class)->ignore($accountID)
             ],
             'password_confirmation' => [
                 'required',

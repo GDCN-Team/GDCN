@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Account\LoginRequest;
 use App\Http\Requests\Game\Account\RegisterRequest;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use App\Services\Web\NoticeService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -59,7 +59,7 @@ class AccountsController extends Controller
          */
 
         $data = $request->validated();
-        $account = GameAccount::query()
+        $account = Account::query()
             ->create([
                 'name' => $data['userName'],
                 'email' => $data['email'],
@@ -78,7 +78,7 @@ class AccountsController extends Controller
     {
         if ($hash = $request->get('_')) {
             [$accountID, $email] = explode(':', Crypt::decryptString($hash));
-            $account = GameAccount::where([
+            $account = Account::where([
                 'id' => $accountID,
                 'email' => $email
             ])->first();
@@ -105,9 +105,6 @@ class AccountsController extends Controller
     public function login(LoginRequest $request)
     {
         $data = $request->validated();
-        $request->auth();
-
-        /** @var GameAccount $account */
         $account = $request->user();
 
         if (!$account->hasVerifiedEmail()) {

@@ -4,9 +4,9 @@ namespace App\Services\Web\Tools;
 
 use App\Exceptions\Web\Tools\UnknownServerException;
 use App\Game\Helpers;
-use App\Models\GameAccount;
-use App\Models\GameAccountLink;
-use App\Presenter\WebToolsPresenter;
+use App\Models\Game\Account;
+use App\Models\Game\Account\Link;
+use App\Presenter\Web\ToolsPresenter;
 use App\Services\Web\NoticeService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -25,16 +25,16 @@ class AccountService
     protected $noticeService;
 
     /**
-     * @var WebToolsPresenter
+     * @var ToolsPresenter
      */
     protected $presenter;
 
     /**
      * AccountService constructor.
-     * @param WebToolsPresenter $presenter
+     * @param ToolsPresenter $presenter
      * @param NoticeService $noticeService
      */
-    public function __construct(WebToolsPresenter $presenter, NoticeService $noticeService)
+    public function __construct(ToolsPresenter $presenter, NoticeService $noticeService)
     {
         $this->presenter = $presenter;
         $this->noticeService = $noticeService;
@@ -48,7 +48,7 @@ class AccountService
      */
     public function linkAccount($serverAlias, $name, $password): InertiaResponse
     {
-        /** @var GameAccount $account */
+        /** @var Account $account */
         $account = Auth::user();
 
         try {
@@ -74,7 +74,7 @@ class AccountService
         }
 
         [$accountID, $userID] = explode(',', $response);
-        $exists = GameAccountLink::whereHost($host)
+        $exists = Link::whereHost($host)
             ->whereTargetAccountId($accountID)
             ->whereTargetUserId($userID)
             ->exists();
@@ -84,7 +84,7 @@ class AccountService
             return $this->presenter->accountLink();
         }
 
-        $link = new GameAccountLink();
+        $link = new Link();
         $link->host = $host;
         $link->account = $account->id;
         $link->target_account_id = $accountID;
@@ -102,10 +102,10 @@ class AccountService
      */
     public function unlinkAccount($id): InertiaResponse
     {
-        /** @var GameAccount $account */
+        /** @var Account $account */
         $account = Auth::user();
 
-        $link = GameAccountLink::whereId($id)->first();
+        $link = Link::whereId($id)->first();
         if (!$link) {
             $this->noticeService->sendErrorNotice('链接不存在(或未找到)');
             return $this->presenter->accountLink();

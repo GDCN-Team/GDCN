@@ -5,12 +5,12 @@ namespace App\Http\Requests\Game\Level;
 use App\Enums\Game\Log\Types;
 use App\Game\Components\Hash\Checker;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameDailyLevel;
-use App\Models\GameLevel;
-use App\Models\GameLog;
-use App\Models\GameUser;
-use App\Models\GameWeeklyLevel;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
+use App\Models\Game\Level\Daily;
+use App\Models\Game\Level\Weekly;
+use App\Models\Game\Log;
+use App\Models\Game\User;
 use GDCN\ChkValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
@@ -27,12 +27,12 @@ class DownloadRequest extends Request
     public $feaID = 0;
 
     /**
-     * @var GameLevel
+     * @var Level
      */
     public $level;
 
     /**
-     * @var GameUser
+     * @var User
      */
     public $user;
 
@@ -49,18 +49,18 @@ class DownloadRequest extends Request
 
         switch ($this->levelID) {
             case -1: // Daily
-                $daily = GameDailyLevel::query()->latest();
+                $daily = Daily::query()->latest();
                 $this->feaID = $daily->id;
-                $this->level = GameLevel::whereId($daily->level)->first();
+                $this->level = Level::whereId($daily->level)->first();
                 break;
             case -2: // Weekly
-                $weekly = GameWeeklyLevel::query()->latest();
+                $weekly = Weekly::query()->latest();
                 $this->feaID = $weekly->id + config('game.weeklyIdOffset', 100000);
-                $this->level = GameLevel::whereId($weekly->level)->first();
+                $this->level = Level::whereId($weekly->level)->first();
                 break;
             default:
                 try {
-                    $this->level = GameLevel::whereId($this->levelID)->firstOrFail();
+                    $this->level = Level::whereId($this->levelID)->firstOrFail();
                 } catch (ModelNotFoundException $e) {
                     return false;
                 }
@@ -73,7 +73,7 @@ class DownloadRequest extends Request
             'ip' => $this->ip()
         ];
 
-        $log = GameLog::query()
+        $log = Log::query()
             ->where($attributes);
 
         if (!$log->exists()) {
@@ -105,14 +105,14 @@ class DownloadRequest extends Request
                 'sometimes',
                 'required',
                 'exclude_if:accountID,0',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'udid' => 'required_with:gjp',
             'uuid' => 'required_with:udid',
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ],
             'inc' => 'required',
             'extras' => 'required',

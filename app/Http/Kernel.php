@@ -3,7 +3,6 @@
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
-use App\Http\Middleware\CheckPermission;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
@@ -93,7 +92,6 @@ class Kernel extends HttpKernel
         'password.confirm' => RequirePassword::class,
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,
-        'verified' => EnsureEmailIsVerified::class,
-        'permission.can' => CheckPermission::class
+        'verified' => EnsureEmailIsVerified::class
     ];
 }

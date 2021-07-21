@@ -3,28 +3,28 @@
 namespace App\Http\Controllers\Web\Tools;
 
 use App\Http\Controllers\Controller;
-use App\Presenter\WebToolsPresenter;
+use App\Presenter\Web\ToolsPresenter;
 use App\Repositories\Game\CustomSongRepository;
 use Inertia\Response;
 
 class PageController extends Controller
 {
     /**
-     * @var WebToolsPresenter
+     * @var ToolsPresenter
      */
     protected $presenter;
 
     /**
-     * @var \App\Repositories\Game\CustomSongRepository
+     * @var CustomSongRepository
      */
     protected $repository;
 
     /**
      * WebToolsPageController constructor.
-     * @param WebToolsPresenter $presenter
+     * @param ToolsPresenter $presenter
      * @param CustomSongRepository $repository
      */
-    public function __construct(WebToolsPresenter $presenter, CustomSongRepository $repository)
+    public function __construct(ToolsPresenter $presenter, CustomSongRepository $repository)
     {
         $this->presenter = $presenter;
         $this->repository = $repository;

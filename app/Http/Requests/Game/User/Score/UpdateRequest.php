@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\User\Score;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class UpdateRequest extends Request
@@ -22,7 +22,7 @@ class UpdateRequest extends Request
             'accountID' => [
                 'sometimes',
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'uuid' => 'required_without_all:accountID,gjp',

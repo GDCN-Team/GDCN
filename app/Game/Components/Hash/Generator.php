@@ -3,7 +3,7 @@
 namespace App\Game\Components\Hash;
 
 /**
- * Class Generator
+ * Class ChkGenerator
  * @package App\Game\Components\Hash
  */
 class Generator

@@ -7,7 +7,7 @@ use App\Exceptions\Game\InvalidArgumentException;
 use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Challenge\GetRequest;
-use App\Models\GameChallenge;
+use App\Models\Game\Challenge;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
@@ -42,7 +42,7 @@ class ChallengesController extends Controller
 
             /* Generate challenges */
             $today = Carbon::today();
-            $challenges = GameChallenge::query()
+            $challenges = Challenge::query()
                 ->where('updated_at', '>', $today);
 
             $challengeCount = $challenges->count();
@@ -59,7 +59,7 @@ class ChallengesController extends Controller
                         [$every, $reward] = $config['proportion'];
 
                         $collect = random_int($collectConfig['min'], $collectConfig['max']);
-                        $challenge = new GameChallenge();
+                        $challenge = new Challenge();
                         $challenge->type = $type;
                         $challenge->name = $name;
                         $challenge->collect_count = $collect;
@@ -77,7 +77,7 @@ class ChallengesController extends Controller
                 return ResponseCode::CHALLENGE_NOT_ENOUGH;
             }
 
-            $user = $request->getGameUser();
+            $user = $request->user;
             if (!$user) {
                 return ResponseCode::USER_NOT_FOUND;
             }

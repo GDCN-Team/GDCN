@@ -4,7 +4,7 @@ namespace App\Http\Requests\Game\User;
 
 use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class ListGetRequest extends Request
@@ -36,7 +36,7 @@ class ListGetRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'type' => [

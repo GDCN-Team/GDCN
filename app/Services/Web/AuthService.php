@@ -2,8 +2,8 @@
 
 namespace App\Services\Web;
 
-use App\Presenter\WebAuthPresenter;
-use App\Presenter\WebDashboardPresenter;
+use App\Presenter\Web\AuthPresenter;
+use App\Presenter\Web\DashboardPresenter;
 use App\Services\Game\AccountService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +18,7 @@ use Inertia\Response as InertiaResponse;
 class AuthService
 {
     /**
-     * @var WebAuthPresenter
+     * @var AuthPresenter
      */
     protected $presenter;
 
@@ -33,18 +33,18 @@ class AuthService
     protected $gameAccountService;
 
     /**
-     * @var WebDashboardPresenter
+     * @var DashboardPresenter
      */
     protected $dashboardPresenter;
 
     /**
      * AuthService constructor.
-     * @param WebAuthPresenter $presenter
-     * @param WebDashboardPresenter $dashboardPresenter
+     * @param AuthPresenter $presenter
+     * @param DashboardPresenter $dashboardPresenter
      * @param NoticeService $noticeService
      * @param AccountService $gameAccountService
      */
-    public function __construct(WebAuthPresenter $presenter, WebDashboardPresenter $dashboardPresenter, NoticeService $noticeService, AccountService $gameAccountService)
+    public function __construct(AuthPresenter $presenter, DashboardPresenter $dashboardPresenter, NoticeService $noticeService, AccountService $gameAccountService)
     {
         $this->presenter = $presenter;
         $this->noticeService = $noticeService;

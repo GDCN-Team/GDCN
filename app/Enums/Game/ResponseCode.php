@@ -10,16 +10,54 @@ use BenSampo\Enum\Enum;
  */
 final class ResponseCode extends Enum
 {
+    // Account block
+    public const BLOCK_FAILED = self::FAILED;
+    public const BLOCK_SUCCESS = self::OK;
+    public const UNBLOCK_SUCCESS = self::OK;
+    public const UNBLOCK_FAILED = self::DELETE_FAILED;
+
+    // Account Comment
+    public const ACCOUNT_COMMENT_UPLOAD_FAILED = self::FAILED;
+    public const ACCOUNT_COMMENT_DELETE_SUCCESS = self::OK;
+    public const ACCOUNT_COMMENT_DELETE_FAILED = self::FAILED;
+
+    // Account Friend Request
+    public const FRIEND_REQUEST_UPLOAD_FAILED = self::FAILED;
+    public const FRIEND_REQUEST_DELETE_SUCCESS = self::OK;
+    public const FRIEND_REQUEST_DELETE_FAILED = self::FAILED;
+    public const FRIEND_REQUEST_READ_SUCCESS = self::OK;
+    public const FRIEND_REQUEST_READ_FAILED = self::FAILED;
+    public const FRIEND_REQUEST_ACCEPT_SUCCESS = self::OK;
+    public const FRIEND_REQUEST_ACCEPT_FAILED = self::FAILED;
+
+    // Account Friend
+    public const FRIEND_REMOVE_SUCCESS = self::OK;
+    public const FRIEND_REMOVE_FAILED = self::FAILED;
+
+    // Account Message
+    public const MESSAGE_SENT_SUCCESS = self::OK;
+    public const MESSAGE_SENT_FAILED = self::FAILED;
+    public const MESSAGE_DELETE_SUCCESS = self::OK;
+    public const MESSAGE_DELETE_FAILED = self::FAILED;
+    public const MESSAGE_DOWNLOAD_FAILED = self::FAILED;
+
+    // Account Save Data
+    public const ACCOUNT_DATA_SAVE_SUCCESS = self::OK;
+    public const ACCOUNT_DATA_SAVE_FAILED = self::FAILED;
+    public const ACCOUNT_DATA_LOAD_FAILED = self::FAILED;
+
+    // Account Setting
+    public const ACCOUNT_SETTING_UPDATE_SUCCESS = self::OK;
+    public const ACCOUNT_SETTING_UPDATE_FAILED = self::FAILED;
+
     //Account register
     public const REGISTER_USERNAME_NOT_UNIQUE = -2;
     public const REGISTER_EMAIL_NOT_UNIQUE = -3;
     public const REGISTER_EMAIL_INVALID = -6;
 
-    //Account block
-    public const BLOCK_FAILED = self::FAILED;
-    public const BLOCK_SUCCESS = self::OK;
-    public const UNBLOCK_SUCCESS = self::OK;
-    public const UNBLOCK_FAILED = self::DELETE_FAILED;
+    // Song
+    public const SONG_DISABLE = -2;
+    public const SONG_NOT_FOUND = self::FAILED;
 
     public const FAILED = -1;
     public const OK = 1;
@@ -28,6 +66,7 @@ final class ResponseCode extends Enum
 
     public const EMPTY_RESULT_FAILED = self::FAILED;
     public const EMPTY_RESULT = -2;
+    public const EMPTY_RESULT_STRING = '#0:0:0';
 
     public const REQUEST_CHECK_FAILED = self::FAILED;
     public const INVALID_REQUEST = self::FAILED;

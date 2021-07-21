@@ -3,12 +3,25 @@
 namespace App\Http\Requests\Game\Account\Friend\Request;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameAccountFriendRequest;
+use App\Models\Game\Account;
+use App\Models\Game\Account\FriendRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Class ReadRequest
+ * @package App\Http\Requests\Game\Account\Friend\Request
+ */
 class ReadRequest extends Request
 {
+    /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        return $this->validateAccountGJP();
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -20,19 +33,10 @@ class ReadRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
-            'gjp' => 'required_with:accountID',
-            'requestID' => [
-                'required',
-                Rule::exists(GameAccountFriendRequest::class, 'id')
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'accountID' => Rule::exists(Account::class, 'id'),
+            'gjp' => 'required',
+            'requestID' => Rule::exists(FriendRequest::class, 'id'),
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

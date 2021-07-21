@@ -6,7 +6,7 @@ use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Reward\GetRequest;
-use App\Models\GameUserScore;
+use App\Models\Game\UserScore;
 use Exception;
 use Illuminate\Support\Str;
 
@@ -28,14 +28,14 @@ class RewardsController extends Controller
         try {
             $data = $request->validated();
 
-            $user = $request->getGameUser();
+            $user = $request->user;
             if (!$user) {
                 return ResponseCode::USER_NOT_FOUND;
             }
 
             $userScore = $user->score;
             if (!$userScore) {
-                $userScore = new GameUserScore();
+                $userScore = new UserScore();
                 $userScore->user = $user->id;
                 $userScore->game_version = $data['gameVersion'];
                 $userScore->binary_version = $data['binaryVersion'];

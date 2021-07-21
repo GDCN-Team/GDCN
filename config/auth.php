@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Game\Account;
+use App\Models\Game\User;
+
 return [
 
     /*
@@ -14,7 +17,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'game',
+        'guard' => 'web',
         'passwords' => 'accounts',
     ],
 
@@ -38,12 +41,17 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'accounts',
         ],
 
         'game' => [
-            'driver' => 'session',
+            'driver' => 'game',
             'provider' => 'accounts',
+        ],
+
+        'game.user' => [
+            'driver' => 'game',
+            'provider' => 'users',
         ],
 
         'api' => [
@@ -71,19 +79,14 @@ return [
     */
 
     'providers' => [
-        // 'users' => [
-        //     'driver' => 'eloquent',
-        //     'model' => App\Models\User::class,
-        // ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => User::class,
+        ],
 
         'accounts' => [
             'driver' => 'eloquent',
-            'model' => App\Models\GameAccount::class,
+            'model' => Account::class,
         ],
     ],
 
@@ -103,13 +106,6 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-
         'accounts' => [
             'provider' => 'accounts',
             'table' => 'game_account_password_resets',
@@ -130,5 +126,4 @@ return [
     */
 
     'password_timeout' => 10800,
-
 ];

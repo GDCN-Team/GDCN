@@ -6,9 +6,8 @@ use App\Exceptions\Game\ChkValidateException;
 use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Game\HashesController;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameLevel;
-use App\Models\GameUser;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 use function app;
@@ -16,12 +15,7 @@ use function app;
 class RateStarsRequest extends Request
 {
     /**
-     * @var GameUser
-     */
-    public $user;
-
-    /**
-     * @var GameLevel
+     * @var Level
      */
     public $level;
 
@@ -37,8 +31,7 @@ class RateStarsRequest extends Request
         }
 
         try {
-            $this->user = $this->getGameUser();
-            $this->level = GameLevel::whereId($this->levelID)->firstOrFail();
+            $this->level = Level::whereId($this->levelID)->firstOrFail();
         } catch (UserNotFoundException | ModelNotFoundException $e) {
             return false;
         }
@@ -60,14 +53,14 @@ class RateStarsRequest extends Request
             'accountID' => [
                 'required',
                 'exclude_if:accountID,0',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'udid' => 'required',
             'uuid' => 'required_with:udid',
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ],
             'stars' => [
                 'required',

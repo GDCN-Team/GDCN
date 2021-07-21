@@ -4,7 +4,7 @@ namespace App\Http\Requests\Game\Account;
 
 use App\Enums\Game\ResponseCode;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class RegisterRequest extends Request
@@ -19,13 +19,13 @@ class RegisterRequest extends Request
         return [
             'userName' => [
                 'required',
-                Rule::unique(GameAccount::class, 'name')
+                Rule::unique(Account::class, 'name')
             ],
             'password' => 'required',
             'email' => [
                 'required',
                 'email',
-                Rule::unique(GameAccount::class)
+                Rule::unique(Account::class)
             ],
             'sID' => 'sometimes',
             'secret' => [

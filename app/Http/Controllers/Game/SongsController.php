@@ -6,8 +6,8 @@ use App\Game\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Song\GetRequest;
 use App\Http\Requests\Game\Song\TopArtistsGetRequest;
-use App\Models\GameCustomSong;
-use App\Models\GameSong;
+use App\Models\Game\CustomSong;
+use App\Models\Game\Song;
 use GDCN\GDObject;
 use Illuminate\Support\Facades\Http;
 
@@ -26,19 +26,20 @@ class SongsController extends Controller
     public function get(GetRequest $request)
     {
         $data = $request->validated();
-        $song = $data['songID'] >= config('game.customSongIdOffset', 5000000) ? GameCustomSong::whereSongId($data['songID'])->first() : GameSong::whereId($data['songID'])->first();
+        $song = $data['songID'] >= config('game.customSongIdOffset', 5000000) ? CustomSong::whereSongId($data['songID'])->first() : Song::whereId($data['songID'])->first();
 
-        if ($song instanceof GameSong || $song instanceof GameCustomSong) {
+        if ($song instanceof Song || $song instanceof CustomSong) {
             return $song->toSongString();
         }
 
         $response = Http::get('http://ng.geometrydashchinese.com/api', [
             'method' => 'object',
-            'songID' => $data['songID']
+            'songID' => $data['songID'],
+            'give_cdn' => true
         ])->body();
 
         $songInfo = GDObject::split($response, '~|~');
-        $song = GameSong::query()
+        $song = Song::query()
             ->updateOrCreate([
                 'id' => $songInfo[1]
             ], [
@@ -66,10 +67,10 @@ class SongsController extends Controller
         $page = $data['page'];
         $perPage = app(Helpers::class)->perPage;
 
-        return GameSong::query()
+        return Song::query()
             ->forPage(++$page, $perPage)
             ->get()
-            ->map(function (GameSong $song) {
+            ->map(function (Song $song) {
                 return GDObject::merge([
                     4 => $song->author_name
                 ], ':');

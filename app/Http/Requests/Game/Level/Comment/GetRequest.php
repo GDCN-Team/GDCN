@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\Level\Comment;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameLevel;
+use App\Models\Game\Level;
 use Illuminate\Validation\Rule;
 
 class GetRequest extends Request
@@ -21,18 +21,9 @@ class GetRequest extends Request
             'gdw' => 'required',
             'page' => 'required',
             'total' => 'required_with:page',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'mode' => [
-                'required',
-                Rule::in([0, 1])
-            ],
-            'levelID' => [
-                'required',
-                Rule::exists(GameLevel::class, 'id')
-            ]
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'mode' => Rule::in([0, 1]),
+            'levelID' => Rule::exists(Level::class, 'id')
         ];
     }
 }

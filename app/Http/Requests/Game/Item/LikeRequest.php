@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\Item;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class LikeRequest extends Request
@@ -22,7 +22,7 @@ class LikeRequest extends Request
             'accountID' => [
                 'sometimes',
                 'exclude_if:accountID,0',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'udid' => 'required',

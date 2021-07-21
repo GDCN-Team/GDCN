@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\Reward;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class GetRequest extends Request
@@ -23,7 +23,7 @@ class GetRequest extends Request
                 'sometimes',
                 'required',
                 'exclude_if:accountID,0',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => [
                 'required_with:accountID',

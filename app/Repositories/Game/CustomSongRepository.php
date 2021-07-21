@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Game;
 
-use App\Models\GameCustomSong;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Game\CustomSong;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 /**
@@ -14,11 +14,11 @@ class CustomSongRepository
 {
     /**
      * @param array|string[] $columns
-     * @return GameCustomSong[]|Builder[]|\Illuminate\Database\Eloquent\Collection|Collection
+     * @return EloquentCollection|array|Collection
      */
-    public function getForSongList(array $columns = ['id', 'name', 'type', 'author_name', 'download_url', 'song_id', 'size', 'uploader'])
+    public function getForSongList(array $columns = ['id', 'name', 'type', 'author_name', 'download_url', 'song_id', 'size', 'uploader']): EloquentCollection|array|Collection
     {
-        return GameCustomSong::query()
+        return CustomSong::query()
             ->with('owner:id,name')
             ->get($columns);
     }

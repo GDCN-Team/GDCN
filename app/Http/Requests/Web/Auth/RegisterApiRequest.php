@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Web\Auth;
 
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,7 +18,7 @@ class RegisterApiRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                Rule::unique(GameAccount::class)
+                Rule::unique(Account::class)
             ],
             'password' => 'required',
             'password_confirmation' => [
@@ -27,7 +27,7 @@ class RegisterApiRequest extends FormRequest
             ],
             'email' => [
                 'required',
-                Rule::unique(GameAccount::class)
+                Rule::unique(Account::class)
             ]
         ];
     }

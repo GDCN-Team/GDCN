@@ -9,10 +9,9 @@ use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Item\LikeRequest;
 use App\Http\Requests\Game\Item\RestoreRequest;
-use App\Models\GameAccountComment;
-use App\Models\GameLevel;
-use App\Models\GameLevelComment;
-use App\Models\GameLog;
+use App\Models\Game\Account\Comment;
+use App\Models\Game\Level;
+use App\Models\Game\Log;
 
 /**
  * Class MiscController
@@ -39,15 +38,15 @@ class MiscController extends Controller
 
             switch ($data['type']) {
                 case 1: // Level
-                    $item = GameLevel::whereId($data['itemID'])->first();
+                    $item = Level::whereId($data['itemID'])->first();
                     $logType = Types::LIKE_LEVEL;
                     break;
                 case 2: // Level Comment
-                    $item = GameLevelComment::whereId($data['itemID'])->first();
+                    $item = Comment::whereId($data['itemID'])->first();
                     $logType = Types::LIKE_LEVEL_COMMENT;
                     break;
                 case 3: // Account Comment
-                    $item = GameAccountComment::whereId($data['itemID'])->first();
+                    $item = Comment::whereId($data['itemID'])->first();
                     $logType = Types::LIKE_ACCOUNT_COMMENT;
                     break;
                 default:
@@ -58,7 +57,11 @@ class MiscController extends Controller
                 return ResponseCode::ITEM_NOT_FOUND;
             }
 
-            $user = $request->getGameUser();
+            $user = $request->user;
+            if (!$user) {
+                return ResponseCode::USER_NOT_FOUND;
+            }
+
             $attributes = [
                 'type' => $logType,
                 'value' => $item->id,
@@ -69,7 +72,7 @@ class MiscController extends Controller
                 'ip' => $request->ip()
             ];
 
-            $log = GameLog::query()
+            $log = Log::query()
                 ->where($attributes);
 
             if (!$log->exists()) {

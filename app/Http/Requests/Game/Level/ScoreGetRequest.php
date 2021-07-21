@@ -4,8 +4,8 @@ namespace App\Http\Requests\Game\Level;
 
 use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameLevel;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
 use Illuminate\Validation\Rule;
 
 class ScoreGetRequest extends Request
@@ -37,12 +37,12 @@ class ScoreGetRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ],
             'percent' => [
                 'required',

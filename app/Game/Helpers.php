@@ -7,10 +7,10 @@ use App\Exceptions\Game\Command\ExecuteException;
 use App\Exceptions\Web\Tools\UnknownServerException;
 use App\Game\Components\Command\AccountCommentCommands;
 use App\Game\Components\Command\LevelCommentCommands;
-use App\Models\GameAccountComment;
-use App\Models\GameLevelComment;
+use App\Models\Game\Account\Comment;
 use Base64Url\Base64Url;
 use GDCN\XORCipher;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -102,40 +102,40 @@ class Helpers
 
         switch ($stars) {
             case 1:
-                $name = "Auto";
+                $name = 'Auto';
                 $diff = 50;
                 $auto = true;
                 break;
             case 2:
-                $name = "Easy";
+                $name = 'Easy';
                 $diff = 10;
                 break;
             case 3:
-                $name = "Normal";
+                $name = 'Normal';
                 $diff = 20;
                 break;
             case 4:
             case 5:
-                $name = "Hard";
-                $diff = 30;
+            $name = 'Hard';
+            $diff = 30;
                 break;
             case 6:
             case 7:
-                $name = "Harder";
-                $diff = 40;
+            $name = 'Harder';
+            $diff = 40;
                 break;
             case 8:
             case 9:
-                $name = "Insane";
-                $diff = 50;
+            $name = 'Insane';
+            $diff = 50;
                 break;
             case 10:
-                $name = "Demon";
+                $name = 'Demon';
                 $diff = 50;
                 $demon = true;
                 break;
             default:
-                $name = $stars > 10 ? "Demon" : "N/A";
+                $name = $stars > 10 ? 'Demon' : 'N/A';
                 $diff = $stars > 10 ? 50 : 0;
                 $demon = $stars > 10;
                 break;
@@ -166,15 +166,15 @@ class Helpers
     }
 
     /**
-     * @param GameAccountComment|GameLevelComment $comment
+     * @param Comment|Comment $comment
      * @return string|null
      */
     public function doCommand($comment): ?string
     {
-        if ($comment instanceof GameAccountComment && config('game.feature.command.account_comment.enabled')) {
+        if ($comment instanceof Comment && config('game.feature.command.account_comment.enabled')) {
             $class = AccountCommentCommands::class;
             $prefix = config('game.feature.command.account_comment.prefix', '!');
-        } else if ($comment instanceof GameLevelComment && config('game.feature.command.level_comment.enabled')) {
+        } else if ($comment instanceof Comment && config('game.feature.command.level_comment.enabled')) {
             $class = LevelCommentCommands::class;
             $prefix = config('game.feature.command.level_comment.prefix', '!');
         } else {
@@ -275,7 +275,12 @@ class Helpers
             case 'official':
                 return 'dl.geometrydashchinese.com';
             default:
-                throw new UnknownServerException;
+                throw new UnknownServerException();
         }
+    }
+
+    public function setCarbonLocaleToEnglish()
+    {
+        Carbon::setLocale('en');
     }
 }

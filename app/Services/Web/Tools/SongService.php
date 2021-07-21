@@ -3,9 +3,9 @@
 namespace App\Services\Web\Tools;
 
 use App\Enums\Web\Tools\Song\Types;
-use App\Models\GameAccount;
-use App\Models\GameCustomSong;
-use App\Presenter\WebToolsPresenter;
+use App\Models\Game\Account;
+use App\Models\Game\CustomSong;
+use App\Presenter\Web\ToolsPresenter;
 use App\Services\Web\NoticeService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -23,16 +23,16 @@ class SongService
     protected $noticeService;
 
     /**
-     * @var WebToolsPresenter
+     * @var ToolsPresenter
      */
     protected $presenter;
 
     /**
      * SongService constructor.
-     * @param WebToolsPresenter $presenter
+     * @param ToolsPresenter $presenter
      * @param NoticeService $noticeService
      */
-    public function __construct(WebToolsPresenter $presenter, NoticeService $noticeService)
+    public function __construct(ToolsPresenter $presenter, NoticeService $noticeService)
     {
         $this->presenter = $presenter;
         $this->noticeService = $noticeService;
@@ -45,7 +45,7 @@ class SongService
      */
     public function upload_netease(int $songID, int $musicID): Response
     {
-        if (GameCustomSong::whereSongId($songID)->exists()) {
+        if (CustomSong::whereSongId($songID)->exists()) {
             $this->noticeService->sendErrorNotice("歌曲ID $songID 已被使用");
         } else {
             $data = Http::get("https://music.163.com/api/song/detail?ids=[$musicID]")->json();
@@ -60,11 +60,11 @@ class SongService
                     $artists[] = $artist['name'];
                 }
 
-                $s = GameCustomSong::whereHash($hash);
+                $s = CustomSong::whereHash($hash);
                 if ($s->exists()) {
                     $this->noticeService->sendErrorNotice("歌曲 {$music['name']} 已被上传过了", "歌曲ID: {$s->value('song_id')}");
                 } else {
-                    $song = new GameCustomSong();
+                    $song = new CustomSong();
                     $song->song_id = $songID;
                     $song->type = Types::NETEASE_MUSIC;
                     $song->name = $music['name'];
@@ -85,11 +85,11 @@ class SongService
     }
 
     /**
-     * @param GameAccount $operator
-     * @param GameCustomSong $song
+     * @param Account $operator
+     * @param CustomSong $song
      * @return Response
      */
-    public function deleteSong(GameAccount $operator, GameCustomSong $song): Response
+    public function deleteSong(Account $operator, CustomSong $song): Response
     {
         if ($operator->can('delete', $song)) {
             $song->delete();
@@ -110,7 +110,7 @@ class SongService
      */
     public function upload_link($songID, $name, $authorName, $link): Response
     {
-        $s = GameCustomSong::whereDownloadUrl($link);
+        $s = CustomSong::whereDownloadUrl($link);
         if ($s->exists()) {
             $this->noticeService->sendErrorNotice('上传失败', "原因: 歌曲已存在, 歌曲ID: {$s->value('song_id')}");
         } else {
@@ -122,12 +122,12 @@ class SongService
             } else {
                 $hash = sha1("link:$link");
 
-                $song = GameCustomSong::whereHash($hash);
+                $song = CustomSong::whereHash($hash);
                 if ($song->exists()) {
                     $this->noticeService->sendErrorNotice('上传失败', "原因: 歌曲已存在, 歌曲ID: {$song->value('song_id')}");
                 }
 
-                $song = new GameCustomSong();
+                $song = new CustomSong();
                 $song->song_id = $songID;
                 $song->type = Types::LINK;
                 $song->name = $name;
@@ -147,14 +147,14 @@ class SongService
     }
 
     /**
-     * @param GameAccount $operator
-     * @param GameCustomSong $song
+     * @param Account $operator
+     * @param CustomSong $song
      * @param $newSongID
      * @param $newName
      * @param $newAuthorName
      * @return Response
      */
-    public function updateSong(GameAccount $operator, GameCustomSong $song, $newSongID, $newName, $newAuthorName): Response
+    public function updateSong(Account $operator, CustomSong $song, $newSongID, $newName, $newAuthorName): Response
     {
         if ($operator->can('edit', $song)) {
             $song->song_id = $newSongID;

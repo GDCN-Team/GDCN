@@ -2,46 +2,19 @@
 
 namespace App\Http\Requests\Game\Account\Message;
 
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameAccountMessage;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Arr;
+use App\Models\Game\Account;
+use App\Models\Game\Account\Message;
 use Illuminate\Validation\Rule;
 
 class DeleteRequest extends Request
 {
     /**
-     * @var Collection
-     */
-    public $messages;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
      * @return bool
      */
     public function authorize(): bool
     {
-        try {
-            $this->auth();
-            if (!empty($this['messages'])) {
-                $messageIds = explode(',', $this['messages']);
-            } else if (!empty($this->messageID)) {
-                $messageIds = Arr::wrap($this->messageID);
-            } else {
-                return false;
-            }
-
-            $this->messages = GameAccountMessage::query()
-                ->findMany($messageIds);
-
-        } catch (AuthenticationException $e) {
-            return false;
-        }
-
-        return count($this->messages) > 0;
+        return $this->validateAccountGJP();
     }
 
     /**
@@ -55,24 +28,16 @@ class DeleteRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
+            'accountID' => Rule::exists(Account::class, 'id'),
             'gjp' => 'required_with:accountID',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
+            'secret' => Rule::in('Wmfd2893gb7'),
             'isSender' => [
                 'sometimes',
-                'required',
                 'boolean'
             ],
             'messageID' => [ // single delete
                 'sometimes',
-                'required',
-                Rule::exists(GameAccountMessage::class, 'id')
+                Rule::exists(Message::class, 'id')
             ],
             'messages' => 'required_without:messageID' // multi delete
         ];

@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\User;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class InfoGetRequest extends Request
@@ -21,14 +21,14 @@ class InfoGetRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'uuid' => 'required_without_all:accountID,gjp',
             'udid' => 'required_with:uuid',
             'targetAccountID' => [
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'secret' => [
                 'required',

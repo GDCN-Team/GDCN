@@ -15,14 +15,14 @@ use App\Http\Requests\Game\Level\ReportRequest;
 use App\Http\Requests\Game\Level\SearchRequest;
 use App\Http\Requests\Game\Level\UpdateDescRequest;
 use App\Http\Requests\Game\Level\UploadRequest;
-use App\Models\GameCustomSong;
-use App\Models\GameDailyLevel;
-use App\Models\GameLevel;
-use App\Models\GameLevelReport;
-use App\Models\GameLog;
-use App\Models\GameSong;
-use App\Models\GameUser;
-use App\Models\GameWeeklyLevel;
+use App\Models\Game\CustomSong;
+use App\Models\Game\Level;
+use App\Models\Game\Level\Daily;
+use App\Models\Game\Level\Report;
+use App\Models\Game\Level\Weekly;
+use App\Models\Game\Log;
+use App\Models\Game\Song;
+use App\Models\Game\User;
 use Exception;
 use GDCN\ChkValidationException;
 use GDCN\GDObject;
@@ -65,11 +65,14 @@ class LevelsController extends Controller
     {
         try {
             $data = $request->validated();
-            $user = $request->getGameUser();
+            $user = $request->user;
+            if (!$user) {
+                return ResponseCode::USER_NOT_FOUND;
+            }
 
-            $level = GameLevel::whereId($data['levelID'])->firstOrNew();
+            $level = Level::whereId($data['levelID'])->firstOrNew();
             if ($level->exists() && $user->cannot('update', $level)) {
-                $level = new GameLevel();
+                $level = new Level();
             }
 
             $level = $level->fill([
@@ -117,7 +120,7 @@ class LevelsController extends Controller
     {
         try {
             $data = $request->validated();
-            $query = GameLevel::query();
+            $query = Level::query();
 
             // Advanced Options
             if (!empty($data['uncompleted']) && !empty($data['completedLevels'])) {
@@ -268,7 +271,7 @@ class LevelsController extends Controller
             $page = $data['page'];
 
             $levels = $query->forPage(++$page, $helper->perPage)->get();
-            $result = $levels->map(fn(GameLevel $level) => GDObject::merge([
+            $result = $levels->map(fn(Level $level) => GDObject::merge([
                 1 => $level->id,
                 2 => $level->name,
                 3 => $level->desc,
@@ -299,21 +302,21 @@ class LevelsController extends Controller
 
             $users = $query->pluck('user')
                 ->map(function ($userID) {
-                    $user = GameUser::whereId($userID)->first();
+                    $user = User::whereId($userID)->first();
                     return $user->user_string ?? null;
                 })->join('|');
 
             $songIds = $query->pluck('song');
-            $customSongQuery = GameCustomSong::query()
+            $customSongQuery = CustomSong::query()
                 ->whereIn('song_id', $songIds)
                 ->get();
 
-            $songs = GameSong::query()
+            $songs = Song::query()
                 ->whereIn('id', $songIds)
                 ->get()
                 ->union($customSongQuery)
                 ->map(function ($song) {
-                    /** @var GameSong|GameCustomSong $song */
+                    /** @var Song|CustomSong $song */
                     return $song->toSongString();
                 })->join('~:~');
 
@@ -422,14 +425,14 @@ class LevelsController extends Controller
         $data = $request->validated();
 
         if ($data['weekly']) {
-            $fea = GameWeeklyLevel::query()
+            $fea = Weekly::query()
                 ->latest()
                 ->first();
 
             $feaID = !empty($fea) ? $fea->id + config('game.weeklyIdOffset', 100000) : 0;
             $seconds = Carbon::rawParse('next monday')->diffInSeconds();
         } else {
-            $fea = GameDailyLevel::query()
+            $fea = Daily::query()
                 ->latest()
                 ->first();
 
@@ -442,16 +445,16 @@ class LevelsController extends Controller
 
     /**
      * @param ReportRequest $request
-     * @param GameLog $log
+     * @param Log $log
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/reportGJLevel
      */
-    public function report(ReportRequest $request, GameLog $log): int
+    public function report(ReportRequest $request, Log $log): int
     {
         $data = $request->validated();
         if ($log->existsOrNew(Types::fromValue(Types::REPORT_LEVEL), $data['levelID'], null, true)) {
-            $report = GameLevelReport::query()
+            $report = Report::query()
                 ->firstOrCreate([
                     'level' => $data['levelID']
                 ]);

@@ -2,23 +2,17 @@
 
 namespace App\Http\Requests\Game\Level\Comment;
 
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameLevel;
-use App\Models\GameLevelComment;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
+use App\Models\Game\Level\Comment;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 
 class DeleteRequest extends Request
 {
     /**
-     * @var GameAccount
-     */
-    public $account;
-
-    /**
-     * @var GameLevelComment
+     * @var Comment
      */
     public $comment;
 
@@ -34,19 +28,13 @@ class DeleteRequest extends Request
         }
 
         try {
-            $this->auth();
-            $this->account = $this->user();
-        } catch (AuthenticationException $e) {
-            return false;
-        }
-
-        try {
-            $this->comment = GameLevelComment::whereId($this->commentID)->firstOrFail();
+            $this->comment = Comment::whereId($this->commentID)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return false;
         }
 
-        if (!$this->account->can('delete', $this->comment)) {
+        $this->auth();
+        if (!optional($this->account)->can('delete', $this->comment)) {
             return false;
         }
 
@@ -66,12 +54,12 @@ class DeleteRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'commentID' => [
                 'required',
-                Rule::exists(GameLevelComment::class, 'id')
+                Rule::exists(Comment::class, 'id')
             ],
             'secret' => [
                 'required',
@@ -79,7 +67,7 @@ class DeleteRequest extends Request
             ],
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ]
         ];
     }

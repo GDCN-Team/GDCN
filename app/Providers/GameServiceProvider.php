@@ -3,11 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,17 +32,20 @@ class GameServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Schema::defaultStringLength(191);
+        $this->registerNewEmailVerifyLinkGenerateMethod();
+    }
 
-        Paginator::defaultSimpleView('pagination::simple-bootstrap-4');
-        Paginator::defaultView('pagination::bootstrap-4');
-
+    /**
+     * @return void
+     */
+    public function registerNewEmailVerifyLinkGenerateMethod(): void
+    {
         VerifyEmail::createUrlUsing(function ($notifiable) {
             return URL::temporarySignedRoute(
                 'game.account.verify',
                 Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
                 [
-                    '_' => Crypt::encryptString($notifiable->getKey() . ":" . $notifiable->getEmailForVerification()),
+                    '_' => Crypt::encryptString($notifiable->getKey() . ':' . $notifiable->getEmailForVerification()),
                 ]
             );
         });

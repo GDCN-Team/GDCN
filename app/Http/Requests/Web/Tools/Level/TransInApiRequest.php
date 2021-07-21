@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Web\Tools\Level;
 
-use App\Models\GameLevel;
+use App\Models\Game\Level;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,7 +23,7 @@ class TransInApiRequest extends FormRequest
             'levelID' => [
                 'required',
                 'integer',
-                Rule::unique(GameLevel::class, 'original')
+                Rule::unique(Level::class, 'original')
             ]
         ];
     }

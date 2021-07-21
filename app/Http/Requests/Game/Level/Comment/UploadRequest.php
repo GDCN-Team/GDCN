@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Game\Level\Comment;
 
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Game\Components\Hash\Checker;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameLevel;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
 use GDCN\ChkValidationException;
 use Illuminate\Validation\Rule;
 use function app;
@@ -20,11 +19,7 @@ class UploadRequest extends Request
      */
     public function authorize(): bool
     {
-        try {
-            return $this->auth();
-        } catch (AuthenticationException $e) {
-            return false;
-        }
+        return $this->auth();
     }
 
     /**
@@ -40,7 +35,7 @@ class UploadRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'userName' => 'required',
@@ -51,7 +46,7 @@ class UploadRequest extends Request
             ],
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ],
             'percent' => [
                 'sometimes',

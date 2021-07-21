@@ -2,25 +2,18 @@
 
 namespace App\Http\Requests\Game\Account\SaveData;
 
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class LoadRequest extends Request
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
      * @return bool
      */
     public function authorize(): bool
     {
-        try {
-            return $this->auth();
-        } catch (AuthenticationException $e) {
-            return false;
-        }
+        return $this->validateAccount();
     }
 
     /**
@@ -31,27 +24,12 @@ class LoadRequest extends Request
     public function rules(): array
     {
         return [
-            'userName' => [
-                'required',
-                Rule::exists(GameAccount::class, 'name')
-            ],
-            'password' => [
-                'required',
-                'password'
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfv3899gc9')
-            ],
-            'gameVersion' => [
-                'required',
-                'gte:21'
-            ],
-            'binaryVersion' => 'required_with:gameVersion',
-            'gdw' => [
-                'required',
-                'boolean'
-            ]
+            'gameVersion' => 'required',
+            'binaryVersion' => 'required',
+            'gdw' => 'required',
+            'userName' => Rule::exists(Account::class, 'name'),
+            'password' => 'required',
+            'secret' => Rule::in('Wmfv3899gc9')
         ];
     }
 }

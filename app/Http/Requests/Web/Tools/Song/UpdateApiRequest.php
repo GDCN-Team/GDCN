@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Web\Tools\Song;
 
-use App\Models\GameCustomSong;
+use App\Models\Game\CustomSong;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use function config;
@@ -20,7 +20,7 @@ class UpdateApiRequest extends FormRequest
             'song_id' => [
                 'required',
                 'gte:' . config('game.customSongIdOffset'),
-                Rule::unique(GameCustomSong::class)
+                Rule::unique(CustomSong::class)
             ],
             'name' => 'required',
             'author_name' => 'required'
