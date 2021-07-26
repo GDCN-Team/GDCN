@@ -1,0 +1,13 @@
+{
+    "name": "NGProxy",
+    "alias": "ngproxy",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\NGProxy\\Providers\\NGProxyServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

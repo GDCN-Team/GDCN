@@ -1,0 +1,13 @@
+{
+    "name": "GDProxy",
+    "alias": "gdproxy",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\GDProxy\\Providers\\GDProxyServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

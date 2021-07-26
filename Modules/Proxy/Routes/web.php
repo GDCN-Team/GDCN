@@ -10,6 +10,3 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::view('/', 'proxy::index');
-Route::post('{path}/{path2?}/{path3?}', 'ProxyController@proxy');

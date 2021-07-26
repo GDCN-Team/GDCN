@@ -1,0 +1,27 @@
+<?php
+namespace Modules\NGProxy\Database\factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class SongFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = \Modules\NGProxy\Entities\Song::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            //
+        ];
+    }
+}
+
