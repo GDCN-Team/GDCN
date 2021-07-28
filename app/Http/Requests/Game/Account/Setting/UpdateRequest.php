@@ -2,25 +2,19 @@
 
 namespace App\Http\Requests\Game\Account\Setting;
 
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class UpdateRequest extends Request
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
+     * @inerhitDoc
      * @return bool
      */
     public function authorize(): bool
     {
-        try {
-            return $this->auth();
-        } catch (AuthenticationException $e) {
-            return false;
-        }
+        return $this->validateAccountGJP();
     }
 
     /**
@@ -31,30 +25,15 @@ class UpdateRequest extends Request
     public function rules(): array
     {
         return [
-            'accountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
-            'gjp' => 'required_with:accountID',
-            'mS' => [
-                'required',
-                Rule::in([0, 1, 2])
-            ],
-            'frS' => [
-                'required',
-                Rule::in([0, 1])
-            ],
-            'cS' => [
-                'required',
-                Rule::in([0, 1, 2])
-            ],
+            'accountID' => Rule::exists(Account::class, 'id'),
+            'gjp' => 'required',
+            'mS' => 'between:0,2',
+            'frS' => 'between:0,1',
+            'cS' => 'between:0,2',
             'yt' => 'nullable',
             'twitter' => 'nullable',
             'twitch' => 'nullable',
-            'secret' => [
-                'required',
-                Rule::in('Wmfv3899gc9')
-            ]
+            'secret' => Rule::in('Wmfv3899gc9')
         ];
     }
 }

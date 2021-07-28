@@ -3,11 +3,23 @@
 namespace App\Http\Requests\Game\Level;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class DailyGetRequest extends Request
 {
+    /**
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if ($this->has(['accountID', 'gjp'])) {
+            return $this->validateAccountGJP();
+        }
+
+        return true;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -21,18 +33,11 @@ class DailyGetRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                'required',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'weekly' => [
-                'required',
-                'boolean'
-            ]
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'weekly' => 'boolean'
         ];
     }
 }

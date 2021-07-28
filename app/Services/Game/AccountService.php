@@ -2,12 +2,13 @@
 
 namespace App\Services\Game;
 
-use App\Exceptions\Game\Account\Setting\EmailChangeException;
-use App\Exceptions\Game\Account\Setting\NameChangeException;
-use App\Exceptions\Game\Account\Setting\PasswordChangeException;
-use App\Models\GameAccount;
+use App\Exceptions\Game\InvalidArgumentException;
+use App\Models\Game\Account;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use function event;
 
 /**
@@ -20,11 +21,11 @@ class AccountService
      * @param string $name
      * @param string $password
      * @param string $email
-     * @return GameAccount
+     * @return Account
      */
-    public function register(string $name, string $password, string $email): GameAccount
+    public function register(string $name, string $password, string $email): Account
     {
-        $account = new GameAccount;
+        $account = new Account();
         $account->name = $name;
         $account->password = Hash::make($password);
         $account->email = $email;
@@ -35,58 +36,46 @@ class AccountService
     }
 
     /**
-     * @param GameAccount $account
-     * @param string $newName
-     * @return bool
-     * @throws NameChangeException
+     * @param int $accountID
+     * @param string $email
+     * @return RedirectResponse
      */
-    public function changeName(GameAccount $account, string $newName): bool
+    public function verify(int $accountID, string $email): RedirectResponse
     {
-        if ($account->name === $newName) {
-            throw new NameChangeException;
+        $account = Account::where([
+            'id' => $accountID,
+            'email' => $email
+        ])->first();
+
+        if (!$account) {
+            abort(404);
         }
 
-        if ($user = $account->user) {
-            $user->name = $newName;
-            $user->save();
-        }
+        $account->markEmailAsVerified();
+        Auth::login($account, true);
 
-        $account->name = $newName;
-        return $account->save();
+        return Redirect::route('dashboard.home');
     }
 
     /**
-     * @param GameAccount $account
-     * @param string $newPassword
+     * @param string $name
+     * @param string $password
+     * @param string $udid
      * @return bool
-     * @throws \App\Exceptions\Game\Account\Setting\PasswordChangeException
      */
-    public function changePassword(GameAccount $account, string $newPassword): bool
+    public function login(string $name, string $password, string $udid): bool
     {
-        if (Hash::check($newPassword, $account->password)) {
-            throw new PasswordChangeException;
+        if (Auth::once(compact('name', 'password'))) {
+            try {
+                /** @var Account $account */
+                $account = Auth::user();
+                $account->resolveUser($udid);
+                return true;
+            } catch (InvalidArgumentException) {
+                return false;
+            }
         }
 
-        $account->password = Hash::make($newPassword);
-        return $account->save();
-    }
-
-    /**
-     * @param GameAccount $account
-     * @param string $newEmail
-     * @return bool
-     * @throws \App\Exceptions\Game\Account\Setting\EmailChangeException
-     */
-    public function changeEmail(GameAccount $account, string $newEmail): bool
-    {
-        if ($account->email === $newEmail) {
-            throw new EmailChangeException;
-        }
-
-        $account->email = $newEmail;
-        $account->email_verified_at = null;
-        event(new Registered($account));
-
-        return $account->save();
+        return false;
     }
 }

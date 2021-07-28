@@ -1,2 +1,2 @@
-@import "~ant-design-vue/dist/antd.min.css";
-@import "~tailwindcss/tailwind.css";
+@import "~view-design/dist/styles/iview.css";
+@import "./tailwind.css";

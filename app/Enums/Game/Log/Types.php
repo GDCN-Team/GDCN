@@ -19,4 +19,5 @@ final class Types extends Enum
     public const REPORT_LEVEL = 7;
     public const DO_ACCOUNT_COMMENT_COMMAND = 8;
     public const DO_LEVEL_COMMENT_COMMAND = 9;
+    public const UPDATE_PROFILE = 10;
 }

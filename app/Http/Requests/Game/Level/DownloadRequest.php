@@ -2,83 +2,21 @@
 
 namespace App\Http\Requests\Game\Level;
 
-use App\Enums\Game\Log\Types;
-use App\Game\Components\Hash\Checker;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameDailyLevel;
-use App\Models\GameLevel;
-use App\Models\GameLog;
-use App\Models\GameUser;
-use App\Models\GameWeeklyLevel;
-use GDCN\ChkValidationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\Game\Account;
+use App\Models\Game\Level;
 use Illuminate\Validation\Rule;
-use function app;
-use function config;
 
 class DownloadRequest extends Request
 {
     /**
-     * Daily id or weekly id
-     *
-     * @var int
-     */
-    public $feaID = 0;
-
-    /**
-     * @var GameLevel
-     */
-    public $level;
-
-    /**
-     * @var GameUser
-     */
-    public $user;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
+     * @inerhitDoc
      * @return bool
      */
     public function authorize(): bool
     {
-        if (empty($this->levelID)) {
-            return false;
-        }
-
-        switch ($this->levelID) {
-            case -1: // Daily
-                $daily = GameDailyLevel::query()->latest();
-                $this->feaID = $daily->id;
-                $this->level = GameLevel::whereId($daily->level)->first();
-                break;
-            case -2: // Weekly
-                $weekly = GameWeeklyLevel::query()->latest();
-                $this->feaID = $weekly->id + config('game.weeklyIdOffset', 100000);
-                $this->level = GameLevel::whereId($weekly->level)->first();
-                break;
-            default:
-                try {
-                    $this->level = GameLevel::whereId($this->levelID)->firstOrFail();
-                } catch (ModelNotFoundException $e) {
-                    return false;
-                }
-                break;
-        }
-
-        $attributes = [
-            'type' => Types::DOWNLOADED_LEVEL,
-            'value' => $this->level->id,
-            'ip' => $this->ip()
-        ];
-
-        $log = GameLog::query()
-            ->where($attributes);
-
-        if (!$log->exists()) {
-            $log->create($attributes);
-            $this->level->increment('downloads');
+        if ($this->has(['accountID', 'gjp'])) {
+            return $this->validateAccountGJP();
         }
 
         return true;
@@ -92,51 +30,23 @@ class DownloadRequest extends Request
     public function rules(): array
     {
         return [
-            'gameVersion' => [
-                'required',
-                'gte:20'
-            ],
-            'binaryVersion' => 'required_with:gameVersion',
-            'gdw' => [
-                'required',
-                'boolean'
-            ],
+            'gameVersion' => 'required',
+            'binaryVersion' => 'required',
+            'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                'required',
                 'exclude_if:accountID,0',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'udid' => 'required_with:gjp',
             'uuid' => 'required_with:udid',
-            'levelID' => [
-                'required',
-                Rule::exists(GameLevel::class, 'id')
-            ],
+            'levelID' => Rule::exists(Level::class, 'id'),
             'inc' => 'required',
             'extras' => 'required',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'rs' => [
-                'sometimes',
-                'required'
-            ],
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'rs' => 'sometimes',
             'chk' => 'required_with:rs'
         ];
-    }
-
-    /**
-     * @throws ChkValidationException
-     */
-    public function validateChk(): void
-    {
-        if (empty($this->chk)) {
-            return;
-        }
-
-        app(Checker::class)->downloadLevel($this);
     }
 }

@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers\Game;
 
-use App\Enums\Game\Log\Types;
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\Game\ChkValidateException;
-use App\Exceptions\Game\UserNotFoundException;
+use App\Enums\LikeType;
+use App\Exceptions\Game\InvalidArgumentException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Item\LikeRequest;
 use App\Http\Requests\Game\Item\RestoreRequest;
-use App\Models\GameAccountComment;
-use App\Models\GameLevel;
-use App\Models\GameLevelComment;
-use App\Models\GameLog;
+use App\Services\Game\MiscService;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class MiscController
@@ -20,76 +17,30 @@ use App\Models\GameLog;
  */
 class MiscController extends Controller
 {
+    public function __construct(
+        public MiscService $service
+    )
+    {
+    }
+
     /**
      * @param LikeRequest $request
-     * @param HashesController $hash
      * @return int
      *
      * @see http://docs.gdprogra.me/#/endpoints/likeGJItem211
      */
-    public function likeItem(LikeRequest $request, HashesController $hash): ?int
+    public function likeItem(LikeRequest $request): int
     {
+        $data = $request->validated();
         try {
-            $data = $request->validated();
-
-            $hash->checkChk(
-                $hash->generateLikeChk($data['special'], $data['itemID'], $data['like'], $data['type'], $data['rs'], ($data['accountID'] ?? 0), $data['udid'], $data['uuid']),
-                $hash->decodeChk($data['chk'], $hash->keys['like'])
-            );
-
-            switch ($data['type']) {
-                case 1: // Level
-                    $item = GameLevel::whereId($data['itemID'])->first();
-                    $logType = Types::LIKE_LEVEL;
-                    break;
-                case 2: // Level Comment
-                    $item = GameLevelComment::whereId($data['itemID'])->first();
-                    $logType = Types::LIKE_LEVEL_COMMENT;
-                    break;
-                case 3: // Account Comment
-                    $item = GameAccountComment::whereId($data['itemID'])->first();
-                    $logType = Types::LIKE_ACCOUNT_COMMENT;
-                    break;
-                default:
-                    return ResponseCode::INVALID_REQUEST;
-            }
-
-            if (!$item) {
-                return ResponseCode::ITEM_NOT_FOUND;
-            }
-
-            $user = $request->getGameUser();
-            $attributes = [
-                'type' => $logType,
-                'value' => $item->id,
-                'user' => $user->id
-            ];
-
-            $ip = [
-                'ip' => $request->ip()
-            ];
-
-            $log = GameLog::query()
-                ->where($attributes);
-
-            if (!$log->exists()) {
-                if ($data['like']) {
-                    $item->increment('likes');
-                } else {
-                    $item->decrement('likes');
-                }
-
-                $log->create(array_merge($attributes, $ip));
-                $item->save();
-
-                return ResponseCode::OK;
-            }
-
-            return ResponseCode::FAILED;
-        } catch (ChkValidateException $e) {
-            return ResponseCode::CHK_CHECK_FAILED;
-        } catch (UserNotFoundException $e) {
-            return ResponseCode::USER_NOT_FOUND;
+            return $this->service->like(
+                $request->getPlayer(),
+                LikeType::fromValue($data['type']),
+                $data['itemID'],
+                $data['like'] ?? true
+            ) ? ResponseCode::LIKE_SUCCESS : ResponseCode::LIKE_FAILED;
+        } catch (InvalidArgumentException) {
+            return ResponseCode::INVALID_REQUEST;
         }
     }
 
@@ -102,6 +53,7 @@ class MiscController extends Controller
     public function restoreItem(RestoreRequest $request): int
     {
         $request->validated();
-        return ResponseCode::RESTORE_ITEM_FAILED;
+        $result = $this->service->restore();
+        return !empty($result) ? $result : ResponseCode::RESTORE_ITEM_FAILED;
     }
 }

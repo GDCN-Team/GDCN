@@ -9,14 +9,14 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     @csrf
-    <link rel="icon" href="{{ asset('storage/images/logo.png') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <script src="{{ asset('js/manifest.js') }}"></script>
-    <script src="{{ asset('js/vendor.js') }}"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
+    <link rel="icon" href="https://cdn.geometrydashchinese.com/static/gdcn/images/logo.png">
+    <link rel="stylesheet" href="{{ asset('css/gdcn.css') }}">
+    <script src="{{ asset('js/gdcn.js') }}"></script>
     <title>{{ config('app.name') }}</title>
 </head>
-<body class="dark:bg-gray-800">
-@inertia
+<body>
+<div data-component="{{ $component }}" id="app">
+
+</div>
 </body>
 </html>

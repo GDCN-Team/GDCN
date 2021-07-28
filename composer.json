@@ -15,15 +15,16 @@
         "barryvdh/laravel-ide-helper": "^2.9",
         "bensampo/laravel-enum": "^3.2",
         "dcat/laravel-admin": "2.*",
+        "doctrine/dbal": "^3.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "gdcn/gd-object": "^1.0",
-        "gdcn/hash": "^1.0",
+        "gdcn/hash": "dev-main",
         "gdcn/xor-cipher": "^1.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "inertiajs/inertia-laravel": "^0.4.2",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
+        "nwidart/laravel-modules": "^8.2",
         "overtrue/laravel-lang": "^5.0",
         "spomky-labs/base64url": "^2.0"
     },
@@ -53,6 +54,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "Modules\\": "Modules",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

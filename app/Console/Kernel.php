@@ -2,8 +2,8 @@
 
 namespace App\Console;
 
-use App\Models\GameAccount;
-use App\Models\GameAccountPasswordReset;
+use App\Models\Game\Account;
+use App\Models\Game\Account\PasswordReset;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -33,13 +33,13 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $now = now();
             $hourLater = $now->addHour();
-            GameAccount::query()->whereNull('email_verified_at')->where('created_at', '<', $hourLater)->delete();
+            Account::query()->whereNull('email_verified_at')->where('created_at', '<', $hourLater)->delete();
         })->name('Delete unverified account');
 
         $schedule->call(function () {
             $now = now();
             $expiredTime = $now->addSeconds(config('auth.password_timeout', 10800));
-            GameAccountPasswordReset::query()->where('created_at', '<', $expiredTime)->delete();
+            PasswordReset::query()->where('created_at', '<', $expiredTime)->delete();
         })->name('Delete expired password reset data');
     }
 

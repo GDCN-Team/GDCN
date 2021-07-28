@@ -3,11 +3,20 @@
 namespace App\Http\Requests\Game\Account;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class LoginRequest extends Request
 {
+    /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        return $this->validateAccount();
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,23 +25,11 @@ class LoginRequest extends Request
     public function rules(): array
     {
         return [
-            'udid' => [
-                'required',
-                'string'
-            ],
-            'userName' => [
-                'required',
-                Rule::exists(GameAccount::class, 'name')
-            ],
+            'udid' => 'required',
+            'userName' => Rule::exists(Account::class, 'name'),
             'password' => 'required',
-            'sID' => [
-                'sometimes',
-                'required'
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfv3899gc9')
-            ]
+            'sID' => 'nullable',
+            'secret' => Rule::in('Wmfv3899gc9')
         ];
     }
 }

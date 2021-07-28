@@ -74,7 +74,7 @@ return [
     'continue_creating' => 'Continue creating',
     'detail' => 'Detail',
     'browse' => 'Browse',
-    'reset' => 'Reset',
+    'reset' => 'PasswordReset',
     'export' => 'Export',
     'batch_delete' => 'Batch delete',
     'save' => 'Save',

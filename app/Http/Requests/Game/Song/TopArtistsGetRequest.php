@@ -19,11 +19,8 @@ class TopArtistsGetRequest extends Request
             'binaryVersion' => 'required',
             'gdw' => 'required',
             'page' => 'required',
-            'total' => 'required_with:page',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'total' => 'required',
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

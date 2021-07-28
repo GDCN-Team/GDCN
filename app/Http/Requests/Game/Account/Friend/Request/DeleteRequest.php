@@ -3,11 +3,24 @@
 namespace App\Http\Requests\Game\Account\Friend\Request;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
+/**
+ * Class DeleteRequest
+ * @package App\Http\Requests\Game\Account\Friend\Request
+ */
 class DeleteRequest extends Request
 {
+    /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        return $this->validateAccountGJP();
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -19,25 +32,14 @@ class DeleteRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
-            'gjp' => 'required_with:accountID',
+            'accountID' => Rule::exists(Account::class, 'id'),
+            'gjp' => 'required',
             'targetAccountID' => [
-                'sometimes',
-                'required',
-                'exclude_if:targetAccountID,0',
-                Rule::exists(GameAccount::class, 'id')
+                'exclude_if:targetAccountID,0', // multi
+                Rule::exists(Account::class, 'id')
             ],
-            'isSender' => [
-                'required',
-                'boolean'
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
+            'isSender' => 'boolean',
+            'secret' => Rule::in('Wmfd2893gb7'),
             'accounts' => 'required_without:targetAccountID'
         ];
     }

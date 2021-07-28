@@ -1,0 +1,13 @@
+{
+    "name": "Proxy",
+    "alias": "proxy",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Proxy\\Providers\\ProxyServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -3,11 +3,24 @@
 namespace App\Http\Requests\Game\User\Score;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class GetRequest extends Request
 {
+    /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if ($this->has(['accountID', 'gjp'])) {
+            return $this->validateAccountGJP();
+        }
+
+        return true;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -21,20 +34,14 @@ class GetRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
-            'udid' => 'required_without:accountID,gjp',
+            'udid' => 'required_without:gjp',
             'uuid' => 'required_with:udid',
-            'type' => [
-                'required',
-                Rule::in(['top', 'friends', 'relative', 'creators'])
-            ],
+            'type' => Rule::in(['top', 'friends', 'relative', 'creators']),
             'count' => 'required',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

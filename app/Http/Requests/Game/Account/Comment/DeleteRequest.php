@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests\Game\Account\Comment;
 
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Models\GameAccountComment;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\Game\Account;
+use App\Models\Game\Account\Comment;
 use Illuminate\Validation\Rule;
 
 /**
@@ -16,44 +14,12 @@ use Illuminate\Validation\Rule;
 class DeleteRequest extends Request
 {
     /**
-     * @var GameAccount
-     */
-    public $account;
-
-    /**
-     * @var GameAccountComment
-     */
-    public $comment;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
+     * @inerhitDoc
      * @return bool
      */
     public function authorize(): bool
     {
-        if (empty($this->commentID)) {
-            return false;
-        }
-
-        try {
-            $this->auth();
-            $this->account = $this->user();
-        } catch (AuthenticationException $e) {
-            return false;
-        }
-
-        try {
-            $this->comment = GameAccountComment::whereId($this->commentID)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return false;
-        }
-
-        if (!$this->account->can('delete', $this->comment)) {
-            return false;
-        }
-
-        return true;
+        return $this->validateAccountGJP();
     }
 
     /**
@@ -67,23 +33,11 @@ class DeleteRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
-            'gjp' => 'required_with:accountID',
-            'commentID' => [
-                'required',
-                Rule::exists(GameAccountComment::class, 'id')
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'cType' => [
-                'required',
-                Rule::in(1)
-            ]
+            'accountID' => Rule::exists(Account::class, 'id'),
+            'gjp' => 'required',
+            'commentID' => Rule::exists(Comment::class, 'id'),
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'cType' => Rule::in(1)
         ];
     }
 }

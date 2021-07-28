@@ -3,11 +3,20 @@
 namespace App\Http\Requests\Game\Account\Friend\Request;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class RemoveRequest extends Request
 {
+    /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        return $this->validateAccountGJP();
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -19,19 +28,10 @@ class RemoveRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
-            'gjp' => 'required_with:accountID',
-            'targetAccountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'accountID' => Rule::exists(Account::class, 'id'),
+            'gjp' => 'required',
+            'targetAccountID' => Rule::exists(Account::class, 'id'),
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

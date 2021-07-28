@@ -4,7 +4,7 @@ namespace App\Http\Requests\Game\Account;
 
 use App\Enums\Game\ResponseCode;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class RegisterRequest extends Request
@@ -17,21 +17,11 @@ class RegisterRequest extends Request
     public function rules(): array
     {
         return [
-            'userName' => [
-                'required',
-                Rule::unique(GameAccount::class, 'name')
-            ],
+            'userName' => Rule::unique(Account::class, 'name'),
             'password' => 'required',
-            'email' => [
-                'required',
-                'email',
-                Rule::unique(GameAccount::class)
-            ],
+            'email' => Rule::unique(Account::class),
             'sID' => 'sometimes',
-            'secret' => [
-                'required',
-                Rule::in('Wmfv3899gc9')
-            ]
+            'secret' => Rule::in('Wmfv3899gc9')
         ];
     }
 
@@ -44,9 +34,9 @@ class RegisterRequest extends Request
     {
         return [
             '*.required' => ResponseCode::INVALID_REQUEST,
-            'userName.unique' => ResponseCode::REGISTER_USERNAME_NOT_UNIQUE,
-            'email.email' => ResponseCode::REGISTER_EMAIL_INVALID,
-            'email.unique' => ResponseCode::REGISTER_EMAIL_NOT_UNIQUE
+            'userName.unique' => ResponseCode::ACCOUNT_REGISTER_USERNAME_NOT_UNIQUE,
+            'email.email' => ResponseCode::ACCOUNT_REGISTER_EMAIL_INVALID,
+            'email.unique' => ResponseCode::ACCOUNT_REGISTER_EMAIL_NOT_UNIQUE
         ];
     }
 }

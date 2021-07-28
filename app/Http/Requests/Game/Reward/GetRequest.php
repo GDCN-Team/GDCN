@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\Reward;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class GetRequest extends Request
@@ -21,24 +21,14 @@ class GetRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                'required',
                 'exclude_if:accountID,0',
-                Rule::exists(GameAccount::class, 'id')
+                Rule::exists(Account::class, 'id')
             ],
-            'gjp' => [
-                'required_with:accountID',
-                'nullable'
-            ],
+            'gjp' => 'required_with:accountID',
             'udid' => 'required',
             'uuid' => 'required_with:udid',
-            'rewardType' => [
-                'required',
-                Rule::in([0, 1, 2])
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
+            'rewardType' => 'between:0,2',
+            'secret' => Rule::in('Wmfd2893gb7'),
             'chk' => 'required',
             'r1' => 'required',
             'r2' => 'required'

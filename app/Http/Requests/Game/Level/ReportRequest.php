@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Game\Level;
 
 use App\Http\Requests\Game\Request;
-use App\Models\GameLevel;
+use App\Models\Game\Level;
 use Illuminate\Validation\Rule;
 
 class ReportRequest extends Request
@@ -18,7 +18,7 @@ class ReportRequest extends Request
         return [
             'levelID' => [
                 'required',
-                Rule::exists(GameLevel::class, 'id')
+                Rule::exists(Level::class, 'id')
             ],
             'secret' => [
                 'required',

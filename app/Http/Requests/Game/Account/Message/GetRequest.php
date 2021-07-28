@@ -2,25 +2,19 @@
 
 namespace App\Http\Requests\Game\Account\Message;
 
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
+use App\Models\Game\Account;
 use Illuminate\Validation\Rule;
 
 class GetRequest extends Request
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
+     * @inerhitDoc
      * @return bool
      */
     public function authorize(): bool
     {
-        try {
-            return $this->auth();
-        } catch (AuthenticationException $e) {
-            return false;
-        }
+        return $this->validateAccountGJP();
     }
 
     /**
@@ -34,25 +28,12 @@ class GetRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(GameAccount::class, 'id')
-            ],
-            'gjp' => 'required_with:accountID',
-            'page' => [
-                'required',
-                'integer'
-            ],
-            'total' => 'required_with:page',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'getSent' => [
-                'sometimes',
-                'required',
-                'boolean'
-            ]
+            'accountID' => Rule::exists(Account::class, 'id'),
+            'gjp' => 'required',
+            'page' => 'integer',
+            'total' => 'required',
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'getSent' => 'sometimes'
         ];
     }
 }

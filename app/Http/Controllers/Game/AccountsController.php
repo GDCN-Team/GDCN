@@ -3,20 +3,15 @@
 namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\Game\InvalidArgumentException;
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Account\LoginRequest;
 use App\Http\Requests\Game\Account\RegisterRequest;
 use App\Http\Requests\Game\Request;
-use App\Models\GameAccount;
-use App\Services\Web\NoticeService;
-use Illuminate\Auth\Events\Registered;
+use App\Models\Game\Account;
+use App\Services\Game\AccountService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Redirect;
 
 /**
  * Class AccountsController
@@ -24,18 +19,10 @@ use Illuminate\Support\Facades\Redirect;
  */
 class AccountsController extends Controller
 {
-    /**
-     * @var NoticeService
-     */
-    protected $noticeService;
-
-    /**
-     * AccountsController constructor.
-     * @param NoticeService $noticeService
-     */
-    public function __construct(NoticeService $noticeService)
+    public function __construct(
+        public AccountService $service
+    )
     {
-        $this->noticeService = $noticeService;
     }
 
     /**
@@ -59,15 +46,8 @@ class AccountsController extends Controller
          */
 
         $data = $request->validated();
-        $account = GameAccount::query()
-            ->create([
-                'name' => $data['userName'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password'])
-            ]);
-
-        event(new Registered($account));
-        return ResponseCode::OK;
+        return $this->service->register($data['userName'], $data['password'], $data['email'])
+            ? ResponseCode::ACCOUNT_REGISTER_SUCCESS : ResponseCode::ACCOUNT_REGISTER_FAILED;
     }
 
     /**
@@ -76,50 +56,33 @@ class AccountsController extends Controller
      */
     public function verify(Request $request): RedirectResponse
     {
-        if ($hash = $request->get('_')) {
-            [$accountID, $email] = explode(':', Crypt::decryptString($hash));
-            $account = GameAccount::where([
-                'id' => $accountID,
-                'email' => $email
-            ])->first();
+        $string = $request->get('_');
+        $string = Crypt::decryptString($string);
+        [$accountID, $email] = explode(':', $string);
 
-            if ($account->markEmailAsVerified()) {
-                $this->noticeService->sendSuccessNotice(Lang::get('GameAccountEmailVerify.success'));
-            } else {
-                $this->noticeService->sendErrorNotice(Lang::get('GameAccountEmailVerify.failed'));
-            }
-        } else {
-            $this->noticeService->sendErrorNotice(Lang::get('GameAccountEmailVerify.param_missing'));
-        }
-
-        return Redirect::home();
+        return $this->service->verify($accountID, $email);
     }
 
     /**
      * @param LoginRequest $request
      * @return int|string
      *
-     * @throws AuthenticationException
      * @see http://docs.gdprogra.me/#/endpoints/accounts/loginGJAccount
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): int|string
     {
         $data = $request->validated();
-        $request->auth();
+        if ($this->service->login($data['userName'], $data['password'], $data['udid'])) {
+            /** @var Account $account */
+            $account = Auth::user();
 
-        /** @var GameAccount $account */
-        $account = $request->user();
+            if (!$account->hasVerifiedEmail()) {
+                return ResponseCode::ACCOUNT_LOGIN_ACCOUNT_NOT_VERIFIED;
+            }
 
-        if (!$account->hasVerifiedEmail()) {
-            return ResponseCode::ACCOUNT_LOGIN_ACCOUNT_NOT_VERIFIED;
+            return $account->id . ',' . $account->user->id;
         }
 
-        try {
-            $user = $account->resolveUser($data['udid']);
-        } catch (InvalidArgumentException $e) {
-            return ResponseCode::USER_NOT_FOUND;
-        }
-
-        return "$account->id,$user->id";
+        return ResponseCode::ACCOUNT_LOGIN_FAILED;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 return [
     'labels' => [
-        'GameLevelPack' => '关卡包(Level Pack)',
+        'Pack' => '关卡包(Level Pack)',
         'game-level-pack' => '关卡包(Level Pack)',
     ],
     'fields' => [

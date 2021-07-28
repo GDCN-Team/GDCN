@@ -19,10 +19,7 @@ class PackGetRequest extends Request
             'binaryVersion' => 'required',
             'gdw' => 'required',
             'page' => 'required',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

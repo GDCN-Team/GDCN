@@ -12,6 +12,6 @@ Route::group([
     'middleware' => config('admin.route.middleware'),
 ], function (Router $router) {
     $router->get('/', 'HomeController@index');
-    $router->resource('level/packs', 'GameLevelPackController');
-    $router->resource('level/gauntlets', 'GameLevelGauntletController');
+    $router->resource('level/packs', 'Game\Level\PackController');
+    $router->resource('level/gauntlets', 'Game\Level\GauntletController');
 });
