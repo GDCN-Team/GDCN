@@ -9,7 +9,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     @csrf
-    <link rel="icon" href="https://cdn.geometrydashchinese.com/static/gdcn/images/logo.png">
+    <link rel="icon" href="https://cdn.geometrydashchinese.com/static/images/logo.png">
     <link rel="stylesheet" href="{{ asset('css/gdcn.css') }}">
     <script src="{{ asset('js/gdcn.js') }}"></script>
     <title>{{ config('app.name') }}</title>

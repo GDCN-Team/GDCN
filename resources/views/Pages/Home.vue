@@ -1,6 +1,6 @@
 <template>
     <CommonLayout>
-        <img src="https://cdn.geometrydashchinese.com/static/gdcn/images/title.png" alt="Geometry Dash Chinese">
+        <img src="https://cdn.geometrydashchinese.com/static/images/title.png" alt="Geometry Dash Chinese">
 
         <Alert class="mt-2" banner v-if="serverStat.notice"><span class="text-blue-500">公告:</span>
             {{ serverStat.notice.notice || '无' }}
