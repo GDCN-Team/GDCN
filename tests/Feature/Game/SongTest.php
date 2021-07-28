@@ -3,6 +3,9 @@
 namespace Tests\Feature\Game;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
+use Modules\GDProxy\Http\Controllers\GDProxyController;
+use Modules\NGProxy\Entities\Song;
 use Tests\TestCase;
 use function route;
 
@@ -13,6 +16,8 @@ class SongTest extends TestCase
 
     public function test_get(): void
     {
+        Http::fake();
+
         $request = $this->post(
             route('game.song.get'),
             [
@@ -21,14 +26,24 @@ class SongTest extends TestCase
             ]
         );
 
+        $GDProxy = app(GDProxyController::class);
+        Http::assertSent(function ($request) use ($GDProxy) {
+            return in_array(
+                $request->url(),
+                [
+                    $GDProxy->gdServer . '/getGJSongInfo.php',
+                    $GDProxy->gdServer . '/getGJLevels21.php'
+                ]
+            );
+        });
+
         $request->dump();
         $request->assertOk();
-        $request->assertSee('1~|~');
     }
 
     public function test_get_top_artists(): void
     {
-        $this->test_get();
+        Song::factory()->createOne();
 
         $request = $this->post(
             route('game.artists.get'),

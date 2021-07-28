@@ -25,23 +25,11 @@ class LoginRequest extends Request
     public function rules(): array
     {
         return [
-            'udid' => [
-                'required',
-                'string'
-            ],
-            'userName' => [
-                'required',
-                Rule::exists(Account::class, 'name')
-            ],
+            'udid' => 'required',
+            'userName' => Rule::exists(Account::class, 'name'),
             'password' => 'required',
-            'sID' => [
-                'sometimes',
-                'required'
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfv3899gc9')
-            ]
+            'sID' => 'nullable',
+            'secret' => Rule::in('Wmfv3899gc9')
         ];
     }
 }

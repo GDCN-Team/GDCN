@@ -43,7 +43,7 @@ class DailyTest extends TestCase
         $request->assertOk();
         $time = Carbon::rawParse('tomorrow')->diffInSeconds();
 
-        $request->assertSee("{$daily->id}|{$time}");
+        $request->assertSee("$daily->id|$time");
     }
 
     public function test_get_use_account(): void
@@ -99,7 +99,7 @@ class DailyTest extends TestCase
         $request->assertOk();
         $time = Carbon::rawParse('next monday')->diffInSeconds();
 
-        $request->assertSee("{$weekly->id}|{$time}");
+        $request->assertSee("$weekly->id|$time");
     }
 
     public function test_get_weekly_use_account(): void
@@ -129,6 +129,6 @@ class DailyTest extends TestCase
         $request->assertOk();
         $time = Carbon::rawParse('next monday')->diffInSeconds();
 
-        $request->assertSee("{$weekly->id}|{$time}");
+        $request->assertSee("$weekly->id|$time");
     }
 }

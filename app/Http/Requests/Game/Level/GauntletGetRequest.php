@@ -18,10 +18,7 @@ class GauntletGetRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

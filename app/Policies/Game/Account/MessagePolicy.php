@@ -18,7 +18,7 @@ class MessagePolicy
      */
     public function download(Account $operator, Message $message, bool $isSender): bool
     {
-        return (int)($isSender ? $message->account : $message->to_account) === $operator->id;
+        return ($isSender ? $message->account : $message->to_account) === $operator->id;
     }
 
     /**

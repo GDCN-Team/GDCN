@@ -2,16 +2,15 @@
 
 namespace Tests\Feature\Game;
 
-use App\Http\Controllers\Game\HashesController;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
+use App\Models\Game\User;
 use Base64Url\Base64Url;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use function app;
 use function route;
 
 /**
@@ -27,19 +26,21 @@ class LevelTest extends TestCase
     {
         Storage::fake('oss');
 
+        /** @var User $user */
+        $user = User::factory()->createOne();
+
         $levelString = Str::random();
         $levelName = $this->faker->word;
         $levelDesc = Base64Url::encode($this->faker->word, true);
 
-        $hash = app(HashesController::class);
         $request = $this->post(
             route('game.level.upload'),
             [
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'udid' => 'S' . mt_rand(),
-                'uuid' => 0,
+                'udid' => $user->udid,
+                'uuid' => $user->id,
                 'userName' => $this->faker->firstName,
                 'levelID' => 0,
                 'levelName' => $levelName,
@@ -61,7 +62,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => $hash->generateUploadLevelSeed($levelString),
+                'seed2' => Str::random(),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
@@ -88,15 +89,17 @@ class LevelTest extends TestCase
         $levelName = $this->faker->word;
         $levelDesc = Base64Url::encode($this->faker->word, true);
 
-        $hash = app(HashesController::class);
+        /** @var User $user */
+        $user = User::factory()->createOne();
+
         $request = $this->post(
             route('game.level.upload'),
             [
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'udid' => 'S' . mt_rand(),
-                'uuid' => 0,
+                'udid' => $user->udid,
+                'uuid' => $user->id,
                 'userName' => $this->faker->firstName,
                 'levelID' => 0,
                 'levelName' => $levelName,
@@ -118,7 +121,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => $hash->generateUploadLevelSeed($levelString),
+                'seed2' => Str::random(),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
@@ -148,7 +151,6 @@ class LevelTest extends TestCase
         $levelName = $this->faker->word;
         $levelDesc = Base64Url::encode($this->faker->word, true);
 
-        $hash = app(HashesController::class);
         $request = $this->post(
             route('game.level.upload'),
             [
@@ -157,7 +159,7 @@ class LevelTest extends TestCase
                 'gdw' => false,
                 'accountID' => $account->id,
                 'gjp' => 'AgUGBgMF',
-                'userName' => $this->faker->firstName,
+                'userName' => $account->name,
                 'levelID' => 0,
                 'levelName' => $levelName,
                 'levelDesc' => $levelDesc,
@@ -178,7 +180,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => $hash->generateUploadLevelSeed($levelString),
+                'seed2' => Str::random(),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
@@ -232,7 +234,7 @@ class LevelTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$level->id}:2:{$level->name}:3:{$level->desc}");
+        $request->assertSee("1:$level->id:2:$level->name:3:$level->desc");
     }
 
     public function test_download(): void
@@ -261,7 +263,7 @@ class LevelTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$level->id}:2:{$level->name}:3:{$level->desc}:4:{$levelString}");
+        $request->assertSee("1:$level->id:2:$level->name:3:$level->desc:4:$levelString");
     }
 
     public function test_download_use_chk(): void
@@ -277,7 +279,6 @@ class LevelTest extends TestCase
         $levelString = Str::random();
         Storage::fake('oss')->put("gdcn/levels/$level->id.dat", $levelString);
 
-        $hash = app(HashesController::class);
         $rs = Str::random();
 
         $request = $this->post(
@@ -295,13 +296,13 @@ class LevelTest extends TestCase
                 'extras' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'rs' => $rs,
-                'chk' => $hash->encodeChk($hash->generateDownloadLevelChk($level->id, 0, $rs, $account->id, $account->user->udid, $account->user->uuid), $hash->keys['level_seed'])
+                'chk' => Str::random()
             ]
         );
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$level->id}:2:{$level->name}:3:{$level->desc}");
+        $request->assertSee("1:$level->id:2:$level->name:3:$level->desc");
     }
 
     public function test_delete(): void

@@ -9,6 +9,19 @@ use Illuminate\Validation\Rule;
 class UpdateRequest extends Request
 {
     /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if ($this->has(['accountID', 'gjp'])) {
+            return $this->validateAccountGJP();
+        }
+
+        return true;
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -21,7 +34,6 @@ class UpdateRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                'required',
                 Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',

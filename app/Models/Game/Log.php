@@ -38,6 +38,16 @@ class Log extends Model
     use HasFactory;
 
     /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'type',
+        'user',
+        'value',
+        'ip'
+    ];
+
+    /**
      * @var string
      */
     protected $table = 'game_logs';

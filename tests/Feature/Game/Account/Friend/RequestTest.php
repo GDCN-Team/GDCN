@@ -89,7 +89,7 @@ class RequestTest extends TestCase
 
     public function test_delete_single(): void
     {
-        /** @var Account\Friend\FriendRequest $friendRequest */
+        /** @var FriendRequest $friendRequest */
         $friendRequest = FriendRequest::factory()->create();
 
         $request = $this->post(
@@ -116,7 +116,7 @@ class RequestTest extends TestCase
 
     public function test_delete_single_from_other(): void
     {
-        /** @var Account\Friend\FriendRequest $friendRequest */
+        /** @var FriendRequest $friendRequest */
         $friendRequest = FriendRequest::factory()->create();
 
         $request = $this->post(
@@ -147,7 +147,7 @@ class RequestTest extends TestCase
         $account = Account::factory()->create();
         $accountID = $account->id;
 
-        /** @var Account\Friend\FriendRequest[] $friendRequests */
+        /** @var FriendRequest[] $friendRequests */
         $friendRequests = FriendRequest::factory()
             ->state(['account' => $accountID])
             ->count(2)
@@ -182,7 +182,7 @@ class RequestTest extends TestCase
         /** @var Account $account */
         $account = Account::factory()->create();
 
-        /** @var Account\Friend\FriendRequest[] $friendRequests */
+        /** @var FriendRequest[] $friendRequests */
         $friendRequests = FriendRequest::factory()
             ->state(['to_account' => $account->id])
             ->count(2)
@@ -214,7 +214,7 @@ class RequestTest extends TestCase
 
     public function test_get(): void
     {
-        /** @var Account\Friend\FriendRequest $friendRequest */
+        /** @var FriendRequest $friendRequest */
         $friendRequest = FriendRequest::factory()->create();
 
         $request = $this->post(
@@ -279,7 +279,7 @@ class RequestTest extends TestCase
 
     public function test_get_sent(): void
     {
-        /** @var Account\Friend\FriendRequest $friendRequest */
+        /** @var FriendRequest $friendRequest */
         $friendRequest = FriendRequest::factory()->create();
 
         $request = $this->post(
@@ -299,7 +299,7 @@ class RequestTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("32:{$friendRequest->id}:35:{$friendRequest->comment}");
+        $request->assertSee("32:$friendRequest->id:35:$friendRequest->comment");
     }
 
     public function test_read(): void
@@ -352,8 +352,8 @@ class RequestTest extends TestCase
         $this->assertDatabaseHas(
             'game_account_friends',
             [
-                'account' => $friendRequest->account,
-                'target_account' => $friendRequest->to_account
+                'account' => $friendRequest->to_account,
+                'target_account' => $friendRequest->account
             ]
         );
     }

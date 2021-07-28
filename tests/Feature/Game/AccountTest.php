@@ -4,14 +4,14 @@ namespace Tests\Feature\Game;
 
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Models\Game\Account;
+use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Notification;
-use Inertia\Inertia;
 use Tests\TestCase;
 use function route;
 
@@ -61,7 +61,11 @@ class AccountTest extends TestCase
         $account = Account::factory()->create();
         $account->sendEmailVerificationNotification();
 
-        Notification::assertSentTo([$account], VerifyEmail::class);
+        try {
+            Notification::assertSentTo([$account], VerifyEmail::class);
+        } catch (Exception $e) {
+            self::fail($e->getMessage());
+        }
     }
 
     public function test_empty_udid_exception(): void
@@ -75,13 +79,26 @@ class AccountTest extends TestCase
 
     public function test_verify(): void
     {
-        $account = Account::factory()->createOne();
-        $url = call_user_func(VerifyEmail::$createUrlCallback, $account);
+        Notification::fake();
+        Notification::assertNothingSent();
 
-        $this->get($url)
-            ->assertRedirect();
+        /** @var Account $account */
+        $account = Account::factory()->create();
+        $account->sendEmailVerificationNotification();
 
-        $this->assertEquals(Lang::get('GameAccountEmailVerify.success'), Inertia::getShared('notices')[0]['message']);
+        $this->get(
+            route('game.account.verify'),
+            [
+                '_' => Crypt::encryptString($account->id . ':' . $account->email)
+            ]
+        );
+
+        try {
+            Notification::assertSentTo([$account], VerifyEmail::class);
+            $this->assertTrue($account->hasVerifiedEmail());
+        } catch (Exception $e) {
+            $this->fail($e->getMessage());
+        }
     }
 
     public function test_login(): void
@@ -102,6 +119,6 @@ class AccountTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        self::assertEquals("{$account->id},{$account->user->id}", $request->getContent());
+        self::assertEquals("$account->id,{$account->user->id}", $request->getContent());
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Game\Account;
 
 use App\Models\Game\Account;
+use App\Services\Game\Account\SaveDataService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
@@ -44,7 +45,7 @@ class SaveDataTest extends TestCase
 
     public function test_save(): void
     {
-        $storage = Storage::fake('oss');
+        Storage::fake('oss');
 
         /** @var Account $account */
         $account = Account::factory()->createOne();
@@ -69,12 +70,13 @@ class SaveDataTest extends TestCase
     public function test_load(): void
     {
         Storage::fake('oss');
+        $service = app(SaveDataService::class);
 
         /** @var Account $account */
         $account = Account::factory()->createOne();
 
         $content = Str::random();
-        Storage::fake('oss')->put("gdcn/saveData/$account->name.dat", $content);
+        $service->save($account->name, $content);
 
         $request = $this->post(
             route('game.account.data.load'),

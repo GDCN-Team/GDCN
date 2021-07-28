@@ -2,12 +2,20 @@
 
 namespace App\Services\Game\Level;
 
+use App\Enums\Game\Level\Rating\SuggestionType;
 use App\Exceptions\Game\Level\UnRateException;
-use App\Game\Helpers;
+use App\Exceptions\Game\UserNotFoundException;
+use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Rating;
+use App\Models\Game\Level\RatingSuggestion;
+use App\Models\Game\User;
 use App\Models\Game\UserScore;
+use App\Services\Game\HelperService;
+use BenSampo\Enum\Exceptions\InvalidEnumKeyException;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use function config;
 
 /**
@@ -17,27 +25,172 @@ use function config;
 class RatingService
 {
     /**
-     * @var Helpers
-     */
-    protected $helper;
-
-    /**
      * RatingService constructor.
-     * @param Helpers $helper
+     * @param HelperService $helper
      */
-    public function __construct(Helpers $helper)
+    public function __construct(
+        public HelperService $helper
+    )
     {
-        $this->helper = $helper;
+
     }
 
     /**
-     * @param Level $level
-     * @param int $stars
-     * @param int|null $diff
+     * @param SuggestionType $type
+     * @param $suggestion
+     * @param bool $clearStars
      * @return bool
      */
-    public function rate(Level $level, int $stars, int $diff = null): bool
+    public function auto_rate(SuggestionType $type, $suggestion, bool $clearStars = true): bool
     {
+        switch ($type->value) {
+            case SuggestionType::SUGGEST:
+                $config = config('game.feature.auto_rate.suggest');
+                break;
+            case SuggestionType::RATE:
+                $config = config('game.feature.auto_rate.rate');
+                break;
+            case SuggestionType::DEMON:
+                $config = config('game.feature.auto_rate.demon');
+                break;
+            default:
+                return false;
+        }
+
+        $suggestions = RatingSuggestion::where([
+            'type' => $type->value,
+            'level' => $suggestion->level
+        ]);
+
+        $level = $this->helper->getModel($suggestion->level, Level::class);
+        if ($config['enabled'] && $suggestions->count() >= $config['least_suggest']) {
+            $stars = round($suggestions->average('rating'));
+
+            if ($type->value !== SuggestionType::DEMON) {
+                $rating = $this->rate($level, $stars);
+
+                if ($type->value === SuggestionType::SUGGEST) {
+                    $featured = max(0, round($suggestions->average('featured')));
+                    $rating->featured_score = $featured;
+                    $rating->save();
+                }
+            } else {
+                $rating = $level->rating;
+                $rating->demon_difficulty = $this->helper->guessDemonDifficultyFromRating(round($suggestions->average('rating')));
+                $rating->save();
+            }
+
+            if ($clearStars) {
+                $rating->stars = 0;
+                $rating->save();
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param SuggestionType $type
+     * @param $user
+     * @param $level
+     * @param int $rating
+     * @param bool $featured
+     * @return Model|Builder|RatingSuggestion
+     */
+    public function upload_suggestion(SuggestionType $type, $user, $level, int $rating, bool $featured = false): Model|Builder|RatingSuggestion
+    {
+        return RatingSuggestion::query()
+            ->updateOrCreate([
+                'type' => $type->value,
+                'user' => $this->helper->getID($user),
+                'level' => $this->helper->getID($level)
+            ], [
+                'rating' => $rating,
+                'featured' => $featured
+            ]);
+    }
+
+    /**
+     * @param $account
+     * @param $level
+     * @param int $stars
+     * @param bool $featured
+     * @return bool
+     * @throws UserNotFoundException
+     */
+    public function suggest($account, $level, int $stars, bool $featured): bool
+    {
+        $account = $this->helper->getModel($account, Account::class);
+        if (!$user = $account->user) {
+            throw new UserNotFoundException();
+        }
+
+        try {
+            $type = SuggestionType::fromKey('SUGGEST');
+            $suggestion = $this->upload_suggestion($type, $user, $level, $stars, $featured);
+        } catch (InvalidEnumKeyException) {
+            return false;
+        }
+
+        return $this->auto_rate($type, $suggestion, false);
+    }
+
+    /**
+     * @param $user
+     * @param $level
+     * @param int $stars
+     * @return bool
+     * @throws UserNotFoundException
+     */
+    public function suggest_rate($user, $level, int $stars): bool
+    {
+        if (!$user = $this->helper->getModel($user, User::class)) {
+            throw new UserNotFoundException();
+        }
+
+        try {
+            $type = SuggestionType::fromKey('RATE');
+            $suggestion = $this->upload_suggestion($type, $user, $level, $stars);
+        } catch (InvalidEnumKeyException) {
+            return false;
+        }
+
+        return $this->auto_rate($type, $suggestion);
+    }
+
+    /**
+     * @param $user
+     * @param $level
+     * @param int $rating
+     * @return bool
+     * @throws UserNotFoundException
+     */
+    public function suggest_demon($user, $level, int $rating): bool
+    {
+        if (!$user = $this->helper->getModel($user, User::class)) {
+            throw new UserNotFoundException();
+        }
+
+        try {
+            $type = SuggestionType::fromKey('DEMON');
+            $suggestion = $this->upload_suggestion($type, $user, $level, $rating);
+        } catch (InvalidEnumKeyException) {
+            return false;
+        }
+
+        return $this->auto_rate($type, $suggestion);
+    }
+
+    /**
+     * @param int|Level $level
+     * @param int $stars
+     * @param int|null $diff
+     * @return Rating
+     */
+    public function rate(Level|int $level, int $stars, int $diff = null): Rating
+    {
+        $level = $this->helper->getModel($level, Level::class);
+
         if (!$rating = $level->rating) {
             $rating = new Rating();
             $rating->level = $level->id;
@@ -54,10 +207,10 @@ class RatingService
         $rating->epic = false;
         $rating->coin_verified = false;
         $rating->demon_difficulty = 0;
+        $rating->save();
 
-        $result = $rating->save();
         $this->recalculateCreatorPoints();
-        return $result;
+        return $rating;
     }
 
     /**
@@ -75,7 +228,7 @@ class RatingService
             $result = $level->rating->delete();
             $this->recalculateCreatorPoints();
             return $result;
-        } catch (Exception $e) {
+        } catch (Exception) {
             throw new UnRateException();
         }
     }

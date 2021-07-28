@@ -11,25 +11,13 @@ use Illuminate\Validation\Rule;
 class RateDemonRequest extends Request
 {
     /**
-     * @var Level
-     */
-    public $level;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
+     * @inerhitDoc
      * @return bool
      */
     public function authorize(): bool
     {
-        if (empty($this->levelID)) {
-            return false;
-        }
-
-        try {
-            $this->level = Level::whereId($this->levelID)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return false;
+        if ($this->has(['accountID', 'gjp'])) {
+            return $this->validateAccountGJP();
         }
 
         return true;
@@ -48,24 +36,15 @@ class RateDemonRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                'required',
+                'exclude_if:accountID,0',
                 Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'udid' => 'required_without_all:accountID,gjp',
             'uuid' => 'required_with:udid',
-            'levelID' => [
-                'required',
-                Rule::exists(Level::class, 'id')
-            ],
-            'rating' => [
-                'required',
-                'digits_between:1,5'
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfp3879gc3')
-            ]
+            'levelID' => Rule::exists(Level::class, 'id'),
+            'rating' => 'between:1,5',
+            'secret' => Rule::in('Wmfp3879gc3')
         ];
     }
 }

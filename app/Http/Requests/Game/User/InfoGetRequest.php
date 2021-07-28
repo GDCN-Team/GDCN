@@ -9,6 +9,19 @@ use Illuminate\Validation\Rule;
 class InfoGetRequest extends Request
 {
     /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if ($this->has(['accountID', 'gjp'])) {
+            return $this->validateAccountGJP();
+        }
+
+        return true;
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -24,16 +37,10 @@ class InfoGetRequest extends Request
                 Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
-            'uuid' => 'required_without_all:accountID,gjp',
+            'uuid' => 'required_without:gjp',
             'udid' => 'required_with:uuid',
-            'targetAccountID' => [
-                'required',
-                Rule::exists(Account::class, 'id')
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'targetAccountID' => Rule::exists(Account::class, 'id'),
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

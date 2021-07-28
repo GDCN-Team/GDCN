@@ -38,6 +38,6 @@ class CreateGameLevelCommentsTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('level_comments');
+        Schema::dropIfExists('game_level_comments');
     }
 }

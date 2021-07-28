@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Game\Level;
 
-use App\Game\Helpers;
+use App\Enums\Game\ResponseCode;
+use App\Exceptions\Game\NoItemException;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Game\HashesController;
 use App\Http\Requests\Game\Level\PackGetRequest;
-use App\Models\Game\Level\Pack;
-use GDCN\GDObject;
+use App\Services\Game\Level\PackService;
 
 /**
  * Class PacksController
@@ -15,35 +14,25 @@ use GDCN\GDObject;
  */
 class PacksController extends Controller
 {
+    public function __construct(
+        public PackService $service
+    )
+    {
+    }
+
     /**
      * @param PackGetRequest $request
-     * @param Helpers $helper
-     * @param HashesController $hash
      * @return string
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJMapPacks21
      */
-    public function get(PackGetRequest $request, Helpers $helper, HashesController $hash): string
+    public function get(PackGetRequest $request): string
     {
-        $data = $request->validated();
-
-        $query = Pack::all();
-        $page = $data['page'];
-
-        $packs = $query->forPage(++$page, $helper->perPage)
-            ->map(function (Pack $pack) {
-                return GDObject::merge([
-                    1 => $pack->id,
-                    2 => $pack->name,
-                    3 => $pack->levels,
-                    4 => $pack->stars,
-                    5 => $pack->coins,
-                    6 => $pack->difficulty,
-                    7 => $pack->text_color,
-                    8 => $pack->bar_color
-                ], ':');
-            })->join('|');
-
-        return "{$packs}#{$helper->generatePageHash($query->count(), $page)}#{$hash->generateLevelPackHash($query)}";
+        try {
+            $data = $request->validated();
+            return $this->service->get($data['page']);
+        } catch (NoItemException) {
+            return ResponseCode::EMPTY_RESULT_STRING;
+        }
     }
 }

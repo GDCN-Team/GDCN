@@ -21,10 +21,7 @@ class SearchRequest extends Request
             'str' => 'required',
             'page' => 'required',
             'total' => 'required_with:page',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

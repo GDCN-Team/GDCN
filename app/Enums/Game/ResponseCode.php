@@ -50,14 +50,57 @@ final class ResponseCode extends Enum
     public const ACCOUNT_SETTING_UPDATE_SUCCESS = self::OK;
     public const ACCOUNT_SETTING_UPDATE_FAILED = self::FAILED;
 
+    // Level Comment
+    public const LEVEL_COMMENT_UPLOAD_SUCCESS = self::OK;
+    public const LEVEL_COMMENT_UPLOAD_FAILED = self::FAILED;
+    public const LEVEL_COMMENT_DELETE_SUCCESS = self::OK;
+    public const LEVEL_COMMENT_DELETE_FAILED = self::FAILED;
+
+    // Level Rating
+    public const LEVEL_SUGGEST_SUCCESS = self::OK;
+    public const LEVEL_SUGGEST_FAILED = self::FAILED;
+    public const LEVEL_SUGGEST_RATE_SUCCESS = self::OK;
+    public const LEVEL_SUGGEST_RATE_FAILED = self::FAILED;
+    public const LEVEL_SUGGEST_DEMON_SUCCESS = self::OK;
+    public const LEVEL_SUGGEST_DEMON_FAILED = self::FAILED;
+
     //Account register
-    public const REGISTER_USERNAME_NOT_UNIQUE = -2;
-    public const REGISTER_EMAIL_NOT_UNIQUE = -3;
-    public const REGISTER_EMAIL_INVALID = -6;
+    public const ACCOUNT_REGISTER_SUCCESS = self::OK;
+    public const ACCOUNT_REGISTER_FAILED = self::FAILED;
+    public const ACCOUNT_REGISTER_USERNAME_NOT_UNIQUE = -2;
+    public const ACCOUNT_REGISTER_EMAIL_NOT_UNIQUE = -3;
+    public const ACCOUNT_REGISTER_EMAIL_INVALID = -6;
+
+    // Account login
+    public const ACCOUNT_LOGIN_ACCOUNT_NOT_VERIFIED = self::FAILED;
+    public const ACCOUNT_LOGIN_FAILED = self::FAILED;
+
+    // Level
+    public const LEVEL_UPLOAD_FAILED = self::FAILED;
+    public const LEVEL_DELETE_SUCCESS = self::OK;
+    public const LEVEL_DELETE_FAILED = self::FAILED;
+    public const LEVEL_REPORT_SUCCESS = self::OK;
+    public const LEVEL_REPORT_FAILED = self::FAILED;
+    public const LEVEL_UPDATE_DESC_SUCCESS = self::OK;
+    public const LEVEL_UPDATE_DESC_FAILED = self::FAILED;
+
+    // Misc
+    public const LIKE_SUCCESS = self::OK;
+    public const LIKE_FAILED = self::FAILED;
+    public const RESTORE_ITEM_FAILED = self::FAILED;
+
+    // Challenge
+    public const CHALLENGE_GET_FAILED = self::FAILED;
 
     // Song
-    public const SONG_DISABLE = -2;
-    public const SONG_NOT_FOUND = self::FAILED;
+    public const SONG_GET_FAILED = self::FAILED;
+
+    // User
+    public const ACCESS_FAILED = self::FAILED;
+
+    // User Score
+    public const USER_SCORE_UPDATE_SUCCESS = self::OK;
+    public const USER_SCORE_UPDATE_FAILED = self::FAILED;
 
     public const FAILED = -1;
     public const OK = 1;
@@ -95,16 +138,10 @@ final class ResponseCode extends Enum
     public const SAVE_DATA_NOT_FOUND = self::FAILED;
     public const CHALLENGE_NOT_ENOUGH = self::FAILED;
 
-    // Account login
-    public const ACCOUNT_LOGIN_ACCOUNT_NOT_VERIFIED = self::FAILED;
-    public const ACCOUNT_LOGIN_FAILED = self::FAILED;
-
-    // Upload level
-    public const LEVEL_UPLOAD_FAILED = self::FAILED;
 
     // Download level
     public const DOWNLOAD_LEVEL_MISSING_LEVEL_STRING = self::FAILED;
 
-    // Restore item
-    public const RESTORE_ITEM_FAILED = self::FAILED;
+    // Misc
+    public const USER_SCORE_NOT_FOUND = self::FAILED;
 }

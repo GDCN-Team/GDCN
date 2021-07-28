@@ -17,7 +17,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'game',
         'passwords' => 'accounts',
     ],
 
@@ -39,26 +39,15 @@ return [
     */
 
     'guards' => [
-        'web' => [
+        'game' => [
             'driver' => 'session',
             'provider' => 'accounts',
         ],
 
-        'game' => [
-            'driver' => 'game',
-            'provider' => 'accounts',
-        ],
-
-        'game.user' => [
-            'driver' => 'game',
+        'gameUser' => [
+            'driver' => 'session',
             'provider' => 'users',
-        ],
-
-        'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
-            'hash' => false,
-        ],
+        ]
     ],
 
     /*

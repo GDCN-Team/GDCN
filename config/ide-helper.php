@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'filename' => '_ide_helper.php',
+    'filename'  => '_ide_helper.php',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     |
     */
 
-    'include_fluent' => true,
+    'include_fluent' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ return [
     |
     */
 
-    'include_factory_builders' => true,
+    'include_factory_builders' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -96,7 +96,7 @@ return [
     |
     */
 
-    'write_eloquent_model_mixins' => true,
+    'write_eloquent_model_mixins' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -108,7 +108,7 @@ return [
     |
     */
 
-    'include_helpers' => true,
+    'include_helpers' => false,
 
     'helper_files' => [
         base_path() . '/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
@@ -129,7 +129,7 @@ return [
 
     'model_locations' => [
         'app',
-        'Modules',
+        'Modules'
     ],
 
     /*
@@ -268,7 +268,7 @@ return [
     | magic methods and properties.
     |
     */
-    'include_class_docblocks' => true,
+    'include_class_docblocks' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -280,7 +280,7 @@ return [
     | or there is an import (use className) of a given class
     |
     */
-    'force_fqn' => true,
+    'force_fqn' => false,
 
     /*
     |--------------------------------------------------------------------------

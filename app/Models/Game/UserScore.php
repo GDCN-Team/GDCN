@@ -39,12 +39,12 @@ use Illuminate\Support\Carbon;
  * @property int $acc_explosion
  * @property int $creator_points
  * @property int $chest1count
- * @property string|null $chest1time
+ * @property Carbon|null $chest1time
  * @property int $chest2count
- * @property string|null $chest2time
+ * @property Carbon|null $chest2time
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User|null $owner
+ * @property-read \App\Models\Game\User|null $owner
  * @method static Builder|UserScore newModelQuery()
  * @method static Builder|UserScore newQuery()
  * @method static Builder|UserScore query()
@@ -79,6 +79,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|UserScore whereUser($value)
  * @method static Builder|UserScore whereUserCoins($value)
  * @mixin Eloquent
+ * @method static \Database\Factories\Game\UserScoreFactory factory(...$parameters)
  */
 class UserScore extends Model
 {
@@ -88,6 +89,14 @@ class UserScore extends Model
      * @var string
      */
     protected $table = 'game_user_scores';
+
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'chest1time' => 'datetime',
+        'chest2time' => 'datetime'
+    ];
 
     /**
      * @return HasOne

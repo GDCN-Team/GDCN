@@ -6,39 +6,17 @@ use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Comment;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 
 class DeleteRequest extends Request
 {
     /**
-     * @var Comment
-     */
-    public $comment;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
+     * @inerhitDoc
      * @return bool
      */
     public function authorize(): bool
     {
-        if (empty($this->commentID) || empty($this->levelID)) {
-            return false;
-        }
-
-        try {
-            $this->comment = Comment::whereId($this->commentID)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return false;
-        }
-
-        $this->auth();
-        if (!optional($this->account)->can('delete', $this->comment)) {
-            return false;
-        }
-
-        return true;
+        return $this->validateAccountGJP();
     }
 
     /**
@@ -52,23 +30,11 @@ class DeleteRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(Account::class, 'id')
-            ],
-            'gjp' => 'required_with:accountID',
-            'commentID' => [
-                'required',
-                Rule::exists(Comment::class, 'id')
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'levelID' => [
-                'required',
-                Rule::exists(Level::class, 'id')
-            ]
+            'accountID' => Rule::exists(Account::class, 'id'),
+            'gjp' => 'required',
+            'commentID' => Rule::exists(Comment::class, 'id'),
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'levelID' => Rule::exists(Level::class, 'id')
         ];
     }
 }

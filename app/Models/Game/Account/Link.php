@@ -2,10 +2,12 @@
 
 namespace App\Models\Game\Account;
 
+use App\Models\Game\Account;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -13,7 +15,7 @@ use Illuminate\Support\Carbon;
  *
  * @package App\Models\Game\Account
  * @property int $id
- * @property string $host
+ * @property string $server
  * @property int $account
  * @property int $target_account_id
  * @property int $target_user_id
@@ -25,13 +27,14 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Link query()
  * @method static Builder|Link whereAccount($value)
  * @method static Builder|Link whereCreatedAt($value)
- * @method static Builder|Link whereHost($value)
  * @method static Builder|Link whereId($value)
+ * @method static Builder|Link whereServer($value)
  * @method static Builder|Link whereTargetAccountId($value)
  * @method static Builder|Link whereTargetName($value)
  * @method static Builder|Link whereTargetUserId($value)
  * @method static Builder|Link whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property-read Account $owner
  */
 class Link extends Model
 {
@@ -41,4 +44,23 @@ class Link extends Model
      * @var string
      */
     protected $table = 'game_account_links';
+
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'account',
+        'server',
+        'target_name',
+        'target_account_id',
+        'target_user_id'
+    ];
+
+    /**
+     * @return BelongsTo
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'account');
+    }
 }

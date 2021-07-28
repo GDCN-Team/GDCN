@@ -9,6 +9,7 @@ use App\Game\AccountMessagesManager;
 use App\Models\Game\Account\Comment;
 use App\Models\Game\Account\Friend;
 use App\Models\Game\Account\FriendRequest;
+use App\Models\Game\Account\Link;
 use App\Models\Game\Account\Message;
 use App\Models\Game\Account\Permission\Assign;
 use App\Models\Game\Account\Permission\Group;
@@ -78,6 +79,8 @@ use function app;
  * @method static Builder|Account whereRememberToken($value)
  * @method static Builder|Account whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property-read Collection|Link[] $links
+ * @property-read int|null $links_count
  */
 class Account extends Model implements MustVerifyEmailContract, CanResetPasswordContract, AuthenticatableContract, AuthorizableContract
 {
@@ -124,36 +127,9 @@ class Account extends Model implements MustVerifyEmailContract, CanResetPassword
     ];
 
     /**
-     * @return AccountFriendsManager
+     * @return Collection
      */
-    public function getFriendAttribute(): AccountFriendsManager
-    {
-        return new AccountFriendsManager(
-            $this,
-            app(Friend::class)
-        );
-    }
-
-    /**
-     * @return AccountMessagesManager
-     */
-    public function getMessageAttribute(): AccountMessagesManager
-    {
-        return new AccountMessagesManager($this);
-    }
-
-    /**
-     * @return AccountFriendRequestsManager
-     */
-    public function getFriendRequestAttribute(): AccountFriendRequestsManager
-    {
-        return new AccountFriendRequestsManager($this);
-    }
-
-    /**
-     * @return Collection|Account[]
-     */
-    public function getFriendsAttribute()
+    public function getFriendsAttribute(): Collection
     {
         $friends = Friend::query()
             ->orWhere(['account' => $this->id, 'target_account' => $this->id])
@@ -223,6 +199,14 @@ class Account extends Model implements MustVerifyEmailContract, CanResetPassword
     public function permission(): HasOneThrough
     {
         return $this->hasOneThrough(Group::class, Assign::class, 'account', 'id', null, 'group');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function links(): HasMany
+    {
+        return $this->hasMany(Link::class, 'account');
     }
 
     /**

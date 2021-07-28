@@ -44,6 +44,14 @@ class Friend extends Model
     protected $table = 'game_account_friends';
 
     /**
+     * @var string[]
+     */
+    protected $casts = [
+        'account' => 'integer',
+        'target_account' => 'integer'
+    ];
+
+    /**
      * @param int|AccountModel $account1
      * @param int|AccountModel $account2
      * @return Builder

@@ -21,14 +21,10 @@ class SearchRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                'required',
                 Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
-            'type' => [
-                'required',
-                Rule::in([0, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 16])
-            ],
+            'type' => 'between:1,16',
             'str' => 'nullable',
             'page' => 'required',
             'total' => 'required',
@@ -64,34 +60,18 @@ class SearchRequest extends Request
                 'nullable',
                 'boolean'
             ],
-            'completedLevels' => [
-                'sometimes',
-                'required'
-            ],
+            'completedLevels' => 'sometimes',
 
             /* Filters */
 
-            'len' => [
-                'sometimes',
-                'required'
-            ],
-            'star' => [
-                'sometimes',
-                'required'
-            ],
-            'diff' => [
-                'exclude_if:diff,-',
-                'required'
-            ],
+            'len' => 'sometimes',
+            'star' => 'sometimes',
+            'diff' => 'exclude_if:diff,-',
             'demonFilter' => [
                 'sometimes',
-                'required',
-                Rule::in([1, 2, 3, 4, 5])
+                'between:1,5'
             ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

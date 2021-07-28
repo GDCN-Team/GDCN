@@ -45,11 +45,11 @@ class HelperService
     }
 
     /**
-     * @param int|Model $value
+     * @param Model|int|null $value
      * @param string $targetClassName
      * @return mixed
      */
-    public function getModel(Model|int $value, string $targetClassName): mixed
+    public function getModel(Model|int|null $value, string $targetClassName): mixed
     {
         return $value instanceof $targetClassName ? $value : $targetClassName::findOrFail($value);
     }
@@ -79,5 +79,73 @@ class HelperService
         }
 
         return false;
+    }
+
+    /**
+     * @param int $rating
+     * @return int
+     */
+    public function guessDemonDifficultyFromRating(int $rating): int
+    {
+        return match ($rating) {
+            1 => 3,
+            2 => 4,
+            4 => 5,
+            5 => 6,
+            default => 0,
+        };
+    }
+
+    /**
+     * @param $stars
+     * @return array
+     */
+    public function guessDiffFromStars($stars): array
+    {
+        $auto = false;
+        $demon = false;
+
+        switch ($stars) {
+            case 1:
+                $name = 'Auto';
+                $diff = 50;
+                $auto = true;
+                break;
+            case 2:
+                $name = 'Easy';
+                $diff = 10;
+                break;
+            case 3:
+                $name = 'Normal';
+                $diff = 20;
+                break;
+            case 4:
+            case 5:
+                $name = 'Hard';
+                $diff = 30;
+                break;
+            case 6:
+            case 7:
+                $name = 'Harder';
+                $diff = 40;
+                break;
+            case 8:
+            case 9:
+                $name = 'Insane';
+                $diff = 50;
+                break;
+            case 10:
+                $name = 'Demon';
+                $diff = 50;
+                $demon = true;
+                break;
+            default:
+                $name = $stars > 10 ? 'Demon' : 'N/A';
+                $diff = $stars > 10 ? 50 : 0;
+                $demon = $stars > 10;
+                break;
+        }
+
+        return [$name, $diff, $auto, $demon];
     }
 }

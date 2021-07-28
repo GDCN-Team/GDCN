@@ -16,10 +16,7 @@ class GetRequest extends Request
     {
         return [
             'songID' => 'required',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

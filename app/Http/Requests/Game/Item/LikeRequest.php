@@ -9,6 +9,19 @@ use Illuminate\Validation\Rule;
 class LikeRequest extends Request
 {
     /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if ($this->has('accountID', 'gjp')) {
+            return $this->validateAccountGJP();
+        }
+
+        return true;
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -28,18 +41,9 @@ class LikeRequest extends Request
             'udid' => 'required',
             'uuid' => 'required_with:udid',
             'itemID' => 'required',
-            'like' => [
-                'required',
-                'boolean'
-            ],
-            'type' => [
-                'required',
-                Rule::in([1, 2, 3])
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
+            'like' => 'boolean',
+            'type' => Rule::in([1, 2, 3]),
+            'secret' => Rule::in('Wmfd2893gb7'),
             'special' => 'required',
             'rs' => 'required',
             'chk' => 'required'

@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Game;
 
-use;
 use App\Enums\Game\ResponseCode;
 use App\Models\Game\Account;
+use App\Models\Game\Account\Comment as AccountComment;
 use App\Models\Game\Level;
-use App\Models\Game\Level\Comment;
+use App\Models\Game\Level\Comment as LevelComment;
 use App\Models\Game\User;
 use Base64Url\Base64Url;
 use GDCN\XORCipher;
@@ -63,7 +63,7 @@ class MiscTest extends TestCase
             'like' => (int)$like,
             'type' => $type,
             'secret' => 'Wmfd2893gb7',
-            'special' => (int)false,
+            'special' => false,
             'rs' => $rs = Str::random(),
             'chk' => $this->generate_like_chk($item->id, $like, $type, $rs, $useAcc ? $user->account->id : 0, $user->udid, 0)
         ];
@@ -102,7 +102,7 @@ class MiscTest extends TestCase
     {
         return Base64Url::encode(
             XORCipher::cipher(
-                sha1("0{$itemID}" . ($like ? 1 : 0) . "{$type}{$rs}{$accountID}{$udid}{$uuid}ysg6pUrtjn0J"),
+                sha1("0$itemID" . ($like ? 1 : 0) . "$type$rs$accountID$udid{$uuid}ysg6pUrtjn0J"),
                 58281), true);
     }
 
@@ -150,64 +150,64 @@ class MiscTest extends TestCase
 
     public function test_dislike_level_comment(): void
     {
-        /** @var Comment $comment */
-        $comment = Comment::factory()->create();
+        /** @var LevelComment $comment */
+        $comment = LevelComment::factory()->create();
 
         $this->test_like($comment->sender->user, $comment, 2, false);
     }
 
     public function test_dislike_level_comment_with_account(): void
     {
-        /** @var Comment $comment */
-        $comment = Comment::factory()->create();
+        /** @var LevelComment $comment */
+        $comment = LevelComment::factory()->create();
 
         $this->test_like($comment->sender->user, $comment, 2, false, true);
     }
 
     public function test_like_level_comment(): void
     {
-        /** @var Comment $comment */
-        $comment = Comment::factory()->create();
+        /** @var LevelComment $comment */
+        $comment = LevelComment::factory()->create();
 
         $this->test_like($comment->sender->user, $comment, 2, true);
     }
 
     public function test_like_level_comment_with_account(): void
     {
-        /** @var Comment $comment */
-        $comment = Comment::factory()->create();
+        /** @var LevelComment $comment */
+        $comment = LevelComment::factory()->create();
 
         $this->test_like($comment->sender->user, $comment, 2, true, true);
     }
 
     public function test_dislike_account_comment(): void
     {
-        /** @var \App\Models\Game\Level\Comment $comment */
-        $comment = Comment::factory()->create();
+        /** @var AccountComment $comment */
+        $comment = AccountComment::factory()->create();
 
         $this->test_like($comment->sender->user, $comment, 3, false);
     }
 
     public function test_dislike_account_comment_with_account(): void
     {
-        /** @var Account\Comment $comment */
-        $comment = Comment::factory()->create();
+        /** @var AccountComment $comment */
+        $comment = AccountComment::factory()->create();
 
         $this->test_like($comment->sender->user, $comment, 3, false, true);
     }
 
     public function test_like_account_comment(): void
     {
-        /** @var \App\Models\Game\Level\Comment $comment */
-        $comment = Comment::factory()->create();
+        /** @var AccountComment $comment */
+        $comment = AccountComment::factory()->create();
 
         $this->test_like($comment->sender->user, $comment, 3, true);
     }
 
     public function test_like_account_comment_with_account(): void
     {
-        /** @var Account\Comment $comment */
-        $comment = Comment::factory()->create();
+        /** @var AccountComment $comment */
+        $comment = AccountComment::factory()->create();
 
         $this->test_like($comment->sender->user, $comment, 3, true, true);
     }

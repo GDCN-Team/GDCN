@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Game\Level;
 
-use App\Exceptions\Game\Request\AuthenticationException;
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
@@ -11,17 +10,12 @@ use Illuminate\Validation\Rule;
 class ScoreGetRequest extends Request
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
+     * @inerhitDoc
      * @return bool
      */
     public function authorize(): bool
     {
-        try {
-            return $this->auth();
-        } catch (AuthenticationException $e) {
-            return false;
-        }
+        return $this->validateAccountGJP();
     }
 
     /**
@@ -35,53 +29,22 @@ class ScoreGetRequest extends Request
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'accountID' => [
-                'required',
-                Rule::exists(Account::class, 'id')
-            ],
-            'gjp' => 'required_with:accountID',
-            'levelID' => [
-                'required',
-                Rule::exists(Level::class, 'id')
-            ],
-            'percent' => [
-                'required',
-                'digits_between:0,100'
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'type' => [
-                'required',
-                Rule::in([0, 1, 2])
-            ],
-            's1' => [
-                'required',
-                'numeric',
-                'min:8354',
-            ],
-            's2' => [
-                'required',
-                'numeric',
-                'min:3991'
-            ],
-            's3' => [
-                'required',
-                'numeric',
-                'min:4085'
-            ],
-            's4' => 'required',
-            's5' => 'required',
-            's6' => 'nullable',
-            's7' => 'required',
-            's8' => 'required',
-            's9' => [
-                'required',
-                'numeric',
-                'min:5819'
-            ],
-            's10' => 'required',
+            'accountID' => Rule::exists(Account::class, 'id'),
+            'gjp' => 'required',
+            'levelID' => Rule::exists(Level::class, 'id'),
+            'percent' => 'between:0,100',
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'type' => Rule::in([0, 1, 2]),
+            's1' => 'gte:8354', // User's attempts + 8354
+            's2' => 'gte:3991', // User's jumps + 3991
+            's3' => 'gte:4085', // User's time in seconds + 4085
+            's4' => 'required', // related to percentage -> Client does math on it (likely used to make the leaderboards accurate)
+            's5' => 'required', // Random number goes up to 4 digits
+            's6' => 'nullable', // List of PB differences (For example from 0 to 50, then 69, it would be 50,19) XOR'd with 41274 and Base64 encoded
+            's7' => 'required', // Randomly Generated 10 character string
+            's8' => 'required', // Attempt Count
+            's9' => 'gte:5819', // The amount of coins the user got + 5819
+            's10' => 'required', // Timely ID
             'chk' => 'required_with:s7'
         ];
     }

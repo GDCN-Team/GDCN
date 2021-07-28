@@ -2,12 +2,9 @@
 
 namespace Tests\Feature\Game\User;
 
-use;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Friend;
 use App\Models\Game\UserScore;
-use Base64Url\Base64Url;
-use GDCN\XORCipher;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -100,10 +97,7 @@ class ScoreTest extends TestCase
                 'accSpider' => 0,
                 'accExplosion' => 0,
                 'seed' => Str::random(),
-                'seed2' => Base64Url::encode(
-                    XORCipher::cipher(
-                        sha1("{$account->id}0000000000000000xI35fsAapCRg"),
-                        85271), true)
+                'seed2' => Str::random()
             ]
         );
 
@@ -121,7 +115,7 @@ class ScoreTest extends TestCase
 
     public function test_get_top(): void
     {
-        /** @var \App\Models\Game\UserScore $score */
+        /** @var UserScore $score */
         $score = UserScore::factory()->create();
 
         $request = $this->post(
@@ -168,7 +162,7 @@ class ScoreTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("16:{$account->id}");
+        $request->assertSee("16:$account->id");
     }
 
     public function test_get_friends(): void
@@ -202,12 +196,12 @@ class ScoreTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("16:{$friend->account}");
+        $request->assertSee("16:$friend->account");
     }
 
     public function test_get_relative(): void
     {
-        /** @var \App\Models\Game\User\UserScore $score */
+        /** @var UserScore $score */
         $score = UserScore::factory()->create();
 
 
@@ -235,7 +229,7 @@ class ScoreTest extends TestCase
         /** @var Account $account */
         $account = Account::factory()->create();
 
-        /** @var \App\Models\Game\User\UserScore $score */
+        /** @var UserScore $score */
         $score = UserScore::factory()
             ->state(['user' => $account->user->id])
             ->create();
@@ -288,7 +282,7 @@ class ScoreTest extends TestCase
         /** @var Account $account */
         $account = Account::factory()->create();
 
-        /** @var \App\Models\Game\User\UserScore $score */
+        /** @var UserScore $score */
         $score = UserScore::factory()
             ->state(['user' => $account->user->id])
             ->create();

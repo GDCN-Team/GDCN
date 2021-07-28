@@ -35,4 +35,11 @@ class Assign extends Model
      * @var string
      */
     protected $table = 'game_account_permission_assigns';
+
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'account'
+    ];
 }

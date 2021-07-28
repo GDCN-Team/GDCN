@@ -63,4 +63,19 @@ class StorageService
 
         return null;
     }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function delete(string $name): bool
+    {
+        /** @var FilesystemAdapter $storage */
+
+        foreach ($this->storages as $storage) {
+            $storage->delete($name);
+        }
+
+        return true;
+    }
 }

@@ -4,13 +4,12 @@ namespace App\Http\Requests\Game;
 
 use App\Exceptions\Game\Request\AuthorizationException;
 use App\Exceptions\Game\Request\ValidateException;
-use App\Game\Helpers;
 use App\Models\Game\Account;
 use App\Models\Game\User;
+use GDCN\Hash\Hasher;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use function app;
 
 /**
  * Class FriendRequest
@@ -18,16 +17,6 @@ use function app;
  */
 class Request extends FormRequest
 {
-    /**
-     * @var Account|null
-     */
-    public $account;
-
-    /**
-     * @var User|null
-     */
-    public $user;
-
     /**
      * @inerhitDoc
      * @return array
@@ -40,7 +29,7 @@ class Request extends FormRequest
     }
 
     /**
-     * @return bool
+     * @return false
      */
     public function validateAccount(): bool
     {
@@ -65,45 +54,47 @@ class Request extends FormRequest
 
         return Auth::once([
             'id' => $this->get('accountID'),
-            'password' => app(Helpers::class)->decodeGJP($this->get('gjp'))
+            'password' => app(Hasher::class)->decodeGJP($this->get('gjp'))
         ]);
     }
 
     /**
-     * @return bool
+     * @return User|null
      */
-    public function validateUser(): bool
+    public function getPlayer(): ?User
     {
-        if (!$this->has(['uuid', 'udid'])) {
-            return false;
+        if (
+            $this->has(['accountID', 'gjp']) && $this->validateAccountGJP() ||
+            $this->has(['userName', 'password']) && $this->validateAccount()
+        ) {
+            /** @var Account $account */
+            $account = Auth::user();
+
+            return $account->user;
         }
 
-        $auth = Auth::guard('game.user');
-        $attempt = $auth->once([
-            'id' => $this->get('uuid'),
-            'udid' => $this->get('udid')
-        ]);
+        if ($this->has(['uuid', 'udid'])) {
+            $user = User::where([
+                'id' => $this->get('uuid')
+            ])->orWhere([
+                'uuid' => $this->get('udid'),
+                'udid' => $this->get('udid')
+            ])->first();
 
-        if (!$attempt) {
-            $user = new User();
-            $udid = $this->get('udid');
-            $user->uuid = $udid;
-            $user->udid = $udid;
-            $user->name = $this->get('name');
-            $user->save();
-
-            $attempt = $auth->once($user->toArray());
+            if (!$user) {
+                $user = new User();
+                $user->name = $this->get('userName', 'Player');
+                $user->uuid = $this->get('udid');
+                $user->udid = $this->get('udid');
+                if ($user->save()) {
+                    return $user;
+                }
+            } else {
+                return $user;
+            }
         }
 
-        return $attempt;
-    }
-
-    /**
-     * @return bool
-     */
-    public function auth(): bool
-    {
-        return true;
+        return null;
     }
 
     /**

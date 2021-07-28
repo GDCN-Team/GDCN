@@ -45,6 +45,13 @@ class Comment extends Model
     protected $table = 'game_account_comments';
 
     /**
+     * @var string[]
+     */
+    protected $casts = [
+        'account' => 'integer'
+    ];
+
+    /**
      * @return BelongsTo
      */
     public function sender(): BelongsTo

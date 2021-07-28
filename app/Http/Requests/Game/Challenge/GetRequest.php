@@ -9,6 +9,19 @@ use Illuminate\Validation\Rule;
 class GetRequest extends Request
 {
     /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if ($this->has(['accountID', 'gjp'])) {
+            return $this->validateAccountGJP();
+        }
+
+        return true;
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -20,22 +33,14 @@ class GetRequest extends Request
             'binaryVersion' => 'required',
             'gdw' => 'required',
             'accountID' => [
-                'sometimes',
-                'required',
                 'exclude_if:accountID,0',
                 Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
             'udid' => 'required',
-            'uuid' => 'required_with:udid',
-            'world' => [
-                'required',
-                'boolean'
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
+            'uuid' => 'required',
+            'world' => 'boolean',
+            'secret' => Rule::in('Wmfd2893gb7'),
             'chk' => 'required'
         ];
     }

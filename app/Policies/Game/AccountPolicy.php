@@ -43,7 +43,7 @@ class AccountPolicy
         }
 
         return $mS->is(MessageState::ALL)
-            || ($mS->is(MessageState::FRIENDS) && $receiver->friend->has($sender->id))
+            || ($mS->is(MessageState::FRIENDS) && $this->friendRepository->between($sender, $sender)->exists())
             || $mS->isNot(MessageState::NONE);
     }
 
@@ -57,7 +57,7 @@ class AccountPolicy
         try {
             $default = FriendRequestState::fromKey('ALL');
             $frS = $receiver->setting->friend_request_state ?? $default;
-        } catch (InvalidEnumKeyException $e) {
+        } catch (InvalidEnumKeyException) {
             return false;
         }
 
@@ -66,21 +66,20 @@ class AccountPolicy
     }
 
     /**
-     * @param Account|null $viewer
      * @param Account $target
      * @return bool
      */
-    public function view_comment_history(?Account $viewer, Account $target): bool
+    public function view_comment_history(/* ?Account $viewer, */ Account $target): bool
     {
         try {
             $default = CommentHistoryState::fromKey('ALL');
             $cS = $target->setting->comment_history_state ?? $default;
-        } catch (InvalidEnumKeyException $e) {
+        } catch (InvalidEnumKeyException) {
             return false;
         }
 
         return $cS->is(CommentHistoryState::ALL)
-            || ($viewer && $cS->is(CommentHistoryState::FRIENDS) && $target->friend->has($viewer->id))
+            // || ($viewer && $cS->is(CommentHistoryState::FRIENDS) && $this->friendRepository->between($viewer, $target))
             || $cS->isNot(CommentHistoryState::NONE);
     }
 }

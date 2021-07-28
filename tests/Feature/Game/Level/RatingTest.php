@@ -5,6 +5,8 @@ namespace Tests\Feature\Game\Level;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Permission\Group;
 use App\Models\Game\Level;
+use App\Models\Game\User;
+use App\Services\Game\Level\RatingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -77,7 +79,8 @@ class RatingTest extends TestCase
             'game.feature.auto_rate.rate.least_suggest' => 1
         ]);
 
-        $udid = 'S' . mt_rand();
+        /** @var User $user */
+        $user = User::factory()->createOne();
         $rs = Str::random();
 
         $request = $this->post(
@@ -88,13 +91,13 @@ class RatingTest extends TestCase
                 'gdw' => 0,
                 'accountID' => $account->id,
                 'gjp' => 'AgUGBgMF',
-                'udid' => $udid,
-                'uuid' => 0,
+                'udid' => $user->udid,
+                'uuid' => $user->id,
                 'levelID' => $level->id,
                 'stars' => 8,
                 'secret' => 'Wmfd2893gb7',
                 'rs' => $rs,
-                'chk' => Hash::generateChkForRate($level->id, 8, $rs, $account->id, $udid, 0, true)
+                'chk' => Str::random() // not work, use random string instead
             ]
         );
 
@@ -119,7 +122,8 @@ class RatingTest extends TestCase
         $level = Level::factory()
             ->create();
 
-        $level->rate(10);
+        $service = app(RatingService::class);
+        $service->rate($level, 10);
 
         config([
             'game.feature.auto_rate.demon.enabled' => true,

@@ -54,6 +54,20 @@ class CustomSong extends Model
     protected $table = 'game_custom_songs';
 
     /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'hash'
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'uploader' => 'integer'
+    ];
+
+    /**
      * @return HasOne
      */
     public function owner(): HasOne

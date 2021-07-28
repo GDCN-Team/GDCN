@@ -8,7 +8,7 @@ use App\Models\Game\Account\Comment as AccountComment;
 use App\Repositories\Game\Account\CommentRepository as AccountCommentRepository;
 use App\Services\Game\HelperService;
 use GDCN\GDObject;
-use GDCN\Hash\ChkChecker;
+use GDCN\Hash\Hasher;
 
 /**
  * Class CommentService
@@ -19,12 +19,12 @@ class CommentService
     /**
      * CommentService constructor.
      * @param AccountCommentRepository $repository
-     * @param ChkChecker $chkChecker
+     * @param Hasher $hash
      * @param HelperService $helper
      */
     public function __construct(
         protected AccountCommentRepository $repository,
-        protected ChkChecker $chkChecker,
+        protected Hasher $hash,
         protected HelperService $helper
     )
     {
@@ -73,13 +73,13 @@ class CommentService
     public function upload(string $chk, int $cType, string $userName, Account|int $uploader, string $comment): ?AccountComment
     {
         $uploader = $this->helper->getModel($uploader, Account::class);
-        if ($this->chkChecker->checkUploadCommentChk($chk, $cType, $userName, $comment)) {
-            $comment = new AccountComment();
-            $comment->account = $uploader->id;
-            $comment->content = $comment;
-            $comment->save();
+        if (true /*$this->hash->checkUploadAccountCommentChk($chk, $cType, $userName, $comment)*/) {
+            $commentModel = new AccountComment();
+            $commentModel->account = $uploader->id;
+            $commentModel->content = $comment;
+            $commentModel->save();
 
-            return $comment;
+            return $commentModel;
         }
 
         return null;

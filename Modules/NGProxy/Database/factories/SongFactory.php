@@ -17,10 +17,14 @@ class SongFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name,
+            'author_id' => mt_rand(),
+            'author_name' => $this->faker->name,
+            'size' => $this->faker->randomFloat(2, 0, 100),
+            'download_link' => $this->faker->url
         ];
     }
 }

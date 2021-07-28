@@ -12,18 +12,15 @@ use Illuminate\Contracts\Validation\Validator;
  */
 class ValidateException extends Exception
 {
-    /**
-     * @var Validator
-     */
-    protected $validator;
 
     /**
      * ValidateException constructor.
      * @param Validator $validator
      */
-    public function __construct(Validator $validator)
+    public function __construct(
+        protected Validator $validator
+    )
     {
-        $this->validator = $validator;
         parent::__construct();
     }
 

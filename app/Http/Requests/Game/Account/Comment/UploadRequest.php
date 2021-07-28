@@ -13,9 +13,13 @@ use Illuminate\Validation\Rule;
  */
 class UploadRequest extends Request
 {
-    public function authorize()
+    /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
     {
-        $this->validateAccountGJP();
+        return $this->validateAccountGJP();
     }
 
     /**

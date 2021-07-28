@@ -48,6 +48,14 @@ class Score extends Model
     protected $table = 'game_level_scores';
 
     /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'account',
+        'level'
+    ];
+
+    /**
      * @return HasOne
      */
     public function owner(): HasOne

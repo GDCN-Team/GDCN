@@ -22,6 +22,8 @@ class CreateNgproxySongsTable extends Migration
             $table->string('video_id')->nullable();
             $table->string('author_youtube_url')->nullable();
             $table->string('download_link');
+            $table->boolean('disabled')->default(false);
+            $table->unsignedBigInteger('level_count')->default(0);
             $table->timestamps();
         });
     }

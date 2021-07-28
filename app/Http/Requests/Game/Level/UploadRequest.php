@@ -9,6 +9,19 @@ use Illuminate\Validation\Rule;
 class UploadRequest extends Request
 {
     /**
+     * @inerhitDoc
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if ($this->has(['accountID', 'gjp'])) {
+            return $this->validateAccountGJP();
+        }
+
+        return true;
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -21,7 +34,6 @@ class UploadRequest extends Request
             'gdw' => 'required',
             'accountID' => [
                 'sometimes',
-                'required',
                 Rule::exists(Account::class, 'id')
             ],
             'gjp' => 'required_with:accountID',
@@ -32,47 +44,26 @@ class UploadRequest extends Request
             'levelName' => 'required',
             'levelDesc' => 'nullable',
             'levelVersion' => 'required',
-            'levelLength' => [
-                'required',
-                'between:0,4'
-            ],
-            'audioTrack' => [
-                'required',
-                'between:1,21'
-            ],
-            'auto' => [
-                'required',
-                'boolean'
-            ],
+            'levelLength' => 'between:0,4',
+            'audioTrack' => 'between:0,21',
+            'auto' => 'boolean',
             'password' => 'required',
             'original' => 'required',
-            'twoPlayer' => [
-                'required',
-                'boolean'
-            ],
+            'twoPlayer' => 'boolean',
             'songID' => 'required',
             'objects' => 'required',
             'coins' => 'required',
             'requestedStars' => 'required',
-            'unlisted' => [
-                'required',
-                'boolean'
-            ],
+            'unlisted' => 'boolean',
             'wt' => 'required',
             'wt2' => 'required',
-            'ldm' => [
-                'required',
-                'boolean'
-            ],
+            'ldm' => 'boolean',
             'extraString' => 'required',
             'seed' => 'required',
             'seed2' => 'required',
             'levelString' => 'required',
             'levelInfo' => 'required', // anticheat: verify hack
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'secret' => Rule::in('Wmfd2893gb7')
         ];
     }
 }

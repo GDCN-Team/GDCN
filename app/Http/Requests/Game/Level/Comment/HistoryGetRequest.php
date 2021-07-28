@@ -11,31 +11,6 @@ use Illuminate\Validation\Rule;
 class HistoryGetRequest extends Request
 {
     /**
-     * @var Account
-     */
-    public $target;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        if (empty($this->userID)) {
-            return false;
-        }
-
-        try {
-            $this->target = Account::whereId(User::whereId($this->userID)->value('uuid'))->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -48,22 +23,10 @@ class HistoryGetRequest extends Request
             'gdw' => 'required',
             'page' => 'required',
             'total' => 'required_with:page',
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ],
-            'mode' => [
-                'required',
-                Rule::in([0, 1])
-            ],
-            'userID' => [
-                'required',
-                Rule::exists(User::class, 'id')
-            ],
-            'count' => [
-                'sometimes',
-                'required'
-            ]
+            'secret' => Rule::in('Wmfd2893gb7'),
+            'mode' => Rule::in([0, 1]),
+            'userID' => Rule::exists(User::class, 'id'),
+            'count' => 'sometimes'
         ];
     }
 }

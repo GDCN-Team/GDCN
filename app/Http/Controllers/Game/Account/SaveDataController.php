@@ -59,6 +59,6 @@ class SaveDataController extends Controller
     {
         $data = $request->validated();
         $result = $this->service->load($data['userName']);
-        return !empty($reuslt) ? $reuslt : ResponseCode::ACCOUNT_DATA_LOAD_FAILED;
+        return !empty($result) ? $result . ';' . $data['gameVersion'] . ';' . $data['binaryVersion'] . ';' . $result : ResponseCode::ACCOUNT_DATA_LOAD_FAILED;
     }
 }

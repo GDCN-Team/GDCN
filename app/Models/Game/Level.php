@@ -2,7 +2,6 @@
 
 namespace App\Models\Game;
 
-use App\Game\Helpers;
 use App\Models\Game\Level\Comment as LevelCommentModel;
 use App\Models\Game\Level\Rating as LevelRatingModel;
 use App\Models\Game\User as UserModel;
@@ -15,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
-use function app;
 
 /**
  * Class Level
@@ -90,6 +88,21 @@ class Level extends Model
     protected $table = 'game_levels';
 
     /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'id',
+        'user'
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'user' => 'integer'
+    ];
+
+    /**
      * @return bool
      */
     public function getRatedAttribute(): bool
@@ -111,31 +124,6 @@ class Level extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(LevelCommentModel::class, 'level');
-    }
-
-    /**
-     * @param $stars
-     * @return LevelRatingModel
-     */
-    public function rate($stars): LevelRatingModel
-    {
-        /** @var LevelRatingModel $rating */
-        $rating = $this->rating()
-            ->firstOrNew();
-
-        $helper = app(Helpers::class);
-        $rating->level = $this->id;
-        $rating->stars = $stars;
-        $rating->difficulty = $helper->guessDiffFromStars($stars)[1];
-        $rating->featured_score = 0;
-        $rating->epic = false;
-        $rating->coin_verified = false;
-        $rating->auto = $stars === 1;
-        $rating->demon = $stars >= 10;
-        $rating->demon_difficulty = 0;
-        $rating->save();
-
-        return $rating;
     }
 
     /**

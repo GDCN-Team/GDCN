@@ -42,6 +42,7 @@ class RewardTest extends TestCase
             );
         }
 
+        $request->dump();
         $response = $request->getContent();
         $rewardString = explode('|', $response)[0];
 
@@ -51,7 +52,7 @@ class RewardTest extends TestCase
 
         // Check hash
         $rewardHash = sha1(substr($rewardString, 5) . 'pC26fpYaQCtg');
-        $request->assertSee("|{$rewardHash}");
+        $request->assertSee("|$rewardHash");
     }
 
     public function test_get_with_account(): void
@@ -93,6 +94,6 @@ class RewardTest extends TestCase
 
         // Check hash
         $rewardHash = sha1(substr($rewardString, 5) . 'pC26fpYaQCtg');
-        $request->assertSee("|{$rewardHash}");
+        $request->assertSee("|$rewardHash");
     }
 }

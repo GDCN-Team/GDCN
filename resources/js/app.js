@@ -1,31 +1,18 @@
 require("./bootstrap");
 
-import $ from "jquery";
 import Vue from "vue";
-import Antd from 'ant-design-vue';
-import Inertia from '@inertiajs/inertia';
-import {App, plugin} from '@inertiajs/inertia-vue'
-import {InertiaProgress} from '@inertiajs/progress'
-
-Vue.use(plugin);
-Vue.use(Antd);
-InertiaProgress.init();
+import $ from "jquery";
+import ViewUI from 'view-design';
 
 window.$ = $;
 window.Vue = Vue;
-window.Inertia = Inertia.Inertia;
 
 $(function () {
+    Vue.use(ViewUI);
     const el = document.getElementById('app');
+    const component = require(`../views/Pages/${el.dataset.component}`).default;
 
     window.app = new Vue({
-        render: h => h(App, {
-            props: {
-                initialPage: JSON.parse(el.dataset.page),
-                resolveComponent: name => require(`./Pages/${name}`).default,
-            }
-        })
-    });
-
-    app.$mount(el);
+        render: h => h(component)
+    }).$mount(el);
 });

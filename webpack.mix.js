@@ -11,7 +11,7 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js/gdcn.js').extract()
+mix.js('resources/js/app.js', 'public/js/gdcn.js')
     .postCss('resources/css/app.css', 'public/css/gdcn.css', [
         require('tailwindcss'),
         require('autoprefixer')

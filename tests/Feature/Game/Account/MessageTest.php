@@ -152,7 +152,7 @@ class MessageTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$message->id}:2:{$message->account}");
+        $request->assertSee("1:$message->id:2:$message->account");
     }
 
     public function test_get_with_page(): void
@@ -206,7 +206,7 @@ class MessageTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$message->id}:2:{$message->to_account}");
+        $request->assertSee("1:$message->id:2:$message->to_account");
     }
 
     public function test_delete(): void
@@ -354,7 +354,7 @@ class MessageTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$message->id}:2:{$message->account}");
+        $request->assertSee("1:$message->id:2:$message->account");
 
         $this->assertDatabaseHas(
             $message->getTable(),
@@ -386,7 +386,7 @@ class MessageTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$message->id}:2:{$message->to_account}");
+        $request->assertSee("1:$message->id:2:$message->to_account");
 
         $this->assertDatabaseHas(
             $message->getTable(),

@@ -3,7 +3,6 @@
 namespace Tests\Feature\Game\Level;
 
 use App\Enums\Game\ResponseCode;
-use App\Http\Controllers\Game\HashesController;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Setting;
 use App\Models\Game\Level;
@@ -11,8 +10,8 @@ use App\Models\Game\Level\Comment;
 use Base64Url\Base64Url;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Tests\TestCase;
-use function app;
 use function config;
 use function route;
 
@@ -46,7 +45,7 @@ class CommentTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("2~{$comment->content}~3~{$comment->sender->user->id}~4~{$comment->likes}");
+        $request->assertSee("2~$comment->content~3~{$comment->sender->user->id}~4~$comment->likes");
     }
 
     public function test_get_with_page(): void
@@ -90,9 +89,7 @@ class CommentTest extends TestCase
         $level = Level::factory()
             ->create();
 
-        $hash = app(HashesController::class);
         $content = Base64Url::encode($this->faker->word, true);
-
         $request = $this->post(
             route('game.level.comment.upload'),
             [
@@ -106,7 +103,7 @@ class CommentTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'levelID' => $level->id,
                 'percent' => 0,
-                'chk' => $hash->generateUploadLevelCommentChk($account->name, $content, $level->id, 0, true)
+                'chk' => Str::random()
             ]
         );
 
@@ -168,7 +165,7 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->assertSee("1~{$comment->level}~2~{$comment->content}");
+        $request->assertSee("1~$comment->level~2~$comment->content");
     }
 
     public function test_get_history_most_liked(): void
@@ -191,7 +188,7 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->assertSee("1~{$comment->level}~2~{$comment->content}");
+        $request->assertSee("1~$comment->level~2~$comment->content");
     }
 
     public function test_get_history_use_none_policy(): void
@@ -199,8 +196,8 @@ class CommentTest extends TestCase
         /** @var Comment $comment */
         $comment = Comment::factory()->create();
 
-        /** @var Setting $setting */
-        $setting = $comment->sender->setting()->firstOrNew();
+        $setting = new Setting();
+        $setting->account = $comment->account;
         $setting->message_state = 0;
         $setting->friend_request_state = 0;
         $setting->comment_history_state = 2;
@@ -222,7 +219,7 @@ class CommentTest extends TestCase
         );
 
         self::assertEqualsIgnoringCase(
-            ResponseCode::PERMISSION_DENIED,
+            ResponseCode::EMPTY_RESULT_STRING,
             $request->getContent()
         );
     }

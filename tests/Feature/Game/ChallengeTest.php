@@ -44,7 +44,7 @@ class ChallengeTest extends TestCase
 
         // Check hash
         $challengeHash = sha1(substr($challengeString, 5) . 'oC36fpYaPtdg');
-        $request->assertSee("|{$challengeHash}");
+        $request->assertSee("|$challengeHash");
     }
 
     public function test_get_use_account(): void
@@ -79,6 +79,6 @@ class ChallengeTest extends TestCase
 
         // Check hash
         $challengeHash = sha1(substr($challengeString, 5) . 'oC36fpYaPtdg');
-        $request->assertSee("|{$challengeHash}");
+        $request->assertSee("|$challengeHash");
     }
 }

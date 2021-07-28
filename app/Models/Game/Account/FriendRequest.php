@@ -46,6 +46,14 @@ class FriendRequest extends Model
     protected $table = 'game_account_friend_requests';
 
     /**
+     * @var string[]
+     */
+    protected $casts = [
+        'account' => 'integer',
+        'to_account' => 'integer'
+    ];
+
+    /**
      * @param int $account1
      * @param int $account2
      * @return Builder

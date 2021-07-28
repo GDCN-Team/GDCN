@@ -143,7 +143,7 @@ class MessageService
 
             return GDObject::merge([
                 1 => $message->id,
-                2 => $account->id,
+                2 => $isSender ? $message->to_account : $message->account,
                 3 => $account->user->id,
                 4 => $message->subject,
                 5 => $message->body,

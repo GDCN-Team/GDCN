@@ -37,12 +37,12 @@ class FriendRequestService
     public function upload(Account|int $account, Account|int $targetAccount, string $comment): ?FriendRequest
     {
         $account = $this->helper->getModel($account, Account::class);
-        $targetAccountID = $this->helper->getID($targetAccount);
+        $targetAccount = $this->helper->getModel($targetAccount, Account::class);
 
         if ($account->can('send_friend_request', $targetAccount)) {
             $request = new FriendRequest();
             $request->account = $account->id;
-            $request->to_account = $targetAccountID;
+            $request->to_account = $targetAccount->id;
             $request->comment = $comment;
             $request->save();
 

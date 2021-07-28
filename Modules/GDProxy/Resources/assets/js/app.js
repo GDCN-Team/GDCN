@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import $ from 'jquery';
-import Home from '../../views/home';
+import Home from '../../views/Home';
 import Axios from 'axios';
 import ViewUI from 'view-design';
 

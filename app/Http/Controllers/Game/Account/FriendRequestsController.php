@@ -60,7 +60,7 @@ class FriendRequestsController extends Controller
             $data['isSender']
         ) : $this->service->singleDelete(
             $data['accountID'],
-            $data['toAccountID'],
+            $data['targetAccountID'],
             $data['isSender']
         );
 

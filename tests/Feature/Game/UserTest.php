@@ -38,7 +38,7 @@ class UserTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$account->name}");
+        $request->assertSee("1:$account->name");
     }
 
     public function test_info_view_self(): void
@@ -60,7 +60,7 @@ class UserTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$account->name}");
+        $request->assertSee("1:$account->name");
         $request->assertSee('38:');
         $request->assertSee('39:');
         $request->assertSee('40:');
@@ -107,7 +107,7 @@ class UserTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$account->name}");
+        $request->assertSee("1:$account->name");
     }
 
     public function test_search_part_name(): void
@@ -130,7 +130,7 @@ class UserTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$account->name}");
+        $request->assertSee("1:$account->name");
     }
 
     public function test_search_full_name(): void
@@ -153,7 +153,7 @@ class UserTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("1:{$account->name}");
+        $request->assertSee("1:$account->name");
     }
 
     public function test_request_access(): void

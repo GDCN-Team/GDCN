@@ -2,14 +2,13 @@
 
 namespace Tests\Feature\Game\Account;
 
-use App\Http\Controllers\Game\HashesController;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Comment;
 use Base64Url\Base64Url;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Tests\TestCase;
-use function app;
 use function config;
 use function route;
 
@@ -43,9 +42,9 @@ class CommentTest extends TestCase
 
         $request->dump();
         $request->assertOk();
-        $request->assertSee("2~{$comment->content}");
-        $request->assertSee("4~{$comment->likes}");
-        $request->assertSee("6~{$comment->id}");
+        $request->assertSee("2~$comment->content");
+        $request->assertSee("4~$comment->likes");
+        $request->assertSee("6~$comment->id");
     }
 
     public function test_get_with_page(): void
@@ -87,7 +86,6 @@ class CommentTest extends TestCase
         $account = Account::factory()
             ->create();
 
-        $hash = app(HashesController::class);
         $content = Base64Url::encode($this->faker->word, true);
 
         $request = $this->post(
@@ -102,7 +100,7 @@ class CommentTest extends TestCase
                 'comment' => $content,
                 'secret' => 'Wmfd2893gb7',
                 'cType' => 1,
-                'chk' => $hash->generateUploadAccountCommentChk($account->name, $content, true)
+                'chk' => Str::random()
             ]
         );
 

@@ -28,6 +28,6 @@ class CreateGameAccountPermissionsGroupsTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('game_account_permissions');
+        Schema::dropIfExists('game_account_permission_groups');
     }
 }

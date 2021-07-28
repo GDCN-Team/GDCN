@@ -37,4 +37,12 @@ class Block extends Model
      * @var string
      */
     protected $table = 'game_account_blocks';
+
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'account' => 'integer',
+        'target_account' => 'integer'
+    ];
 }
