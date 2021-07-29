@@ -394,6 +394,10 @@ class LevelService
 
         $songs = null;
         foreach ($levels->pluck('song') as $song) {
+            if ($song <= 0) {
+                continue;
+            }
+
             try {
                 $songs .= $this->NGProxy->getObject($song, true);
             } catch (SongGetException | ProxyFailedException) {
