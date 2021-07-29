@@ -167,7 +167,7 @@ class LevelService
      */
     public function search(
         SearchType $type,
-        string $str,
+        ?string $str,
         int $page,
 
         Account|int|null $account,
