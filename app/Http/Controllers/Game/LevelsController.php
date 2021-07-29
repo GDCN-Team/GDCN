@@ -101,7 +101,7 @@ class LevelsController extends Controller
         } catch (InvalidArgumentException) {
             return ResponseCode::INVALID_REQUEST;
         } catch (NoItemException) {
-            return ResponseCode::EMPTY_RESULT_STRING;
+            return ResponseCode::LEVEL_EMPTY_RESULT_STRING;
         }
     }
 

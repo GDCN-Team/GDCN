@@ -83,6 +83,10 @@ final class ResponseCode extends Enum
     public const LEVEL_REPORT_FAILED = self::FAILED;
     public const LEVEL_UPDATE_DESC_SUCCESS = self::OK;
     public const LEVEL_UPDATE_DESC_FAILED = self::FAILED;
+    public const LEVEL_EMPTY_RESULT_STRING = '##' . self::LEVEL_PACK_EMPTY_RESULT_STRING;
+
+    // Level Pack
+    public const LEVEL_PACK_EMPTY_RESULT_STRING = self::EMPTY_RESULT_STRING . '#f5da5823d94bbe7208dd83a30ff427c7d88fdb99';
 
     // Misc
     public const LIKE_SUCCESS = self::OK;
@@ -109,7 +113,7 @@ final class ResponseCode extends Enum
 
     public const EMPTY_RESULT_FAILED = self::FAILED;
     public const EMPTY_RESULT = -2;
-    public const EMPTY_RESULT_STRING = '#0:0:0';
+    public const EMPTY_RESULT_STRING = '#0:0:10';
 
     public const REQUEST_CHECK_FAILED = self::FAILED;
     public const INVALID_REQUEST = self::FAILED;
