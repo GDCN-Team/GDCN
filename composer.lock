@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74d319b64093cf503f709b9290c16302",
+    "content-hash": "56fdb576e18d91dbd995b5f9f1b8d927",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -2069,7 +2069,7 @@
         },
         {
             "name": "gdcn/hash",
-            "version": "dev-main",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GDCN-Team/Hash.git",
@@ -2089,7 +2089,6 @@
             "require-dev": {
                 "phpunit/phpunit": "^9.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2109,7 +2108,7 @@
             "description": "Geometry Dash Chinese Hash",
             "support": {
                 "issues": "https://github.com/GDCN-Team/Hash/issues",
-                "source": "https://github.com/GDCN-Team/Hash/tree/main"
+                "source": "https://github.com/GDCN-Team/Hash/tree/2.0.0"
             },
             "time": "2021-07-28T11:07:14+00:00"
         },
@@ -10710,9 +10709,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "gdcn/hash": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
