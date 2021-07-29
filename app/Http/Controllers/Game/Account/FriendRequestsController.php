@@ -19,17 +19,13 @@ use App\Services\Game\Account\FriendRequestService;
 class FriendRequestsController extends Controller
 {
     /**
-     * @var FriendRequestService
-     */
-    protected $service;
-
-    /**
      * FriendRequestsController constructor.
      * @param FriendRequestService $service
      */
-    public function __construct(FriendRequestService $service)
+    public function __construct(
+        protected FriendRequestService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**

@@ -19,17 +19,13 @@ use App\Services\Game\Account\MessageService;
 class MessagesController extends Controller
 {
     /**
-     * @var MessageService
-     */
-    protected $service;
-
-    /**
      * MessagesController constructor.
      * @param MessageService $service
      */
-    public function __construct(MessageService $service)
+    public function __construct(
+        protected MessageService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**
