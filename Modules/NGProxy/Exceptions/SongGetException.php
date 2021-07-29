@@ -20,9 +20,9 @@ class SongGetException extends Exception
     /**
      * @return int|array
      */
-    public function response(): int|array
+    public function render(): int|array
     {
-        if (Request::isXmlHttpRequest()) {
+        if (Request::isXmlHttpRequest() || Request::expectsJson()) {
             return [
                 'status' => false,
                 'msg' => __('ngproxy::errors.get')
