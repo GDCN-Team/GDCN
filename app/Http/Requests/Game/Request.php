@@ -33,7 +33,7 @@ class Request extends FormRequest
      */
     public function validateAccount(): bool
     {
-        if (!$this->has(['userName', 'password'])) {
+        if (!$this->filled(['userName', 'password'])) {
             return false;
         }
 
@@ -48,7 +48,7 @@ class Request extends FormRequest
      */
     public function validateAccountGJP(): bool
     {
-        if (!$this->has(['accountID', 'gjp'])) {
+        if (!$this->filled(['accountID', 'gjp'])) {
             return false;
         }
 
@@ -64,8 +64,8 @@ class Request extends FormRequest
     public function getPlayer(): ?User
     {
         if (
-            $this->has(['accountID', 'gjp']) && $this->validateAccountGJP() ||
-            $this->has(['userName', 'password']) && $this->validateAccount()
+            $this->filled(['accountID', 'gjp']) && $this->validateAccountGJP() ||
+            $this->filled(['userName', 'password']) && $this->validateAccount()
         ) {
             /** @var Account $account */
             $account = Auth::user();
@@ -73,7 +73,7 @@ class Request extends FormRequest
             return $account->user;
         }
 
-        if ($this->has(['uuid', 'udid'])) {
+        if ($this->filled(['uuid', 'udid'])) {
             $user = User::where([
                 'id' => $this->get('uuid')
             ])->orWhere([

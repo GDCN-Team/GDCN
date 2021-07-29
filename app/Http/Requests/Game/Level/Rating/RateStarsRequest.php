@@ -15,7 +15,7 @@ class RateStarsRequest extends Request
      */
     public function authorize(): bool
     {
-        if ($this->has(['accountID', 'gjp'])) {
+        if ($this->filled(['accountID', 'gjp'])) {
             return $this->validateAccountGJP();
         }
 
