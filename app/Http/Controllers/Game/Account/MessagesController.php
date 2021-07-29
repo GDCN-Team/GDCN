@@ -53,7 +53,7 @@ class MessagesController extends Controller
         try {
             return $this->service->get($data['accountID'], $data['page'], $data['getSent'] ?? false);
         } catch (NoItemException) {
-            return ResponseCode::EMPTY_RESULT_STRING;
+            return ResponseCode::EMPTY_RESULT;
         }
     }
 
