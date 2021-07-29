@@ -85,7 +85,7 @@ class MessagesController extends Controller
      *
      * @see http://docs.gdprogra.me/#/endpoints/downloadGJMessageo20
      */
-    public function download(DownloadRequest $request)
+    public function download(DownloadRequest $request): int|string
     {
         try {
             $data = $request->validated();

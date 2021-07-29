@@ -69,7 +69,7 @@ class FriendRequestsController extends Controller
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJFriendRequests20
      */
-    public function get(GetRequest $request)
+    public function get(GetRequest $request): int|string
     {
         try {
             $data = $request->validated();
