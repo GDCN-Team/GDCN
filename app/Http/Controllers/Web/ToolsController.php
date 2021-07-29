@@ -77,6 +77,9 @@ class ToolsController extends Controller
             return $this->response(false, '账号 ' . $data['name'] . '[' . $accountID . ',' . $userID . '] 已被绑定');
         }
 
+        $link = new Link();
+        $link->server = $data['server'];
+        $link->target_user_id = $userID;
         $link->account = $account->id;
         $link->target_name = $data['name'];
         $link->target_account_id = $accountID;
@@ -153,10 +156,14 @@ class ToolsController extends Controller
             'type' => Types::REUPLOAD_LEVEL,
             'value' => "{$data['server']}:$levelObject[1]"
         ]);
+
         if ($log->exists()) {
             return $this->response(false, '关卡 ' . $levelObject[2] . '[' . $levelObject[1] . '] 已经被搬运过了, 请勿重复搬运');
         }
 
+        $log = new Log();
+        $log->type = Types::REUPLOAD_LEVEL;
+        $log->value = "{$data['server']}:$levelObject[1]";
         $log->user = $linkAccount->user->id;
         $log->ip = $request->ip();
         $log->save();
