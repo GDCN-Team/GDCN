@@ -52,7 +52,7 @@ class MessagesController extends Controller
         $data = $request->validated();
         try {
             return $this->service->get($data['accountID'], $data['page'], $data['getSent'] ?? false);
-        } catch (NoItemException $e) {
+        } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT_STRING;
         }
     }
@@ -90,7 +90,7 @@ class MessagesController extends Controller
         try {
             $data = $request->validated();
             return $this->service->download($data['accountID'], $data['messageID'], $data['isSender']);
-        } catch (NoPermissionException $e) {
+        } catch (NoPermissionException) {
             return ResponseCode::MESSAGE_DOWNLOAD_FAILED;
         }
     }
