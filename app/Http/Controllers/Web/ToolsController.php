@@ -68,20 +68,20 @@ class ToolsController extends Controller
         $account = $this->getAccount();
         [$accountID, $userID] = explode(',', $response);
 
-        $link = Link::firstOrNew([
+        $link = Link::where([
             'server' => $data['server'],
             'target_user_id' => $userID
-        ], [
-            'account' => $account->id,
-            'target_name' => $data['name'],
-            'target_account_id' => $accountID
         ]);
 
         if ($link->exists()) {
             return $this->response(false, '账号 ' . $data['name'] . '[' . $accountID . ',' . $userID . '] 已被绑定');
         }
 
+        $link->account = $account->id;
+        $link->target_name = $data['name'];
+        $link->target_account_id = $accountID;
         $link->save();
+
         return $this->response(true);
     }
 
@@ -149,19 +149,18 @@ class ToolsController extends Controller
             return $this->response(false, '用户不存在(或未找到)');
         }
 
-        $log = Log::firstOrNew([
+        $log = Log::where([
             'type' => Types::REUPLOAD_LEVEL,
             'value' => "{$data['server']}:$levelObject[1]"
-        ], [
-            'user' => $linkAccount->id,
-            'ip' => $request->ip()
         ]);
-
         if ($log->exists()) {
             return $this->response(false, '关卡 ' . $levelObject[2] . '[' . $levelObject[1] . '] 已经被搬运过了, 请勿重复搬运');
         }
 
+        $log->user = $linkAccount->user->id;
+        $log->ip = $request->ip();
         $log->save();
+
         $levelService = app(LevelService::class);
         $hasher = app(Hasher::class);
 
