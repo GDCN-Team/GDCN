@@ -364,7 +364,11 @@ class ToolsController extends Controller
         return $this->response(
             true,
             null,
-            CustomSong::paginate(10)
+            [
+                'account' => $this->getAccount(),
+                'songs' => CustomSong::with('owner')
+                    ->paginate(10)
+            ]
         );
     }
 
