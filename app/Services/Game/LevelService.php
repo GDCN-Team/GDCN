@@ -392,20 +392,20 @@ class LevelService
             return $level->creator->user_string ?? null;
         })->join('|');
 
-        $songs = null;
+        $songs = [];
         foreach ($levels->pluck('song') as $song) {
             if ($song <= 0) {
                 continue;
             }
 
             try {
-                $songs .= $this->NGProxy->getObject($song, true);
+                $songs[] .= $this->NGProxy->getObject($song, true);
             } catch (SongGetException | ProxyFailedException) {
                 continue;
             }
         }
 
-        return $result . "#" . $users . "#" . $songs . "#" . $this->helper->generatePageHash($count, $page) . "#" . $this->hash->generateHashForSearchLevels($hash);
+        return $result . "#" . $users . "#" . implode('~:~', $songs) . "#" . $this->helper->generatePageHash($count, $page) . "#" . $this->hash->generateHashForSearchLevels($hash);
     }
 
     /**
