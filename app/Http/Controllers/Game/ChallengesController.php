@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\ChallengeGenerateException;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\UserNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Challenge\GetRequest;
 use App\Services\Game\ChallengeService;
@@ -31,11 +32,18 @@ class ChallengesController extends Controller
     {
         try {
             $data = $request->validated();
-            return $this->service->get($data['udid'], $data['accountID'] ?? 0, $data['chk']);
+            return $this->service->get(
+                $request->getPlayer(),
+                $data['udid'],
+                $data['accountID'] ?? 0,
+                $data['chk']
+            );
         } catch (InvalidArgumentException) {
             return ResponseCode::INVALID_REQUEST;
         } catch (ChallengeGenerateException) {
             return ResponseCode::CHALLENGE_GET_FAILED;
+        } catch (UserNotFoundException) {
+            return ResponseCode::USER_NOT_FOUND;
         }
     }
 }

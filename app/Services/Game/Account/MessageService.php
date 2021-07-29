@@ -85,7 +85,7 @@ class MessageService
                     8 => $message->readed,
                     9 => $getSent
                 ], ':');
-            })->join('|') . $this->helper->generatePageHash($count, $page);
+            })->join('|') . '#' . $this->helper->generatePageHash($count, $page);
     }
 
     /**

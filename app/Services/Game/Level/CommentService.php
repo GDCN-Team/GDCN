@@ -4,11 +4,13 @@ namespace App\Services\Game\Level;
 
 use App\Enums\Game\Account\Setting\CommentHistoryState;
 use App\Enums\Game\Level\CommentMode;
+use App\Exceptions\Game\AccountNotFoundException;
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Exceptions\Game\NoItemException;
 use App\Exceptions\Game\UserNotFoundException;
 use App\Models\Game\Account;
 use App\Models\Game\Level\Comment;
+use App\Models\Game\User;
 use App\Services\Game\HelperService;
 use GDCN\GDObject;
 
@@ -80,7 +82,7 @@ class CommentService
                             16 => $user->account->id
                         ], '~')
                     ]);
-                })->join('|') . $this->helper->generatePageHash($count, $page);
+                })->join('|') . '#' . $this->helper->generatePageHash($count, $page);
     }
 
     /**
@@ -125,13 +127,18 @@ class CommentService
      * @param CommentMode $mode
      * @param int $page
      * @return string
+     * @throws AccountNotFoundException
      * @throws InvalidArgumentException
      * @throws NoItemException
      */
     public function getHistory($target, CommentMode $mode, int $page): string
     {
         /** @var Account $target */
-        $target = $this->helper->getModel($target, Account::class);
+        $target = $this->helper->getModel($target, User::class)->account;
+        if (!$target) {
+            throw new AccountNotFoundException();
+        }
+
         $comments = $this->model->whereAccount($target->id);
 
         switch ($mode->value) {
@@ -183,6 +190,6 @@ class CommentService
                             16 => $user->account->id
                         ], '~')
                     ]);
-                })->join('|') . $this->helper->generatePageHash($count, $page);
+                })->join('|') . '#' . $this->helper->generatePageHash($count, $page);
     }
 }

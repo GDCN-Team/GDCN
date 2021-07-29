@@ -53,6 +53,6 @@ class PackService
                 ], ':');
             })->join('|');
 
-        return $result . $this->helper->generatePageHash($count, $page) . $this->hash->generateHashForPack($hash);
+        return $result . '#' . $this->helper->generatePageHash($count, $page) . '#' . $this->hash->generateHashForPack($hash);
     }
 }

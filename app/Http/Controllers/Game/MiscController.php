@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Item\LikeRequest;
 use App\Http\Requests\Game\Item\RestoreRequest;
 use App\Services\Game\MiscService;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Class MiscController
@@ -35,7 +34,7 @@ class MiscController extends Controller
         try {
             return $this->service->like(
                 $request->getPlayer(),
-                LikeType::fromValue($data['type']),
+                LikeType::fromValue((int)$data['type']),
                 $data['itemID'],
                 $data['like'] ?? true
             ) ? ResponseCode::LIKE_SUCCESS : ResponseCode::LIKE_FAILED;

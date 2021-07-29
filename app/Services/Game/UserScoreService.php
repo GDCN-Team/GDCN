@@ -2,8 +2,6 @@
 
 namespace App\Services\Game;
 
-use App\Exceptions\Game\InvalidArgumentException;
-use App\Models\Game\Account;
 use App\Models\Game\User;
 use App\Models\Game\UserScore;
 use GDCN\GDObject;
@@ -114,7 +112,7 @@ class UserScoreService
                 $limit = floor($count / 2);
 
                 $query = UserScore::where('stars', '<=', $stars)->take($limit);
-                $top = $query->count() + 1;
+                $top = $query->count() - $limit;
 
                 $query->union(UserScore::where('stars', '>=', $stars)->take($limit));
                 break;
@@ -133,7 +131,7 @@ class UserScoreService
         return $query->with('owner')
             ->take($count)
             ->get()
-            ->map(function (UserScore $score) use ($top) {
+            ->map(function (UserScore $score) use (&$top) {
                 return GDObject::merge([
                     1 => $score->owner->name,
                     2 => $score->owner->id,

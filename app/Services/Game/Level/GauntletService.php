@@ -27,7 +27,7 @@ class GauntletService
      */
     public function get(): string
     {
-        $hash = null;
+        $hash = '';
         $gauntlets = Gauntlet::all();
         $result = $gauntlets->map(function (Gauntlet $gauntlet) use (&$hash) {
             $hash .= implode(null, [$gauntlet->id, $gauntlet->level1, $gauntlet->level2, $gauntlet->level3, $gauntlet->level4, $gauntlet->level5]);
@@ -44,6 +44,6 @@ class GauntletService
             ], ':');
         })->join('|');
 
-        return $result . $this->hash->generateHashForGauntlet($hash);
+        return $result . '#' . $this->hash->generateHashForGauntlet($hash);
     }
 }

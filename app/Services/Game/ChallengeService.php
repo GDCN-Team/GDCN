@@ -4,6 +4,7 @@ namespace App\Services\Game;
 
 use App\Exceptions\Game\ChallengeGenerateException;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\UserNotFoundException;
 use App\Models\Game\Challenge;
 use Exception;
 use GDCN\Hash\Hasher;
@@ -33,6 +34,7 @@ class ChallengeService
     }
 
     /**
+     * @param $user
      * @param string $udid
      * @param int $accountID
      * @param string $chk
@@ -40,9 +42,14 @@ class ChallengeService
      * @return string
      * @throws ChallengeGenerateException
      * @throws InvalidArgumentException
+     * @throws UserNotFoundException
      */
-    public function get(string $udid, int $accountID, string $chk, bool $noCycle = false): string
+    public function get($user, string $udid, int $accountID, string $chk, bool $noCycle = false): string
     {
+        if (!$user) {
+            throw new UserNotFoundException();
+        }
+
         /* Generate challenges */
         $today = Carbon::today();
         $challenges = Challenge::query()
@@ -78,13 +85,13 @@ class ChallengeService
             if ($noCycle) {
                 throw new ChallengeGenerateException();
             } else {
-                return $this->get($udid, $accountID, $chk, true);
+                return $this->get($user, $udid, $accountID, $chk, true);
             }
         }
 
         $result = implode(':', [
             Str::random(5),
-            $udid,
+            $user->id,
             $this->hash->decodeChallengeChk($chk),
             $udid,
             $accountID,
