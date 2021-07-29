@@ -7,12 +7,10 @@ use App\Enums\Game\Log\Types;
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
-use App\Models\Game\CustomSong;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Daily;
 use App\Models\Game\Level\Weekly;
 use App\Models\Game\Log;
-use App\Models\Game\Song;
 use App\Models\Game\User;
 use GDCN\GDObject;
 use GDCN\Hash\Hasher;
@@ -21,6 +19,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use Modules\NGProxy\Exceptions\SongGetException;
+use Modules\NGProxy\Http\Controllers\NGProxyController;
+use Modules\Proxy\Exceptions\ProxyFailedException;
 
 /**
  * Class LevelService
@@ -33,11 +34,13 @@ class LevelService
      * @param Hasher $hash
      * @param HelperService $helper
      * @param StorageService $storage
+     * @param NGProxyController $NGProxy
      */
     public function __construct(
         public Hasher $hash,
         public HelperService $helper,
-        public StorageService $storage
+        public StorageService $storage,
+        public NGProxyController $NGProxy
     )
     {
     }
@@ -389,16 +392,14 @@ class LevelService
             return $level->creator->user_string ?? null;
         })->join('|');
 
-        $songIds = $levels->pluck('song');
-        $songs = Song::query()
-            ->whereIn('id', $songIds)
-            ->get()
-            ->union(CustomSong::query()
-                ->whereIn('song_id', $songIds)
-                ->get())
-            ->map(function (Song|CustomSong $song) {
-                return $song->toSongString();
-            })->join('~:~');
+        $songs = null;
+        foreach ($levels->pluck('song') as $song) {
+            try {
+                $songs .= $this->NGProxy->getObject($song, true);
+            } catch (SongGetException | ProxyFailedException) {
+                continue;
+            }
+        }
 
         return $result . "#" . $users . "#" . $songs . "#" . $this->helper->generatePageHash($count, $page) . "#" . $this->hash->generateHashForSearchLevels($hash);
     }
