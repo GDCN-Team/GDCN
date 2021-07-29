@@ -32,7 +32,7 @@ class PacksController extends Controller
             $data = $request->validated();
             return $this->service->get($data['page']);
         } catch (NoItemException) {
-            return ResponseCode::EMPTY_RESULT_STRING;
+            return ResponseCode::LEVEL_PACK_EMPTY_RESULT_STRING;
         }
     }
 }

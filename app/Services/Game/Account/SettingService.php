@@ -27,12 +27,12 @@ class SettingService
      * @param int $messageState
      * @param bool $friendRequestState
      * @param int $commentState
-     * @param string $youtube
-     * @param string $twitter
-     * @param string $twitch
+     * @param string|null $youtube
+     * @param string|null $twitter
+     * @param string|null $twitch
      * @return bool
      */
-    public function update(Account|int $account, int $messageState, bool $friendRequestState, int $commentState, string $youtube, string $twitter, string $twitch): bool
+    public function update(Account|int $account, int $messageState, bool $friendRequestState, int $commentState, ?string $youtube, ?string $twitter, ?string $twitch): bool
     {
         $account = $this->helper->getModel($account, Account::class);
         $setting = $account->setting ?? new AccountSetting();

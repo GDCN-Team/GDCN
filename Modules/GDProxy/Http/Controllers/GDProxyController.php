@@ -2,7 +2,7 @@
 
 namespace Modules\GDProxy\Http\Controllers;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\GDProxy\Entities\Traffic;
@@ -68,7 +68,10 @@ class GDProxyController extends Controller
         return $response;
     }
 
-    public function getTraffics()
+    /**
+     * @return LengthAwarePaginator
+     */
+    public function getTraffics(): LengthAwarePaginator
     {
         return Traffic::paginate(7);
     }

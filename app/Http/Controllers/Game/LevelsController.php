@@ -77,7 +77,7 @@ class LevelsController extends Controller
         try {
             $data = $request->validated();
             return $this->service->search(
-                SearchType::fromValue($data['type']),
+                SearchType::fromValue((int)$data['type']),
                 $data['str'],
                 $data['page'],
                 $data['accountID'] ?? 0,
@@ -101,7 +101,7 @@ class LevelsController extends Controller
         } catch (InvalidArgumentException) {
             return ResponseCode::INVALID_REQUEST;
         } catch (NoItemException) {
-            return ResponseCode::EMPTY_RESULT_STRING;
+            return ResponseCode::LEVEL_EMPTY_RESULT_STRING;
         }
     }
 

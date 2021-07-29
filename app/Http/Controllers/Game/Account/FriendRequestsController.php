@@ -19,17 +19,13 @@ use App\Services\Game\Account\FriendRequestService;
 class FriendRequestsController extends Controller
 {
     /**
-     * @var FriendRequestService
-     */
-    protected $service;
-
-    /**
      * FriendRequestsController constructor.
      * @param FriendRequestService $service
      */
-    public function __construct(FriendRequestService $service)
+    public function __construct(
+        protected FriendRequestService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**
@@ -73,12 +69,12 @@ class FriendRequestsController extends Controller
      *
      * @see http://docs.gdprogra.me/#/endpoints/getGJFriendRequests20
      */
-    public function get(GetRequest $request)
+    public function get(GetRequest $request): int|string
     {
         try {
             $data = $request->validated();
-            return $this->service->list($data['accountID'], $data['getSent'], $data['page']);
-        } catch (NoItemException $e) {
+            return $this->service->list($data['accountID'], $data['getSent'] ?? false, $data['page']);
+        } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT;
         }
     }

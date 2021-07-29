@@ -8,6 +8,7 @@ use App\Repositories\Game\Account\FriendRepository;
 use App\Repositories\Game\Account\FriendRequestRepository;
 use App\Repositories\Game\Account\MessageRepository;
 use App\Services\Game\HelperService;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class BlockService
@@ -43,13 +44,33 @@ class BlockService
 
         // Delete messages, friend & friend requests
         $this->friendRepository->between($accountID, $targetAccountID)->delete();
+        Log::debug("[Account Block] 正在删除好友", [
+            'accountID' => $accountID,
+            'targetAccountID' => $targetAccountID
+        ]);
+
         $this->messageRepository->between($accountID, $targetAccountID)->delete();
+        Log::debug("[Account Block] 正在删除消息", [
+            'accountID' => $accountID,
+            'targetAccountID' => $targetAccountID
+        ]);
+
         $this->friendRequestRepository->between($accountID, $targetAccountID)->delete();
+        Log::debug("[Account Block] 正在删除好友请求", [
+            'accountID' => $accountID,
+            'targetAccountID' => $targetAccountID
+        ]);
+
 
         $block = new Block();
         $block->account = $accountID;
         $block->target_account = $targetAccountID;
         $block->save();
+
+        Log::debug("[Account Block] 拉黑成功", [
+            'accountID' => $accountID,
+            'targetAccountID' => $targetAccountID
+        ]);
 
         return $block;
     }

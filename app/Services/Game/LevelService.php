@@ -142,7 +142,7 @@ class LevelService
 
     /**
      * @param SearchType $type
-     * @param string $str
+     * @param string|null $str
      * @param int $page
      * @param Account|int|null $account
      * @param string|null $followed
@@ -167,7 +167,7 @@ class LevelService
      */
     public function search(
         SearchType $type,
-        string $str,
+        ?string $str,
         int $page,
 
         Account|int|null $account,
@@ -268,14 +268,18 @@ class LevelService
         if ($diff && $diff !== '-') {
             switch ($diff) {
                 case -1: // N/A
-                    $query->whereHas('rating', function (Builder $query) {
-                        $query->orWhere('stars', '<=', 0);
-                    });
+                    $query->whereDoesntHave('rating');
                     break;
                 case -2: // Demon
                     $query->whereHas('rating', function (Builder $query) use ($demonFilter) {
                         $diff = $this->helper->guessDemonDifficultyFromRating($demonFilter);
                         $query->where('demon_difficulty', $diff);
+                    });
+                    break;
+                case -3: // Auto
+                    $query->whereHas('rating', function (Builder $query) use ($demonFilter) {
+                        $query->where('stars', 1);
+                        $query->where('auto', true);
                     });
                     break;
                 default:
@@ -344,7 +348,12 @@ class LevelService
         $hash = null;
         $levels = $query->forPage(++$page, $this->helper->perPage)->with('rating')->get();
         $result = $levels->map(function (Level $level) use (&$hash) {
-            $hash .= implode(null, [substr($level->id, 0, 1), substr($level->id, -1), $level->rating->stars ?? 0, $level->rating->coin_verified ?? false]);
+            $hash .= implode(null, [
+                substr($level->id, 0, 1),
+                substr($level->id, -1),
+                $level->rating->stars ?? 0,
+                $level->rating->coin_verified ?? 0
+            ]);
 
             return GDObject::merge([
                 1 => $level->id,

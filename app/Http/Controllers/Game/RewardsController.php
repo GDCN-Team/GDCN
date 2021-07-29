@@ -33,7 +33,7 @@ class RewardsController extends Controller
         try {
             $data = $request->validated();
             return $this->service->get(
-                RewardType::fromValue($data['rewardType']),
+                RewardType::fromValue((int)$data['rewardType']),
                 $request->getPlayer(),
                 $data['gameVersion'],
                 $data['binaryVersion'],

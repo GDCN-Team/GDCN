@@ -32,7 +32,7 @@ class ScoresController extends Controller
     {
         $data = $request->validated();
         try {
-            return $this->service->get($data['accountID'], $data['levelID'], ScoreType::fromValue($data['type']), $data['s1'] - 8354, $data['percent'], $data['s9'] - 5819);
+            return $this->service->get($data['accountID'], $data['levelID'], ScoreType::fromValue((int)$data['type']), $data['s1'] - 8354, $data['percent'], $data['s9'] - 5819);
         } catch (InvalidArgumentException) {
             return ResponseCode::INVALID_REQUEST;
         } catch (NoItemException) {

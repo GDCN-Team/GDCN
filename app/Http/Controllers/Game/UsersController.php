@@ -78,10 +78,12 @@ class UsersController extends Controller
             $data = $request->validated();
             return $this->service->list(
                 $data['accountID'],
-                UserListType::fromValue($data['type'])
+                UserListType::fromValue((int)$data['type'])
             );
         } catch (InvalidArgumentException) {
             return ResponseCode::INVALID_REQUEST;
+        } catch (NoItemException) {
+            return ResponseCode::EMPTY_RESULT;
         }
     }
 }

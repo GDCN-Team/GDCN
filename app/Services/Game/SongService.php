@@ -26,7 +26,7 @@ class SongService
      */
     public function get(int $songID): string
     {
-        return $this->NGProxy->getObject($songID);
+        return $this->NGProxy->getObject($songID, true);
     }
 
     /**

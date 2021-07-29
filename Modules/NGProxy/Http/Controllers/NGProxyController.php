@@ -2,6 +2,7 @@
 
 namespace Modules\NGProxy\Http\Controllers;
 
+use App\Models\Game\CustomSong;
 use GDCN\GDObject;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -40,9 +41,10 @@ class NGProxyController extends Controller
     /**
      * @param int $songID
      * @return mixed
-     * @throws ProxyFailedException|SongGetException
+     * @throws ProxyFailedException
+     * @throws SongGetException
      */
-    public function getSong(int $songID): mixed
+    protected function getSong(int $songID): mixed
     {
         if ($song = Song::find($songID)) {
             return $song;
@@ -130,14 +132,47 @@ class NGProxyController extends Controller
 
     /**
      * @param int $songID
+     * @return CustomSong|null
+     */
+    public function getCustomSong(int $songID): ?CustomSong
+    {
+        return CustomSong::firstWhere('song_id', $songID);
+    }
+
+    /**
+     * @param int $songID
+     * @return string
+     */
+    public function getCustomSongObject(int $songID): string
+    {
+        $song = $this->getCustomSong($songID);
+
+        return GDObject::merge([
+            1 => $song->song_id,
+            2 => $song->name,
+            3 => 7,
+            4 => $song->author_name,
+            5 => $song->size,
+            6 => null,
+            7 => null,
+            10 => urlencode($song->download_url)
+        ], '~|~');
+    }
+
+    /**
+     * @param int $songID
+     * @param bool $getCustomSong
      * @return string
      * @throws ProxyFailedException
      * @throws SongGetException
      */
-    public function getObject(int $songID): string
+    public function getObject(int $songID, bool $getCustomSong = false): string
     {
-        $song = $this->getSong($songID);
+        if ($songID >= config('game.customSongIdOffset') && $getCustomSong) {
+            return $this->getCustomSongObject($songID);
+        }
 
+        $song = $this->getSong($songID);
         return GDObject::merge([
             1 => $song->id,
             2 => $song->name,

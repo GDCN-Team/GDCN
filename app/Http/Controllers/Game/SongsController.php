@@ -32,9 +32,7 @@ class SongsController extends Controller
     {
         try {
             $data = $request->validated();
-            if ($data['songID'] < config('game.customSongIdOffset', 5000000)) {
-                return $this->service->get($data['songID']);
-            }
+            return $this->service->get($data['songID']);
         } catch (SongGetException | ProxyFailedException) {
             return ResponseCode::SONG_GET_FAILED;
         }

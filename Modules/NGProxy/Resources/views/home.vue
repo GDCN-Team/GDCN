@@ -64,8 +64,15 @@ export default {
             Axios.get(`/api/info/${songID}`, {
                 cancelToken: that.source.token
             }).then(function(response) {
-                that.show_song_info_card = true;
-                that.song = response.data;
+                if (response.data.status === false) {
+                    that.show_song_info_card = false;
+                    that.$Message.error({
+                        content: response.data.msg
+                    });
+                } else {
+                    that.show_song_info_card = true;
+                    that.song = response.data;
+                }
             });
         }
     }

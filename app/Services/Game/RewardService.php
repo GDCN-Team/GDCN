@@ -59,13 +59,17 @@ class RewardService
         $chest2stuff = [0, 0, 0, 0];
         switch ($type->value) {
             case RewardType::SMALL:
-                ++$score->chest1time;
+                $score->chest1time = now();
+                $chest1time = $chest1config['wait'];
+                ++$score->chest1count;
                 $score->save();
 
                 $chest1stuff = $this->getStuff($chest1config);
                 break;
             case RewardType::BIG:
-                ++$score->chest2time;
+                $score->chest2time = now();
+                $chest2time = $chest2config['wait'];
+                ++$score->chest2count;
                 $score->save();
 
                 $chest2stuff = $this->getStuff($chest2config);
@@ -79,7 +83,7 @@ class RewardService
             $accountID ?? $user->account->id ?? 0,
             $chest1time,
             implode(',', $chest1stuff),
-            ++$score->chest1count,
+            $score->chest1count,
             $chest2time,
             implode(',', $chest2stuff),
             ++$score->chest2count,

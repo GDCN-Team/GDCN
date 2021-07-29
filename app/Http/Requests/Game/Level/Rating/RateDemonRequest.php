@@ -5,7 +5,6 @@ namespace App\Http\Requests\Game\Level\Rating;
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
 
 class RateDemonRequest extends Request
@@ -16,7 +15,7 @@ class RateDemonRequest extends Request
      */
     public function authorize(): bool
     {
-        if ($this->has(['accountID', 'gjp'])) {
+        if ($this->filled(['accountID', 'gjp'])) {
             return $this->validateAccountGJP();
         }
 

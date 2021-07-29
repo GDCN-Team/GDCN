@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Game\Level;
 
 use App\Enums\Game\Level\CommentMode;
 use App\Enums\Game\ResponseCode;
+use App\Exceptions\Game\AccountNotFoundException;
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Exceptions\Game\NoItemException;
 use App\Http\Controllers\Controller;
@@ -11,7 +12,6 @@ use App\Http\Requests\Game\Level\Comment\DeleteRequest;
 use App\Http\Requests\Game\Level\Comment\GetRequest;
 use App\Http\Requests\Game\Level\Comment\HistoryGetRequest;
 use App\Http\Requests\Game\Level\Comment\UploadRequest;
-use App\Models\Game\User;
 use App\Services\Game\Level\CommentService;
 
 /**
@@ -42,7 +42,7 @@ class CommentsController extends Controller
             $data = $request->validated();
             return $this->service->list(
                 $data['levelID'],
-                CommentMode::fromValue($data['mode']),
+                CommentMode::fromValue((int)$data['mode']),
                 $data['page']
             );
         } catch (InvalidArgumentException) {
@@ -89,14 +89,16 @@ class CommentsController extends Controller
         try {
             $data = $request->validated();
             return $this->service->getHistory(
-                User::findOrFail($data['userID'])->value('uuid'),
-                CommentMode::fromValue($data['mode']),
+                $data['userID'],
+                CommentMode::fromValue((int)$data['mode']),
                 $data['page']
             );
         } catch (InvalidArgumentException) {
             return ResponseCode::INVALID_REQUEST;
         } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT_STRING;
+        } catch (AccountNotFoundException) {
+            return ResponseCode::ACCOUNT_NOT_FOUND;
         }
     }
 }

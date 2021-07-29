@@ -19,17 +19,13 @@ use App\Services\Game\Account\MessageService;
 class MessagesController extends Controller
 {
     /**
-     * @var MessageService
-     */
-    protected $service;
-
-    /**
      * MessagesController constructor.
      * @param MessageService $service
      */
-    public function __construct(MessageService $service)
+    public function __construct(
+        protected MessageService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**
@@ -56,8 +52,8 @@ class MessagesController extends Controller
         $data = $request->validated();
         try {
             return $this->service->get($data['accountID'], $data['page'], $data['getSent'] ?? false);
-        } catch (NoItemException $e) {
-            return ResponseCode::EMPTY_RESULT_STRING;
+        } catch (NoItemException) {
+            return ResponseCode::EMPTY_RESULT;
         }
     }
 
@@ -89,12 +85,12 @@ class MessagesController extends Controller
      *
      * @see http://docs.gdprogra.me/#/endpoints/downloadGJMessageo20
      */
-    public function download(DownloadRequest $request)
+    public function download(DownloadRequest $request): int|string
     {
         try {
             $data = $request->validated();
             return $this->service->download($data['accountID'], $data['messageID'], $data['isSender']);
-        } catch (NoPermissionException $e) {
+        } catch (NoPermissionException) {
             return ResponseCode::MESSAGE_DOWNLOAD_FAILED;
         }
     }

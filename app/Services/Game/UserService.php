@@ -175,6 +175,7 @@ class UserService
      * @param UserListType $type
      * @return string
      * @throws InvalidArgumentException
+     * @throws NoItemException
      */
     public function list($account, UserListType $type): string
     {
@@ -185,6 +186,10 @@ class UserService
             UserListType::BLOCKS => Block::where(['account' => $accountID]),
             default => throw new InvalidArgumentException()
         };
+
+        if ($query->count() <= 0) {
+            throw new NoItemException();
+        }
 
         return $query
             ->get()
