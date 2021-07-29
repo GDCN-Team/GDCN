@@ -10,7 +10,7 @@
         <Content class="text-center mt-5 overflow-auto">
             <h1 class="text-2xl">NGProxy</h1>
             <div class="mt-5 w-3/4 lg:w-1/4 mx-auto text-center">
-                <Input search enter-button="查询" placeholder="歌曲ID" type="number" @on-search="getSongInfo" />
+                <Input :disabled="loading" search enter-button="查询" placeholder="歌曲ID" type="number" @on-search="getSongInfo" />
                 <Card shadow v-if="show_song_info_card" class="mt-5 dark:text-black" title="查询结果">
                     <p>歌曲ID: {{ song.id }}</p>
                     <p>歌曲名: {{ song.name }}</p>
@@ -45,6 +45,7 @@ export default {
         return {
             show_song_info_card: false,
             source: null,
+            loading: false,
             song: {
                 author_id: null,
                 download_link: null,
@@ -60,10 +61,12 @@ export default {
                 that.source.cancel();
             }
 
+            that.loading = true;
             that.source = Axios.CancelToken.source();
             Axios.get(`/api/info/${songID}`, {
                 cancelToken: that.source.token
             }).then(function(response) {
+                that.loading = false;
                 if (response.data.status === false) {
                     that.show_song_info_card = false;
                     that.$Message.error({
@@ -73,6 +76,8 @@ export default {
                     that.show_song_info_card = true;
                     that.song = response.data;
                 }
+            }).catch(function(error) {
+                that.loading = false;
             });
         }
     }
