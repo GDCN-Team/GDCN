@@ -77,7 +77,7 @@ class LevelsController extends Controller
         try {
             $data = $request->validated();
             return $this->service->search(
-                SearchType::fromValue($data['type']),
+                SearchType::fromValue((int)$data['type']),
                 $data['str'],
                 $data['page'],
                 $data['accountID'] ?? 0,
