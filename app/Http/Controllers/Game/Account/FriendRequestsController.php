@@ -73,7 +73,7 @@ class FriendRequestsController extends Controller
     {
         try {
             $data = $request->validated();
-            return $this->service->list($data['accountID'], $data['getSent'], $data['page']);
+            return $this->service->list($data['accountID'], $data['getSent'] ?? false, $data['page']);
         } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT;
         }
