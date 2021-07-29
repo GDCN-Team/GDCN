@@ -19,24 +19,30 @@
                 <span v-else>{{ row.author_name }}</span>
             </template>
 
+            <template slot-scope="{ row }" slot="uploader">
+                <span>{{ row.owner.name }}</span>
+            </template>
+
             <template slot-scope="{ row }" slot="size">
                 <span>{{ row.size }} MB</span>
             </template>
 
             <template slot-scope="{ row, index }" slot="action">
                 <Button :to="row.download_url">试听</Button>
-                <Button @click="edit(row, index)" v-if="editingIndex !== index">编辑</Button>
-                <Button :loading="request2.loading" @click="saveEdit()" v-else>完成</Button>
-                <Poptip
-                    confirm
-                    placement="left"
-                    title="确认删除?"
-                    @on-ok="deleteSong(row.id)">
-                <Button :loading="request1.loading || false">删除</Button>
-                </Poptip>
+                <div v-if="row.owner.id === accountID">
+                    <Button @click="edit(row, index)" v-if="editingIndex !== index">编辑</Button>
+                    <Button :loading="request2.loading" @click="saveEdit()" v-else>完成</Button>
+                    <Poptip
+                        confirm
+                        placement="left"
+                        title="确认删除?"
+                        @on-ok="deleteSong(row.id)">
+                        <Button :loading="request1.loading || false">删除</Button>
+                    </Poptip>
+                </div>
             </template>
         </Table>
-        <Page :current="songs.current_page"
+        <Page :current="currentPage"
               @on-change="getSongs"
               class="mt-2"
               :total="songs.total"
@@ -55,6 +61,8 @@ export default {
     data: function () {
         return {
             show: true,
+            accountID: null,
+            currentPage: 1,
             songs: [],
             editingIndex: null,
             editing: {
@@ -87,6 +95,10 @@ export default {
                     slot: 'size'
                 },
                 {
+                    title: '上传者',
+                    slot: 'uploader'
+                },
+                {
                     title: '操作',
                     slot: 'action'
                 }
@@ -96,10 +108,10 @@ export default {
     methods: {
         getSongs: function(page = 1) {
             const that = this;
-            request('GET', '/api/tools/song/list', {
-                data: {page},
+            request('GET', `/api/tools/song/list?page=${page}`, {
                 onSuccess: function(response) {
-                    that.songs = response.data;
+                    that.accountID = response.data.account.id;
+                    that.songs = response.data.songs;
                 }
             })
         },
