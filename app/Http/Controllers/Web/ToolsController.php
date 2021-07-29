@@ -444,7 +444,12 @@ class ToolsController extends Controller
     public function editSong(EditRequest $request): array
     {
         $data = $request->validated();
+        $account = $this->getAccount();
         $song = CustomSong::find($data['id']);
+
+        if (!$account->can('edit', $song)) {
+            return $this->response(false, '无权编辑该歌曲');
+        }
 
         $song->song_id = $data['song_id'];
         if ($song->type !== 'netease') {

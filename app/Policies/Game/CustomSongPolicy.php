@@ -17,6 +17,16 @@ class CustomSongPolicy
      */
     public function delete(Account $account, CustomSong $song): bool
     {
+        return $this->edit($account, $song);
+    }
+
+    /**
+     * @param Account $account
+     * @param CustomSong $song
+     * @return bool
+     */
+    public function edit(Account $account, CustomSong $song): bool
+    {
         return $song->uploader === $account->id;
     }
 }
