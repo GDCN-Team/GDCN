@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  *
  * @package App\Models\Game\Level
  * @property int $id
+ * @property int $gauntlet_id
  * @property int $level1
  * @property int $level2
  * @property int $level3
@@ -29,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Gauntlet newQuery()
  * @method static Builder|Gauntlet query()
  * @method static Builder|Gauntlet whereCreatedAt($value)
+ * @method static Builder|Gauntlet whereGauntletId($value)
  * @method static Builder|Gauntlet whereId($value)
  * @method static Builder|Gauntlet whereLevel1($value)
  * @method static Builder|Gauntlet whereLevel2($value)

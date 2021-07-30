@@ -20,6 +20,7 @@ class GauntletController extends AdminController
     {
         return Grid::make(new Gauntlet(), function (Grid $grid) {
             $grid->column('id')->sortable();
+            $grid->column('gauntlet_id');
             $grid->column('level1');
             $grid->column('level2');
             $grid->column('level3');
@@ -46,6 +47,7 @@ class GauntletController extends AdminController
     {
         return Show::make($id, new Gauntlet(), function (Show $show) {
             $show->field('id');
+            $show->field('gauntlet_id');
             $show->field('level1');
             $show->field('level2');
             $show->field('level3');
@@ -65,6 +67,23 @@ class GauntletController extends AdminController
     {
         return Form::make(new Gauntlet(), function (Form $form) {
             $form->display('id');
+            $form->select('gauntlet_id')->options([
+                1 => "Fire",
+                2 => "Ice",
+                3 => "Poison",
+                4 => "Shadow",
+                5 => "Lava",
+                6 => "Bonus",
+                7 => "Chaos",
+                8 => "Demon",
+                9 => "Time",
+                10 => "Crystal",
+                11 => "Magic",
+                12 => "Spike",
+                13 => "Monster",
+                14 => "Doom",
+                15 => "Death"
+            ]);
 
             $levels = Level::all(['id', 'name'])->pluck('name', 'id');
             $form->select('level1')->options($levels);
