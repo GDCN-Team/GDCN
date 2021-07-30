@@ -98,6 +98,7 @@ final class ResponseCode extends Enum
 
     // Song
     public const SONG_GET_FAILED = self::FAILED;
+    public const SONG_DISABLED = -2;
 
     // User
     public const ACCESS_FAILED = self::FAILED;

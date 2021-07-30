@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Modules\GDProxy\Http\Controllers\GDProxyController;
 use Modules\NGProxy\Entities\Song;
+use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
 use Modules\Proxy\Exceptions\ProxyFailedException;
 use Modules\Proxy\Http\Controllers\ProxyController;
@@ -42,6 +43,7 @@ class NGProxyController extends Controller
      * @param int $songID
      * @return mixed
      * @throws ProxyFailedException
+     * @throws SongDisabledException
      * @throws SongGetException
      */
     protected function getSong(int $songID): mixed
@@ -67,12 +69,13 @@ class NGProxyController extends Controller
                 ->asForm()
                 ->post($url, [
                     'song' => $songID,
+                    'customSong' => true,
                     'secret' => 'Wmfd2893gb7'
                 ]);
 
             $response = $req->body();
             $levelObjectParts = explode('#', $response);
-            $songString = $levelObjectParts[1] ?? null;
+            $songString = $levelObjectParts[2] ?? null;
             if (empty($songString)) {
                 throw new ProxyFailedException();
             }
@@ -95,6 +98,10 @@ class NGProxyController extends Controller
         $this->processSong($song);
         $song->save();
 
+        if ($song->disabled) {
+            throw new SongDisabledException();
+        }
+
         return $song;
     }
 
@@ -112,6 +119,11 @@ class NGProxyController extends Controller
                 ->get($link)
                 ->body();
 
+            if ($song_content < $song->size * 1024 * 1024) {
+                $song->disabled = true;
+                return;
+            }
+
             $oss->put($object, $song_content);
         }
 
@@ -122,26 +134,40 @@ class NGProxyController extends Controller
      * @param int $songID
      * @return string
      * @throws ProxyFailedException
+     * @throws SongDisabledException
      * @throws SongGetException
      */
     public function getInfo(int $songID): string
     {
-        $song = $this->getSong($songID);
-        return $song->toJson();
+        return $this->getSong($songID)->toJson();
     }
 
     /**
      * @param int $songID
-     * @return CustomSong|null
+     * @return CustomSong
+     * @throws SongDisabledException
+     * @throws SongGetException
      */
-    public function getCustomSong(int $songID): ?CustomSong
+    public function getCustomSong(int $songID): CustomSong
     {
-        return CustomSong::firstWhere('song_id', $songID);
+        $song = CustomSong::firstWhere('song_id', $songID);
+
+        if (!$song) {
+            throw new SongGetException();
+        }
+
+        if ($song->disabled) {
+            throw new SongDisabledException();
+        }
+
+        return $song;
     }
 
     /**
      * @param int $songID
      * @return string
+     * @throws SongDisabledException
+     * @throws SongGetException
      */
     public function getCustomSongObject(int $songID): string
     {
@@ -164,6 +190,7 @@ class NGProxyController extends Controller
      * @param bool $getCustomSong
      * @return string
      * @throws ProxyFailedException
+     * @throws SongDisabledException
      * @throws SongGetException
      */
     public function getObject(int $songID, bool $getCustomSong = false): string
