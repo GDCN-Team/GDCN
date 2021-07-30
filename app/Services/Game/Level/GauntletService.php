@@ -30,10 +30,10 @@ class GauntletService
         $hash = '';
         $gauntlets = Gauntlet::all();
         $result = $gauntlets->map(function (Gauntlet $gauntlet) use (&$hash) {
-            $hash .= implode(null, [$gauntlet->id, $gauntlet->level1, $gauntlet->level2, $gauntlet->level3, $gauntlet->level4, $gauntlet->level5]);
+            $hash .= implode(null, [$gauntlet->gauntlet_id, $gauntlet->level1, $gauntlet->level2, $gauntlet->level3, $gauntlet->level4, $gauntlet->level5]);
 
             return GDObject::merge([
-                1 => $gauntlet->id,
+                1 => $gauntlet->gauntlet_id,
                 3 => implode(',', [
                     $gauntlet->level1,
                     $gauntlet->level2,
