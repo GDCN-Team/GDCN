@@ -82,10 +82,10 @@ class HelperService
     }
 
     /**
-     * @param int $rating
+     * @param int|null $rating
      * @return int
      */
-    public function guessDemonDifficultyFromRating(int $rating): int
+    public function guessDemonDifficultyFromRating(?int $rating): int
     {
         return match ($rating) {
             1 => 3,
