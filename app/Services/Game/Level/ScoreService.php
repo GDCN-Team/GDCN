@@ -34,7 +34,7 @@ class ScoreService
      */
     public function upload($account, $level, int $attempts, int $percent, int $coins): Model|Score
     {
-        if ($percent < 0) {
+        if ($percent <= 0) {
             throw new InvalidArgumentException();
         }
 
