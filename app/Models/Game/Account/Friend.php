@@ -46,6 +46,14 @@ class Friend extends Model
     /**
      * @var string[]
      */
+    protected $fillable = [
+        'new',
+        'target_new'
+    ];
+
+    /**
+     * @var string[]
+     */
     protected $casts = [
         'account' => 'integer',
         'target_account' => 'integer'

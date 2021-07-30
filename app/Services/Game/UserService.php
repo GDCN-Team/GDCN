@@ -107,8 +107,8 @@ class UserService
         if ($target->is($viewer)) { // View self
             $userInfo[38] = Message::where(['to_account' => $target->id, 'readed' => false])->count();
             $userInfo[39] = FriendRequest::where(['to_account' => $target->id, 'new' => true])->count();
-            $userInfo[40] = Friend::where(['target_account' => $target->id, 'target_new' => 'true'])
-                ->orWhere(['account' => $target->id, 'new' => true])
+            $userInfo[40] = Friend::where(['target_account' => $target->id, 'target_new' => true])
+                ->where(['account' => $target->id, 'new' => true])
                 ->count();
         }
 
