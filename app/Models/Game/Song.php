@@ -2,6 +2,7 @@
 
 namespace App\Models\Game;
 
+use Database\Factories\Game\SongFactory;
 use Eloquent;
 use GDCN\GDObject;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,6 +36,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Song whereSize($value)
  * @method static Builder|Song whereUpdatedAt($value)
  * @mixin Eloquent
+ * @method static SongFactory factory(...$parameters)
  */
 class Song extends Model
 {

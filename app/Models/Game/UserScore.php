@@ -2,6 +2,7 @@
 
 namespace App\Models\Game;
 
+use Database\Factories\Game\UserScoreFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,7 +45,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $chest2time
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \App\Models\Game\User|null $owner
+ * @property-read User|null $owner
  * @method static Builder|UserScore newModelQuery()
  * @method static Builder|UserScore newQuery()
  * @method static Builder|UserScore query()
@@ -79,7 +80,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|UserScore whereUser($value)
  * @method static Builder|UserScore whereUserCoins($value)
  * @mixin Eloquent
- * @method static \Database\Factories\Game\UserScoreFactory factory(...$parameters)
+ * @method static UserScoreFactory factory(...$parameters)
  */
 class UserScore extends Model
 {

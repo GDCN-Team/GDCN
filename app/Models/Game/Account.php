@@ -36,7 +36,6 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable as NotifiableTrait;
 use Illuminate\Support\Carbon;
-use function app;
 
 /**
  * Class Account
