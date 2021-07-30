@@ -14,7 +14,7 @@ class AddGauntletIdToGameLevelGauntletsTable extends Migration
     public function up()
     {
         Schema::table('game_level_gauntlets', function (Blueprint $table) {
-            $table->unsignedTinyInteger('gauntlet_id')->after('id');
+            $table->unsignedTinyInteger('gauntlet_id')->unique();
         });
     }
 
