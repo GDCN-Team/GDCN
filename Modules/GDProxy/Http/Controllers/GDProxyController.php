@@ -6,6 +6,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\GDProxy\Entities\Traffic;
+use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
 use Modules\NGProxy\Http\Controllers\NGProxyController;
 use Modules\Proxy\Exceptions\ProxyFailedException;
@@ -37,6 +38,7 @@ class GDProxyController extends Controller
      * @return string
      * @throws ProxyFailedException
      * @throws SongGetException
+     * @throws SongDisabledException
      */
     public function proxy(Request $request): string
     {
