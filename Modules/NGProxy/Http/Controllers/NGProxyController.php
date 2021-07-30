@@ -115,16 +115,16 @@ class NGProxyController extends Controller
         $object = $this->oss_prefix . '/' . $song->id . '_' . sha1($song->id . 'NGProxy') . '.mp3';
         $download_link = urlencode($this->cdn_domain . '/' . $object);
         if (!$oss->exists($object)) {
-            $song_content = $this->proxy->getInstance()
-                ->get($link)
-                ->body();
+            $req = $this->proxy->getInstance()
+                ->get($link);
 
-            if ($song_content < $song->size * 1024 * 1024) {
+            if (!$req->ok()) {
                 $song->disabled = true;
                 return;
             }
 
-            $oss->put($object, $song_content);
+            $response = $req->body();
+            $oss->put($object, $response);
         }
 
         $song->download_link = $download_link;
