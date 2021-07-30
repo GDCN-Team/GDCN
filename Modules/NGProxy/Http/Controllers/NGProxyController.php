@@ -2,7 +2,6 @@
 
 namespace Modules\NGProxy\Http\Controllers;
 
-use App\Models\Game\CustomSong;
 use GDCN\GDObject;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -149,61 +148,13 @@ class NGProxyController extends Controller
 
     /**
      * @param int $songID
-     * @return CustomSong
-     * @throws SongDisabledException
-     * @throws SongGetException
-     */
-    public function getCustomSong(int $songID): CustomSong
-    {
-        $song = CustomSong::firstWhere('song_id', $songID);
-
-        if (!$song) {
-            throw new SongGetException();
-        }
-
-        if ($song->disabled) {
-            throw new SongDisabledException();
-        }
-
-        return $song;
-    }
-
-    /**
-     * @param int $songID
-     * @return string
-     * @throws SongDisabledException
-     * @throws SongGetException
-     */
-    public function getCustomSongObject(int $songID): string
-    {
-        $song = $this->getCustomSong($songID);
-
-        return GDObject::merge([
-            1 => $song->song_id,
-            2 => $song->name,
-            3 => 7,
-            4 => $song->author_name,
-            5 => $song->size,
-            6 => null,
-            7 => null,
-            10 => urlencode($song->download_url)
-        ], '~|~');
-    }
-
-    /**
-     * @param int $songID
-     * @param bool $getCustomSong
      * @return string
      * @throws ProxyFailedException
      * @throws SongDisabledException
      * @throws SongGetException
      */
-    public function getObject(int $songID, bool $getCustomSong = false): string
+    public function getObject(int $songID): string
     {
-        if ($songID >= config('game.customSongIdOffset') && $getCustomSong) {
-            return $this->getCustomSongObject($songID);
-        }
-
         $song = $this->getSong($songID);
         return GDObject::merge([
             1 => $song->id,

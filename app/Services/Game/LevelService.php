@@ -6,6 +6,7 @@ use App\Enums\Game\Level\SearchType;
 use App\Enums\Game\Log\Types;
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Exceptions\Game\NoItemException;
+use App\Exceptions\Game\SongNotFoundException;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Daily;
@@ -19,8 +20,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
-use Modules\NGProxy\Http\Controllers\NGProxyController;
 use Modules\Proxy\Exceptions\ProxyFailedException;
 
 /**
@@ -34,13 +35,13 @@ class LevelService
      * @param Hasher $hash
      * @param HelperService $helper
      * @param StorageService $storage
-     * @param NGProxyController $NGProxy
+     * @param SongService $songService
      */
     public function __construct(
         public Hasher $hash,
         public HelperService $helper,
         public StorageService $storage,
-        public NGProxyController $NGProxy
+        public SongService $songService
     )
     {
     }
@@ -399,8 +400,8 @@ class LevelService
             }
 
             try {
-                $songs[] .= $this->NGProxy->getObject($song, true);
-            } catch (SongGetException | ProxyFailedException) {
+                $songs[] .= $this->songService->get($song);
+            } catch (SongGetException | ProxyFailedException | SongDisabledException | SongNotFoundException) {
                 continue;
             }
         }

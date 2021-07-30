@@ -97,6 +97,7 @@ final class ResponseCode extends Enum
     public const CHALLENGE_GET_FAILED = self::FAILED;
 
     // Song
+    public const SONG_NOT_FOUND = self::FAILED;
     public const SONG_GET_FAILED = self::FAILED;
     public const SONG_DISABLED = -2;
 

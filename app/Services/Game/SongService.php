@@ -2,6 +2,10 @@
 
 namespace App\Services\Game;
 
+use App\Exceptions\Game\SongNotFoundException;
+use App\Models\Game\CustomSong;
+use GDCN\GDObject;
+use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
 use Modules\NGProxy\Http\Controllers\NGProxyController;
 use Modules\Proxy\Exceptions\ProxyFailedException;
@@ -21,12 +25,32 @@ class SongService
     /**
      * @param int $songID
      * @return string
-     * @throws SongGetException
      * @throws ProxyFailedException
+     * @throws SongDisabledException
+     * @throws SongGetException
+     * @throws SongNotFoundException
      */
     public function get(int $songID): string
     {
-        return $this->NGProxy->getObject($songID, true);
+        // 自定义歌曲
+        $offset = config('game.customSongIdOffset');
+        if ($songID >= $offset) {
+            $song = CustomSong::whereSongId($songID)->first();
+            if (!$song) {
+                throw new SongNotFoundException();
+            }
+
+            return GDObject::merge([
+                1 => $song->song_id,
+                2 => $song->name,
+                3 => 7,
+                4 => $song->author_name,
+                5 => $song->size,
+                10 => urlencode($song->download_url)
+            ], '~|~');
+        }
+
+        return $this->NGProxy->getObject($songID);
     }
 
     /**
