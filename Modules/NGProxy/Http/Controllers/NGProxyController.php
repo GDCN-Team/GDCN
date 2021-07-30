@@ -6,6 +6,7 @@ use App\Models\Game\CustomSong;
 use GDCN\GDObject;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Modules\GDProxy\Http\Controllers\GDProxyController;
 use Modules\NGProxy\Entities\Song;
 use Modules\NGProxy\Exceptions\SongDisabledException;
@@ -118,12 +119,12 @@ class NGProxyController extends Controller
             $req = $this->proxy->getInstance()
                 ->get($link);
 
-            if (!$req->ok()) {
+            $response = $req->body();
+            if (Str::contains($response, '404')) {
                 $song->disabled = true;
                 return;
             }
 
-            $response = $req->body();
             $oss->put($object, $response);
         }
 
