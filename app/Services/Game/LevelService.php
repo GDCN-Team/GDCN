@@ -84,7 +84,7 @@ class LevelService
         $level,
         int $gameVersion,
         string $levelName,
-        string $levelDesc,
+        ?string $levelDesc,
         int $levelVersion,
         int $levelLength,
         int $audioTrack,
@@ -108,6 +108,7 @@ class LevelService
 
         $level = Level::where([
             'id' => $levelID,
+            'name' => $levelName,
             'user' => $userID
         ]);
 
