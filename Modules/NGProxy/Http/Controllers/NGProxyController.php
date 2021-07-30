@@ -50,6 +50,10 @@ class NGProxyController extends Controller
     protected function getSong(int $songID): mixed
     {
         if ($song = Song::find($songID)) {
+            if ($song->disabled) {
+                throw new SongDisabledException();
+            }
+
             return $song;
         }
 
