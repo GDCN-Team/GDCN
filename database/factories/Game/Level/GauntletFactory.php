@@ -23,6 +23,7 @@ class GauntletFactory extends Factory
     public function definition(): array
     {
         return [
+            'gauntlet_id' => mt_rand(),
             'level1' => Level::factory(),
             'level2' => Level::factory(),
             'level3' => Level::factory(),
