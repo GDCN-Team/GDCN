@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Modules\GDProxy\Http\Controllers\GDProxyController;
+use Modules\NGProxy\Entities\CustomSong;
 use Modules\NGProxy\Entities\Song;
 use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
@@ -30,6 +31,11 @@ class NGProxyController extends Controller
     public string $oss_prefix = 'ngproxy/songs';
 
     /**
+     * @var bool
+     */
+    public bool $is_custom_song = false;
+
+    /**
      * NGProxyController constructor.
      * @param ProxyController $proxy
      */
@@ -48,6 +54,10 @@ class NGProxyController extends Controller
      */
     protected function getSong(int $songID): mixed
     {
+        if ($songID >= config('ngproxy.custom_song_offset')) {
+            return $this->getCustomSong($songID);
+        }
+
         if ($song = Song::find($songID)) {
             if ($song->disabled) {
                 throw new SongDisabledException();
@@ -143,7 +153,14 @@ class NGProxyController extends Controller
      */
     public function getInfo(int $songID): string
     {
-        return $this->getSong($songID)->toJson();
+        $song = $this->getSong($songID);
+
+        if ($this->is_custom_song) {
+            $song->id = $song->song_id;
+            unset($song->song_id);
+        }
+
+        return $song->toJson();
     }
 
     /**
@@ -157,7 +174,7 @@ class NGProxyController extends Controller
     {
         $song = $this->getSong($songID);
         return GDObject::merge([
-            1 => $song->id,
+            1 => $this->is_custom_song ? $song->song_id : $song->id,
             2 => $song->name,
             3 => $song->author_id,
             4 => $song->author_name,
@@ -177,11 +194,31 @@ class NGProxyController extends Controller
     {
         return Song::forPage($page, $perPage)
             ->get()
-            ->map(function(Song $song) {
+            ->map(function (Song $song) {
                 return GDObject::merge([
                     4 => $song->author_name,
                     7 => $song->author_youtube_url
                 ], ':');
             })->join('|');
+    }
+
+    /**
+     * @param int $songID
+     * @return object|null
+     * @throws SongDisabledException
+     * @throws SongGetException
+     */
+    public function getCustomSong(int $songID): null|object
+    {
+        if ($song = CustomSong::whereSongId($songID)->first()) {
+            if ($song->disabled) {
+                throw new SongDisabledException();
+            }
+
+            $this->is_custom_song = true;
+            return $song;
+        }
+
+        throw new SongGetException();
     }
 }

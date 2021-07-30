@@ -2,9 +2,11 @@
 
 namespace Modules\GDProxy\Http\Controllers;
 
+use GDCN\GDObject;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\GDProxy\Entities\ReplaceSongLevel;
 use Modules\GDProxy\Entities\Traffic;
 use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
@@ -26,9 +28,11 @@ class GDProxyController extends Controller
     /**
      * GDProxyController constructor.
      * @param ProxyController $proxy
+     * @param NGProxyController $NGProxy
      */
     public function __construct(
-        public ProxyController $proxy
+        public ProxyController $proxy,
+        public NGProxyController $NGProxy
     )
     {
     }
@@ -58,6 +62,28 @@ class GDProxyController extends Controller
         $response = $req->body();
         if (empty($response) || $response < 0 || !$req->ok()) {
             throw new ProxyFailedException();
+        }
+
+        if ($uri === '/getGJLevels21.php') {
+            $levelParts = explode('#', $response);
+            $levelObjects = $levelParts[0];
+            $levelObjects = explode('|', $levelObjects);
+
+            foreach ($levelObjects as $index => $levelObject) {
+                $levelObject = GDObject::split($levelObject, ':');
+                $levelID = $levelObject[1];
+
+                if ($replace = ReplaceSongLevel::whereLevel($levelID)->first()) {
+                    $levelObject[12] = 0;
+                    $levelObject[35] = $replace->song;
+                    $levelParts[2] .= '~:~' . $this->NGProxy->getObject($replace->song);
+                }
+
+                $levelObjects[$index] = GDObject::merge($levelObject, ':');
+            }
+
+            $levelParts[0] = implode('|', $levelObjects);
+            $response = implode('#', $levelParts);
         }
 
         $traffic = Traffic::firstOrNew([
