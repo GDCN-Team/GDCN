@@ -9,6 +9,7 @@ use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Rating;
 use App\Models\Game\Level\RatingSuggestion;
+use App\Models\Game\Level\SharedCreatorPoint;
 use App\Models\Game\User;
 use App\Models\Game\UserScore;
 use App\Services\Game\HelperService;
@@ -311,7 +312,23 @@ class RatingService
                 $creator_points += config('game.creator_points_count.epic', 4);
             }
 
-            $score->creator_points = $creator_points;
+            $query = SharedCreatorPoint::whereLevel($level->id);
+            if ($query->exists()) {
+                $sharedCPs = $query->get();
+                foreach ($sharedCPs as $sharedCP) {
+                    tap(User::find($sharedCP->user), function ($user) use ($creator_points) {
+                        if (!$user || !$score = $user->score) {
+                            return false;
+                        }
+
+                        $score->creator_points += $creator_points;
+                        $score->save();
+                        return true;
+                    });
+                }
+            }
+
+            $score->creator_points += $creator_points;
             $score->save();
         }
 
