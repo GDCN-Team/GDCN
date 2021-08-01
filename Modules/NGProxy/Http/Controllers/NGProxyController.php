@@ -6,6 +6,7 @@ use GDCN\GDObject;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
@@ -17,8 +18,10 @@ use Modules\NGProxy\Entities\ApplicationUserTraffic;
 use Modules\NGProxy\Entities\CustomSong;
 use Modules\NGProxy\Entities\Song;
 use Modules\NGProxy\Exceptions\SongDisabledException;
+use Modules\NGProxy\Exceptions\SongDownloadException;
 use Modules\NGProxy\Exceptions\SongGetException;
-use Modules\Proxy\Exceptions\ProxyFailedException;
+use Modules\NGProxy\Exceptions\SongSaveException;
+use Modules\NGProxy\Exceptions\TrafficGetException;
 use Modules\Proxy\Http\Controllers\ProxyController;
 
 /**
@@ -38,11 +41,6 @@ class NGProxyController extends Controller
     public string $oss_prefix = 'ngproxy/songs';
 
     /**
-     * @var bool
-     */
-    public bool $is_custom_song = false;
-
-    /**
      * @var string|null
      */
     public ?string $app_id;
@@ -58,149 +56,254 @@ class NGProxyController extends Controller
     )
     {
         $this->app_id = $this->request->get('app_id');
+
     }
 
     /**
      * @param int $songID
-     * @return mixed
-     * @throws ProxyFailedException
+     * @return Song|CustomSong
      * @throws SongDisabledException
      * @throws SongGetException
+     * @throws SongSaveException
      */
-    protected function getSong(int $songID): mixed
+    protected function getSongModel(int $songID): Song|CustomSong
     {
+        // 自定义歌曲
         if ($songID >= config('ngproxy.custom_song_offset')) {
-            return $this->getCustomSong($songID);
+            return $this->getCustomSongModel($songID);
         }
 
-        if ($song = Song::find($songID)) {
-            if ($song->disabled) {
-                throw new SongDisabledException();
+        if (!$song = Song::find($songID)) {
+            $songObject = $this->getSongObjectFromOfficialServer($songID);
+
+            try {
+                $song = new Song();
+                $song->id = $songObject[1];
+                $song->name = $songObject[2];
+                $song->author_id = $songObject[3] ?? null;
+                $song->author_name = $songObject[4];
+                $song->size = $songObject[5];
+                $song->video_id = $songObject[6];
+                $song->author_youtube_url = $songObject[7];
+                $song->download_link = $this->getOssDownloadLink($song->id, $songObject[10]);
+                $song->save();
+            } catch (SongDownloadException) {
+                $song->download_link = $songObject[10];
+                $song->disabled = true;
+                $song->save();
             }
-
-            $this->processSongDownloadLink($song);
-            return $song;
         }
 
-        $GDProxy = app(GDProxyController::class);
-        $url = $GDProxy->gdServer . '/getGJSongInfo.php';
+        if (!$song instanceof Song) {
+            throw new SongGetException();
+        }
 
-        $req = $this->proxy->getInstance()
+        if ($song->disabled) {
+            throw new SongDisabledException();
+        }
+
+        $song->download_link = $this->getDownloadLinkUsingUserTraffic($song);
+        return $song;
+    }
+
+    /**
+     * @param int $songID
+     * @return CustomSong
+     * @throws SongGetException
+     */
+    protected function getCustomSongModel(int $songID): CustomSong
+    {
+        $song = CustomSong::find($songID);
+        if (!$song instanceof CustomSong) {
+            throw new SongGetException();
+        }
+
+        $song->download_link = $this->getDownloadLinkUsingUserTraffic($song);
+        return $song;
+    }
+
+    /**
+     * @param int $songID
+     * @return array|void
+     * @throws SongGetException
+     */
+    protected function getSongObjectFromOfficialServer(int $songID)
+    {
+        $GDProxy = app(GDProxyController::class);
+        $req = $this->proxy
+            ->getInstance()
             ->asForm()
-            ->post($url, [
+            ->post($GDProxy->gdServer . '/getGJSongInfo.php', [
                 'songID' => $songID,
                 'secret' => 'Wmfd2893gb7'
             ]);
 
         $songString = $req->body();
         if ($songString < 0 || empty($songString) || !$req->ok()) {
-            $url = $GDProxy->gdServer . '/getGJLevels21.php';
-            $req = $this->proxy->getInstance()
+            $req = $this->proxy
+                ->getInstance()
                 ->asForm()
-                ->post($url, [
+                ->post($GDProxy->gdServer . '/getGJLevels21.php', [
                     'song' => $songID,
                     'customSong' => true,
                     'secret' => 'Wmfd2893gb7'
                 ]);
 
             $response = $req->body();
-            $levelObjectParts = explode('#', $response);
-            $songString = $levelObjectParts[2] ?? null;
+            $songString = explode('#', $response)[2];
             if (empty($songString)) {
-                throw new ProxyFailedException();
-            }
-        }
-
-        $songObject = GDObject::split($songString, '~|~');
-        if (empty($songObject[10])) {
-            throw new SongGetException();
-        }
-
-        $song = new Song();
-        $song->id = $songObject[1];
-        $song->name = $songObject[2];
-        $song->author_id = $songObject[3] ?? null;
-        $song->author_name = $songObject[4];
-        $song->size = $songObject[5];
-        $song->video_id = $songObject[6] ?? null;
-        $song->author_youtube_url = $songObject[7] ?? null;
-        $song->download_link = $songObject[10];
-        $this->processSong($song);
-        $song->save();
-
-        if ($song->disabled) {
-            throw new SongDisabledException();
-        }
-
-        $this->processSongDownloadLink($song);
-        return $song;
-    }
-
-    /**
-     * @param Song $song
-     * @return string
-     */
-    protected function getFileName(Song $song): string
-    {
-        return $this->oss_prefix . '/' . $song->id . '_' . sha1($song->id . 'NGProxy') . '.mp3';
-    }
-
-    /**
-     * @param Song $song
-     */
-    protected function processSong(Song $song): void
-    {
-        $oss = Storage::disk('oss');
-        $link = urldecode($song->download_link);
-        $object = $this->getFileName($song);
-        $download_link = urlencode($this->cdn_domain . '/' . $object);
-        if (!$oss->exists($object)) {
-            $req = $this->proxy->getInstance()
-                ->get($link);
-
-            $response = $req->body();
-            if (!$req->ok()) {
-                $song->disabled = true;
-                return;
+                throw new SongGetException();
             }
 
-            $oss->put($object, $response);
+            return GDObject::split($songString, '~|~');
         }
-
-        $song->download_link = $download_link;
     }
 
     /**
      * @param int $songID
      * @return string
-     * @throws ProxyFailedException
-     * @throws SongDisabledException
-     * @throws SongGetException
      */
-    public function getInfo(int $songID): string
+    protected function getOssObject(int $songID): string
     {
-        $song = $this->getSong($songID);
+        return $this->oss_prefix . '/' . $songID . '_' . sha1($songID . 'NGProxy') . '.mp3';
+    }
 
-        if ($this->is_custom_song) {
+    /**
+     * @param int $songID
+     * @param string $download_link
+     * @return string
+     * @throws SongDownloadException
+     * @throws SongSaveException
+     */
+    protected function getOssDownloadLink(int $songID, string $download_link): string
+    {
+        // 变量
+        $link = urldecode($download_link);
+        $object = $this->getOssObject($songID);
+
+        // 检测歌曲是否存在oss中
+        $oss = Storage::disk('oss');
+        $cdnUrl = urlencode($this->cdn_domain . '/' . $object);
+        if (!$oss->exists($object)) {
+            $req = $this->proxy
+                ->getInstance()
+                ->get($link);
+
+            if (!$req->ok()) {
+                throw new SongDownloadException();
+            }
+
+            $response = $req->body();
+            if ($oss->put($object, $response)) {
+                return $cdnUrl;
+            }
+
+            throw new SongSaveException();
+        }
+
+        return $cdnUrl;
+    }
+
+    /**
+     * @param Song|CustomSong $song
+     * @return string
+     */
+    protected function getDownloadLinkUsingUserTraffic(Song|CustomSong $song): string
+    {
+        $defaultURL = URL::signedRoute('song.download', [
+            '_' => Crypt::encryptString("$song->id|0")
+        ]);
+
+        // 获取应用
+        if ($application = Application::whereAppId($this->app_id)->first()) {
+            // 获取用户
+            if ($user = ApplicationUser::where(['bind_ip' => $this->request->ip(), 'app_id' => $application->id])->first()) {
+                if (!$traffic = $user->traffic) {
+                    $traffic = new ApplicationUserTraffic();
+                    $traffic->user_id = $user->id;
+                    $traffic->traffic_count = 0;
+                    $traffic->save();
+                }
+
+                return URL::signedRoute('song.download', [
+                    '_' => Crypt::encryptString("$song->id|$traffic->id")
+                ]);
+            }
+        }
+
+        return $defaultURL;
+    }
+
+    /**
+     * @param int $trafficID
+     * @return ApplicationUserTraffic
+     * @throws TrafficGetException
+     */
+    protected function getTrafficModel(int $trafficID): ApplicationUserTraffic
+    {
+        $traffic = ApplicationUserTraffic::find($trafficID);
+        if (!$traffic instanceof ApplicationUserTraffic) {
+            throw new TrafficGetException();
+        }
+
+        return $traffic;
+    }
+
+    /**
+     * @param int $songID
+     * @return string
+     */
+    protected function getSpeedLink(int $songID): string
+    {
+        $oss = Storage::disk('oss');
+        $object = $this->getOssObject($songID);
+        $now = Carbon::now();
+        $tenMinutesLater = $now->addMinutes(10);
+        return $oss->temporaryUrl($object, $tenMinutesLater);
+    }
+
+    /**
+     * @param $song
+     * @return Song|CustomSong
+     */
+    protected function processSongInfo($song): Song|CustomSong
+    {
+        if ($song instanceof CustomSong) {
             $song->id = $song->song_id;
             unset($song->song_id);
         }
 
-        return $song->toJson();
+        return $song;
     }
 
     /**
      * @param int $songID
      * @return string
-     * @throws ProxyFailedException
      * @throws SongDisabledException
      * @throws SongGetException
+     * @throws SongSaveException
+     */
+    public function getInfo(int $songID): string
+    {
+        $song = $this->getSongModel($songID)->toJson();
+        return $this->processSongInfo($song);
+    }
+
+    /**
+     * @param int $songID
+     * @return string
+     * @throws SongDisabledException
+     * @throws SongGetException
+     * @throws SongSaveException
      */
     public function getObject(int $songID): string
     {
-        $song = $this->getSong($songID);
+        $song = $this->processSongInfo(
+            $this->getSongModel($songID)
+        );
+
         return GDObject::merge([
-            1 => $this->is_custom_song ? $song->song_id : $song->id,
+            1 => $song->id,
             2 => $song->name,
             3 => $song->author_id,
             4 => $song->author_name,
@@ -219,6 +322,7 @@ class NGProxyController extends Controller
     public function getTopArtists(int $page, int $perPage = 20): string
     {
         return Song::forPage($page, $perPage)
+            ->orderByDesc('level_count')
             ->get()
             ->map(function (Song $song) {
                 return GDObject::merge([
@@ -229,64 +333,12 @@ class NGProxyController extends Controller
     }
 
     /**
-     * @param int $songID
-     * @return object|null
-     * @throws SongDisabledException
-     * @throws SongGetException
-     */
-    public function getCustomSong(int $songID): null|object
-    {
-        if ($song = CustomSong::whereSongId($songID)->first()) {
-            if ($song->disabled) {
-                throw new SongDisabledException();
-            }
-
-            $this->is_custom_song = true;
-            $this->processSongDownloadLink($song);
-            return $song;
-        }
-
-        throw new SongGetException();
-    }
-
-    public function processSongDownloadLink($song)
-    {
-        $appID = $this->app_id;
-        $app = Application::whereAppId($appID)->first();
-        if (!$app) {
-            return;
-        }
-
-        $user = ApplicationUser::where([
-            'app_id' => $app->id,
-            'bind_ip' => $this->request->ip()
-        ])->first();
-        if (!$user) {
-            return;
-        }
-
-        $traffic = ApplicationUserTraffic::whereUserId($user->id)->first();
-        if (!$traffic) {
-            $traffic = new ApplicationUserTraffic();
-            $traffic->user_id = $user->id;
-            $traffic->traffic_count = 0;
-            $traffic->save();
-        }
-
-        $traffic_count = ($traffic->traffic_count - $song->size);
-        if ($traffic_count > 0) {
-            /** @var Song|CustomSong $song */
-            $file = $this->getFileName($song);
-            $url = Storage::disk('oss')->temporaryUrl($file, now()->addMinutes(10));
-            $song->download_link = URL::signedRoute('song.download', [
-                '_' => Crypt::encryptString($url . '|' . $traffic->id . '|' . $song->size)
-            ]);
-        }
-    }
-
-    /**
      * @param Request $request
      * @return RedirectResponse
+     * @throws SongDisabledException
+     * @throws SongGetException
+     * @throws SongSaveException
+     * @throws TrafficGetException
      */
     public function download(Request $request): RedirectResponse
     {
@@ -295,11 +347,13 @@ class NGProxyController extends Controller
         }
 
         $_ = Crypt::decryptString($_);
-        [$url, $trafficID, $size] = explode('|', $_);
+        [$songID, $trafficID] = explode('|', $_);
 
-        $traffic = ApplicationUserTraffic::findOrFail($trafficID);
-        $traffic->traffic_count -= $size;
-        $traffic->save();
+        $song = $this->getSongModel($songID);
+        $traffic = $this->getTrafficModel($trafficID);
+
+        $remaining = $traffic->traffic_count - $song->size;
+        $url = $remaining > 0 ? $this->getSpeedLink($song->id) : $song->download_link;
 
         return Redirect::away($url);
     }

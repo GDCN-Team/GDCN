@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Modules\NGProxy\Database\factories\ApplicationUserFactory;
 
@@ -29,6 +30,7 @@ use Modules\NGProxy\Database\factories\ApplicationUserFactory;
  * @method static Builder|ApplicationUser whereUpdatedAt($value)
  * @method static Builder|ApplicationUser whereUserId($value)
  * @mixin Eloquent
+ * @property-read ApplicationUserTraffic $traffic
  */
 class ApplicationUser extends Model
 {
@@ -43,5 +45,16 @@ class ApplicationUser extends Model
     protected static function newFactory(): ApplicationUserFactory
     {
         return ApplicationUserFactory::new();
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function traffic(): HasOne
+    {
+        return $this->hasOne(ApplicationUserTraffic::class, 'user_id')->withDefault([
+            'user_id' => $this->id,
+            'traffic_count' => 0
+        ]);
     }
 }
