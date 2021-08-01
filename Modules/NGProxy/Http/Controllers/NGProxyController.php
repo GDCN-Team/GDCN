@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 use Modules\GDProxy\Http\Controllers\GDProxyController;
 use Modules\NGProxy\Entities\Application;
 use Modules\NGProxy\Entities\ApplicationUser;
@@ -160,7 +159,7 @@ class NGProxyController extends Controller
                 ->get($link);
 
             $response = $req->body();
-            if (Str::contains($response, '404 Not Found')) {
+            if (!$req->ok()) {
                 $song->disabled = true;
                 return;
             }
