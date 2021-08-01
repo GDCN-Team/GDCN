@@ -160,7 +160,7 @@ class NGProxyController extends Controller
                 ->get($link);
 
             $response = $req->body();
-            if (Str::contains($response, '404')) {
+            if (Str::contains($response, '404 Not Found')) {
                 $song->disabled = true;
                 return;
             }
