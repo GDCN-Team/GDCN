@@ -3,9 +3,13 @@
 namespace Modules\NGProxy\Http\Controllers;
 
 use GDCN\GDObject;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Modules\GDProxy\Http\Controllers\GDProxyController;
 use Modules\NGProxy\Entities\Application;
@@ -40,19 +44,21 @@ class NGProxyController extends Controller
     public bool $is_custom_song = false;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $app_id;
+    public ?string $app_id;
 
     /**
      * NGProxyController constructor.
      * @param ProxyController $proxy
+     * @param Request $request
      */
     public function __construct(
-        public ProxyController $proxy
+        public ProxyController $proxy,
+        public Request         $request
     )
     {
-        $this->app_id = Request::get('app_id');
+        $this->app_id = $this->request->get('app_id');
     }
 
     /**
@@ -133,12 +139,21 @@ class NGProxyController extends Controller
 
     /**
      * @param Song $song
+     * @return string
+     */
+    protected function getFileName(Song $song): string
+    {
+        return $this->oss_prefix . '/' . $song->id . '_' . sha1($song->id . 'NGProxy') . '.mp3';
+    }
+
+    /**
+     * @param Song $song
      */
     protected function processSong(Song $song): void
     {
         $oss = Storage::disk('oss');
         $link = urldecode($song->download_link);
-        $object = $this->oss_prefix . '/' . $song->id . '_' . sha1($song->id . 'NGProxy') . '.mp3';
+        $object = $this->getFileName($song);
         $download_link = urlencode($this->cdn_domain . '/' . $object);
         if (!$oss->exists($object)) {
             $req = $this->proxy->getInstance()
@@ -238,20 +253,56 @@ class NGProxyController extends Controller
     public function processSongDownloadLink($song)
     {
         $appID = $this->app_id;
-        $app = Application::whereAppId($appID);
+        $app = Application::whereAppId($appID)->first();
+        if (!$app) {
+            return;
+        }
+
         $user = ApplicationUser::where([
             'app_id' => $app->id,
-            'ip' => Request::ip()
-        ]);
+            'bind_ip' => $this->request->ip()
+        ])->first();
+        if (!$user) {
+            return;
+        }
 
-        $traffic = ApplicationUserTraffic::whereUserId($user->id);
+        $traffic = ApplicationUserTraffic::whereUserId($user->id)->first();
+        if (!$traffic) {
+            $traffic = new ApplicationUserTraffic();
+            $traffic->user_id = $user->id;
+            $traffic->traffic_count = 0;
+            $traffic->save();
+        }
+
         $traffic_count = ($traffic->traffic_count - $song->size);
         if ($traffic_count > 0) {
             /** @var Song|CustomSong $song */
-            $song->download_link = '';
-            $traffic->traffic_count = $traffic_count;
-            $traffic->save();
+            $file = $this->getFileName($song);
+            $url = Storage::disk('oss')->temporaryUrl($file, now()->addMinutes(10));
+            $song->download_link = URL::signedRoute('song.download', [
+                '_' => Crypt::encryptString($url . '|' . $traffic->id . '|' . $song->size)
+            ]);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function download(Request $request): RedirectResponse
+    {
+        if (!$_ = $request->get('_')) {
+            abort(404);
+        }
+
+        $_ = Crypt::decryptString($_);
+        [$url, $trafficID, $size] = explode('|', $_);
+
+        $traffic = ApplicationUserTraffic::findOrFail($trafficID);
+        $traffic->traffic_count -= $size;
+        $traffic->save();
+
+        return Redirect::away($url);
     }
 
     /**

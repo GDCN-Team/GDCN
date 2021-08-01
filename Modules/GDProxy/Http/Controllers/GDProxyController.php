@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Request as RequestFacade;
 use Modules\GDProxy\Entities\NGProxyBind;
 use Modules\GDProxy\Entities\ReplaceSongLevel;
 use Modules\GDProxy\Entities\Traffic;
+use Modules\NGProxy\Entities\Application;
 use Modules\NGProxy\Entities\ApplicationUser;
 use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
@@ -31,7 +32,7 @@ class GDProxyController extends Controller
     /**
      * @var string
      */
-    public string $app_id = '';
+    public string $app_id = 'HssgUeHhgZ8DsiztqWQOvxHfE3BTqEmAVMv5DR2AJGAzsa59ZqlYOGVWD66AFsHe';
 
     /**
      * GDProxyController constructor.
@@ -60,7 +61,9 @@ class GDProxyController extends Controller
         $queries = $request->all();
 
         if ($uri === '/getGJSongInfo.php') { // 转到 NGProxy
-            return app(NGProxyController::class)->getObject($queries['songID']);
+            $NGProxy = app(NGProxyController::class);
+            $NGProxy->setAppId($this->app_id);
+            return $NGProxy->getObject($queries['songID']);
         }
 
         $req = $this->proxy->getInstance()
@@ -121,20 +124,21 @@ class GDProxyController extends Controller
 
     protected function bindToNGProxy($accountID, $userID)
     {
+        $app = Application::whereAppId($this->app_id)->first();
         $query = NGProxyBind::whereAccountId($accountID);
         if (!$query->exists()) {
             $user = new ApplicationUser();
-            $user->app_id = $this->app_id;
+            $user->app_id = $app->id;
             $user->user_id = $userID;
         } else {
             $user = ApplicationUser::where([
-                'app_id' => $this->app_id,
+                'app_id' => $app->id,
                 'user_id' => $query->value('ngproxy_user_id')
             ])->first();
 
             if (!$user) {
                 $user = new ApplicationUser();
-                $user->app_id = $this->app_id;
+                $user->app_id = $app->id;
                 $user->user_id = $userID;
             }
         }
