@@ -14,6 +14,7 @@ use Modules\NGProxy\Entities\Application;
 use Modules\NGProxy\Entities\ApplicationUser;
 use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
+use Modules\NGProxy\Exceptions\SongSaveException;
 use Modules\NGProxy\Http\Controllers\NGProxyController;
 use Modules\Proxy\Exceptions\ProxyFailedException;
 use Modules\Proxy\Http\Controllers\ProxyController;
@@ -50,8 +51,9 @@ class GDProxyController extends Controller
      * @param Request $request
      * @return string
      * @throws ProxyFailedException
-     * @throws SongGetException
      * @throws SongDisabledException
+     * @throws SongGetException
+     * @throws SongSaveException
      */
     public function proxy(Request $request): string
     {

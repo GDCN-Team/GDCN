@@ -113,7 +113,7 @@ class NGProxyController extends Controller
      */
     protected function getCustomSongModel(int $songID): CustomSong
     {
-        $song = CustomSong::find($songID);
+        $song = CustomSong::whereSongId($songID)->first();
         if (!$song instanceof CustomSong) {
             throw new SongGetException();
         }
