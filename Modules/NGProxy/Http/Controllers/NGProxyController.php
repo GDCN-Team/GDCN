@@ -382,7 +382,7 @@ class NGProxyController extends Controller
      */
     public function activeCode(int $userID, string $code): array
     {
-        if ($user = ApplicationUserTraffic::whereUserId($userID)) {
+        if ($user = ApplicationUserTraffic::whereUserId($userID)->first()) {
             if ($code = TrafficCode::whereActiveCode($code)->first()) {
                 $user->traffic_count += $code->traffic_count;
                 $user->save();
