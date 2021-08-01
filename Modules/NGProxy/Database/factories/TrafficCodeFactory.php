@@ -22,7 +22,7 @@ class TrafficCodeFactory extends Factory
     public function definition()
     {
         return [
-            //
+
         ];
     }
 }
