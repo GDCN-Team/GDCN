@@ -370,9 +370,7 @@ class NGProxyController extends Controller
             $url = $song->download_link;
         }
 
-        return Redirect::away(
-            urldecode($url)
-        );
+        return Redirect::away($url);
     }
 
     /**
