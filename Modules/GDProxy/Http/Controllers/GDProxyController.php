@@ -6,8 +6,11 @@ use GDCN\GDObject;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Request as RequestFacade;
+use Modules\GDProxy\Entities\NGProxyBind;
 use Modules\GDProxy\Entities\ReplaceSongLevel;
 use Modules\GDProxy\Entities\Traffic;
+use Modules\NGProxy\Entities\ApplicationUser;
 use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
 use Modules\NGProxy\Http\Controllers\NGProxyController;
@@ -26,12 +29,17 @@ class GDProxyController extends Controller
     public string $gdServer = 'http://www.boomlings.com/database';
 
     /**
+     * @var string
+     */
+    public string $app_id = '';
+
+    /**
      * GDProxyController constructor.
      * @param ProxyController $proxy
      * @param NGProxyController $NGProxy
      */
     public function __construct(
-        public ProxyController $proxy,
+        public ProxyController   $proxy,
         public NGProxyController $NGProxy
     )
     {
@@ -62,6 +70,13 @@ class GDProxyController extends Controller
         $response = $req->body();
         if (empty($response) || $response < 0 || !$req->ok()) {
             throw new ProxyFailedException();
+        }
+
+        if ($uri === '/getGJUserInfo20.php') {
+            $userInfo = GDObject::split($response, ':');
+            if ($queries['accountID'] === $userInfo[16]) {
+                $this->bindToNGProxy($queries['accountID'], $userInfo[2]);
+            }
         }
 
         if ($uri === '/getGJLevels21.php') {
@@ -102,5 +117,36 @@ class GDProxyController extends Controller
     public function getTraffics(): LengthAwarePaginator
     {
         return Traffic::paginate(7);
+    }
+
+    protected function bindToNGProxy($accountID, $userID)
+    {
+        $query = NGProxyBind::whereAccountId($accountID);
+        if (!$query->exists()) {
+            $user = new ApplicationUser();
+            $user->app_id = $this->app_id;
+            $user->user_id = $userID;
+        } else {
+            $user = ApplicationUser::where([
+                'app_id' => $this->app_id,
+                'user_id' => $query->value('ngproxy_user_id')
+            ])->first();
+
+            if (!$user) {
+                $user = new ApplicationUser();
+                $user->app_id = $this->app_id;
+                $user->user_id = $userID;
+            }
+        }
+
+        $user->bind_ip = RequestFacade::ip();
+        $user->save();
+
+        if (!$query->exists()) {
+            $bind = new NGProxyBind();
+            $bind->account_id = $accountID;
+            $bind->ngproxy_user_id = $user->id;
+            $bind->save();
+        }
     }
 }

@@ -4,9 +4,13 @@ namespace Modules\NGProxy\Http\Controllers;
 
 use GDCN\GDObject;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Modules\GDProxy\Http\Controllers\GDProxyController;
+use Modules\NGProxy\Entities\Application;
+use Modules\NGProxy\Entities\ApplicationUser;
+use Modules\NGProxy\Entities\ApplicationUserTraffic;
 use Modules\NGProxy\Entities\CustomSong;
 use Modules\NGProxy\Entities\Song;
 use Modules\NGProxy\Exceptions\SongDisabledException;
@@ -36,6 +40,11 @@ class NGProxyController extends Controller
     public bool $is_custom_song = false;
 
     /**
+     * @var string
+     */
+    public string $app_id;
+
+    /**
      * NGProxyController constructor.
      * @param ProxyController $proxy
      */
@@ -43,6 +52,7 @@ class NGProxyController extends Controller
         public ProxyController $proxy
     )
     {
+        $this->app_id = Request::get('app_id');
     }
 
     /**
@@ -63,6 +73,7 @@ class NGProxyController extends Controller
                 throw new SongDisabledException();
             }
 
+            $this->processSongDownloadLink($song);
             return $song;
         }
 
@@ -116,6 +127,7 @@ class NGProxyController extends Controller
             throw new SongDisabledException();
         }
 
+        $this->processSongDownloadLink($song);
         return $song;
     }
 
@@ -216,9 +228,39 @@ class NGProxyController extends Controller
             }
 
             $this->is_custom_song = true;
+            $this->processSongDownloadLink($song);
             return $song;
         }
 
         throw new SongGetException();
+    }
+
+    public function processSongDownloadLink($song)
+    {
+        $appID = $this->app_id;
+        $app = Application::whereAppId($appID);
+        $user = ApplicationUser::where([
+            'app_id' => $app->id,
+            'ip' => Request::ip()
+        ]);
+
+        $traffic = ApplicationUserTraffic::whereUserId($user->id);
+        $traffic_count = ($traffic->traffic_count - $song->size);
+        if ($traffic_count > 0) {
+            /** @var Song|CustomSong $song */
+            $song->download_link = '';
+            $traffic->traffic_count = $traffic_count;
+            $traffic->save();
+        }
+    }
+
+    /**
+     * @param string $app_id
+     * @return NGProxyController
+     */
+    public function setAppId(string $app_id): NGProxyController
+    {
+        $this->app_id = $app_id;
+        return $this;
     }
 }
