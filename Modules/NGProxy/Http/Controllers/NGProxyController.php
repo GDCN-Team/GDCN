@@ -2,6 +2,7 @@
 
 namespace Modules\NGProxy\Http\Controllers;
 
+use App\Http\Controllers\Web\Traits\ResponseTrait;
 use GDCN\GDObject;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Modules\NGProxy\Entities\ApplicationUser;
 use Modules\NGProxy\Entities\ApplicationUserTraffic;
 use Modules\NGProxy\Entities\CustomSong;
 use Modules\NGProxy\Entities\Song;
+use Modules\NGProxy\Entities\TrafficCode;
 use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongDownloadException;
 use Modules\NGProxy\Exceptions\SongGetException;
@@ -30,6 +32,8 @@ use Modules\Proxy\Http\Controllers\ProxyController;
  */
 class NGProxyController extends Controller
 {
+    use ResponseTrait;
+
     /**
      * @var string
      */
@@ -279,15 +283,19 @@ class NGProxyController extends Controller
 
     /**
      * @param int $songID
-     * @return string
+     * @return array
      * @throws SongDisabledException
      * @throws SongGetException
      * @throws SongSaveException
      */
-    public function getInfo(int $songID): string
+    public function getInfo(int $songID): array
     {
         $song = $this->getSongModel($songID)->toJson();
-        return $this->processSongInfo($song);
+        return $this->response(
+            true,
+            null,
+            $this->processSongInfo($song)
+        );
     }
 
     /**
@@ -365,6 +373,30 @@ class NGProxyController extends Controller
         return Redirect::away(
             urldecode($url)
         );
+    }
+
+    /**
+     * @param int $userID
+     * @param string $code
+     * @return array
+     */
+    public function activeCode(int $userID, string $code): array
+    {
+        if ($user = ApplicationUserTraffic::whereUserId($userID)) {
+            if ($code = TrafficCode::whereActiveCode($code)->first()) {
+                $user->traffic_count += $code->traffic_count;
+                $user->save();
+
+                $code->used = true;
+                $code->save();
+
+                return $this->response(true, '兑换成功!');
+            } else {
+                return $this->response(false, '兑换码不存在(或未找到)');
+            }
+        } else {
+            return $this->response(false, '用户不存在(或未找到)');
+        }
     }
 
     /**

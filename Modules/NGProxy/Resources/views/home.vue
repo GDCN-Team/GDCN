@@ -10,7 +10,8 @@
         <Content class="text-center mt-5 overflow-auto">
             <h1 class="text-2xl">NGProxy</h1>
             <div class="mt-5 w-3/4 lg:w-1/4 mx-auto text-center">
-                <Input :disabled="loading" search enter-button="查询" placeholder="歌曲ID" type="number" @on-search="getSongInfo" />
+                <Input :disabled="request1.loading" enter-button="查询" placeholder="歌曲ID" search type="number"
+                       @on-search="getSongInfo"/>
                 <Card shadow v-if="show_song_info_card" class="mt-5 dark:text-black" title="查询结果">
                     <p>歌曲ID: {{ song.id }}</p>
                     <p>歌曲名: {{ song.name }}</p>
@@ -39,13 +40,20 @@
 </template>
 
 <script>
+import {request} from "../../../../resources/js/helper";
+
 export default {
     name: "Home",
     data: function () {
         return {
             show_song_info_card: false,
             source: null,
-            loading: false,
+            request1: {
+                loading: false
+            },
+            request2: {
+                loading: false
+            },
             song: {
                 author_id: null,
                 download_link: null,
@@ -57,27 +65,20 @@ export default {
     methods: {
         getSongInfo: function(songID) {
             const that = this;
-            if (that.source) {
-                that.source.cancel();
-            }
 
-            that.loading = true;
-            that.source = Axios.CancelToken.source();
-            Axios.get(`/api/info/${songID}`, {
-                cancelToken: that.source.token
-            }).then(function(response) {
-                that.loading = false;
-                if (response.data.status === false) {
-                    that.show_song_info_card = false;
-                    that.$Message.error({
-                        content: response.data.msg
-                    });
-                } else {
+            that.show_song_info_card = false;
+            request('GET', `/api/info/${songID}`, {
+                request: that.request1,
+                onSuccess: function (response) {
                     that.show_song_info_card = true;
                     that.song = response.data;
+                },
+                onFailed: function () {
+                    that.show_song_info_card = false;
+                },
+                onError: function () {
+                    that.show_song_info_card = false;
                 }
-            }).catch(function(error) {
-                that.loading = false;
             });
         }
     }

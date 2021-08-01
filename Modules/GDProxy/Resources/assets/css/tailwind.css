@@ -258,6 +258,13 @@ Correct the cursor style of increment and decrement buttons in Safari.
 2. Correct the outline style in Safari.
 */
 
+[type='search'] {
+    -webkit-appearance: textfield;
+    /* 1 */
+    outline-offset: -2px;
+    /* 2 */
+}
+
 /**
 Remove the inner padding in Chrome and Safari on macOS.
 */
@@ -498,14 +505,14 @@ samp {
  *    CSS Remedy, with `svg` added as well.
  *
  *    https://github.com/mozdevs/cssremedy/issues/14
- * 
+ *
  * 2. Add `vertical-align: middle` to align replaced elements more
  *    sensibly by default when overriding `display` by adding a
  *    utility like `inline`.
  *
  *    This can trigger a poorly considered linting error in some
  *    tools but is included by design.
- * 
+ *
  *    https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210
  */
 
@@ -555,19 +562,23 @@ video {
 }
 
 .mt-5 {
-  margin-top: 1.25rem;
+    margin-top: 1.25rem;
 }
 
 .mt-10 {
-  margin-top: 2.5rem;
+    margin-top: 2.5rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
 }
 
 .table {
-  display: table;
+    display: table;
 }
 
 .h-screen {
-  height: 100vh;
+    height: 100vh;
 }
 
 .w-full {
@@ -671,24 +682,29 @@ video {
 }
 
 .text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
 }
 
 .text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.text-black {
+    --tw-text-opacity: 1;
+    color: rgba(0, 0, 0, var(--tw-text-opacity));
 }
 
 @media (prefers-color-scheme: dark) {
-  .dark\:text-white {
-    --tw-text-opacity: 1;
-    color: rgba(255, 255, 255, var(--tw-text-opacity));
-  }
+    .dark\:text-white {
+        --tw-text-opacity: 1;
+        color: rgba(255, 255, 255, var(--tw-text-opacity));
+    }
 }
 
 *, ::before, ::after {
-  --tw-shadow: 0 0 #0000;
+    --tw-shadow: 0 0 #0000;
 }
 
 *, ::before, ::after {

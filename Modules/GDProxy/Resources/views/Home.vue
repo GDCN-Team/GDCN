@@ -30,6 +30,15 @@
                 </Button>
             </div>
 
+            <div v-if="ngproxy_bind_account_getted" class="mt-5 lg:w-2/4 w-full text-center mx-auto">
+                <Card title="NGProxy流量兑换">
+                    <h2 class="mb-2 text-black">兑换至账号: {{ ngproxy_bind.account_name }}[{{
+                            ngproxy_bind.account_id
+                        }}]</h2>
+                    <Input enter-button="兑换" placeholder="兑换码" search @on-search="activeNGProxyCode"></Input>
+                </Card>
+            </div>
+
             <div class="mt-5 lg:w-2/4 w-full text-center mx-auto">
                 <h6 class="mt-10 text-lg">流量公示</h6>
                 <Table :columns="traffic_columns" :data="traffics.data"></Table>
@@ -56,6 +65,8 @@
 </template>
 
 <script>
+import {request} from "../../../../resources/js/helper";
+
 export default {
     name: "home",
     data: function () {
@@ -80,17 +91,48 @@ export default {
             traffics: {
                 current_page: 1,
                 per_page: 7
+            },
+            ngproxy_bind_account_getted: false,
+            ngproxy_bind: {
+                account_id: null,
+                account_name: null,
+                ngproxy_user_id: null
             }
         }
     },
     mounted: function () {
         this.getTraffics(1);
+        this.getBindedAccount();
     },
     methods: {
         getTraffics: function (page = 1) {
             const that = this;
-            Axios.get(`/api/traffics?page=${page}`).then(function (response) {
+            axios.get(`/api/traffics?page=${page}`).then(function (response) {
                 that.traffics = response.data;
+            });
+        },
+        getBindedAccount: function () {
+            const that = this;
+            request('GET', '/api/get_ngproxy_binded_account', {
+                onSuccess: function (response) {
+                    that.ngproxy_bind_account_getted = true;
+                    that.ngproxy_bind = response.data;
+                },
+                onFailed: function () {
+                    that.ngproxy_bind_account_getted = false;
+                },
+                onError: function () {
+                    that.ngproxy_bind_account_getted = false;
+                }
+            })
+        },
+        activeNGProxyCode: function (code) {
+            request('POST', `https://ng.geometrydashchinese.com/api/activeCode/${this.ngproxy_bind.ngproxy_user_id}/${code}`, {
+                onSuccess: function (response) {
+                    app.$Message.success({
+                        content: response.msg
+                    });
+                }
             });
         },
         bytesToSize: function (bytes) {

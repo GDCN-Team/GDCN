@@ -2,6 +2,7 @@
 
 namespace Modules\GDProxy\Http\Controllers;
 
+use App\Http\Controllers\Web\Traits\ResponseTrait;
 use GDCN\GDObject;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
@@ -25,6 +26,8 @@ use Modules\Proxy\Http\Controllers\ProxyController;
  */
 class GDProxyController extends Controller
 {
+    use ResponseTrait;
+
     /**
      * @var string
      */
@@ -80,7 +83,7 @@ class GDProxyController extends Controller
         if ($uri === '/getGJUserInfo20.php') {
             $userInfo = GDObject::split($response, ':');
             if ($queries['accountID'] === $userInfo[16]) {
-                $this->bindToNGProxy($queries['accountID'], $userInfo[2]);
+                $this->bindToNGProxy($queries['accountID'], $userInfo[2], $userInfo[1]);
             }
         }
 
@@ -124,7 +127,7 @@ class GDProxyController extends Controller
         return Traffic::paginate(7);
     }
 
-    protected function bindToNGProxy($accountID, $userID)
+    protected function bindToNGProxy($accountID, $userID, $name)
     {
         $app = Application::whereAppId($this->app_id)->first();
         $query = NGProxyBind::whereAccountId($accountID);
@@ -151,8 +154,32 @@ class GDProxyController extends Controller
         if (!$query->exists()) {
             $bind = new NGProxyBind();
             $bind->account_id = $accountID;
+            $bind->account_name = $name;
             $bind->ngproxy_user_id = $user->id;
             $bind->save();
         }
+    }
+
+    /**
+     * @return array|void
+     */
+    public function getNGProxyBindedAccount()
+    {
+        if ($app = Application::whereAppId($this->app_id)->first()) {
+            $user = ApplicationUser::where([
+                'app_id' => $app->id,
+                'bind_ip' => RequestFacade::ip()
+            ])->first();
+
+            if ($user) {
+                return $this->response(
+                    true,
+                    null,
+                    NGProxyBind::whereNgproxyUserId($user->id)->first()
+                );
+            }
+        }
+
+        return $this->response(false, '未找到绑定设备, 请在游戏内打开个人主页以绑定设备');
     }
 }

@@ -27,6 +27,8 @@ use Modules\GDProxy\Database\factories\NGProxyBindFactory;
  * @method static Builder|NGProxyBind whereNgproxyUserId($value)
  * @method static Builder|NGProxyBind whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property string $account_name
+ * @method static Builder|NGProxyBind whereAccountName($value)
  */
 class NGProxyBind extends Model
 {

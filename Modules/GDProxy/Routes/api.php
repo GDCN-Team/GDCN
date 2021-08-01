@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Modules\GDProxy\Http\Controllers\GDProxyController;
 
 /*
@@ -15,3 +14,4 @@ use Modules\GDProxy\Http\Controllers\GDProxyController;
 */
 
 Route::get('/traffics', [GDProxyController::class, 'getTraffics']);
+Route::get('/get_ngproxy_binded_account', [GDProxyController::class, 'getNGProxyBindedAccount']);

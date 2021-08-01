@@ -5,7 +5,7 @@ import Axios from 'axios';
 import ViewUI from 'view-design';
 
 window.Vue = Vue;
-window.Axios = Axios;
+window.axios = Axios;
 window.$ = $;
 
 $(function () {
