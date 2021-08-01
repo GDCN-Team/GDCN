@@ -3,6 +3,7 @@
 namespace Modules\NGProxy\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Modules\NGProxy\Entities\TrafficCode;
 
 class GenerateTrafficCode extends Command
@@ -38,15 +39,25 @@ class GenerateTrafficCode extends Command
      */
     public function handle()
     {
-        $codes = TrafficCode::factory()
-            ->count($this->ask('count'))
-            ->create([
-                'traffic_count' => $this->ask('traffic_count')
-            ]);
+        $count = $this->ask('count');
+        $traffic_count = $this->ask('traffic_count');
 
-        $codes = $codes->pluck('active_code');
-        $codes = implode(PHP_EOL, $codes);
-        $this->info($codes);
+        $codes = [];
+        for ($i = 0; $i < $count; $i++) {
+            $code = new TrafficCode();
+            $code->active_code = Str::random(64);
+            $code->traffic_count = $traffic_count;
+            $code->save();
+
+            $codes[] = $code;
+        }
+
+        $result = null;
+        foreach ($codes as $code) {
+            $result .= $code->active_code . PHP_EOL;
+        }
+
+        $this->info($result);
     }
 
     /**
