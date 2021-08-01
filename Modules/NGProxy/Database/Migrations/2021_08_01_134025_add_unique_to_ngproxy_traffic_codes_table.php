@@ -14,7 +14,7 @@ class AddUniqueToNgproxyTrafficCodesTable extends Migration
     public function up()
     {
         Schema::table('ngproxy_traffic_codes', function (Blueprint $table) {
-            $table->string('active_code')->unique();
+            $table->string('active_code')->unique()->change();
         });
     }
 
@@ -26,7 +26,7 @@ class AddUniqueToNgproxyTrafficCodesTable extends Migration
     public function down()
     {
         Schema::table('ngproxy_traffic_codes', function (Blueprint $table) {
-            $table->string('active_code');
+            $table->string('active_code')->change();
         });
     }
 }
