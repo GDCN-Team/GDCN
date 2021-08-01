@@ -58,6 +58,7 @@ return [
             'access_key' => env('ALIYUN_OSS_ACCESS_SECRET'),
             'bucket' => 'gdcn',
             'endpoint' => env('ALIYUN_OSS_ENDPOINT'),
+            'internal' => env('ALIYUN_OSS_ENDPOINT_INTERNAL'),
             'use_ssl' => true,
             'debug' => env('APP_DEBUG', false)
         ]
