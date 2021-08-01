@@ -3,7 +3,7 @@
 namespace Modules\NGProxy\Console;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Modules\NGProxy\Entities\TrafficCode;
 
 class GenerateTrafficCode extends Command
 {
@@ -34,11 +34,19 @@ class GenerateTrafficCode extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
+        $codes = TrafficCode::factory()
+            ->count($this->ask('count'))
+            ->create([
+                'traffic_count' => $this->ask('traffic_count')
+            ]);
 
+        $codes = $codes->pluck('active_code');
+        $codes = implode(PHP_EOL, $codes);
+        $this->info($codes);
     }
 
     /**
@@ -46,10 +54,10 @@ class GenerateTrafficCode extends Command
      *
      * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
-            ['count', InputArgument::REQUIRED, '生成数量'],
+
         ];
     }
 
@@ -58,7 +66,7 @@ class GenerateTrafficCode extends Command
      *
      * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
 

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Modules\NGProxy\Console\GenerateTrafficCode;
 
 /**
  * Class AppServiceProvider
@@ -18,7 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->commands([
+            GenerateTrafficCode::class
+        ]);
     }
 
     /**

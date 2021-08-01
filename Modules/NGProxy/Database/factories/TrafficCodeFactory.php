@@ -3,6 +3,7 @@
 namespace Modules\NGProxy\Database\factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use Modules\NGProxy\Entities\TrafficCode;
 
 class TrafficCodeFactory extends Factory
@@ -22,7 +23,7 @@ class TrafficCodeFactory extends Factory
     public function definition()
     {
         return [
-
+            'active_code' => Str::random(100)
         ];
     }
 }
