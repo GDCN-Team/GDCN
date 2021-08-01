@@ -35,7 +35,8 @@
                     <h2 class="mb-2 text-black">兑换至账号: {{ ngproxy_bind.account_name }}[{{
                             ngproxy_bind.account_id
                         }}]</h2>
-                    <Input enter-button="兑换" placeholder="兑换码" search @on-search="activeNGProxyCode"></Input>
+                    <Input :disabled="request.loading" enter-button="兑换" placeholder="兑换码" search
+                           @on-search="activeNGProxyCode"></Input>
                 </Card>
             </div>
 
@@ -92,6 +93,9 @@ export default {
                 current_page: 1,
                 per_page: 7
             },
+            request: {
+                loading: false
+            },
             ngproxy_bind_account_getted: false,
             ngproxy_bind: {
                 account_id: null,
@@ -114,6 +118,7 @@ export default {
         getBindedAccount: function () {
             const that = this;
             request('GET', '/api/get_ngproxy_binded_account', {
+                request: that.request,
                 onSuccess: function (response) {
                     that.ngproxy_bind_account_getted = true;
                     that.ngproxy_bind = response.data;
