@@ -83,8 +83,8 @@ class NGProxyController extends Controller
                 $song->author_id = $songObject[3] ?? null;
                 $song->author_name = $songObject[4];
                 $song->size = $songObject[5];
-                $song->video_id = $songObject[6];
-                $song->author_youtube_url = $songObject[7];
+                $song->video_id = $songObject[6] ?? null;
+                $song->author_youtube_url = $songObject[7] ?? null;
                 $song->download_link = $this->getOssDownloadLink($song->id, $songObject[10]);
                 $song->save();
             } catch (SongDownloadException) {
@@ -124,10 +124,10 @@ class NGProxyController extends Controller
 
     /**
      * @param int $songID
-     * @return array|void
+     * @return array
      * @throws SongGetException
      */
-    protected function getSongObjectFromOfficialServer(int $songID)
+    protected function getSongObjectFromOfficialServer(int $songID): array
     {
         $GDProxy = app(GDProxyController::class);
         $req = $this->proxy
@@ -150,13 +150,14 @@ class NGProxyController extends Controller
                 ]);
 
             $response = $req->body();
-            $songString = explode('#', $response)[2];
-            if (empty($songString)) {
-                throw new SongGetException();
-            }
-
-            return GDObject::split($songString, '~|~');
+            $songString = explode('#', $response)[2] ?? null;
         }
+
+        if (empty($songString)) {
+            throw new SongGetException();
+        }
+
+        return GDObject::split($songString, '~|~');
     }
 
     /**
@@ -350,12 +351,20 @@ class NGProxyController extends Controller
         [$songID, $trafficID] = explode('|', $_);
 
         $song = $this->getSongModel($songID);
-        $traffic = $this->getTrafficModel($trafficID);
+        $song->refresh();
 
-        $remaining = $traffic->traffic_count - $song->size;
-        $url = $remaining > 0 ? $this->getSpeedLink($song->id) : $song->download_link;
+        if ($trafficID) {
+            $traffic = $this->getTrafficModel($trafficID);
 
-        return Redirect::away($url);
+            $remaining = $traffic->traffic_count - $song->size;
+            $url = $remaining > 0 ? $this->getSpeedLink($song->id) : $song->download_link;
+        } else {
+            $url = $song->download_link;
+        }
+
+        return Redirect::away(
+            urldecode($url)
+        );
     }
 
     /**
