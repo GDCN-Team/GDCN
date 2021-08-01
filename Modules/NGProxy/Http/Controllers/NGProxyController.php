@@ -384,6 +384,10 @@ class NGProxyController extends Controller
     {
         if ($user = ApplicationUserTraffic::whereUserId($userID)->first()) {
             if ($code = TrafficCode::whereActiveCode($code)->first()) {
+                if ($code->used) {
+                    return $this->response(false, '该兑换码已被兑换过了');
+                }
+
                 $user->traffic_count += $code->traffic_count;
                 $user->save();
 
