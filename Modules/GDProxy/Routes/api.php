@@ -1,6 +1,6 @@
 <?php
 
-use Modules\GDProxy\Http\Controllers\GDProxyController;
+use Modules\GDProxy\Http\Controllers\GDProxyApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,5 +13,5 @@ use Modules\GDProxy\Http\Controllers\GDProxyController;
 |
 */
 
-Route::get('/traffics', [GDProxyController::class, 'getTraffics']);
-Route::get('/get_ngproxy_binded_account', [GDProxyController::class, 'getNGProxyBindedAccount']);
+Route::get('/traffics', [GDProxyApiController::class, 'getTraffics']);
+Route::get('/get_ngproxy_binded_account', [GDProxyApiController::class, 'getNGProxyBindedAccount']);

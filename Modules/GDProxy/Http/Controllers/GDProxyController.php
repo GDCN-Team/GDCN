@@ -4,7 +4,6 @@ namespace Modules\GDProxy\Http\Controllers;
 
 use App\Http\Controllers\Web\Traits\ResponseTrait;
 use GDCN\GDObject;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Request as RequestFacade;
@@ -119,14 +118,6 @@ class GDProxyController extends Controller
         return $response;
     }
 
-    /**
-     * @return LengthAwarePaginator
-     */
-    public function getTraffics(): LengthAwarePaginator
-    {
-        return Traffic::paginate(7);
-    }
-
     protected function bindToNGProxy($accountID, $userID, $name)
     {
         $app = Application::whereAppId($this->app_id)->first();
@@ -158,28 +149,5 @@ class GDProxyController extends Controller
             $bind->ngproxy_user_id = $user->id;
             $bind->save();
         }
-    }
-
-    /**
-     * @return array|void
-     */
-    public function getNGProxyBindedAccount()
-    {
-        if ($app = Application::whereAppId($this->app_id)->first()) {
-            $user = ApplicationUser::where([
-                'app_id' => $app->id,
-                'bind_ip' => RequestFacade::ip()
-            ])->first();
-
-            if ($user) {
-                return $this->response(
-                    true,
-                    null,
-                    NGProxyBind::whereNgproxyUserId($user->id)->first()
-                );
-            }
-        }
-
-        return $this->response(false, '未找到绑定设备, 请在游戏内打开个人主页以绑定设备');
     }
 }
