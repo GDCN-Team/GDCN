@@ -430,7 +430,7 @@ class LevelService
         $level = $this->helper->getModel($level, Level::class);
         $levelString = $this->getLevelString($level->id);
 
-        $log = Log::firstOrNew([
+        $log = Log::where([
             'type' => Types::DOWNLOADED_LEVEL,
             'value' => $level->id,
             'ip' => Request::ip()
@@ -439,6 +439,11 @@ class LevelService
         if (!$log->exists()) {
             ++$level->likes;
             $level->save();
+
+            $log = new Log();
+            $log->type = Types::DOWNLOADED_LEVEL;
+            $log->value = $level->id;
+            $log->ip = Request::ip();
             $log->save();
         }
 
