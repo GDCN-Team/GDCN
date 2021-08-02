@@ -2,6 +2,7 @@
 
 namespace App\Services\Game\Account;
 
+use App\Events\FriendRemoved;
 use App\Models\Game\Account;
 use App\Repositories\Game\Account\FriendRepository;
 
@@ -28,6 +29,12 @@ class FriendService
      */
     public function remove(Account|int $account, Account|int $targetAccount): mixed
     {
-        return $this->repository->between($account, $targetAccount)->delete();
+        $friend = $this->repository->between($account, $targetAccount);
+        if (!$result = $friend->delete()) {
+            return $result;
+        }
+
+        event(new FriendRemoved($friend));
+        return $result;
     }
 }

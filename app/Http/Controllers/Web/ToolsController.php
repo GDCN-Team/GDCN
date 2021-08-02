@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Enums\Game\Log\Types;
+use App\Exceptions\Game\LevelUploadException;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Web\Traits\AuthTrait;
 use App\Http\Controllers\Web\Traits\ResponseTrait;
@@ -122,6 +123,7 @@ class ToolsController extends Controller
     /**
      * @param TransInRequest $request
      * @return array
+     * @throws LevelUploadException
      */
     public function levelTransIn(TransInRequest $request): array
     {

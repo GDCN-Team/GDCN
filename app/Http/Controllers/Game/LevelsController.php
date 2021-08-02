@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\Level\SearchType;
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\LevelUploadException;
 use App\Exceptions\Game\NoItemException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Level\DailyGetRequest;
@@ -33,6 +34,7 @@ class LevelsController extends Controller
      * @param UploadRequest $request
      * @return int
      *
+     * @throws LevelUploadException
      * @see http://docs.gdprogra.me/#/endpoints/uploadGJLevel21
      */
     public function upload(UploadRequest $request): int

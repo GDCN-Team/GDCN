@@ -2,6 +2,7 @@
 
 namespace App\Services\Game\Account;
 
+use App\Events\FriendAdded;
 use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Friend;
@@ -22,7 +23,7 @@ class FriendRequestService
      * @param FriendRequestRepository $repository
      */
     public function __construct(
-        protected HelperService $helper,
+        protected HelperService           $helper,
         protected FriendRequestRepository $repository
     )
     {
@@ -160,6 +161,7 @@ class FriendRequestService
             $friend->target_account = $targetAccount->id;
             $friend->save();
 
+            event(new FriendAdded($friend));
             return $request->delete();
         }
 

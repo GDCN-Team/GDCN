@@ -62,7 +62,7 @@ class UploadRequest extends Request
             'seed' => 'required',
             'seed2' => 'required',
             'levelString' => 'required',
-            'levelInfo' => 'required', // anticheat: verify hack
+            'levelInfo' => 'nullable',
             'secret' => Rule::in('Wmfd2893gb7')
         ];
     }

@@ -4,7 +4,10 @@ namespace App\Services\Game;
 
 use App\Enums\Game\Level\SearchType;
 use App\Enums\Game\Log\Types;
+use App\Events\LevelDeleted;
+use App\Events\LevelUploaded;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\LevelUploadException;
 use App\Exceptions\Game\NoItemException;
 use App\Exceptions\Game\SongNotFoundException;
 use App\Models\Game\Account;
@@ -60,7 +63,7 @@ class LevelService
      * @param $level
      * @param int $gameVersion
      * @param string $levelName
-     * @param string $levelDesc
+     * @param string|null $levelDesc
      * @param int $levelVersion
      * @param int $levelLength
      * @param int $audioTrack
@@ -75,9 +78,10 @@ class LevelService
      * @param bool $unlisted
      * @param bool $ldm
      * @param string $extraString
-     * @param string $levelInfo
+     * @param string|null $levelInfo
      * @param string $levelString
      * @return Model|bool|Builder|Level
+     * @throws LevelUploadException
      */
     public function upload(
         $user,
@@ -99,10 +103,18 @@ class LevelService
         bool $unlisted,
         bool $ldm,
         string $extraString,
-        string $levelInfo,
+        ?string $levelInfo,
         string $levelString
     ): Model|bool|Builder|Level
     {
+        if (!$user) {
+            throw (new LevelUploadException('用户不存在(或未找到)'))->setLevelName($levelName);
+        }
+
+        if (!$levelInfo) {
+            throw (new LevelUploadException('检测到Verify Hack'))->setLevelName($levelName);
+        }
+
         $userID = $this->helper->getID($user);
         $levelID = $this->helper->getID($level);
 
@@ -112,7 +124,9 @@ class LevelService
             'user' => $userID
         ]);
 
+        $update = false;
         if (!$level->exists()) {
+            $update = true;
             $level = new Level();
         }
 
@@ -142,6 +156,7 @@ class LevelService
             $levelString
         );
 
+        event(new LevelUploaded($level, $update));
         return $level;
     }
 
@@ -528,7 +543,12 @@ class LevelService
 
         if ($user->can('delete', $level)) {
             $this->storage->delete('gdcn/levels/' . $level->id . '.dat');
-            return $level->delete();
+            if (!$result = $level->delete()) {
+                return $result;
+            }
+
+            event(new LevelDeleted($user, $level));
+            return $result;
         }
 
         return false;
