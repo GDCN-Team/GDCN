@@ -437,7 +437,7 @@ class LevelService
         ]);
 
         if (!$log->exists()) {
-            ++$level->likes;
+            ++$level->downloads;
             $level->save();
 
             $log = new Log();
