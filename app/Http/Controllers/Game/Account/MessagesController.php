@@ -89,7 +89,7 @@ class MessagesController extends Controller
     {
         try {
             $data = $request->validated();
-            return $this->service->download($data['accountID'], $data['messageID'], $data['isSender']);
+            return $this->service->download($data['accountID'], $data['messageID'], $data['isSender'] ?? false);
         } catch (NoPermissionException) {
             return ResponseCode::MESSAGE_DOWNLOAD_FAILED;
         }
