@@ -47,7 +47,7 @@ class MessageService
             $message->to_account = $targetAccount->id;
             $message->subject = $subject;
             $message->body = $body;
-            $message->save();
+            return $message->save();
         }
 
         return null;
