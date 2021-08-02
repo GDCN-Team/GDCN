@@ -16,12 +16,11 @@ use App\Http\Requests\Game\Level\UpdateDescRequest;
 use App\Http\Requests\Game\Level\UploadRequest;
 use App\Services\Game\LevelService;
 
-/**
- * Class LevelsController
- * @package App\Http\Controllers
- */
 class LevelsController extends Controller
 {
+    /**
+     * @param LevelService $service
+     */
     public function __construct(
         public LevelService $service
     )
@@ -70,6 +69,7 @@ class LevelsController extends Controller
      * @param SearchRequest $request
      * @return int|string
      *
+     * @throws InvalidArgumentException
      * @see http://docs.gdprogra.me/#/endpoints/getGJLevels21
      */
     public function search(SearchRequest $request): int|string
@@ -98,8 +98,6 @@ class LevelsController extends Controller
                 $data['coins'] ?? false,
                 $data['twoPlayer'] ?? false
             );
-        } catch (InvalidArgumentException) {
-            return ResponseCode::INVALID_REQUEST;
         } catch (NoItemException) {
             return ResponseCode::LEVEL_EMPTY_RESULT_STRING;
         }

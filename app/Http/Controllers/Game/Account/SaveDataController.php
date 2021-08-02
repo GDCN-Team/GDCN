@@ -9,24 +9,15 @@ use App\Http\Requests\Game\Account\SaveData\LoadRequest;
 use App\Http\Requests\Game\Account\SaveData\SaveRequest;
 use App\Services\Game\Account\SaveDataService;
 
-/**
- * Class SaveDataController
- * @package App\Http\Controllers
- */
 class SaveDataController extends Controller
 {
     /**
-     * @var SaveDataService
-     */
-    protected $service;
-
-    /**
-     * SaveDataController constructor.
      * @param SaveDataService $service
      */
-    public function __construct(SaveDataService $service)
+    public function __construct(
+        protected SaveDataService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**
@@ -47,18 +38,24 @@ class SaveDataController extends Controller
     public function save(SaveRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->save($data['userName'], $data['saveData'])
-            ? ResponseCode::ACCOUNT_DATA_SAVE_SUCCESS : ResponseCode::ACCOUNT_DATA_SAVE_FAILED;
+        if ($this->service->save($data['userName'], $data['saveData'])) {
+            return ResponseCode::ACCOUNT_DATA_SAVE_SUCCESS;
+        } else {
+            return ResponseCode::ACCOUNT_DATA_SAVE_FAILED;
+        }
     }
 
     /**
      * @param LoadRequest $request
      * @return int|string
      */
-    public function load(LoadRequest $request)
+    public function load(LoadRequest $request): int|string
     {
         $data = $request->validated();
-        $result = $this->service->load($data['userName']);
-        return !empty($result) ? $result . ';' . $data['gameVersion'] . ';' . $data['binaryVersion'] . ';' . $result : ResponseCode::ACCOUNT_DATA_LOAD_FAILED;
+        if ($result = $this->service->load($data['userName'])) {
+            return $result . ';' . $data['gameVersion'] . ';' . $data['binaryVersion'] . ';' . $result;
+        } else {
+            return ResponseCode::ACCOUNT_DATA_LOAD_FAILED;
+        }
     }
 }

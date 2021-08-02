@@ -13,12 +13,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
-/**
- * Class AccountsController
- * @package App\Http\Controllers
- */
 class AccountsController extends Controller
 {
+    /**
+     * @param AccountService $service
+     */
     public function __construct(
         public AccountService $service
     )
@@ -46,8 +45,11 @@ class AccountsController extends Controller
          */
 
         $data = $request->validated();
-        return $this->service->register($data['userName'], $data['password'], $data['email'])
-            ? ResponseCode::ACCOUNT_REGISTER_SUCCESS : ResponseCode::ACCOUNT_REGISTER_FAILED;
+        if ($this->service->register($data['userName'], $data['password'], $data['email'])) {
+            return ResponseCode::ACCOUNT_REGISTER_SUCCESS;
+        } else {
+            return ResponseCode::ACCOUNT_REGISTER_FAILED;
+        }
     }
 
     /**

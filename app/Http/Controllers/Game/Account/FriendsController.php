@@ -7,24 +7,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Account\Friend\Request\RemoveRequest;
 use App\Services\Game\Account\FriendService;
 
-/**
- * Class FriendsController
- * @package App\Http\Controllers
- */
+
 class FriendsController extends Controller
 {
     /**
-     * @var FriendService
-     */
-    protected $service;
-
-    /**
-     * FriendsController constructor.
      * @param FriendService $service
      */
-    public function __construct(FriendService $service)
+    public function __construct(
+        protected FriendService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**
@@ -36,7 +28,10 @@ class FriendsController extends Controller
     public function remove(RemoveRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->remove($data['accountID'], $data['targetAccountID'])
-            ? ResponseCode::FRIEND_REMOVE_SUCCESS : ResponseCode::FRIEND_REMOVE_FAILED;
+        if ($this->service->remove($data['accountID'], $data['targetAccountID'])) {
+            return ResponseCode::FRIEND_REMOVE_SUCCESS;
+        } else {
+            return ResponseCode::FRIEND_REMOVE_FAILED;
+        }
     }
 }

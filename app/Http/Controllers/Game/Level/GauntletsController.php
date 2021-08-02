@@ -6,12 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Level\GauntletGetRequest;
 use App\Services\Game\Level\GauntletService;
 
-/**
- * Class GauntletsController
- * @package App\Http\Controllers
- */
 class GauntletsController extends Controller
 {
+    /**
+     * @param GauntletService $service
+     */
     public function __construct(
         public GauntletService $service
     )

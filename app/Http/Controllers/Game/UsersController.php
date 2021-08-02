@@ -14,12 +14,11 @@ use App\Http\Requests\Game\User\SearchRequest;
 use App\Services\Game\UserService;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * Class UsersController
- * @package App\Http\Controllers
- */
 class UsersController extends Controller
 {
+    /**
+     * @param UserService $service
+     */
     public function __construct(
         public UserService $service
     )
@@ -70,6 +69,7 @@ class UsersController extends Controller
      * @param ListGetRequest $request
      * @return int|string
      *
+     * @throws InvalidArgumentException
      * @see http://docs.gdprogra.me/#/endpoints/getGJUserList20
      */
     public function list(ListGetRequest $request): int|string
@@ -80,8 +80,6 @@ class UsersController extends Controller
                 $data['accountID'],
                 UserListType::fromValue((int)$data['type'])
             );
-        } catch (InvalidArgumentException) {
-            return ResponseCode::INVALID_REQUEST;
         } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT;
         }

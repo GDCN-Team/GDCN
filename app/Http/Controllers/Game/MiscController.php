@@ -10,12 +10,11 @@ use App\Http\Requests\Game\Item\LikeRequest;
 use App\Http\Requests\Game\Item\RestoreRequest;
 use App\Services\Game\MiscService;
 
-/**
- * Class MiscController
- * @package App\Http\Controllers
- */
 class MiscController extends Controller
 {
+    /**
+     * @param MiscService $service
+     */
     public function __construct(
         public MiscService $service
     )
@@ -26,21 +25,18 @@ class MiscController extends Controller
      * @param LikeRequest $request
      * @return int
      *
+     * @throws InvalidArgumentException
      * @see http://docs.gdprogra.me/#/endpoints/likeGJItem211
      */
     public function likeItem(LikeRequest $request): int
     {
         $data = $request->validated();
-        try {
-            return $this->service->like(
-                $request->getPlayer(),
-                LikeType::fromValue((int)$data['type']),
-                $data['itemID'],
-                $data['like'] ?? true
-            ) ? ResponseCode::LIKE_SUCCESS : ResponseCode::LIKE_FAILED;
-        } catch (InvalidArgumentException) {
-            return ResponseCode::INVALID_REQUEST;
-        }
+        return $this->service->like(
+            $request->getPlayer(),
+            LikeType::fromValue((int)$data['type']),
+            $data['itemID'],
+            $data['like'] ?? true
+        ) ? ResponseCode::LIKE_SUCCESS : ResponseCode::LIKE_FAILED;
     }
 
     /**

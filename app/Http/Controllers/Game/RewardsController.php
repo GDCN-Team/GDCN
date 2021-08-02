@@ -4,18 +4,16 @@ namespace App\Http\Controllers\Game;
 
 use App\Enums\Game\ResponseCode;
 use App\Enums\Game\RewardType;
-use App\Exceptions\Game\UserScoreNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Reward\GetRequest;
 use App\Services\Game\RewardService;
 use Exception;
 
-/**
- * Class RewardsController
- * @package App\Http\Controllers
- */
 class RewardsController extends Controller
 {
+    /**
+     * @param RewardService $service
+     */
     public function __construct(
         public RewardService $service
     )
@@ -41,8 +39,6 @@ class RewardsController extends Controller
                 $data['accountID'] ?? 0,
                 $data['chk']
             );
-        } catch (UserScoreNotFoundException) {
-            return ResponseCode::USER_SCORE_NOT_FOUND;
         } catch (Exception) {
             return ResponseCode::UNHANDLED_EXCEPTION;
         }

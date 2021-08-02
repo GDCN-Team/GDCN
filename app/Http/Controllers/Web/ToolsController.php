@@ -23,6 +23,7 @@ use GDCN\Hash\Hasher;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use JetBrains\PhpStorm\Pure;
 
 class ToolsController extends Controller
 {
@@ -41,7 +42,7 @@ class ToolsController extends Controller
     /**
      * @return array
      */
-    public function getServers(): array
+    #[Pure] public function getServers(): array
     {
         return $this->response(true, null, $this->servers);
     }

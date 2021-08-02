@@ -8,12 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Level\PackGetRequest;
 use App\Services\Game\Level\PackService;
 
-/**
- * Class PacksController
- * @package App\Http\Controllers
- */
 class PacksController extends Controller
 {
+    /**
+     * @param PackService $service
+     */
     public function __construct(
         public PackService $service
     )

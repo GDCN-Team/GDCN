@@ -12,14 +12,9 @@ use App\Http\Requests\Game\Account\Friend\Request\ReadRequest;
 use App\Http\Requests\Game\Account\Friend\Request\UploadRequest;
 use App\Services\Game\Account\FriendRequestService;
 
-/**
- * Class FriendRequestsController
- * @package App\Http\Controllers\Game\Account
- */
 class FriendRequestsController extends Controller
 {
     /**
-     * FriendRequestsController constructor.
      * @param FriendRequestService $service
      */
     public function __construct(
@@ -37,8 +32,11 @@ class FriendRequestsController extends Controller
     public function upload(UploadRequest $request): int
     {
         $data = $request->validated();
-        $request = $this->service->upload($data['accountID'], $data['toAccountID'], $data['comment']);
-        return !empty($request) ? $request->id : ResponseCode::FRIEND_REQUEST_UPLOAD_FAILED;
+        if ($request = $this->service->upload($data['accountID'], $data['toAccountID'], $data['comment'])) {
+            return $request->id;
+        } else {
+            return ResponseCode::FRIEND_REQUEST_UPLOAD_FAILED;
+        }
     }
 
     /**
@@ -50,17 +48,17 @@ class FriendRequestsController extends Controller
     public function delete(DeleteRequest $request): int
     {
         $data = $request->validated();
-        $result = $request->has('accounts') ? $this->service->multiDelete(
-            $data['accountID'],
-            explode(',', $data['accounts']),
-            $data['isSender']
-        ) : $this->service->singleDelete(
-            $data['accountID'],
-            $data['targetAccountID'],
-            $data['isSender']
-        );
+        if ($request->has('accounts')) {
+            $result = $this->service->multiDelete($data['accountID'], explode(',', $data['accounts']), $data['isSender']);
+        } else {
+            $result = $this->service->singleDelete($data['accountID'], $data['targetAccountID'], $data['isSender']);
+        }
 
-        return $result ? ResponseCode::FRIEND_REQUEST_DELETE_SUCCESS : ResponseCode::FRIEND_REQUEST_DELETE_FAILED;
+        if ($result) {
+            return ResponseCode::FRIEND_REQUEST_DELETE_SUCCESS;
+        } else {
+            return ResponseCode::FRIEND_REQUEST_DELETE_FAILED;
+        }
     }
 
     /**
@@ -88,8 +86,11 @@ class FriendRequestsController extends Controller
     public function read(ReadRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->read($data['accountID'], $data['requestID'])
-            ? ResponseCode::FRIEND_REQUEST_READ_SUCCESS : ResponseCode::FRIEND_REQUEST_READ_FAILED;
+        if ($this->service->read($data['accountID'], $data['requestID'])) {
+            return ResponseCode::FRIEND_REQUEST_READ_SUCCESS;
+        } else {
+            return ResponseCode::FRIEND_REQUEST_READ_FAILED;
+        }
     }
 
     /**
@@ -101,7 +102,10 @@ class FriendRequestsController extends Controller
     public function accept(AcceptFriendRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->accept($data['accountID'], $data['targetAccountID'], $data['requestID'])
-            ? ResponseCode::FRIEND_REQUEST_ACCEPT_SUCCESS : ResponseCode::FRIEND_REQUEST_ACCEPT_FAILED;
+        if ($this->service->accept($data['accountID'], $data['targetAccountID'], $data['requestID'])) {
+            return ResponseCode::FRIEND_REQUEST_ACCEPT_SUCCESS;
+        } else {
+            return ResponseCode::FRIEND_REQUEST_ACCEPT_FAILED;
+        }
     }
 }

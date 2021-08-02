@@ -8,24 +8,15 @@ use App\Http\Requests\Game\Account\Block\BlockRequest;
 use App\Http\Requests\Game\Account\Block\UnblockRequest;
 use App\Services\Game\Account\BlockService;
 
-/**
- * Class BlocksController
- * @package App\Http\Controllers
- */
 class BlocksController extends Controller
 {
     /**
-     * @var BlockService
-     */
-    protected $service;
-
-    /**
-     * BlocksController constructor.
      * @param BlockService $service
      */
-    public function __construct(BlockService $service)
+    public function __construct(
+        protected BlockService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**
@@ -37,8 +28,11 @@ class BlocksController extends Controller
     public function block(BlockRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->block($data['accountID'], $data['targetAccountID'])
-            ? ResponseCode::BLOCK_SUCCESS : ResponseCode::BLOCK_FAILED;
+        if ($this->service->block($data['accountID'], $data['targetAccountID'])) {
+            return ResponseCode::BLOCK_SUCCESS;
+        } else {
+            return ResponseCode::BLOCK_FAILED;
+        }
     }
 
     /**
@@ -50,7 +44,10 @@ class BlocksController extends Controller
     public function unblock(UnblockRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->unblock($data['accountID'], $data['targetAccountID'])
-            ? ResponseCode::UNBLOCK_SUCCESS : ResponseCode::UNBLOCK_FAILED;
+        if ($this->service->unblock($data['accountID'], $data['targetAccountID'])) {
+            return ResponseCode::UNBLOCK_SUCCESS;
+        } else {
+            return ResponseCode::UNBLOCK_FAILED;
+        }
     }
 }

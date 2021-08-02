@@ -9,26 +9,16 @@ use App\Http\Requests\Game\Account\Comment\DeleteRequest;
 use App\Http\Requests\Game\Account\Comment\GetRequest;
 use App\Http\Requests\Game\Account\Comment\UploadRequest;
 use App\Services\Game\Account\CommentService;
-use GDCN\ChkValidationException;
 
-/**
- * Class CommentsController
- * @package App\Http\Controllers
- */
 class CommentsController extends Controller
 {
     /**
-     * @var CommentService
-     */
-    protected $service;
-
-    /**
-     * CommentsController constructor.
      * @param CommentService $service
      */
-    public function __construct(CommentService $service)
+    public function __construct(
+        protected CommentService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**
@@ -42,7 +32,7 @@ class CommentsController extends Controller
         try {
             $data = $request->validated();
             return $this->service->get($data['accountID'], $data['page']);
-        } catch (NoItemException $e) {
+        } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT_STRING;
         }
     }
@@ -56,8 +46,11 @@ class CommentsController extends Controller
     public function upload(UploadRequest $request): int
     {
         $data = $request->validated();
-        $comment = $this->service->upload($data['chk'], $data['cType'], $data['userName'], $data['accountID'], $data['comment']);
-        return !empty($comment) ? $comment->id : ResponseCode::ACCOUNT_COMMENT_UPLOAD_FAILED;
+        if ($comment = $this->service->upload($data['chk'], $data['cType'], $data['userName'], $data['accountID'], $data['comment'])) {
+            return $comment->id;
+        } else {
+            return ResponseCode::ACCOUNT_COMMENT_UPLOAD_FAILED;
+        }
     }
 
     /**
@@ -69,7 +62,10 @@ class CommentsController extends Controller
     public function delete(DeleteRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->delete($data['accountID'], $data['commentID'])
-            ? ResponseCode::ACCOUNT_COMMENT_DELETE_SUCCESS : ResponseCode::ACCOUNT_COMMENT_DELETE_FAILED;
+        if ($this->service->delete($data['accountID'], $data['commentID'])) {
+            return ResponseCode::ACCOUNT_COMMENT_DELETE_SUCCESS;
+        } else {
+            return ResponseCode::ACCOUNT_COMMENT_DELETE_FAILED;
+        }
     }
 }

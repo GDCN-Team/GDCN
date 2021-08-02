@@ -12,14 +12,9 @@ use App\Http\Requests\Game\Account\Message\GetRequest;
 use App\Http\Requests\Game\Account\Message\SendRequest;
 use App\Services\Game\Account\MessageService;
 
-/**
- * Class AccountMessageController
- * @package App\Http\Controllers
- */
 class MessagesController extends Controller
 {
     /**
-     * MessagesController constructor.
      * @param MessageService $service
      */
     public function __construct(
@@ -37,8 +32,11 @@ class MessagesController extends Controller
     public function send(SendRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->upload($data['accountID'], $data['toAccountID'], $data['subject'], $data['body'])
-            ? ResponseCode::MESSAGE_SENT_SUCCESS : ResponseCode::MESSAGE_SENT_FAILED;
+        if ($this->service->upload($data['accountID'], $data['toAccountID'], $data['subject'], $data['body'])) {
+            return ResponseCode::MESSAGE_SENT_SUCCESS;
+        } else {
+            return ResponseCode::MESSAGE_SENT_FAILED;
+        }
     }
 
     /**
@@ -66,17 +64,17 @@ class MessagesController extends Controller
     public function delete(DeleteRequest $request): int
     {
         $data = $request->validated();
-        $result = $request->has('messages') ? $this->service->multiDelete(
-            $data['accountID'],
-            explode(',', $data['messages']),
-            $data['isSender']
-        ) : $this->service->singleDelete(
-            $data['accountID'],
-            $data['messageID'],
-            $data['isSender']
-        );
+        if ($request->has('messages')) {
+            $result = $this->service->multiDelete($data['accountID'], explode(',', $data['messages']), $data['isSender']);
+        } else {
+            $result = $this->service->singleDelete($data['accountID'], $data['messageID'], $data['isSender']);
+        }
 
-        return $result ? ResponseCode::MESSAGE_DELETE_SUCCESS : ResponseCode::MESSAGE_DELETE_FAILED;
+        if ($result) {
+            return ResponseCode::MESSAGE_DELETE_SUCCESS;
+        } else {
+            return ResponseCode::MESSAGE_DELETE_FAILED;
+        }
     }
 
     /**

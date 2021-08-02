@@ -14,14 +14,9 @@ use App\Http\Requests\Game\Level\Comment\HistoryGetRequest;
 use App\Http\Requests\Game\Level\Comment\UploadRequest;
 use App\Services\Game\Level\CommentService;
 
-/**
- * Class CommentsController
- * @package App\Http\Controllers
- */
 class CommentsController extends Controller
 {
     /**
-     * CommentsController constructor.
      * @param CommentService $service
      */
     public function __construct(
@@ -34,19 +29,14 @@ class CommentsController extends Controller
      * @param GetRequest $request
      * @return int|string
      *
+     * @throws InvalidArgumentException
      * @see http://docs.gdprogra.me/#/endpoints/getGJComments21
      */
     public function get(GetRequest $request): int|string
     {
         try {
             $data = $request->validated();
-            return $this->service->list(
-                $data['levelID'],
-                CommentMode::fromValue((int)$data['mode']),
-                $data['page']
-            );
-        } catch (InvalidArgumentException) {
-            return ResponseCode::INVALID_REQUEST;
+            return $this->service->list($data['levelID'], CommentMode::fromValue((int)$data['mode']), $data['page']);
         } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT_STRING;
         }
@@ -61,8 +51,11 @@ class CommentsController extends Controller
     public function upload(UploadRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->upload($data['accountID'], $data['levelID'], $data['comment'])
-            ? ResponseCode::LEVEL_COMMENT_UPLOAD_SUCCESS : ResponseCode::LEVEL_COMMENT_UPLOAD_FAILED;
+        if ($this->service->upload($data['accountID'], $data['levelID'], $data['comment'])) {
+            return ResponseCode::LEVEL_COMMENT_UPLOAD_SUCCESS;
+        } else {
+            return ResponseCode::LEVEL_COMMENT_UPLOAD_FAILED;
+        }
     }
 
     /**
@@ -74,31 +67,28 @@ class CommentsController extends Controller
     public function delete(DeleteRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->delete($data['accountID'], $data['commentID'])
-            ? ResponseCode::LEVEL_COMMENT_DELETE_SUCCESS : ResponseCode::LEVEL_COMMENT_DELETE_FAILED;
+        if ($this->service->delete($data['accountID'], $data['commentID'])) {
+            return ResponseCode::LEVEL_COMMENT_DELETE_SUCCESS;
+        } else {
+            return ResponseCode::LEVEL_COMMENT_DELETE_FAILED;
+        }
     }
 
     /**
      * @param HistoryGetRequest $request
      * @return int|string
      *
+     * @throws AccountNotFoundException
+     * @throws InvalidArgumentException
      * @see http://docs.gdprogra.me/#/endpoints/getGJCommentHistory
      */
     public function history(HistoryGetRequest $request): int|string
     {
         try {
             $data = $request->validated();
-            return $this->service->getHistory(
-                $data['userID'],
-                CommentMode::fromValue((int)$data['mode']),
-                $data['page']
-            );
-        } catch (InvalidArgumentException) {
-            return ResponseCode::INVALID_REQUEST;
+            return $this->service->getHistory($data['userID'], CommentMode::fromValue((int)$data['mode']), $data['page']);
         } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT_STRING;
-        } catch (AccountNotFoundException) {
-            return ResponseCode::ACCOUNT_NOT_FOUND;
         }
     }
 }

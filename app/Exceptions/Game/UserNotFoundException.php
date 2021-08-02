@@ -2,6 +2,7 @@
 
 namespace App\Exceptions\Game;
 
+use App\Enums\Game\ResponseCode;
 use Exception;
 
 /**
@@ -10,5 +11,11 @@ use Exception;
  */
 class UserNotFoundException extends Exception
 {
-    //
+    /**
+     * @return int
+     */
+    public function render(): int
+    {
+        return ResponseCode::USER_NOT_FOUND;
+    }
 }

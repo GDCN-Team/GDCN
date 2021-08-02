@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Game;
 
-use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\SongNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Song\GetRequest;
@@ -12,12 +11,11 @@ use Modules\NGProxy\Exceptions\SongDisabledException;
 use Modules\NGProxy\Exceptions\SongGetException;
 use Modules\Proxy\Exceptions\ProxyFailedException;
 
-/**
- * Class SongsController
- * @package App\Http\Controllers
- */
 class SongsController extends Controller
 {
+    /**
+     * @param SongService $service
+     */
     public function __construct(
         public SongService $service
     )
@@ -28,19 +26,16 @@ class SongsController extends Controller
      * @param GetRequest $request
      * @return int|string
      *
+     * @throws ProxyFailedException
      * @throws SongDisabledException
+     * @throws SongGetException
+     * @throws SongNotFoundException
      * @see http://docs.gdprogra.me/#/endpoints/getGJSongInfo
      */
     public function get(GetRequest $request): int|string
     {
-        try {
-            $data = $request->validated();
-            return $this->service->get($data['songID']);
-        } catch (SongGetException | ProxyFailedException) {
-            return ResponseCode::SONG_GET_FAILED;
-        } catch (SongNotFoundException) {
-            return ResponseCode::SONG_NOT_FOUND;
-        }
+        $data = $request->validated();
+        return $this->service->get($data['songID']);
     }
 
     /**

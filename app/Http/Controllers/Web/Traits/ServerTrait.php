@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Web\Traits;
 
-use GuzzleHttp\Promise\PromiseInterface;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Str;
 use Modules\GDProxy\Http\Controllers\GDProxyController;
 use Modules\Proxy\Http\Controllers\ProxyController;

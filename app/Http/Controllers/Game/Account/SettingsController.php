@@ -7,24 +7,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Account\Setting\UpdateRequest;
 use App\Services\Game\Account\SettingService;
 
-/**
- * Class SettingsController
- * @package App\Http\Controllers
- */
 class SettingsController extends Controller
 {
     /**
-     * @var SettingService
-     */
-    protected $service;
-
-    /**
-     * SettingsController constructor.
      * @param SettingService $service
      */
-    public function __construct(SettingService $service)
+    public function __construct(
+        protected SettingService $service
+    )
     {
-        $this->service = $service;
     }
 
     /**
@@ -36,7 +27,10 @@ class SettingsController extends Controller
     public function update(UpdateRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->update($data['accountID'], $data['mS'], $data['frS'], $data['cS'], $data['yt'], $data['twitter'], $data['twitch'])
-            ? ResponseCode::ACCOUNT_SETTING_UPDATE_SUCCESS : ResponseCode::ACCOUNT_SETTING_UPDATE_FAILED;
+        if ($this->service->update($data['accountID'], $data['mS'], $data['frS'], $data['cS'], $data['yt'], $data['twitter'], $data['twitch'])) {
+            return ResponseCode::ACCOUNT_SETTING_UPDATE_SUCCESS;
+        } else {
+            return ResponseCode::ACCOUNT_SETTING_UPDATE_FAILED;
+        }
     }
 }
