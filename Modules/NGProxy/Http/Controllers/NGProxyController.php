@@ -290,11 +290,11 @@ class NGProxyController extends Controller
      */
     public function getInfo(int $songID): array
     {
-        $song = $this->getSongModel($songID)->toJson();
+        $song = $this->getSongModel($songID);
         return $this->response(
             true,
             null,
-            $this->processSongInfo($song)
+            $this->processSongInfo($song)->toJson()
         );
     }
 
