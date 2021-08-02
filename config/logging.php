@@ -41,6 +41,12 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'gdcn' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/gdcn.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
