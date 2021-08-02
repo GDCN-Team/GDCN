@@ -14,7 +14,7 @@ class AddNameToGdproxyNgproxyBindsTable extends Migration
     public function up()
     {
         Schema::table('gdproxy_ngproxy_binds', function (Blueprint $table) {
-            $table->string('account_name');
+            $table->string('account_name')->nullable();
         });
     }
 
