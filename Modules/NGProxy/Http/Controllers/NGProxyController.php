@@ -294,7 +294,7 @@ class NGProxyController extends Controller
         return $this->response(
             true,
             null,
-            $this->processSongInfo($song)->toJson()
+            $this->processSongInfo($song)
         );
     }
 
