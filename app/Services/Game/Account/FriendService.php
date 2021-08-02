@@ -29,7 +29,7 @@ class FriendService
      */
     public function remove(Account|int $account, Account|int $targetAccount): mixed
     {
-        $friend = $this->repository->between($account, $targetAccount);
+        $friend = $this->repository->between($account, $targetAccount)->first();
         if (!$result = $friend->delete()) {
             return $result;
         }
