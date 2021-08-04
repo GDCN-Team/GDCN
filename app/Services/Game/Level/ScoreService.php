@@ -29,7 +29,7 @@ class ScoreService
      * @param int $attempts
      * @param int $percent
      * @param int $coins
-     * @return Model|Score
+     * @return Score|Model
      * @throws InvalidArgumentException
      */
     public function upload($account, $level, int $attempts, int $percent, int $coins): Model|Score
@@ -38,17 +38,14 @@ class ScoreService
             throw new InvalidArgumentException();
         }
 
-        $score = Score::firstOrNew([
+        return Score::updateOrCreate([
             'account' => $this->helper->getID($account),
             'level' => $this->helper->getID($level)
+        ], [
+            'attempts' => $attempts,
+            'percent' => $percent,
+            'coins' => $coins
         ]);
-
-        $score->attempts = $attempts;
-        $score->percent = $percent;
-        $score->coins = $coins;
-        $score->save();
-
-        return $score;
     }
 
     /**
