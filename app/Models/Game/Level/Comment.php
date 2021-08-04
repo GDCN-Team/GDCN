@@ -3,7 +3,9 @@
 namespace App\Models\Game\Level;
 
 use App\Models\Game\Account;
+use App\Models\Game\Level;
 use Database\Factories\Game\Level\CommentFactory;
+use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,11 +13,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Comment
+ * App\Models\Game\Level\Comment
  *
- * @package App\Models
  * @property int $id
- * @property int $level
+ * @property Level $level
  * @property int $account
  * @property string $content
  * @property int|null $percent
@@ -23,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Account $sender
+ * @method static CommentFactory factory(...$parameters)
  * @method static Builder|Comment newModelQuery()
  * @method static Builder|Comment newQuery()
  * @method static Builder|Comment query()
@@ -34,8 +36,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Comment whereLikes($value)
  * @method static Builder|Comment wherePercent($value)
  * @method static Builder|Comment whereUpdatedAt($value)
- * @mixin Model
- * @method static CommentFactory factory(...$parameters)
+ * @mixin Eloquent
  */
 class Comment extends Model
 {
@@ -52,6 +53,14 @@ class Comment extends Model
     protected static function newFactory(): CommentFactory
     {
         return CommentFactory::new();
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(Level::class, 'level');
     }
 
     /**
