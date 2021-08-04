@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\AccountCommentUploaded;
 use App\Events\FriendAdded;
 use App\Events\FriendRemoved;
+use App\Events\LevelCommentUploaded;
 use App\Events\LevelDeleted;
 use App\Events\LevelUploaded;
+use App\Listeners\ExecuteAccountCommentCommand;
+use App\Listeners\ExecuteLevelCommentCommand;
 use App\Listeners\LogFriendAdded;
 use App\Listeners\LogFriendRemoved;
 use App\Listeners\LogLevelDeleted;
@@ -40,6 +44,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         FriendRemoved::class => [
             LogFriendRemoved::class
+        ],
+        AccountCommentUploaded::class => [
+            ExecuteAccountCommentCommand::class
+        ],
+        LevelCommentUploaded::class => [
+            ExecuteLevelCommentCommand::class
         ]
     ];
 

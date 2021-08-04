@@ -39,18 +39,14 @@ class CommentsController extends Controller
 
     /**
      * @param UploadRequest $request
-     * @return int
+     * @return int|string
      *
      * @see http://docs.gdprogra.me/#/endpoints/uploadGJAccComment20
      */
-    public function upload(UploadRequest $request): int
+    public function upload(UploadRequest $request): int|string
     {
         $data = $request->validated();
-        if ($comment = $this->service->upload($data['chk'], $data['cType'], $data['userName'], $data['accountID'], $data['comment'])) {
-            return $comment->id;
-        } else {
-            return ResponseCode::ACCOUNT_COMMENT_UPLOAD_FAILED;
-        }
+        return $this->service->upload($data['chk'], $data['cType'], $data['userName'], $data['accountID'], $data['comment']) ?? ResponseCode::ACCOUNT_COMMENT_UPLOAD_FAILED;
     }
 
     /**

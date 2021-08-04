@@ -2,6 +2,7 @@
 
 namespace App\Services\Game\Account;
 
+use App\Events\AccountCommentUploaded;
 use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Comment as AccountComment;
@@ -9,6 +10,7 @@ use App\Repositories\Game\Account\CommentRepository as AccountCommentRepository;
 use App\Services\Game\HelperService;
 use GDCN\GDObject;
 use GDCN\Hash\Hasher;
+use Illuminate\Support\Facades\Event;
 
 /**
  * Class CommentService
@@ -24,8 +26,8 @@ class CommentService
      */
     public function __construct(
         protected AccountCommentRepository $repository,
-        protected Hasher $hash,
-        protected HelperService $helper
+        protected Hasher                   $hash,
+        protected HelperService            $helper
     )
     {
     }
@@ -68,9 +70,9 @@ class CommentService
      * @param string $userName
      * @param int|Account $uploader
      * @param string $comment
-     * @return AccountComment|null
+     * @return int|string|null
      */
-    public function upload(string $chk, int $cType, string $userName, Account|int $uploader, string $comment): ?AccountComment
+    public function upload(string $chk, int $cType, string $userName, Account|int $uploader, string $comment): int|string|null
     {
         $uploader = $this->helper->getModel($uploader, Account::class);
         if (true /*$this->hash->checkUploadAccountCommentChk($chk, $cType, $userName, $comment)*/) {
@@ -79,7 +81,8 @@ class CommentService
             $commentModel->content = $comment;
             $commentModel->save();
 
-            return $commentModel;
+            $event = Event::dispatch(new AccountCommentUploaded($commentModel), halt: true);
+            return $event ? "temp_0_{$event}" : $commentModel->id;
         }
 
         return null;

@@ -4,6 +4,7 @@ namespace App\Services\Game\Level;
 
 use App\Enums\Game\Account\Setting\CommentHistoryState;
 use App\Enums\Game\Level\CommentMode;
+use App\Events\LevelCommentUploaded;
 use App\Exceptions\Game\AccountNotFoundException;
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Exceptions\Game\NoItemException;
@@ -13,6 +14,7 @@ use App\Models\Game\Level\Comment;
 use App\Models\Game\User;
 use App\Services\Game\HelperService;
 use GDCN\GDObject;
+use Illuminate\Support\Facades\Event;
 
 /**
  * Class CommentService
@@ -21,7 +23,7 @@ use GDCN\GDObject;
 class CommentService
 {
     public function __construct(
-        public Comment $model,
+        public Comment       $model,
         public HelperService $helper
     )
     {
@@ -89,9 +91,9 @@ class CommentService
      * @param $account
      * @param $level
      * @param string $comment
-     * @return Comment
+     * @return int|string
      */
-    public function upload($account, $level, string $comment): Comment
+    public function upload($account, $level, string $comment): int|string
     {
         $accountID = $this->helper->getID($account);
         $levelID = $this->helper->getID($level);
@@ -102,7 +104,8 @@ class CommentService
         $commentModel->content = $comment;
         $commentModel->save();
 
-        return $commentModel;
+        $event = Event::dispatch(new LevelCommentUploaded($commentModel), halt: true);
+        return !empty($event) ? "temp_0_{$event}" : $commentModel->id;
     }
 
     /**

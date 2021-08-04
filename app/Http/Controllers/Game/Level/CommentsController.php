@@ -44,18 +44,14 @@ class CommentsController extends Controller
 
     /**
      * @param UploadRequest $request
-     * @return int
+     * @return int|string
      *
      * @see https://docs.gdprogra.me/#/endpoints/uploadGJComment21
      */
-    public function upload(UploadRequest $request): int
+    public function upload(UploadRequest $request): int|string
     {
         $data = $request->validated();
-        if ($this->service->upload($data['accountID'], $data['levelID'], $data['comment'])) {
-            return ResponseCode::LEVEL_COMMENT_UPLOAD_SUCCESS;
-        } else {
-            return ResponseCode::LEVEL_COMMENT_UPLOAD_FAILED;
-        }
+        return $this->service->upload($data['accountID'], $data['levelID'], $data['comment']) ?? ResponseCode::LEVEL_COMMENT_UPLOAD_FAILED;
     }
 
     /**
