@@ -52,7 +52,10 @@ class Score extends Model
      */
     protected $fillable = [
         'account',
-        'level'
+        'level',
+        'attempts',
+        'percent',
+        'coins'
     ];
 
     /**
