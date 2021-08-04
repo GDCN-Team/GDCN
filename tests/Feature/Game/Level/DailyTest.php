@@ -39,7 +39,6 @@ class DailyTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $time = Carbon::rawParse('tomorrow')->diffInSeconds();
 
@@ -69,7 +68,6 @@ class DailyTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $time = Carbon::rawParse('tomorrow')->diffInSeconds();
         $request->assertSee("$daily->id|$time");
@@ -95,7 +93,6 @@ class DailyTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $time = Carbon::rawParse('next monday')->diffInSeconds();
 
@@ -125,7 +122,6 @@ class DailyTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $time = Carbon::rawParse('next monday')->diffInSeconds();
 

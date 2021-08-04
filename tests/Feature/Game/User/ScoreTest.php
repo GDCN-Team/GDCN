@@ -55,7 +55,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas('game_user_scores', [
             'user' => $request->getContent()
@@ -101,7 +100,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEquals(
             $account->id,
@@ -132,7 +130,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }
@@ -160,7 +157,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("16:$account->id");
     }
@@ -194,7 +190,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("16:$friend->account");
     }
@@ -219,7 +214,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }
@@ -248,7 +242,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }
@@ -272,7 +265,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }
@@ -301,7 +293,6 @@ class ScoreTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("7:{$score->owner->uuid}");
     }

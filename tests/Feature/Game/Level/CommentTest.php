@@ -43,7 +43,6 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("2~$comment->content~3~{$comment->sender->user->id}~4~$comment->likes");
     }
@@ -70,7 +69,6 @@ class CommentTest extends TestCase
                 'levelID' => $level->id
             ]
         );
-        $request->dump();
         $request->assertOk();
 
         $response = $request->getContent();
@@ -107,7 +105,6 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_level_comments',
@@ -137,7 +134,6 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDeleted(
             $comment->getTable(),

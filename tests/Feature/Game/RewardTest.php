@@ -42,7 +42,7 @@ class RewardTest extends TestCase
             );
         }
 
-        $request->dump();
+
         $response = $request->getContent();
         $rewardString = explode('|', $response)[0];
 
@@ -79,7 +79,7 @@ class RewardTest extends TestCase
                 ]
             );
 
-            $request->dump();
+
             $request->assertOk();
         } catch (Exception $e) {
             self::fail($e->getMessage());

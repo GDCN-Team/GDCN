@@ -72,7 +72,6 @@ class LevelTest extends TestCase
         $response = $request->getContent();
         Storage::disk('oss')->assertExists("gdcn/levels/$response.dat");
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas('game_levels', [
             'id' => $response,
@@ -130,7 +129,6 @@ class LevelTest extends TestCase
         $response = $request->getContent();
         Storage::disk('oss')->assertExists("gdcn/levels/$response.dat");
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas('game_levels', [
             'id' => $response,
@@ -187,7 +185,6 @@ class LevelTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         Storage::disk('oss')->assertExists("gdcn/levels/$response.dat");
@@ -232,7 +229,6 @@ class LevelTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$level->id:2:$level->name:3:$level->desc");
     }
@@ -261,7 +257,6 @@ class LevelTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$level->id:2:$level->name:3:$level->desc:4:$levelString");
     }
@@ -300,7 +295,6 @@ class LevelTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$level->id:2:$level->name:3:$level->desc");
     }
@@ -328,7 +322,6 @@ class LevelTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         Storage::fake('oss')->assertMissing("gdcn/levels/$level->id.dat");
 
@@ -353,7 +346,6 @@ class LevelTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_level_reports',

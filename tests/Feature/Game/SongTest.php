@@ -37,7 +37,6 @@ class SongTest extends TestCase
             );
         });
 
-        $request->dump();
         $request->assertOk();
     }
 
@@ -57,7 +56,6 @@ class SongTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee('4:');
     }

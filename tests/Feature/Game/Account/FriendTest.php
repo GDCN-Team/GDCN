@@ -30,7 +30,6 @@ class FriendTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEqualsIgnoringCase(
             ResponseCode::OK,

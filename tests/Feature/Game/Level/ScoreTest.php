@@ -68,7 +68,6 @@ class ScoreTest extends TestCase
             self::fail($e->getMessage());
         }
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name:2:{$account->user->id}");
     }
@@ -116,7 +115,6 @@ class ScoreTest extends TestCase
             self::fail($e->getMessage());
         }
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name:2:{$account->user->id}");
         $this->assertDatabaseHas(
@@ -171,7 +169,6 @@ class ScoreTest extends TestCase
             self::fail($e->getMessage());
         }
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name:2:{$account->user->id}");
     }
@@ -219,7 +216,6 @@ class ScoreTest extends TestCase
             self::fail($e->getMessage());
         }
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name:2:{$account->user->id}");
     }

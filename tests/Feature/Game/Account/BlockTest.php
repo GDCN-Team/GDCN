@@ -33,8 +33,7 @@ class BlockTest extends TestCase
             ]
         );
 
-        $request->dump();
-        $request->assertOk();
+
         self::assertEqualsIgnoringCase(
             ResponseCode::OK,
             $request->getContent()
@@ -68,7 +67,6 @@ class BlockTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEqualsIgnoringCase(
             ResponseCode::OK,

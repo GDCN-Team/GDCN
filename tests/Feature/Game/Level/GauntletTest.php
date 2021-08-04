@@ -30,8 +30,7 @@ class GauntletTest extends TestCase
             ]
         );
 
-        $request->dump();
-        $request->assertOk();
+
         $request->assertSee("1:$gauntlet->gauntlet_id:3:$gauntlet->levelIds");
     }
 }

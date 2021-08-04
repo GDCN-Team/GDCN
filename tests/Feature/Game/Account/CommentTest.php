@@ -40,7 +40,6 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("2~$comment->content");
         $request->assertSee("4~$comment->likes");
@@ -72,7 +71,6 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $left = explode('#', $response)[0];
@@ -104,7 +102,6 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_comments',
@@ -135,7 +132,6 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDeleted($comment);
     }

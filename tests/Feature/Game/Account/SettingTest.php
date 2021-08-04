@@ -41,7 +41,6 @@ class SettingTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_settings',

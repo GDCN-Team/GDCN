@@ -52,7 +52,6 @@ class RatingTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_level_ratings',
@@ -101,7 +100,6 @@ class RatingTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_level_ratings',
@@ -145,7 +143,6 @@ class RatingTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_level_ratings',

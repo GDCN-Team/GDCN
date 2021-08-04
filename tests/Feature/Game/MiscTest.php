@@ -77,7 +77,6 @@ class MiscTest extends TestCase
             route('game.item.like'),
             $data);
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             $item->getTable(),
@@ -222,7 +221,6 @@ class MiscTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEqualsIgnoringCase(
             ResponseCode::RESTORE_ITEM_FAILED,

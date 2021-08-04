@@ -31,7 +31,6 @@ class PackTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$pack->id:2:$pack->name:3:$pack->levels");
     }

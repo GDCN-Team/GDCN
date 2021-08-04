@@ -39,7 +39,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_friend_requests',
@@ -82,7 +81,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEqualsIgnoringCase(ResponseCode::FAILED, $request->getContent());
     }
@@ -106,7 +104,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDeleted(
             $friendRequest->getTable(),
@@ -133,7 +130,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDeleted(
             $friendRequest->getTable(),
@@ -167,7 +163,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         foreach ($friendRequests as $friendRequest) {
             $this->assertDeleted(
@@ -202,7 +197,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         foreach ($friendRequests as $friendRequest) {
             $this->assertDeleted(
@@ -232,7 +226,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $left = explode('#', $response)[0];
@@ -268,7 +261,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $left = explode('#', $response)[0];
@@ -297,7 +289,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("32:$friendRequest->id:35:$friendRequest->comment");
     }
@@ -320,7 +311,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEquals(
             '1',
@@ -347,7 +337,6 @@ class RequestTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_friends',

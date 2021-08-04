@@ -40,7 +40,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_messages',
@@ -85,7 +84,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDatabaseHas(
             'game_account_messages',
@@ -125,7 +123,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEqualsIgnoringCase(ResponseCode::FAILED, $request->getContent());
     }
@@ -150,7 +147,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$message->id:2:$message->account");
     }
@@ -175,7 +171,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $left = explode('#', $response)[0];
@@ -204,7 +199,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$message->id:2:$message->to_account");
     }
@@ -228,7 +222,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDeleted(
             $message->getTable(),
@@ -255,7 +248,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $this->assertDeleted(
             $message->getTable(),
@@ -288,7 +280,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         foreach ($messages as $message) {
             $this->assertDeleted(
@@ -323,7 +314,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         foreach ($messages as $message) {
             $this->assertDeleted(
@@ -352,7 +342,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$message->id:2:$message->account");
 
@@ -384,7 +373,6 @@ class MessageTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$message->id:2:$message->to_account");
 

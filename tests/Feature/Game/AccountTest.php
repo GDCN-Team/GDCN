@@ -40,7 +40,6 @@ class AccountTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         Event::assertDispatched(Registered::class);
         $this->assertDatabaseHas(
@@ -117,7 +116,6 @@ class AccountTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEquals("$account->id,{$account->user->id}", $request->getContent());
     }

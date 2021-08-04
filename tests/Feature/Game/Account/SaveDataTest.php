@@ -35,7 +35,6 @@ class SaveDataTest extends TestCase
             ]
         )->dump();
 
-        $request->dump();
         $request->assertOk();
         self::assertEquals(
             Request::getHost(),
@@ -62,7 +61,6 @@ class SaveDataTest extends TestCase
                 'secret' => 'Wmfv3899gc9'
             ])->dump();
 
-        $request->dump();
         $request->assertOk();
         Storage::disk('oss')->assertExists("gdcn/saveData/$account->name.dat");
     }
@@ -89,7 +87,6 @@ class SaveDataTest extends TestCase
                 'gdw' => false
             ]);
 
-        $request->dump();
         $request->assertOk();
         self::assertEquals("$content;21;35;$content", $request->getContent());
     }

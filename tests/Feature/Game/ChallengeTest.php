@@ -33,7 +33,6 @@ class ChallengeTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $challengeString = explode('|', $response)[0];
@@ -68,7 +67,6 @@ class ChallengeTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $response = $request->getContent();
         $challengeString = explode('|', $response)[0];

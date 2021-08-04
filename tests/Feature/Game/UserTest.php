@@ -36,7 +36,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name");
     }
@@ -58,7 +57,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name");
         $request->assertSee('38:');
@@ -82,7 +80,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:{$accounts[0]->name}");
     }
@@ -105,7 +102,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name");
     }
@@ -128,7 +124,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name");
     }
@@ -151,7 +146,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:$account->name");
     }
@@ -185,7 +179,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEquals(
             '1',
@@ -209,7 +202,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         self::assertEquals(
             '2',
@@ -242,7 +234,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:{$accounts[1]->name}:2:{$accounts[1]->user->id}");
     }
@@ -270,7 +261,6 @@ class UserTest extends TestCase
             ]
         );
 
-        $request->dump();
         $request->assertOk();
         $request->assertSee("1:{$accounts[1]->name}:2:{$accounts[1]->user->id}");
     }
