@@ -21,6 +21,14 @@ class ExecuteAccountCommentCommand
     }
 
     /**
+     * @return mixed
+     */
+    protected function shouldExecute(): mixed
+    {
+        return config('game.feature.command.account_comment');
+    }
+
+    /**
      * Handle the event.
      *
      * @param AccountCommentUploaded $event
@@ -28,10 +36,14 @@ class ExecuteAccountCommentCommand
      */
     public function handle(AccountCommentUploaded $event): mixed
     {
-        try {
-            return $this->command->doAccountCommentCommand($event->comment);
-        } catch (InvalidCommandException) {
-            return 'Invalid Command!';
+        if ($this->command->isCommand($event->comment) && $this->shouldExecute()) {
+            try {
+                return $this->command->doAccountCommentCommand($event->comment);
+            } catch (InvalidCommandException) {
+                return 'Invalid Command!';
+            }
         }
+
+        return null;
     }
 }

@@ -90,21 +90,10 @@ return [
         'fuck', // comment will mark as spam when content contained 'fuck'
         'shit'
     ],
-    'default_permissions' => [
-        'command-song-level',
-        'command-test-level',
-        'command-test-account'
-    ],
     'feature' => [
         'command' => [
-            'account_comment' => [
-                'enabled' => true,
-                'prefix' => '!'
-            ],
-            'level_comment' => [
-                'enabled' => true,
-                'prefix' => '!'
-            ]
+            'account_comment' => true,
+            'level_comment' => true
         ],
         'auto_rate' => [
             'rate' => [

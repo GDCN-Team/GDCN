@@ -21,6 +21,14 @@ class ExecuteLevelCommentCommand
     }
 
     /**
+     * @return mixed
+     */
+    protected function shouldExecute(): mixed
+    {
+        return config('game.feature.command.level_comment');
+    }
+
+    /**
      * Handle the event.
      *
      * @param LevelCommentUploaded $event
@@ -28,10 +36,14 @@ class ExecuteLevelCommentCommand
      */
     public function handle(LevelCommentUploaded $event): mixed
     {
-        try {
-            return $this->command->doLevelCommentCommand($event->comment);
-        } catch (InvalidCommandException) {
-            return 'Invalid Command!';
+        if ($this->command->isCommand($event->comment) && $this->shouldExecute()) {
+            try {
+                return $this->command->doLevelCommentCommand($event->comment);
+            } catch (InvalidCommandException) {
+                return 'Invalid Command!';
+            }
         }
+
+        return null;
     }
 }

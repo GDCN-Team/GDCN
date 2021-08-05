@@ -27,11 +27,11 @@ class BaseCommandService
      */
     public function doAccountCommentCommand(AccountComment $comment): mixed
     {
-        $command = Base64Url::decode($comment->content);
-        if (!Str::startsWith($command, $this->prefix)) {
+        if (!$this->isCommand($comment)) {
             throw new InvalidCommandException();
         }
 
+        $command = $this->decodeComment($comment);
         Log::create([
             'type' => Types::DO_ACCOUNT_COMMENT_COMMAND,
             'user' => $comment->sender->user->id,
@@ -46,6 +46,29 @@ class BaseCommandService
         );
 
         return $service->execute();
+    }
+
+    /**
+     * @param AccountComment|LevelComment $comment
+     * @param bool $decode
+     * @return bool
+     */
+    public function isCommand(AccountComment|LevelComment $comment, bool $decode = true): bool
+    {
+        return Str::startsWith(
+            $this->decodeComment($comment, $decode),
+            $this->prefix
+        );
+    }
+
+    /**
+     * @param AccountComment|LevelComment $comment
+     * @param bool $decode
+     * @return string
+     */
+    protected function decodeComment(AccountComment|LevelComment $comment, bool $decode = true): string
+    {
+        return $decode === true ? Base64Url::decode($comment->content) : $comment->content;
     }
 
     /**
@@ -85,11 +108,11 @@ class BaseCommandService
      */
     public function doLevelCommentCommand(LevelComment $comment): mixed
     {
-        $command = Base64Url::decode($comment->content);
-        if (!Str::startsWith($command, $this->prefix)) {
+        if (!$this->isCommand($comment)) {
             throw new InvalidCommandException();
         }
 
+        $command = $this->decodeComment($comment);
         Log::create([
             'type' => Types::DO_LEVEL_COMMENT_COMMAND,
             'user' => $comment->sender->user->id,
