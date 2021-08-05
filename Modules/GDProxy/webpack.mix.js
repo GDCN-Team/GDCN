@@ -7,6 +7,7 @@ require('laravel-mix-merge-manifest');
 mix.setPublicPath('../../public').mergeManifest();
 
 mix.js(__dirname + '/Resources/assets/js/app.js', 'js/gdproxy.js').vue()
+    .setResourceRoot('/static')
     .sass( __dirname + '/Resources/assets/sass/app.scss', 'css/gdproxy.css');
 
 if (mix.inProduction()) {
