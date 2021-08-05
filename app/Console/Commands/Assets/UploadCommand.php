@@ -52,21 +52,25 @@ class UploadCommand extends Command
         $disk = Storage::disk('oss');
         foreach ($paths as $path => $to) {
             if (!$contents = scandir($path)) {
+                $this->info("Dir $path scan Failed");
                 continue;
             }
 
             foreach ($contents as $content) {
                 if (in_array($content, ['.', '..'])) {
+                    $this->info("Ignore $content");
                     continue;
                 }
 
                 if (is_dir($content)) {
+                    $this->info("$content is dir}");
                     $this->uploadDir([
                         "$path/$content" => "$to/$content"
                     ]);
                 }
 
                 if (is_file($content)) {
+                    $this->info("File '$path/$content' Uploaded to '$to/$content'");
                     $disk->put("$to/$content", file_get_contents("$path/$content"));
                 }
             }
