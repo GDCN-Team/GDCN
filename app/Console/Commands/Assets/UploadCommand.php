@@ -62,14 +62,15 @@ class UploadCommand extends Command
                     continue;
                 }
 
-                if (is_dir($content)) {
-                    $this->info("$content is dir}");
+                $file = $path . "/" . $content;
+                if (is_dir($file)) {
+                    $this->info("$content is dir");
                     $this->uploadDir([
-                        "$path/$content" => "$to/$content"
+                        $file => "$to/$content"
                     ]);
                 }
 
-                if (is_file($content)) {
+                if (is_file($file)) {
                     $this->info("File '$path/$content' Uploaded to '$to/$content'");
                     $disk->put("$to/$content", file_get_contents("$path/$content"));
                 }
