@@ -27,46 +27,49 @@ class UploadCommand extends Command
     protected $description = 'Upload assets to oss';
 
     /**
+     * @var string
+     */
+    protected string $prefix = '/static';
+
+    /**
      * Execute the console command.
      *
      * @return int
      */
     public function handle(): int
     {
-        $this->uploadDir(public_path('css'));
-        $this->uploadDir(public_path('js'));
+        $this->uploadDir([
+            public_path('css') => "$this->prefix/css",
+            public_path('js') => "$this->prefix/js",
+            public_path('fonts') => "$this->prefix/fonts"
+        ]);
+
         return 0;
     }
 
-    /**
-     * @param string $dir
-     * @return bool
-     */
-    public function uploadDir(string $dir): bool
+    protected function uploadDir(array $paths)
     {
-        $oss = Storage::disk('oss');
-        if (!is_dir($dir)) {
-            return false;
-        }
-
-        $handle = opendir($dir);
-        while (($file = readdir($handle)) !== false) {
-            if (in_array($file, ['.', '..'])) {
+        $disk = Storage::disk('oss');
+        foreach ($paths as $path => $to) {
+            if (!$contents = scandir($path)) {
                 continue;
             }
 
-            $file = $dir . DIRECTORY_SEPARATOR . $file;
-            if (is_file($file)) {
-                $filePathParts = explode(DIRECTORY_SEPARATOR, $file);
-                $path = "static/gdcn/{$filePathParts[count($filePathParts) - 2]}/{$filePathParts[count($filePathParts) - 1]}";
-                $this->info("$file To $path");
-                $this->info('');
-                $oss->put($path, file_get_contents($file));
-            } elseif (is_dir($file)) {
-                $this->uploadDir($file);
+            foreach ($contents as $content) {
+                if (in_array($content, ['.', '..'])) {
+                    continue;
+                }
+
+                if (is_dir($content)) {
+                    $this->uploadDir([
+                        "$path/$content" => "$to/$content"
+                    ]);
+                }
+
+                if (is_file($content)) {
+                    $disk->put("$to/$content", file_get_contents("$path/$content"));
+                }
             }
         }
-
-        return true;
     }
 }
