@@ -58,13 +58,13 @@ class UploadCommand extends Command
 
             foreach ($contents as $content) {
                 if (in_array($content, ['.', '..'])) {
-                    $this->info("Ignore $content");
+                    $this->info("Ignore '$content'");
                     continue;
                 }
 
                 $file = $path . "/" . $content;
                 if (is_dir($file)) {
-                    $this->info("$content is dir");
+                    $this->info("'$content' is dir");
                     $this->uploadDir([
                         $file => "$to/$content"
                     ]);
