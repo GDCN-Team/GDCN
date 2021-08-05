@@ -8,7 +8,7 @@ yarn run prod
 cd Modules/GDProxy
 yarn install
 yarn run prod
-cd Modules/NGProxy
+cd ../NGProxy
 yarn install
 yarn run prod
 cd ../..
