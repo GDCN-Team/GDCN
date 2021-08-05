@@ -3,14 +3,14 @@
 @task('deploy', ['on' => 'localhost'])
 # git pull origin {{ $branch }}
 php artisan migrate
-yarn install
-yarn prod
+npm install
+npm run prod
 cd Modules/GDProxy
-yarn install
-yarn prod
+npm install
+npm run prod
 cd Modules/NGProxy
-yarn install
-yarn prod
+npm install
+npm run prod
 cd ../..
 php artisan assets:upload
 @endtask
