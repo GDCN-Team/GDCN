@@ -161,6 +161,7 @@ class LevelService
     }
 
     /**
+     * @param User|null $viewer
      * @param SearchType $type
      * @param string|null $str
      * @param int $page
@@ -186,36 +187,38 @@ class LevelService
      * @throws NoItemException
      */
     public function search(
-        SearchType $type,
-        ?string $str,
-        int $page,
+        ?User            $viewer,
+        SearchType       $type,
+        ?string          $str,
+        int              $page,
 
         Account|int|null $account,
-        ?string $followed,
+        ?string          $followed,
 
         // Filters
 
-        ?string $len,
-        ?bool $star,
-        ?string $diff,
-        ?int $demonFilter,
+        ?string          $len,
+        ?bool            $star,
+        ?string          $diff,
+        ?int             $demonFilter,
 
         // Advanced Options
 
-        ?bool $unCompleted,
-        ?bool $onlyCompleted,
-        ?string $completedLevels,
-        ?bool $featured,
-        ?bool $original,
-        ?bool $epic,
-        ?int $song,
-        ?bool $customSong,
-        ?bool $noStar,
-        ?bool $coins,
-        ?bool $twoPlayer
+        ?bool            $unCompleted,
+        ?bool            $onlyCompleted,
+        ?string          $completedLevels,
+        ?bool            $featured,
+        ?bool            $original,
+        ?bool            $epic,
+        ?int             $song,
+        ?bool            $customSong,
+        ?bool            $noStar,
+        ?bool            $coins,
+        ?bool            $twoPlayer
     ): string
     {
         $query = Level::query();
+        $showUnlisted = true;
 
         switch ($type->value) {
             case SearchType::SEARCH:
@@ -235,6 +238,10 @@ class LevelService
                 $query->orderByDesc('created_at');
                 break;
             case SearchType::USER:
+                if (optional($viewer)->id === $str) {
+                    $showUnlisted = false;
+                }
+
                 $query->where('user', $str);
                 break;
             case SearchType::FEATURED:
@@ -271,6 +278,10 @@ class LevelService
                 break;
             default:
                 throw new InvalidArgumentException();
+        }
+
+        if ($showUnlisted) {
+            $query->whereUnlisted(true);
         }
 
         // Filters

@@ -79,6 +79,7 @@ class LevelsController extends Controller
         try {
             $data = $request->validated();
             return $this->service->search(
+                $request->getPlayer(),
                 SearchType::fromValue((int)$data['type']),
                 $data['str'],
                 $data['page'],
