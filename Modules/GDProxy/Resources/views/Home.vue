@@ -15,7 +15,8 @@
                     <span>Android</span>
                 </Button>
                 <dropdown trigger="contextMenu">
-                    <Button to="https://cdn.geometrydashchinese.com/download/GDProxy.zip" icon="logo-windows" type="primary">
+                    <Button icon="logo-windows" to="https://cdn.geometrydashchinese.com/download/GDProxy.zip"
+                            type="primary">
                         <span>Windows</span>
                     </Button>
                     <dropdown-menu slot="list">
@@ -111,9 +112,11 @@ export default {
     methods: {
         getTraffics: function (page = 1) {
             const that = this;
-            axios.get(`/api/traffics?page=${page}`).then(function (response) {
-                that.traffics = response.data;
-            });
+            request('GET', `/api/traffics?page=${page}`, {
+                onSuccess: function (response) {
+                    that.traffics = response.data;
+                }
+            })
         },
         getBindedAccount: function () {
             const that = this;

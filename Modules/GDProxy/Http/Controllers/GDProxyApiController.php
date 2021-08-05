@@ -3,7 +3,6 @@
 namespace Modules\GDProxy\Http\Controllers;
 
 use App\Http\Controllers\Web\Traits\ResponseTrait;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Request as RequestFacade;
 use JetBrains\PhpStorm\ArrayShape;
@@ -26,11 +25,15 @@ class GDProxyApiController extends Controller
     }
 
     /**
-     * @return LengthAwarePaginator
+     * @return array
      */
-    public function getTraffics(): LengthAwarePaginator
+    #[ArrayShape(['status' => "bool", 'msg' => "\null|string", 'data' => "null"])] public function getTraffics(): array
     {
-        return Traffic::paginate(7);
+        return $this->response(
+            true,
+            null,
+            Traffic::paginate(7)
+        );
     }
 
     /**
