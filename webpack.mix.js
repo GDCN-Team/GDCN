@@ -13,7 +13,7 @@ const mix = require('laravel-mix');
 
 mix.setPublicPath('public')
     .setResourceRoot('/static')
-    .js('resources/js/app.js', 'js/gdcn.js')
+    .js('resources/js/app.js', 'js/gdcn.js').vue()
     .postCss('resources/css/app.css', 'css/gdcn.css', [
         require('tailwindcss'),
         require('autoprefixer')
