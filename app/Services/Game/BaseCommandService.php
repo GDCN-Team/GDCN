@@ -91,10 +91,10 @@ class BaseCommandService
             if (Str::startsWith($param, $this->argument_prefix)) {
                 [$key, $value] = explode($this->argument_split, $param, 2);
                 $arguments[Str::substr($key, strlen($this->argument_prefix))] = $value;
-            }
-
-            if (Str::startsWith($param, $this->option_prefix)) {
+            } elseif (Str::startsWith($param, $this->option_prefix)) {
                 $options[] = Str::substr($param, strlen($this->option_prefix));
+            } else {
+                $arguments[] = $param;
             }
         }
 
