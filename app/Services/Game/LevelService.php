@@ -41,10 +41,10 @@ class LevelService
      * @param SongService $songService
      */
     public function __construct(
-        public Hasher $hash,
-        public HelperService $helper,
+        public Hasher         $hash,
+        public HelperService  $helper,
         public StorageService $storage,
-        public SongService $songService
+        public SongService    $songService
     )
     {
     }
@@ -218,7 +218,7 @@ class LevelService
     ): string
     {
         $query = Level::query();
-        $showUnlisted = true;
+        $showUnlisted = false;
 
         switch ($type->value) {
             case SearchType::SEARCH:
@@ -239,7 +239,7 @@ class LevelService
                 break;
             case SearchType::USER:
                 if (optional($viewer)->id === $str) {
-                    $showUnlisted = false;
+                    $showUnlisted = true;
                 }
 
                 $query->where('user', $str);
@@ -280,8 +280,8 @@ class LevelService
                 throw new InvalidArgumentException();
         }
 
-        if ($showUnlisted) {
-            $query->whereUnlisted(true);
+        if (!$showUnlisted) {
+            $query->where('unlisted', '!=', true);
         }
 
         // Filters
