@@ -60,6 +60,10 @@ class CommentCommandService
         RatingService $service
     ): string
     {
+        if (!optional($this->operator->permission)->can('COMMAND_RATE_LEVEL')) {
+            return 'Permission denied!';
+        }
+
         if ($this->level->rated) {
             if (Arr::hasAnyValue($this->options, ['d', 'delete'])) {
                 $this->level->rating->delete();
