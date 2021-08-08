@@ -33,4 +33,11 @@ class Flag extends Model
      * @var string
      */
     protected $table = 'game_account_permission_flags';
+
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'name'
+    ];
 }
