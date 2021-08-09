@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Arr::macro('getAny', function (array $array, ...$keys) {
+        Arr::macro('getAny', function (array $array, array $keys) {
             foreach ($keys as $key) {
                 $value = Arr::get($array, $key);
                 if (!empty($value)) {
@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
             return null;
         });
 
-        Arr::macro('hasAnyValue', function (array $array, ...$values) {
+        Arr::macro('hasAnyValue', function (array $array, array $values) {
             foreach ($array as $val) {
                 foreach ($values as $value) {
                     if ($val === $value) {
