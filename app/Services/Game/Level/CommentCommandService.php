@@ -82,20 +82,34 @@ class CommentCommandService
                 }
 
                 $rating = $this->level->rating;
-                $rating->epic = $epic;
-                $rating->featured_score = $featured_score;
-                $rating->coin_verified = $coin_verified;
-                $rating->demon_difficulty = $helper->guessDemonDifficultyFromRating($demon_difficulty);
+                if (!empty($featured_score)) {
+                    $rating->featured_score = $featured_score;
+                }
+
+                if (!empty($epic)) {
+                    $rating->featured_score = $featured_score;
+                }
+
+                if (!empty($coin_verified)) {
+                    $rating->coin_verified = $coin_verified;
+                }
+
+                if (!empty($demon_difficulty)) {
+                    $rating->demon_difficulty = $helper->guessDemonDifficultyFromRating($demon_difficulty);
+                }
+
                 $rating->save();
 
                 return 'Rating updated successfully!';
             }
         }
 
-        $stars = Arr::getAny($this->arguments, [0, 's', 'star', 'stars']);
+        $stars = Arr::getAny($this->arguments, [1, 's', 'star', 'stars']);
         if (!empty($stars)) {
-            $service->rate($this->level, (int)$stars);
-            return "Level rated successfully!";
+            $rating = $service->rate($this->level, (int)$stars);
+            if (!empty($rating)) {
+                return "Level rated successfully!";
+            }
         }
 
         return 'Argument "stars" is required';
