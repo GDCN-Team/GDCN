@@ -38,7 +38,7 @@ class CommentsController extends Controller
             $data = $request->validated();
             return $this->service->list($data['levelID'], CommentMode::fromValue((int)$data['mode']), $data['page']);
         } catch (NoItemException) {
-            return ResponseCode::EMPTY_RESULT_STRING;
+            return ResponseCode::EMPTY_RESULT;
         }
     }
 
