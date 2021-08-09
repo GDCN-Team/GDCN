@@ -200,7 +200,7 @@ class RatingService
         $info = $this->helper->guessDiffFromStars($stars);
         $diff = $diff ?? $info[1];
 
-        $rating->difficulty = $diff ?: $this->helper->guessDiffFromStars($stars);
+        $rating->difficulty = $diff;
         $rating->stars = $stars;
         $rating->auto = $info[2];
         $rating->demon = $info[3];
