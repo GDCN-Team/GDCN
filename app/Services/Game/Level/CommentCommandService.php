@@ -71,6 +71,7 @@ class CommentCommandService
             }
 
             if (Arr::hasAnyValue($this->options, ['u', 'update'])) {
+                $stars = Arr::getAny($this->arguments, ['s', 'star', 'stars']);
                 $featured = Arr::hasAnyValue($this->options, ['f', 'featured']);
                 $epic = Arr::hasAnyValue($this->options, ['e', 'epic']);
                 $coin_verified = Arr::hasAnyValue($this->options, ['cv', 'coin_verified']);
@@ -88,6 +89,15 @@ class CommentCommandService
                 }
 
                 $rating = $this->level->rating;
+                if (!empty($stars)) {
+                    $rating->stars = $stars;
+                    [$name, $diff, $auto, $demon] = $helper->guessDiffFromStars($stars);
+
+                    $rating->difficulty = $diff;
+                    $rating->auto = $auto;
+                    $rating->demon = $demon;
+                }
+
                 if (!empty($featured_score)) {
                     $rating->featured_score = $featured_score;
                 }
@@ -105,7 +115,6 @@ class CommentCommandService
                 }
 
                 $rating->save();
-
                 return 'Rating updated successfully!';
             }
         }
