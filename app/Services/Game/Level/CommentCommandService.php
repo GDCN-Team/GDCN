@@ -94,7 +94,7 @@ class CommentCommandService
 
         $stars = Arr::getAny($this->arguments, [0, 's', 'star', 'stars']);
         if (!empty($stars)) {
-            $service->rate($this->level, $stars);
+            $service->rate($this->level, (int)$stars);
             return "Level rated successfully!";
         }
 
