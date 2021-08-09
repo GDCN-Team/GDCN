@@ -76,6 +76,12 @@ class CommentCommandService
                 $coin_verified = Arr::hasAnyValue($this->options, ['cv', 'coin_verified']);
                 $demon_difficulty = Arr::getAny($this->arguments, ['dd', 'demon_difficulty']);
 
+                if (Arr::hasAnyValue($this->options, ['i', 'inverse'])) {
+                    $featured = !$featured;
+                    $epic = !$epic;
+                    $coin_verified = !$coin_verified;
+                }
+
                 $featured_score = Arr::getAny($this->arguments, ['fs', 'featured_score']);
                 if (empty($featured_score) && $featured) {
                     $featured_score = 1;
