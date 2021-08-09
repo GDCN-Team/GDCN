@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Modules\NGProxy\Console\GenerateTrafficCode;
 
 /**
  * Class AppServiceProvider
@@ -19,9 +19,28 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->commands([
-            GenerateTrafficCode::class
-        ]);
+        Arr::macro('getAny', function (array $array, ...$keys) {
+            foreach ($keys as $key) {
+                $value = Arr::get($array, $key);
+                if (!empty($value)) {
+                    return $value;
+                }
+            }
+
+            return null;
+        });
+
+        Arr::macro('hasAnyValue', function (array $array, ...$values) {
+            foreach ($array as $val) {
+                foreach ($values as $value) {
+                    if ($val === $value) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
     }
 
     /**
