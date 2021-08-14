@@ -121,7 +121,7 @@ Route::group([
     'domain' => 'dl.geometrydashchinese.com',
     'as' => 'gdproxy.'
 ], function () {
-    Route::get('/{path}', [GDProxyController::class, 'proxy'])->where('path', '.*')->name('proxy');
+    Route::post('/{path}', [GDProxyController::class, 'proxy'])->where('path', '.*')->name('proxy');
 });
 
 Route::group([
