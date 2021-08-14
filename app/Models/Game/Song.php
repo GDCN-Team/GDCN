@@ -48,4 +48,16 @@ class Song extends Model
      * @var string
      */
     protected $table = 'ngproxy_songs';
+
+    protected $fillable = [
+        'song_id',
+        'name',
+        'artist_id',
+        'artist_name',
+        'size',
+        'video_id',
+        'author_youtube_url',
+        'download_link',
+        'disabled'
+    ];
 }
