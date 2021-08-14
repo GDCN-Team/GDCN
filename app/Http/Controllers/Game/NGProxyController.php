@@ -42,8 +42,8 @@ class NGProxyController extends Controller
                 'artist_id' => $song[3],
                 'artist_name' => $song[4],
                 'size' => $song[5],
-                'video_id' => $song[6],
-                'author_youtube_url' => $song[7],
+                'video_id' => $song[6] ?? null,
+                'author_youtube_url' => $song[7] ?? null,
                 'download_url' => $song[10]
             ]);
         }
