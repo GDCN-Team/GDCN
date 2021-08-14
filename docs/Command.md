@@ -9,3 +9,5 @@
 
 > Option 即为选项, 格式为 `--[flag]`  
 > 使用例: !rate -delete `删除Rating`
+
+> 通用测试指令: !test `输出 worked!`

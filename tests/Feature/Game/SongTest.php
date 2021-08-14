@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\Game;
 
+use App\Models\Game\Song;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Modules\GDProxy\Http\Controllers\GDProxyController;
-use Modules\NGProxy\Entities\Song;
 use Tests\TestCase;
 use function route;
 
@@ -26,13 +25,12 @@ class SongTest extends TestCase
             ]
         );
 
-        $GDProxy = app(GDProxyController::class);
-        Http::assertSent(function ($request) use ($GDProxy) {
+        Http::assertSent(function ($request) {
             return in_array(
                 $request->url(),
                 [
-                    $GDProxy->gdServer . '/getGJSongInfo.php',
-                    $GDProxy->gdServer . '/getGJLevels21.php'
+                    'https://dl.geometrydashchinese.com/getGJSongInfo.php',
+                    'https://dl.geometrydashchinese.com/getGJLevels21.php'
                 ]
             );
         });
@@ -57,6 +55,6 @@ class SongTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee('4:');
+        $request->assertSee("4:");
     }
 }

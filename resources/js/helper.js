@@ -1,80 +1,41 @@
-import Vue from "vue";
+import {computed, isRef, ref} from "vue";
+import {Inertia} from "@inertiajs/inertia";
+import {usePage} from "@inertiajs/inertia-vue3";
 
-export function createComponent(component, props = {}) {
-    const remove = function (that = null) {
-        if (that === null) {
-            that = vm || this;
-        }
-
-        document.body.removeChild(that.$el)
-        that.$destroy()
-    };
-
-    props.remove = remove;
-    const vm = new Vue({
-        render: h => h(component, {props})
-    }).$mount();
-
-    const comp = vm.$children[0];
-    comp.remove = remove;
-
-    document.body.appendChild(vm.$el);
-    return comp;
+export function redirect(to) {
+    return window.location.href = to;
 }
 
-let maps = [];
-export function request(method, url, options) {
-    const source = axios.CancelToken.source();
+export function redirectToRoute(name, params = {}) {
+    const to = window.$route(name, params);
+    return redirect(to);
+}
 
-    if (maps[url]) {
-        maps[url].cancel();
+export function invertValue(object, name, force = null) {
+    object[name] = ref(force ?? !object[name]);
+}
+
+export function formatTime(time, empty = null) {
+    if (!time) {
+        return empty;
     }
 
-    if (options.request) {
-        options.request.loading = true;
+    return new Date(time).toLocaleString();
+}
+
+export function registerMediaListener(condition, callback, callFirst = false) {
+    const media = window.matchMedia(`(${condition})`);
+    media.addEventListener('change', callback);
+
+    if (callFirst === true) {
+        callback(media);
     }
+}
 
-    const request =  axios.request({
-        method,
-        url,
-        data: options.data,
-        cancelToken: source.token
-    }).then(function (response) {
-        if (options.request) {
-            options.request.loading = false;
-        }
+export function back() {
+    window.history.back();
+}
 
-        if (response.data.status === true) {
-            if (typeof options.onSuccess === 'function') {
-                options.onSuccess(response.data);
-            }
-
-            return response.data;
-        } else {
-            app.$Message.error({
-                content: response.data.msg
-            });
-
-            if (typeof options.onFailed === 'function') {
-                options.onFailed(response.data);
-            }
-        }
-    }).catch(function(error) {
-        if (options.request) {
-            options.request.loading = false;
-        }
-
-        if (error.response.status === 500) {
-            app.$Message.error({
-                content: '哦不, 服务器发生了一个错误'
-            });
-        }
-
-        if (typeof options.onError === 'function') {
-            options.onError(error.response);
-        }
-    });
-
-    maps[url] = source;
-    return request;
+export function isMobile() {
+    return window.screen.width > 720;
 }

@@ -12,17 +12,27 @@ use Illuminate\Http\Request;
 class Authenticate extends Middleware
 {
     /**
+     * @var string
+     */
+    protected string $route = 'auth.login';
+
+    /**
+     * @var string
+     */
+    protected string $message = '请先登录';
+
+    /**
      * Get the path the user should be redirected to when they are not authenticated.
      *
      * @param Request $request
-     * @return string|null
+     * @return string|void
      */
-    protected function redirectTo($request): ?string
+    protected function redirectTo($request)
     {
         if (!$request->expectsJson()) {
-            abort(401);
+            return route($this->route);
         }
 
-        return null;
+        abort(401);
     }
 }

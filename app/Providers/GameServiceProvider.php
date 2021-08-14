@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Game\Account;
 use App\Models\Game\User;
 use GDCN\Hash\Hasher;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -39,6 +40,7 @@ class GameServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerNewEmailVerifyLinkGenerateMethod();
+        $this->registerNewPasswordResetLinkGenerateMethod();
         $this->registerAuthDriver();
     }
 
@@ -53,6 +55,19 @@ class GameServiceProvider extends ServiceProvider
                 Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
                 [
                     '_' => Crypt::encryptString($notifiable->getKey() . ':' . $notifiable->getEmailForVerification()),
+                ]
+            );
+        });
+    }
+
+    public function registerNewPasswordResetLinkGenerateMethod(): void
+    {
+        ResetPassword::createUrlUsing(function ($notifiable, $token) {
+            return URL::temporarySignedRoute(
+                'auth.password.reset',
+                Carbon::now()->addMinutes(Config::get('auth.password_timeout', 10800)),
+                [
+                    '_' => Crypt::encryptString($notifiable->getKey() . ':' . $token . ':' . $notifiable->getEmailForVerification()),
                 ]
             );
         });

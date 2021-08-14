@@ -1,18 +1,33 @@
+import jquery from 'jquery';
+import {createApp, h} from 'vue';
+import {createInertiaApp} from '@inertiajs/inertia-vue3';
+import {InertiaProgress} from '@inertiajs/progress';
+import {Ziggy} from './ziggy.js';
+import route from 'ziggy';
+import {ZiggyVue} from "ziggy/vue";
+
 require("./bootstrap");
 
-import Vue from "vue";
-import $ from "jquery";
-import ViewUI from 'view-design';
+jquery(function () {
+    window.$ = jquery;
+    window.$route = (n, t, r) => route(n, t, r, Ziggy);
 
-window.$ = $;
-window.Vue = Vue;
+    window.app = createInertiaApp({
+        resolve: name => require(`../views/Pages/${name}`),
+        setup: function (config) {
+            const app = createApp({
+                render: function () {
+                    return h(config.App, config.props);
+                }
+            });
 
-$(function () {
-    Vue.use(ViewUI);
-    const el = document.getElementById('app');
-    const component = require(`../views/Pages/${el.dataset.component}`).default;
+            app.use(config.plugin);
+            app.use(ZiggyVue, Ziggy);
 
-    window.app = new Vue({
-        render: h => h(component)
-    }).$mount(el);
+            app.mount(config.el);
+            return app;
+        }
+    }).then(function () {
+        InertiaProgress.init();
+    });
 });

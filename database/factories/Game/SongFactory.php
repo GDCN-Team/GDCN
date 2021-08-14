@@ -22,11 +22,12 @@ class SongFactory extends Factory
     public function definition(): array
     {
         return [
+            'song_id' => mt_rand(),
             'name' => $this->faker->name,
-            'author_name' => $this->faker->name,
-            'author_id' => mt_rand(),
+            'artist_name' => $this->faker->name,
+            'artist_id' => mt_rand(),
             'size' => mt_rand() . '.00',
-            'download_url' => $this->faker->url,
+            'download_link' => $this->faker->url,
             'disabled' => false
         ];
     }

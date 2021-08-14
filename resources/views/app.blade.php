@@ -7,16 +7,15 @@
     <meta name="author" content="渣渣120,WOSHIZHAZHA120@qq.com"/>
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="csrf-token" content=" {{ csrf_token () }}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     @csrf
     <link rel="icon" href="https://cdn.geometrydashchinese.com/static/images/logo.png">
-    <link rel="stylesheet" href="{{ asset('css/gdcn.css') }}">
-    <script src="{{ asset('js/gdcn.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="{{ asset('js/app.js') }}"></script>
     <title>{{ config('app.name') }}</title>
 </head>
 <body>
-<div data-component="{{ $component }}" id="app">
-
-</div>
+@inertia
 </body>
 </html>

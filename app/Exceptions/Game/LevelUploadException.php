@@ -3,15 +3,11 @@
 namespace App\Exceptions\Game;
 
 use App\Enums\Game\ResponseCode;
-use App\Http\Controllers\Web\Traits\ResponseTrait;
 use Exception;
 use Illuminate\Support\Facades\Log as LogFacade;
-use Illuminate\Support\Facades\Request;
 
 class LevelUploadException extends Exception
 {
-    use ResponseTrait;
-
     /**
      * @var int
      */
@@ -29,10 +25,6 @@ class LevelUploadException extends Exception
      */
     public function render(): int|array
     {
-        if (Request::isXmlHttpRequest() || Request::expectsJson()) {
-            return $this->response(false, $this->message);
-        }
-
         return $this->failed_code;
     }
 

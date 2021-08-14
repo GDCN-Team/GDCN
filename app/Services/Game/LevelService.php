@@ -23,9 +23,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
-use Modules\NGProxy\Exceptions\SongDisabledException;
-use Modules\NGProxy\Exceptions\SongGetException;
-use Modules\Proxy\Exceptions\ProxyFailedException;
 
 /**
  * Class LevelService
@@ -428,7 +425,7 @@ class LevelService
 
             try {
                 $songs[] .= $this->songService->get($song);
-            } catch (SongGetException | ProxyFailedException | SongDisabledException | SongNotFoundException) {
+            } catch (SongNotFoundException) {
                 continue;
             }
         }

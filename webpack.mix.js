@@ -1,4 +1,6 @@
 const mix = require('laravel-mix');
+const dotEnv = require('dotenv');
+const path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -11,10 +13,18 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.setPublicPath('public')
-    .setResourceRoot('/static')
-    .js('resources/js/app.js', 'js/gdcn.js').vue()
-    .postCss('resources/css/app.css', 'css/gdcn.css', [
+dotEnv.config({
+    path: '.env'
+});
+
+mix.js('resources/js/app.js', 'public/js')
+    .vue()
+    .alias({
+        ziggy: path.resolve('vendor/tightenco/ziggy/dist')
+    })
+    .copyDirectory('resources/images', 'public/images')
+    .postCss('resources/css/app.css', 'public/css', [
         require('tailwindcss'),
         require('autoprefixer')
     ]);
+

@@ -26,9 +26,6 @@ class SongsController extends Controller
      * @param GetRequest $request
      * @return int|string
      *
-     * @throws ProxyFailedException
-     * @throws SongDisabledException
-     * @throws SongGetException
      * @throws SongNotFoundException
      * @see http://docs.gdprogra.me/#/endpoints/getGJSongInfo
      */
