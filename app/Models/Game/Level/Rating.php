@@ -2,10 +2,12 @@
 
 namespace App\Models\Game\Level;
 
+use App\Models\Game\Level;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -49,4 +51,9 @@ class Rating extends Model
      * @var string
      */
     protected $table = 'game_level_ratings';
+
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(Level::class, 'level');
+    }
 }
