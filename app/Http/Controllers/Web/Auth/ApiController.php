@@ -67,7 +67,7 @@ class ApiController extends Controller
         $request->validated();
         $this->service->confirm_password();
 
-        return back();
+        return Redirect::intended();
     }
 
     /**
