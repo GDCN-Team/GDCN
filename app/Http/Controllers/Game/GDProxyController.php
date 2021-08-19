@@ -27,6 +27,10 @@ class GDProxyController extends Controller
         }
 
         $response = $this->getProxyInstance()
+            ->withHeaders([
+                'x-forwarded-for' => $request->ip(),
+                'x-real-ip' => $request->ip()
+            ])
             ->post(
                 $this->base_url . $request->getRequestUri(),
                 $request->all()
