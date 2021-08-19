@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Game;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GDProxyController extends Controller
 {
@@ -18,12 +19,23 @@ class GDProxyController extends Controller
     public function proxy(Request $request): string
     {
         if ($result = $this->preProcessRequest($request)) {
+            Log::debug('GDProxy preprocess response', [
+                'data' => $result
+            ]);
+
             return $result;
         }
 
         $response = Http::asForm()->withOptions(['proxy' => $this->proxy_url])->post($this->base_url . $request->getRequestUri(), $request->all())->body();
+        Log::debug('GDProxy response', [
+            'data' => $result
+        ]);
 
         if ($result = $this->processResponse($request, $response)) {
+            Log::debug('GDProxy processed response', [
+                'data' => $result
+            ]);
+
             return $result;
         }
 

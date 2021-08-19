@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Game\Song;
 use GDCN\GDObject;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class NGProxyController extends Controller
 {
@@ -22,6 +23,10 @@ class NGProxyController extends Controller
                     'secret' => 'Wmfd2893gb7'
                 ])->body();
 
+            Log::debug('NGProxy response', [
+                'data' => $response
+            ]);
+
             if (!$response || $response <= 0) {
                 $response = Http::asForm()
                     ->post('https://dl.geometrydashchinese.com/getGJLevels21.php', [
@@ -29,6 +34,10 @@ class NGProxyController extends Controller
                         'customSong' => true,
                         'secret' => 'Wmfd2893gb7'
                     ])->body();
+
+                Log::debug('NGProxy response', [
+                    'data' => $response
+                ]);
 
                 if (!$response || $response <= 0) {
                     throw new SongGetException('歌曲获取失败');
