@@ -82,8 +82,17 @@ class NGProxyService
         return Song::whereSongId($songID)->first();
     }
 
+    /**
+     * @throws SongNotFoundException
+     */
     protected function saveSongFromObject(array $songObject, bool $disabled = false): Song
     {
+        if (!$this->checkObjectExistsInOss($songObject[1])) {
+            if ($this->downloadSongThenSaveToOss($songObject[1], $songObject[10])) {
+                $songObject[10] = $this->getFreeDownloadUrl($songObject[1]);
+            }
+        }
+
         return Song::create([
             'song_id' => $songObject[1],
             'name' => $songObject[2],
