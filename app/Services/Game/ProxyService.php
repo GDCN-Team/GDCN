@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Http;
 
 class ProxyService
 {
-    public string $proxy_url = 'http://127.0.0.1:10809';
+    public string $proxy_url = 'http://localhost:10809';
     public string $geometry_dash_base_url = 'http://www.boomlings.com/database';
 
     public function getProxyInstance(): PendingRequest
     {
         return Http::asForm()
-            ->withOptions(['proxy' => $this->proxy_url]);
+            ->withOptions([
+                'proxy' => $this->proxy_url
+            ]);
     }
 }
