@@ -41,7 +41,7 @@ class GDProxyService
             )->body();
 
         Log::debug('[GDProxy] Requested to official server.', [
-            'data' => $result
+            'data' => $response
         ]);
 
         if ($result = $this->processResponse($path, $data, $response)) {
