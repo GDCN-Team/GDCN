@@ -128,6 +128,6 @@ Route::group([
     'domain' => 'ng.geometrydashchinese.com',
     'as' => 'ngproxy.'
 ], function () {
-    Route::get('/info/{songID}', [NGProxyController::class, 'getInfo'])->name('info');
-    Route::get('/object/{songID}', [NGProxyController::class, 'getObject'])->name('object');
+    Route::get('/info/{songID}', [NGProxyController::class, 'info'])->name('info');
+    Route::get('/object/{songID}', [NGProxyController::class, 'object'])->name('object');
 });
