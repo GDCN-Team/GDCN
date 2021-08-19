@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models\Game;
+namespace App\Models\NGProxy;
 
-use Database\Factories\Game\SongFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Game\Song
+ * App\Models\NGProxy\Song
  *
  * @property int $id
  * @property int $song_id
@@ -18,12 +17,12 @@ use Illuminate\Support\Carbon;
  * @property int $artist_id
  * @property string $artist_name
  * @property string $size
- * @property string $video_id
- * @property string $author_youtube_url
+ * @property string|null $video_id
+ * @property string|null $author_youtube_url
  * @property string $download_link
+ * @property int $disabled
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @method static SongFactory factory(...$parameters)
  * @method static Builder|Song newModelQuery()
  * @method static Builder|Song newQuery()
  * @method static Builder|Song query()
@@ -31,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Song whereArtistName($value)
  * @method static Builder|Song whereAuthorYoutubeUrl($value)
  * @method static Builder|Song whereCreatedAt($value)
+ * @method static Builder|Song whereDisabled($value)
  * @method static Builder|Song whereDownloadLink($value)
  * @method static Builder|Song whereId($value)
  * @method static Builder|Song whereName($value)
@@ -44,20 +44,5 @@ class Song extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'ngproxy_songs';
-
-    protected $fillable = [
-        'song_id',
-        'name',
-        'artist_id',
-        'artist_name',
-        'size',
-        'video_id',
-        'author_youtube_url',
-        'download_link',
-        'disabled'
-    ];
 }
