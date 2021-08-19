@@ -31,10 +31,6 @@ class GDProxyService
         $ip = RequestFacade::ip();
         $response = $this->proxy
             ->getProxyInstance()
-            ->withHeaders([
-                'x-forwarded-for' => $ip,
-                'x-real-ip' => $ip
-            ])
             ->post(
                 $this->proxy->geometry_dash_base_url . Str::start($path, '/'),
                 $data
