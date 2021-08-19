@@ -4,10 +4,8 @@ namespace App\Services\Game;
 
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\SongGetException;
-use App\Http\Controllers\Game\NGProxyController;
 use GDCN\GDObject;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Request as RequestFacade;
 use Illuminate\Support\Str;
 
 class GDProxyService
@@ -28,7 +26,6 @@ class GDProxyService
             return $result;
         }
 
-        $ip = RequestFacade::ip();
         $response = $this->proxy
             ->getProxyInstance()
             ->post(
