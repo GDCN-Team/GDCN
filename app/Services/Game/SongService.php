@@ -2,6 +2,7 @@
 
 namespace App\Services\Game;
 
+use App\Exceptions\Game\SongGetException;
 use App\Exceptions\Game\SongNotFoundException;
 use App\Http\Controllers\Game\NGProxyController;
 use App\Models\Game\CustomSong;
@@ -23,6 +24,7 @@ class SongService
      * @param int $songID
      * @return string
      * @throws SongNotFoundException
+     * @throws SongGetException
      */
     public function get(int $songID): string
     {
@@ -42,7 +44,7 @@ class SongService
             ], '~|~');
         }
 
-        return $this->NGProxy->getObject($songID);
+        return $this->NGProxy->object($songID);
     }
 
     /**
@@ -51,6 +53,7 @@ class SongService
      */
     public function getTopArtists(int $page): string
     {
+        # TODO: Fix top artists
         return $this->NGProxy->getTopArtists($page);
     }
 }
