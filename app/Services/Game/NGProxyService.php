@@ -161,7 +161,7 @@ class NGProxyService
             'data' => $response
         ]);
 
-        return explode('#', $response)[2];
+        return explode('#', $response)[2] ?? '-1';
     }
 
     protected function getObjectNameForOss(int $songID, string $prefix = 'ngproxy/songs'): string
