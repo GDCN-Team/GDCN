@@ -13,6 +13,7 @@ class ProxyService
     public function getProxyInstance(): PendingRequest
     {
         return Http::asForm()
+            ->withUserAgent(null)
             ->withOptions([
                 'proxy' => $this->proxy_url
             ]);
