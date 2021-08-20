@@ -96,6 +96,8 @@ class NGProxyService
             if ($this->downloadSongThenSaveToOss($songObject[1], $songObject[10])) {
                 $songObject[10] = $this->getFreeDownloadUrl($songObject[1]);
             }
+        } else {
+            $songObject[10] = $this->getFreeDownloadUrl($songObject[1]);
         }
 
         if (!Str::contains($songObject[10], '%3A%2F%2F')) {
