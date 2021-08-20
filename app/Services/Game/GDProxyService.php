@@ -73,12 +73,13 @@ class GDProxyService
     {
         switch ($path) {
             case '/downloadGJLevel22.php':
-                [$levelObject, $levelStringHash, , $moreHash] = explode('#', $response);
+                $parts = explode('#', $response);
 
-                $levelObject = GDObject::split($levelObject, ':');
+                $levelObject = GDObject::split($parts[0], ':');
                 $levelObject[27] = 'Aw==';
+                $parts[0] = GDObject::merge($levelObject, ':');
 
-                $levelHash = implode(',', [
+                $parts[2] = implode(',', [
                     $levelObject[6],
                     $levelObject[18],
                     $levelObject[17],
@@ -89,7 +90,7 @@ class GDProxyService
                     $levelObject[41] ?? 0
                 ]);
 
-                return implode('#', [$levelObject, $levelStringHash, $levelHash, $moreHash]);
+                return implode('#', $parts);
             default:
                 return null;
         }
