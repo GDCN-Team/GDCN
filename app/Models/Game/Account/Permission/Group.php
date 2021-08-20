@@ -56,7 +56,7 @@ class Group extends Model
     public function can(string $flag): bool
     {
         return $this->flags()
-            ->where('flag', $flag)
+            ->where('name', $flag)
             ->exists();
     }
 }
