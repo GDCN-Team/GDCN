@@ -6,15 +6,15 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class FlagAssign
+ * App\Models\Game\Account\Permission\FlagAssign
  *
- * @package App\Models\Game\Account\Permission
  * @property int $id
- * @property int $flag
- * @property int $group
+ * @property Flag $flag
+ * @property Group $group
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|FlagAssign newModelQuery()
@@ -31,8 +31,19 @@ class FlagAssign extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_account_permission_flag_assigns';
+
+    protected $fillable = [
+        'group'
+    ];
+
+    public function flag(): BelongsTo
+    {
+        return $this->belongsTo(Flag::class, 'flag');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'group');
+    }
 }

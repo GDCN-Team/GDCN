@@ -34,6 +34,10 @@ class Flag extends Model
 
     protected $table = 'game_account_permission_flags';
 
+    protected $fillable = [
+        'name'
+    ];
+
     public function assigns(): HasMany
     {
         return $this->hasMany(FlagAssign::class, 'flag');
