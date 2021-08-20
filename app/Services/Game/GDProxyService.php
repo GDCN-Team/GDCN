@@ -4,6 +4,7 @@ namespace App\Services\Game;
 
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\SongGetException;
+use App\Exceptions\Game\SongNotFoundException;
 use GDCN\GDObject;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -16,6 +17,9 @@ class GDProxyService
     {
     }
 
+    /**
+     * @throws SongNotFoundException
+     */
     public function proxy(string $path, array $data = []): string
     {
         if ($result = $this->preProcessRequest($path, $data)) {
@@ -48,6 +52,9 @@ class GDProxyService
         return $response;
     }
 
+    /**
+     * @throws SongNotFoundException
+     */
     protected function preProcessRequest(string $path, array $data = []): ?string
     {
         switch ($path) {
@@ -75,7 +82,7 @@ class GDProxyService
                     $levelObject[6],
                     $levelObject[18],
                     $levelObject[17],
-                    $levelObject[1],
+                    $levelObject[1] ?? $data['levelID'],
                     $levelObject[38],
                     $levelObject[19],
                     '1',
