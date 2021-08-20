@@ -20,6 +20,7 @@ class NGProxyService
 
     /**
      * @throws SongGetException
+     * @throws SongNotFoundException
      */
     public function getSong(int $songID, bool $getFromApi = true): Song
     {
@@ -54,6 +55,7 @@ class NGProxyService
 
     /**
      * @throws SongGetException
+     * @throws SongNotFoundException
      */
     public function getSongInfo(int $songID): string
     {
@@ -62,6 +64,7 @@ class NGProxyService
 
     /**
      * @throws SongGetException
+     * @throws SongNotFoundException
      */
     public function getSongObjectForGD(int $songID): string
     {
@@ -71,6 +74,7 @@ class NGProxyService
 
     /**
      * @throws SongGetException
+     * @throws SongNotFoundException
      */
     public function getSongObjectForGDProxy(int $songID): string
     {
@@ -92,6 +96,10 @@ class NGProxyService
             if ($this->downloadSongThenSaveToOss($songObject[1], $songObject[10])) {
                 $songObject[10] = $this->getFreeDownloadUrl($songObject[1]);
             }
+        }
+
+        if (!Str::contains($songObject[10], '%3A%2F%2F')) {
+            $songObject[10] = urlencode($songObject[10]);
         }
 
         return Song::create([
