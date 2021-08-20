@@ -8,6 +8,7 @@ use App\Models\NGProxy\Song;
 use GDCN\GDObject;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class NGProxyService
 {
@@ -162,6 +163,10 @@ class NGProxyService
 
     protected function downloadSongThenSaveToOss(int $songID, string $url = null): bool|string
     {
+        if (Str::contains($url, '%3A%2F%2F')) {
+            $url = urldecode($url);
+        }
+
         $songBinaryData = $this->GDProxy
             ->proxy
             ->getProxyInstance()
