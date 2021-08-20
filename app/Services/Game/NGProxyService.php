@@ -40,6 +40,10 @@ class NGProxyService
                 }
 
                 $songObject = GDObject::split($songObjectData, '~|~');
+                Log::debug('[NGProxy] Song object parsed.', [
+                    'data' => $songObject
+                ]);
+
                 if (empty($songObject[1]) || empty($songObject[10])) {
                     throw new SongGetException('[NGProxy] Song info missing.');
                 }
