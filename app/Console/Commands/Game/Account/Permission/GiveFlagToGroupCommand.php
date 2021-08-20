@@ -12,8 +12,11 @@ class GiveFlagToGroupCommand extends Command
 
     protected $description = 'Give flag to group.';
 
-    public function handle($name, $flag): int
+    public function handle(): int
     {
+        $name = $this->argument('name');
+        $flag = $this->argument('flag');
+
         $group = Group::whereName($name)
             ->firstOrFail();
 
