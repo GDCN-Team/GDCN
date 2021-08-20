@@ -11,6 +11,7 @@ use App\Presenters\Web\DashboardPresenter;
 use App\Presenters\Web\HomePresenter;
 use App\Presenters\Web\ToolsPresenter;
 use Illuminate\Support\Facades\Route;
+use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,13 @@ Route::group([
     $passwordConfirmMiddleware = 'password.confirm:auth.password.confirm';
 
     Route::get('/', [HomePresenter::class, 'renderHomePage'])->name('home');
+
+    Route::group([
+        'prefix' => 'admin',
+        'as' => 'admin.'
+    ], function () {
+        Route::get('/logs', [LogViewerController::class, 'index'])->middleware('permission_can:ADMIN_VIEW_LOGS')->name('logs');
+    });
 
     Route::group([
         'prefix' => 'auth',
