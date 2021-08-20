@@ -79,16 +79,19 @@ class GDProxyService
                 $levelObject[27] = 'Aw==';
                 $parts[0] = GDObject::merge($levelObject, ':');
 
-                $parts[2] = implode(',', [
-                    $levelObject[6],
-                    $levelObject[18],
-                    $levelObject[17],
-                    $levelObject[1] ?? $data['levelID'],
-                    $levelObject[38],
-                    $levelObject[19],
-                    '1',
-                    $levelObject[41] ?? 0
-                ]);
+                $parts[2] = sha1(
+                    implode(',', [
+                        $levelObject[6],
+                        $levelObject[18],
+                        $levelObject[17],
+                        $levelObject[1] ?? $data['levelID'],
+                        $levelObject[38] ?? 0,
+                        $levelObject[19],
+                        1,
+                        $levelObject[41] ?? 0
+                    ])
+                    . 'xI25fpAapCQg'
+                );
 
                 return implode('#', $parts);
             default:
