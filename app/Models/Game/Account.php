@@ -140,16 +140,9 @@ class Account extends Model implements MustVerifyEmailContract, CanResetPassword
         return self::query()->findMany($friends);
     }
 
-    /**
-     * @return FriendRequest[]|Builder[]|Collection|\Illuminate\Support\Collection
-     */
-    public function getFriendRequestsAttribute()
+    public function permission_group(): HasOneThrough
     {
-        return FriendRequest::query()
-            ->orWhere([
-                'account' => $this->id,
-                'to_account' => $this->id
-            ])->get();
+        return $this->hasOneThrough(Group::class, Assign::class, 'account', 'id', 'id', 'group');
     }
 
     /**
