@@ -3,7 +3,6 @@
 namespace App\Services\Game;
 
 use App\Enums\Game\RewardType;
-use App\Models\Game\User;
 use Exception;
 use GDCN\Hash\Components\Reward as RewardComponent;
 use GDCN\Hash\Components\RewardChk as RewardChkComponent;
@@ -22,7 +21,7 @@ class RewardService
      */
     public function get(RewardType $type, ?string $uuid, string $udid, int $accountID, string $chk): string
     {
-        $user = User::whereUuid($uuid)->firstOrFail();
+        $user = $this->helper->resolveUser($uuid);
 
         $chest1config = config('game.reward.small');
         $chest1time = max(0, (optional($user->score->chest1time)->getTimestamp() ?? 0) + $chest1config['wait'] - time());

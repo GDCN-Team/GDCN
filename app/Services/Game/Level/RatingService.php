@@ -6,7 +6,6 @@ use App\Enums\Game\Level\Rating\SuggestionType;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\RatingSuggestion;
-use App\Models\Game\User;
 use App\Services\Game\HelperService;
 
 class RatingService
@@ -37,7 +36,7 @@ class RatingService
 
     public function suggest_rate(?string $uuid, int $levelID, int $stars): bool
     {
-        $user = User::whereUuid($uuid)->firstOrFail();
+        $user = $this->helper->resolveUser($uuid);
 
         $level = Level::findOrFail($levelID);
         $suggestions = $level->rating_suggestions();
@@ -72,7 +71,7 @@ class RatingService
 
     public function suggest_demon(?string $uuid, int $levelID, int $rating): bool
     {
-        $user = User::whereUuid($uuid)->firstOrFail();
+        $user = $this->helper->resolveUser($uuid);
 
         $level = Level::findOrFail($levelID);
         $suggestions = $level->rating_suggestions();

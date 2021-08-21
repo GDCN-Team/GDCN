@@ -61,7 +61,7 @@ class LevelService
         string  $levelString
     ): ?Level
     {
-        $user = User::whereUuid($uuid)->firstOrFail();
+        $user = $this->helper->resolveUser($uuid);
 
         if (!$levelInfo) {
             \Illuminate\Support\Facades\Log::notice('[Level Upload] Detected Verify Hack', [
@@ -468,8 +468,7 @@ class LevelService
 
     public function delete(?string $uuid, int $levelID): bool
     {
-        return User::whereUuid($uuid)
-            ->firstOrFail()
+        return $this->helper->resolveUser($uuid)
             ->levels()
             ->whereKey($levelID)
             ->delete();
@@ -537,8 +536,7 @@ class LevelService
 
     public function updateDesc(?string $uuid, int $levelID, ?string $desc): bool
     {
-        return User::whereUuid($uuid)
-            ->firstOrFail()
+        return $this->helper->resolveUser($uuid)
             ->levels()
             ->whereKey($levelID)
             ->update([

@@ -9,18 +9,23 @@ use App\Models\Game\Account\Comment as AccountComment;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Comment as LevelComment;
 use App\Models\Game\Log;
-use App\Models\Game\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Request;
 
 class MiscService
 {
+    public function __construct(
+        public HelperService $helper
+    )
+    {
+    }
+
     /**
      * @throws InvalidArgumentException
      */
     public function like(?string $uuid, LikeType $type, int $itemID, bool $like = true): bool
     {
-        $user = User::whereUuid($uuid)->firstOrFail();
+        $user = $this->helper->resolveUser($uuid);
 
         switch ($type->value) {
             case LikeType::LEVEL:

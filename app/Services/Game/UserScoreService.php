@@ -42,13 +42,8 @@ class UserScoreService
     ): UserScore
     {
         /** @var UserScore $score */
-        $score = User::whereUuid($uuid)
-            ->firstOrCreate([
-                'uuid' => $uuid
-            ], [
-                'name' => $name,
-                'udid' => $udid
-            ])->score()
+        $score = $this->helper->resolveUser($uuid, $name, $udid)
+            ->score()
             ->updateOrCreate([], [
                 'game_version' => $gameVersion,
                 'binary_version' => $binaryVersion,
@@ -79,7 +74,7 @@ class UserScoreService
 
     public function get(?string $uuid, string $type, int $count): string
     {
-        $user = User::whereUuid($uuid)->firstOrFail();
+        $user = $this->helper->resolveUser($uuid);
 
         $top = 0;
         switch ($type) {

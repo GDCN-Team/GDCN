@@ -3,7 +3,6 @@
 namespace App\Services\Game;
 
 use App\Models\Game\Challenge;
-use App\Models\Game\User;
 use Exception;
 use GDCN\Hash\Components\Challenge as ChallengeComponent;
 use GDCN\Hash\Components\ChallengeChk as ChallengeChkComponent;
@@ -13,6 +12,12 @@ use Illuminate\Support\Str;
 
 class ChallengeService
 {
+    public function __construct(
+        public HelperService $helper
+    )
+    {
+    }
+
     protected array $aliases = [
         1 => 'orbs',
         2 => 'coins',
@@ -24,7 +29,7 @@ class ChallengeService
      */
     public function get(?string $uuid, string $udid, int $accountID, string $chk): string
     {
-        $user = User::whereUuid($uuid)->firstOrFail();
+        $user = $this->helper->resolveUser($uuid);
 
         $challenges = Challenge::whereDate('created_at', now())
             ->take(3)
