@@ -292,7 +292,7 @@ class LevelService
             $query->where('two_player', true);
         }
 
-        $hash = null;
+        $hash = '';
         $users = [];
         $songs = [];
 
