@@ -2,21 +2,21 @@
 
 namespace App\Models\Game\Account;
 
-use App\Models\Game\Account as AccountModel;
+use App\Models\Game\Account;
 use Database\Factories\Game\Account\FriendFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Friend
+ * App\Models\Game\Account\Friend
  *
- * @package App\Models\Game\Account
  * @property int $id
- * @property int $account
- * @property int $target_account
+ * @property Account $account
+ * @property Account $target_account
  * @property int $new
  * @property int $target_new
  * @property Carbon|null $created_at
@@ -38,34 +38,17 @@ class Friend extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_account_friends';
 
-    /**
-     * @var string[]
-     */
-    protected $fillable = [
-        'new',
-        'target_new'
-    ];
+    protected $fillable = ['target_account'];
 
-    /**
-     * @var string[]
-     */
-    protected $casts = [
-        'account' => 'integer',
-        'target_account' => 'integer'
-    ];
-
-    /**
-     * @param int|AccountModel $account1
-     * @param int|AccountModel $account2
-     * @return Builder
-     */
-    public function findEach(int $account1, int $account2): Builder
+    public function account(): BelongsTo
     {
-        return self::query()->where(['account' => $account1->id ?? $account1, 'target_account' => $account2->id ?? $account2])->orWhere('target_account', $account1->id ?? $account1)->where('account', $account2->id ?? $account2);
+        return $this->belongsTo(Account::class, 'account');
+    }
+
+    public function target_account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'target_account');
     }
 }

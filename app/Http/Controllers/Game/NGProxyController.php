@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Game;
 
 use App\Exceptions\Game\SongGetException;
+use App\Exceptions\Game\SongNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Services\Game\NGProxyService;
 
@@ -17,6 +18,7 @@ class NGProxyController extends Controller
 
     /**
      * @throws SongGetException
+     * @throws SongNotFoundException
      */
     public function info(int $songID): string
     {
@@ -25,6 +27,7 @@ class NGProxyController extends Controller
 
     /**
      * @throws SongGetException
+     * @throws SongNotFoundException
      */
     public function object(int $songID): string
     {

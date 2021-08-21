@@ -5,9 +5,9 @@ namespace Tests\Feature\Game\Account;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Comment;
 use Base64Url\Base64Url;
+use GDCN\Hash\Components\CommentUploadChk as CommentUploadChkComponent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 use function config;
 use function route;
@@ -98,7 +98,7 @@ class CommentTest extends TestCase
                 'comment' => $content,
                 'secret' => 'Wmfd2893gb7',
                 'cType' => 1,
-                'chk' => Str::random()
+                'chk' => app(CommentUploadChkComponent::class)->encode($account->name, 1, $content)
             ]
         );
 

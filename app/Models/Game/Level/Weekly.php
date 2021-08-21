@@ -2,19 +2,20 @@
 
 namespace App\Models\Game\Level;
 
+use App\Models\Game\Level;
 use Database\Factories\Game\Level\WeeklyFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Weekly
+ * App\Models\Game\Level\Weekly
  *
- * @package App\Models\Game\Level
  * @property int $id
- * @property int $level
+ * @property Level $level
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $time
@@ -33,8 +34,10 @@ class Weekly extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_weekly_levels';
+
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(Level::class, 'level');
+    }
 }

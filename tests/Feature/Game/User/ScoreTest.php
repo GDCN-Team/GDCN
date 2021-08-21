@@ -4,7 +4,9 @@ namespace Tests\Feature\Game\User;
 
 use App\Models\Game\Account;
 use App\Models\Game\Account\Friend;
+use App\Models\Game\User;
 use App\Models\Game\UserScore;
+use GDCN\Hash\Components\UpdateUserScoreSeed2;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -51,7 +53,7 @@ class ScoreTest extends TestCase
                 'accSpider' => 0,
                 'accExplosion' => 0,
                 'seed' => Str::random(),
-                'seed2' => 'AFAKDwIAVAJUBl1UVFUFDgILA1IODQUHAAsDU1EECwQDDwUMDVEBCQ=='
+                'seed2' => app(UpdateUserScoreSeed2::class)->encode(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             ]
         );
 
@@ -96,7 +98,7 @@ class ScoreTest extends TestCase
                 'accSpider' => 0,
                 'accExplosion' => 0,
                 'seed' => Str::random(),
-                'seed2' => Str::random()
+                'seed2' => app(UpdateUserScoreSeed2::class)->encode($account->id, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             ]
         );
 
@@ -116,14 +118,17 @@ class ScoreTest extends TestCase
         /** @var UserScore $score */
         $score = UserScore::factory()->create();
 
+        /** @var User $user */
+        $user = $score->getRelationValue('user');
+
         $request = $this->post(
             route('game.score.get'),
             [
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'udid' => 'S' . mt_rand(),
-                'uuid' => 0,
+                'udid' => $user?->udid,
+                'uuid' => $user?->id,
                 'type' => 'top',
                 'count' => 100,
                 'secret' => 'Wmfd2893gb7'
@@ -131,7 +136,7 @@ class ScoreTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("7:{$score->owner->uuid}");
+        $request->assertSee("7:{$score->getRelationValue('user')->uuid}");
     }
 
     public function test_get_top_use_account(): void
@@ -199,6 +204,8 @@ class ScoreTest extends TestCase
         /** @var UserScore $score */
         $score = UserScore::factory()->create();
 
+        /** @var User $user */
+        $user = $score->getRelationValue('user');
 
         $request = $this->post(
             route('game.score.get'),
@@ -206,7 +213,7 @@ class ScoreTest extends TestCase
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'udid' => 'S' . mt_rand(),
+                'udid' => $user?->udid,
                 'uuid' => 0,
                 'type' => 'relative',
                 'count' => 50,
@@ -215,7 +222,7 @@ class ScoreTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("7:{$score->owner->uuid}");
+        $request->assertSee("7:{$score->getRelationValue('user')->uuid}");
     }
 
     public function test_get_relative_use_account(): void
@@ -234,7 +241,7 @@ class ScoreTest extends TestCase
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'accountID' => $score->owner->account->id,
+                'accountID' => $score->getRelationValue('user')->account->id,
                 'gjp' => 'AgUGBgMF',
                 'type' => 'relative',
                 'count' => 50,
@@ -243,7 +250,7 @@ class ScoreTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("7:{$score->owner->uuid}");
+        $request->assertSee("7:{$score->getRelationValue('user')->uuid}");
     }
 
     public function test_get_creators(): void
@@ -257,8 +264,8 @@ class ScoreTest extends TestCase
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'udid' => 'S' . mt_rand(),
-                'uuid' => 0,
+                'udid' => $score->getRelationValue('user')?->udid,
+                'uuid' => $score->getRelationValue('user')?->id,
                 'type' => 'creators',
                 'count' => 100,
                 'secret' => 'Wmfd2893gb7'
@@ -266,7 +273,7 @@ class ScoreTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("7:{$score->owner->uuid}");
+        $request->assertSee("7:{$score->getRelationValue('user')->uuid}");
     }
 
     public function test_get_creators_use_account(): void
@@ -285,7 +292,7 @@ class ScoreTest extends TestCase
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'accountID' => $score->owner->account->id,
+                'accountID' => $score->getRelationValue('user')->account->id,
                 'gjp' => 'AgUGBgMF',
                 'type' => 'creators',
                 'count' => 100,
@@ -294,6 +301,6 @@ class ScoreTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("7:{$score->owner->uuid}");
+        $request->assertSee("7:{$score->getRelationValue('user')->uuid}");
     }
 }

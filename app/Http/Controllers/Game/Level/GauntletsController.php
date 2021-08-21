@@ -8,9 +8,6 @@ use App\Services\Game\Level\GauntletService;
 
 class GauntletsController extends Controller
 {
-    /**
-     * @param GauntletService $service
-     */
     public function __construct(
         public GauntletService $service
     )
@@ -18,10 +15,7 @@ class GauntletsController extends Controller
     }
 
     /**
-     * @param GauntletGetRequest $request
-     * @return string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/getGJGauntlets21
+     * @link http://docs.gdprogra.me/#/endpoints/getGJGauntlets21
      */
     public function get(GauntletGetRequest $request): string
     {

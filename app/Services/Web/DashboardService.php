@@ -2,7 +2,7 @@
 
 namespace App\Services\Web;
 
-use App\Enums\Game\Log\Types;
+use App\Enums\Game\LogType;
 use App\Exceptions\Web\Dashboard\SettingUpdateException;
 use App\Models\Game\Account;
 use App\Models\Game\Log;
@@ -99,7 +99,7 @@ class DashboardService
             throw new SettingUpdateException('啥也没改...');
         } else {
             $log = Log::where([
-                'type' => Types::UPDATE_PROFILE,
+                'type' => LogType::UPDATE_PROFILE,
                 'value' => "$name:$email",
                 'user' => $account->user->id,
                 'ip' => Request::ip()
@@ -126,7 +126,7 @@ class DashboardService
                 }
 
                 $log = new Log();
-                $log->type = Types::UPDATE_PROFILE;
+                $log->type = LogType::UPDATE_PROFILE;
                 $log->value = "$name:$email";
                 $log->user = $account->user->id;
                 $log->ip = Request::ip();

@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Account;
 
+use App\Casts\Base64UrlCast;
 use App\Models\Game\Account;
 use Database\Factories\Game\Account\MessageFactory;
 use Eloquent;
@@ -12,18 +13,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Message
+ * App\Models\Game\Account\Message
  *
- * @package App\Models\Game\Account
  * @property int $id
- * @property int $account
- * @property int $to_account
+ * @property Account $account
+ * @property Account $to_account
  * @property string $subject
  * @property string $body
  * @property int $readed
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Account $sender
  * @method static MessageFactory factory(...$parameters)
  * @method static Builder|Message newModelQuery()
  * @method static Builder|Message newQuery()
@@ -42,34 +41,22 @@ class Message extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_account_messages';
 
-    /**
-     * @var string[]
-     */
     protected $casts = [
-        'account' => 'integer',
-        'to_account' => 'integer'
+        'subject' => Base64UrlCast::class,
+        'body' => Base64UrlCast::class
     ];
 
-    /**
-     * @param int $account1
-     * @param int $account2
-     * @return Builder
-     */
-    public function findEach(int $account1, int $account2): Builder
+    protected $fillable = ['to_account', 'subject', 'body', 'readed'];
+
+    public function account(): BelongsTo
     {
-        return self::query()->where(['account' => $account1->id ?? $account1, 'to_account' => $account2->id ?? $account2])->orWhere('to_account', $account1->id ?? $account1)->where('account', $account2->id ?? $account2);
+        return $this->belongsTo(Account::class, 'account');
     }
 
-    /**
-     * @return BelongsTo
-     */
-    public function sender(): BelongsTo
+    public function to_account(): BelongsTo
     {
-        return $this->belongsTo(Account::class, 'id', 'account');
+        return $this->belongsTo(Account::class, 'to_account');
     }
 }

@@ -2,23 +2,22 @@
 
 namespace App\Models\Game\Account;
 
+use App\Casts\Base64UrlCast;
 use App\Models\Game\Account;
 use Database\Factories\Game\Account\FriendRequestFactory;
 use Eloquent;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class FriendRequest
+ * App\Models\Game\Account\FriendRequest
  *
- * @package App\Models\Game\Account
  * @property int $id
- * @property int $account
- * @property int $to_account
+ * @property Account $account
+ * @property Account $to_account
  * @property string|null $comment
  * @property int $new
  * @property Carbon|null $created_at
@@ -40,56 +39,21 @@ class FriendRequest extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_account_friend_requests';
 
-    /**
-     * @var string[]
-     */
     protected $casts = [
-        'account' => 'integer',
-        'to_account' => 'integer'
+        'comment' => Base64UrlCast::class
     ];
 
-    /**
-     * @param int $account1
-     * @param int $account2
-     * @return Builder
-     */
-    public function findEach(int $account1, int $account2): Builder
+    protected $fillable = ['to_account', 'comment'];
+
+    public function account(): BelongsTo
     {
-        return self::query()->where(['account' => $account1->id ?? $account1, 'to_account' => $account2->id ?? $account2])->orWhere('to_account', $account1->id ?? $account1)->where('account', $account2->id ?? $account2);
+        return $this->belongsTo(Account::class, 'account');
     }
 
-    /**
-     * @param $isSender
-     * @return Account|Account[]|Builder|Builder[]|Collection|Model|mixed|null
-     */
-    public function getTarget($isSender)
+    public function to_account(): BelongsTo
     {
-        $accountID = !$isSender ? $this->account : $this->to_account;
-        return Account::query()->find($accountID);
-    }
-
-    /**
-     * @return bool
-     */
-    public function accept(): bool
-    {
-        try {
-            $this->delete();
-        } catch (Exception $e) {
-            return false;
-        }
-
-        Friend::query()
-            ->firstOrCreate([
-                'account' => $this->account,
-                'target_account' => $this->to_account
-            ]);
-
-        return true;
+        return $this->belongsTo(Account::class, 'to_account');
     }
 }

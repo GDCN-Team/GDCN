@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Game;
 
-use App\Models\Game\Song;
+use App\Models\NGProxy\Song;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -29,8 +29,8 @@ class SongTest extends TestCase
             return in_array(
                 $request->url(),
                 [
-                    'https://dl.geometrydashchinese.com/getGJSongInfo.php',
-                    'https://dl.geometrydashchinese.com/getGJLevels21.php'
+                    'http://www.boomlings.com/database/getGJSongInfo.php',
+                    'http://www.boomlings.com/database/getGJLevels21.php'
                 ]
             );
         });

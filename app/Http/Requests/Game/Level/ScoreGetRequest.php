@@ -5,24 +5,11 @@ namespace App\Http\Requests\Game\Level;
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
+use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
 
 class ScoreGetRequest extends Request
 {
-    /**
-     * @inerhitDoc
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return $this->validateAccountGJP();
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -30,10 +17,10 @@ class ScoreGetRequest extends Request
             'binaryVersion' => 'required',
             'gdw' => 'required',
             'accountID' => Rule::exists(Account::class, 'id'),
-            'gjp' => 'required',
+            'gjp' => new ValidateAccountCreditRule(),
             'levelID' => Rule::exists(Level::class, 'id'),
             'percent' => 'between:0,100',
-            'secret' => Rule::in('Wmfd2893gb7'),
+            'secret' => Rule::in(['Wmfd2893gb7']),
             'type' => Rule::in([0, 1, 2]),
             's1' => 'gte:8354', // User's attempts + 8354
             's2' => 'gte:3991', // User's jumps + 3991
@@ -45,7 +32,7 @@ class ScoreGetRequest extends Request
             's8' => 'required', // Attempt Count
             's9' => 'gte:5819', // The amount of coins the user got + 5819
             's10' => 'required', // Timely ID
-            'chk' => 'required_with:s7'
+            'chk' => 'required_with:s7' # TODO: Validate Get Level Score Chk
         ];
     }
 }

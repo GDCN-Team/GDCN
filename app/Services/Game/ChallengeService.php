@@ -2,19 +2,15 @@
 
 namespace App\Services\Game;
 
-use App\Exceptions\Game\ChallengeGenerateException;
-use App\Exceptions\Game\InvalidArgumentException;
-use App\Exceptions\Game\UserNotFoundException;
 use App\Models\Game\Challenge;
+use App\Models\Game\User;
 use Exception;
-use GDCN\Hash\Hasher;
+use GDCN\Hash\Components\Challenge as ChallengeComponent;
+use GDCN\Hash\Components\ChallengeChk as ChallengeChkComponent;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
-/**
- * Class ChallengeService
- * @package App\Services\Game
- */
 class ChallengeService
 {
     protected array $aliases = [
@@ -24,94 +20,66 @@ class ChallengeService
     ];
 
     /**
-     * ChallengeService constructor.
-     * @param Hasher $hash
+     * @throws Exception
      */
-    public function __construct(
-        public Hasher $hash
-    )
+    public function get(?string $uuid, string $udid, int $accountID, string $chk): string
     {
-    }
+        $user = User::whereUuid($uuid)->firstOrFail();
 
-    /**
-     * @param $user
-     * @param string $udid
-     * @param int $accountID
-     * @param string $chk
-     * @param bool $noCycle
-     * @return string
-     * @throws ChallengeGenerateException
-     * @throws InvalidArgumentException
-     * @throws UserNotFoundException
-     */
-    public function get($user, string $udid, int $accountID, string $chk, bool $noCycle = false): string
-    {
-        if (!$user) {
-            throw new UserNotFoundException();
-        }
-
-        /* Generate challenges */
-        $today = Carbon::today();
-        $challenges = Challenge::query()
-            ->where('updated_at', '>', $today)
+        $challenges = Challenge::whereDate('created_at', now())
             ->take(3)
             ->get();
 
-        $challengeCount = $challenges->count();
-        if ($challengeCount < 3) {
-            $need = (3 - $challengeCount);
+        if ($challenges->count() < 3) {
+            $need = 3 - $challenges->count();
             for ($i = 0; $i < $need; $i++) {
-                try {
-                    $type = random_int(1, 3);
+                $type = random_int(1, 3);
+                $config = config('game.challenge.' . $this->aliases[$type]);
+                $collect = random_int($config['collect']['min'], $config['collect']['max']);
+                [$every, $give] = $config['proportion'];
+                $reward = round($collect / $every) * $give;
 
-                    $name = $this->aliases[$type];
-
-                    $config = config('game.challenge.' . $name);
-                    $collectConfig = $config['collect'];
-                    [$every, $reward] = $config['proportion'];
-
-                    $collect = random_int($collectConfig['min'], $collectConfig['max']);
-                    $challenge = new Challenge();
-                    $challenge->type = $type;
-                    $challenge->name = $name;
-                    $challenge->collect_count = $collect;
-                    $challenge->reward_count = ($collect / $every) * $reward;
-                    $challenge->save();
-                } catch (Exception) {
-                    throw new InvalidArgumentException('Unknown Exception');
-                }
-            }
-
-            if ($noCycle) {
-                throw new ChallengeGenerateException();
-            } else {
-                return $this->get($user, $udid, $accountID, $chk, true);
+                $challenges->push(
+                    Challenge::create([
+                        'type' => $type,
+                        'name' => Arr::random($config['names']),
+                        'collect_count' => $collect,
+                        'reward_count' => $reward
+                    ])
+                );
             }
         }
 
+        $challengeComponent = app(ChallengeComponent::class);
         $result = implode(':', [
             Str::random(5),
             $user->id,
-            $this->hash->decodeChallengeChk($chk),
+            app(ChallengeChkComponent::class)->decode($chk),
             $udid,
             $accountID,
-            Carbon::now()->secondsUntilEndOfDay(),
+            app(Carbon::class)->secondsUntilEndOfDay(),
             $this->generateChallengeInfo($challenges[0]),
             $this->generateChallengeInfo($challenges[1]),
             $this->generateChallengeInfo($challenges[2])
         ]);
 
-        $result = $this->hash->encodeChallengeString($result);
-        return Str::random(5) . $result . '|' . $this->hash->generateHashForChallenge($result);
+        return implode('|', [
+            implode(null, [
+                Str::random(5),
+                $challengeString = $challengeComponent->encode($result)
+            ]),
+            $challengeComponent->generateHash($challengeString)
+        ]);
     }
 
-    /**
-     * @param Challenge $challenge
-     * @return string
-     */
     public function generateChallengeInfo(Challenge $challenge): string
     {
-        $challenge = $challenge->toArray();
-        return "{$challenge['id']},{$challenge['type']},{$challenge['collect_count']},{$challenge['reward_count']},{$challenge['name']}";
+        return implode(',', [
+            $challenge->id,
+            $challenge->type,
+            $challenge->collect_count,
+            $challenge->reward_count,
+            $challenge->name
+        ]);
     }
 }

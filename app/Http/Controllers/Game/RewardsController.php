@@ -8,12 +8,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Reward\GetRequest;
 use App\Services\Game\RewardService;
 use Exception;
+use Illuminate\Support\Arr;
 
 class RewardsController extends Controller
 {
-    /**
-     * @param RewardService $service
-     */
     public function __construct(
         public RewardService $service
     )
@@ -21,20 +19,15 @@ class RewardsController extends Controller
     }
 
     /**
-     * @param GetRequest $request
-     * @return int|string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/getGJRewards
+     * @link http://docs.gdprogra.me/#/endpoints/getGJRewards
      */
     public function get(GetRequest $request): int|string
     {
         try {
             $data = $request->validated();
             return $this->service->get(
-                RewardType::fromValue((int)$data['rewardType']),
-                $request->getPlayer(),
-                $data['gameVersion'],
-                $data['binaryVersion'],
+                RewardType::fromValue($data['rewardType']),
+                Arr::getAny($data, ['accountID', 'udid']),
                 $data['udid'],
                 $data['accountID'] ?? 0,
                 $data['chk']

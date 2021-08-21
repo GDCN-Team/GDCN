@@ -10,14 +10,10 @@ use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Services\Game\AccountService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 class AccountsController extends Controller
 {
-    /**
-     * @param AccountService $service
-     */
     public function __construct(
         public AccountService $service
     )
@@ -25,37 +21,18 @@ class AccountsController extends Controller
     }
 
     /**
-     * @param RegisterRequest $request
-     * @return int
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/accounts/registerGJAccount
+     * @link http://docs.gdprogra.me/#/endpoints/accounts/registerGJAccount
      */
     public function register(RegisterRequest $request): int
     {
-        /**
-         * -1: Something went wrong
-         * -2: Username is already in use
-         * -3: Email is already in use
-         * -4: Username is invalid
-         * -5: Password is invalid
-         * -6: Email is invalid
-         * -7: Passwords do not match
-         * -8: Too short. Minimum 6 characters (Password)
-         * -9: Too short. Minimum 3 characters (Username)
-         */
-
         $data = $request->validated();
-        if ($this->service->register($data['userName'], $data['password'], $data['email'])) {
-            return ResponseCode::ACCOUNT_REGISTER_SUCCESS;
-        } else {
+        if (!$this->service->register($data['userName'], $data['password'], $data['email'])) {
             return ResponseCode::ACCOUNT_REGISTER_FAILED;
         }
+
+        return ResponseCode::ACCOUNT_REGISTER_SUCCESS;
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function verify(Request $request): RedirectResponse
     {
         $string = $request->get('_');
@@ -66,25 +43,24 @@ class AccountsController extends Controller
     }
 
     /**
-     * @param LoginRequest $request
-     * @return int|string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/accounts/loginGJAccount
+     * @link http://docs.gdprogra.me/#/endpoints/accounts/loginGJAccount
      */
     public function login(LoginRequest $request): int|string
     {
         $data = $request->validated();
-        if ($this->service->login($data['userName'], $data['password'], $data['udid'])) {
-            /** @var Account $account */
-            $account = Auth::user();
-
-            if (!$account->hasVerifiedEmail()) {
-                return ResponseCode::ACCOUNT_LOGIN_ACCOUNT_NOT_VERIFIED;
-            }
-
-            return $account->id . ',' . $account->user->id;
+        if (!$this->service->login($data['userName'], $data['password'], $data['udid'])) {
+            return ResponseCode::ACCOUNT_LOGIN_FAILED;
         }
 
-        return ResponseCode::ACCOUNT_LOGIN_FAILED;
+        $account = Account::whereName($data['userName'])->firstOrFail();
+        if (empty($account->user)) {
+            return ResponseCode::USER_NOT_FOUND;
+        }
+
+        if (!$account->hasVerifiedEmail()) {
+            return ResponseCode::ACCOUNT_LOGIN_ACCOUNT_NOT_VERIFIED;
+        }
+
+        return $account->id . ',' . $account->user->id;
     }
 }

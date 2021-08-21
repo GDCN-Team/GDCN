@@ -5,23 +5,11 @@ namespace App\Http\Requests\Game\Account\Message;
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Message;
+use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
 
 class DownloadRequest extends Request
 {
-    /**
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return $this->validateAccountGJP();
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -29,13 +17,10 @@ class DownloadRequest extends Request
             'binaryVersion' => 'required',
             'gdw' => 'required',
             'accountID' => Rule::exists(Account::class, 'id'),
-            'gjp' => 'required',
+            'gjp' => new ValidateAccountCreditRule(),
             'messageID' => Rule::exists(Message::class, 'id'),
-            'secret' => Rule::in('Wmfd2893gb7'),
-            'isSender' => [
-                'sometimes',
-                'boolean'
-            ]
+            'secret' => Rule::in(['Wmfd2893gb7']),
+            'isSender' => 'sometimes|boolean'
         ];
     }
 }

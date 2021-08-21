@@ -3,54 +3,49 @@
 namespace App\Services\Game\Account;
 
 use App\Services\Game\StorageService;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Class SaveDataService
- * @package App\Services\Game\Account
- */
 class SaveDataService
 {
-
-    /**
-     * SaveDataService constructor.
-     * @param StorageService $storage
-     */
     public function __construct(
         protected StorageService $storage
     )
     {
     }
 
-    /**
-     * @param string $userName
-     * @param string $saveData
-     * @return bool
-     */
     public function save(string $userName, string $saveData): bool
     {
+        Log::channel('gdcn')
+            ->info('[Account SaveData System] Action: Save Data', [
+                'userName' => $userName
+            ]);
+
+        Log::channel('debug')
+            ->debug('[Account SaveData System] Action: Save Data', [
+                'userName' => $userName,
+                'saveData' => $saveData
+            ]);
+
         return $this->storage->put(
-            $this->generateFileName($userName),
+            $this->getObjectNameForOss($userName),
             $saveData
         );
     }
 
-    /**
-     * @param string $userName
-     * @return string
-     */
-    protected function generateFileName(string $userName): string
-    {
-        return 'gdcn/saveData/' . $userName . '.dat';
-    }
-
-    /**
-     * @param string $userName
-     * @return string|null
-     */
     public function load(string $userName): ?string
     {
+        Log::channel('gdcn')
+            ->info('[Account SaveData System] Action: Load Data', [
+                'userName' => $userName
+            ]);
+
         return $this->storage->get(
-            $this->generateFileName($userName)
+            $this->getObjectNameForOss($userName)
         );
+    }
+
+    protected function getObjectNameForOss(string $userName): string
+    {
+        return 'gdcn/saveData/' . $userName . '.dat';
     }
 }

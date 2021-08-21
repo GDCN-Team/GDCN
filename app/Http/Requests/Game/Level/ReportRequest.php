@@ -8,22 +8,11 @@ use Illuminate\Validation\Rule;
 
 class ReportRequest extends Request
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
-            'levelID' => [
-                'required',
-                Rule::exists(Level::class, 'id')
-            ],
-            'secret' => [
-                'required',
-                Rule::in('Wmfd2893gb7')
-            ]
+            'levelID' => Rule::exists(Level::class, 'id'),
+            'secret' => Rule::in(['Wmfd2893gb7'])
         ];
     }
 }

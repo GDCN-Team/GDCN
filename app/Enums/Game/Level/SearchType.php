@@ -4,10 +4,6 @@ namespace App\Enums\Game\Level;
 
 use BenSampo\Enum\Enum;
 
-/**
- * Class SearchType
- * @package App\Enums\Game\Level
- */
 final class SearchType extends Enum
 {
     public const SEARCH = 0;

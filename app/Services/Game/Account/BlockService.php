@@ -4,66 +4,47 @@ namespace App\Services\Game\Account;
 
 use App\Models\Game\Account;
 use App\Models\Game\Account\Block;
-use App\Repositories\Game\Account\FriendRepository;
-use App\Repositories\Game\Account\FriendRequestRepository;
-use App\Repositories\Game\Account\MessageRepository;
-use App\Services\Game\HelperService;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Class BlockService
- * @package App\Services\Game
- */
 class BlockService
 {
-    /**
-     * BlockService constructor.
-     * @param HelperService $helper
-     * @param FriendRepository $friendRepository
-     * @param MessageRepository $messageRepository
-     * @param FriendRequestRepository $friendRequestRepository
-     */
-    public function __construct(
-        protected HelperService $helper,
-        protected FriendRepository $friendRepository,
-        protected MessageRepository $messageRepository,
-        protected FriendRequestRepository $friendRequestRepository
-    )
+    public function block(int $accountID, int $targetAccountID): Block
     {
-    }
+        /** @var Block $block */
+        $block = Account::findOrFail($accountID)
+            ->blocks()
+            ->firstOrCreate([
+                'target_account' => $targetAccountID
+            ]);
 
-    /**
-     * @param int|Account $account
-     * @param int|Account $targetAccount
-     * @return Block
-     */
-    public function block(Account|int $account, Account|int $targetAccount): Block
-    {
-        $accountID = $this->helper->getID($account);
-        $targetAccountID = $this->helper->getID($targetAccount);
+        Log::channel('gdcn')
+            ->notice('[Account Block System] Action: Blocked', [
+                'accountID' => $accountID,
+                'targetAccountID' => $targetAccountID
+            ]);
 
-        // Delete messages, friend & friend requests
-        $this->friendRepository->between($accountID, $targetAccountID)->delete();
-        $this->messageRepository->between($accountID, $targetAccountID)->delete();
-        $this->friendRequestRepository->between($accountID, $targetAccountID)->delete();
+        Log::channel('debug')
+            ->debug('[Account Block System] Action: Blocked', [
+                'accountID' => $accountID,
+                'targetAccountID' => $targetAccountID,
+                'model' => $block->toArray()
+            ]);
 
-        $block = new Block();
-        $block->account = $accountID;
-        $block->target_account = $targetAccountID;
         $block->save();
-
         return $block;
     }
 
-    /**
-     * @param int|Account $account
-     * @param int|Account $targetAccount
-     * @return mixed
-     */
-    public function unblock(Account|int $account, Account|int $targetAccount): mixed
+    public function unblock(int $accountID, int $targetAccountID): bool
     {
-        return Block::where([
-            'account' => $this->helper->getID($account),
-            'target_account' => $this->helper->getID($targetAccount)
-        ])->delete();
+        Log::channel('gdcn')
+            ->notice('[Account Block System] Action: UnBlocked', [
+                'accountID' => $accountID,
+                'targetAccountID' => $targetAccountID
+            ]);
+
+        return Account::findOrFail($accountID)
+            ->blocks()
+            ->where('target_account', $targetAccountID)
+            ->delete();
     }
 }

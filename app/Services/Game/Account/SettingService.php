@@ -3,46 +3,57 @@
 namespace App\Services\Game\Account;
 
 use App\Models\Game\Account;
-use App\Models\Game\Account\Setting as AccountSetting;
-use App\Services\Game\HelperService;
+use App\Models\Game\Account\Setting;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Class SettingService
- * @package App\Services\Game\Account
- */
 class SettingService
 {
-    /**
-     * SettingService constructor.
-     * @param HelperService $helper
-     */
-    public function __construct(
-        protected HelperService $helper
-    )
+    public function update(
+        int     $accountID,
+        int     $messageState,
+        bool    $friendRequestState,
+        int     $commentState,
+        ?string $youtube,
+        ?string $twitter,
+        ?string $twitch
+    ): Setting
     {
-    }
+        /** @var Setting $setting */
+        $setting = Account::findOrFail($accountID)
+            ->setting()
+            ->updateOrCreate([], [
+                'message_state' => $messageState,
+                'friend_request_state' => $friendRequestState,
+                'comment_history_state' => $commentState,
+                'youtube' => $youtube,
+                'twitter' => $twitter,
+                'twitch' => $twitch
+            ]);
 
-    /**
-     * @param int|Account $account
-     * @param int $messageState
-     * @param bool $friendRequestState
-     * @param int $commentState
-     * @param string|null $youtube
-     * @param string|null $twitter
-     * @param string|null $twitch
-     * @return bool
-     */
-    public function update(Account|int $account, int $messageState, bool $friendRequestState, int $commentState, ?string $youtube, ?string $twitter, ?string $twitch): bool
-    {
-        $account = $this->helper->getModel($account, Account::class);
-        $setting = $account->setting ?? new AccountSetting();
-        $setting->account = $account->id;
-        $setting->message_state = $messageState;
-        $setting->friend_request_state = $friendRequestState;
-        $setting->comment_history_state = $commentState;
-        $setting->youtube = $youtube;
-        $setting->twitter = $twitter;
-        $setting->twitch = $twitch;
-        return $setting->save();
+        Log::channel('gdcn')
+            ->info('[Account Setting System] Action: Update Setting', [
+                'accountID' => $accountID,
+                'messageState' => $messageState,
+                'friendRequestState' => $friendRequestState,
+                'commentState' => $commentState,
+                'youtube' => $youtube,
+                'twitter' => $twitch,
+                'twitch' => $twitch
+            ]);
+
+        Log::channel('debug')
+            ->debug('[Account Setting System] Action: Update Setting', [
+                'accountID' => $accountID,
+                'messageState' => $messageState,
+                'friendRequestState' => $friendRequestState,
+                'commentState' => $commentState,
+                'youtube' => $youtube,
+                'twitter' => $twitch,
+                'twitch' => $twitch,
+                'model' => $setting
+            ]);
+
+        $setting->save();
+        return $setting;
     }
 }

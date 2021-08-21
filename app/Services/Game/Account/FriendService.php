@@ -2,39 +2,26 @@
 
 namespace App\Services\Game\Account;
 
-use App\Events\FriendRemoved;
-use App\Models\Game\Account;
-use App\Repositories\Game\Account\FriendRepository;
+use App\Models\Game\Account\Friend;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Class FriendService
- * @package App\Services\Game\Account
- */
 class FriendService
 {
-    /**
-     * FriendService constructor.
-     * @param FriendRepository $repository
-     */
-    public function __construct(
-        protected FriendRepository $repository
-    )
+    public function remove(int $accountID, int $targetAccountID): bool
     {
-    }
+        Log::channel('gdcn')
+            ->info('[Account Friend System] Action: Remove Friend', [
+                'accountID' => $accountID,
+                'targetAccountID' => $targetAccountID
+            ]);
 
-    /**
-     * @param int|Account $account
-     * @param int|Account $targetAccount
-     * @return mixed
-     */
-    public function remove(Account|int $account, Account|int $targetAccount): mixed
-    {
-        $friend = $this->repository->between($account, $targetAccount)->first();
-        if (!$result = $friend->delete()) {
-            return $result;
-        }
-
-        event(new FriendRemoved($friend));
-        return $result;
+        return Friend::where([
+            'account' => $accountID,
+            'target_account' => $targetAccountID
+        ])->orWhere([
+            'account' => $targetAccountID
+        ])->where([
+            'target_account' => $accountID
+        ])->delete();
     }
 }

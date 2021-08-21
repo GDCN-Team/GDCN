@@ -2,20 +2,15 @@
 
 namespace App\Http\Controllers\Game;
 
+use App\Exceptions\Game\SongGetException;
 use App\Exceptions\Game\SongNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Song\GetRequest;
 use App\Http\Requests\Game\Song\TopArtistsGetRequest;
 use App\Services\Game\SongService;
-use Modules\NGProxy\Exceptions\SongDisabledException;
-use Modules\NGProxy\Exceptions\SongGetException;
-use Modules\Proxy\Exceptions\ProxyFailedException;
 
 class SongsController extends Controller
 {
-    /**
-     * @param SongService $service
-     */
     public function __construct(
         public SongService $service
     )
@@ -23,11 +18,9 @@ class SongsController extends Controller
     }
 
     /**
-     * @param GetRequest $request
-     * @return int|string
-     *
+     * @link http://docs.gdprogra.me/#/endpoints/getGJSongInfo
+     * @throws SongGetException
      * @throws SongNotFoundException
-     * @see http://docs.gdprogra.me/#/endpoints/getGJSongInfo
      */
     public function get(GetRequest $request): int|string
     {
@@ -36,10 +29,7 @@ class SongsController extends Controller
     }
 
     /**
-     * @param TopArtistsGetRequest $request
-     * @return string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/getGJTopArtists
+     * @link http://docs.gdprogra.me/#/endpoints/getGJTopArtists
      */
     public function getTopArtists(TopArtistsGetRequest $request): string
     {

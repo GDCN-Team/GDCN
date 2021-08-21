@@ -7,11 +7,6 @@ use Illuminate\Validation\Rule;
 
 class SearchRequest extends Request
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -19,9 +14,9 @@ class SearchRequest extends Request
             'binaryVersion' => 'required',
             'gdw' => 'required',
             'str' => 'required',
-            'page' => 'required',
-            'total' => 'required_with:page',
-            'secret' => Rule::in('Wmfd2893gb7')
+            'page' => 'integer',
+            'total' => 'nullable',
+            'secret' => Rule::in(['Wmfd2893gb7'])
         ];
     }
 }

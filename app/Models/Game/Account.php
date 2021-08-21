@@ -2,35 +2,34 @@
 
 namespace App\Models\Game;
 
-use App\Exceptions\Game\InvalidArgumentException;
-use App\Game\AccountFriendRequestsManager;
-use App\Game\AccountFriendsManager;
-use App\Game\AccountMessagesManager;
-use App\Models\Game\Account\Comment;
+use App\Models\Game\Account\Block;
+use App\Models\Game\Account\Comment as AccountComment;
 use App\Models\Game\Account\Friend;
 use App\Models\Game\Account\FriendRequest;
 use App\Models\Game\Account\Link;
 use App\Models\Game\Account\Message;
+use App\Models\Game\Account\PasswordReset;
 use App\Models\Game\Account\Permission\Assign;
 use App\Models\Game\Account\Permission\Group;
 use App\Models\Game\Account\Setting;
+use App\Models\Game\Level\Comment as LevelComment;
 use Database\Factories\Game\AccountFactory;
 use Eloquent;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory as HasFactoryTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -38,9 +37,8 @@ use Illuminate\Notifications\Notifiable as NotifiableTrait;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Account
+ * App\Models\Game\Account
  *
- * @package App\Models\Game
  * @property int $id
  * @property string $name
  * @property string $email
@@ -49,196 +47,124 @@ use Illuminate\Support\Carbon;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection|Comment[] $comments
+ * @property-read Collection|Block[] $blocks
+ * @property-read int|null $blocks_count
+ * @property-read Collection|AccountComment[] $comments
  * @property-read int|null $comments_count
- * @property-read AccountFriendsManager $friend
- * @property-read AccountFriendRequestsManager $friend_request
- * @property-read FriendRequest[]|Builder[]|Collection|\Illuminate\Support\Collection $friend_requests
- * @property-read Collection|Account[] $friends
- * @property-read AccountMessagesManager $message
+ * @property-read Collection|FriendRequest[] $friend_requests
+ * @property-read int|null $friend_requests_count
+ * @property-read Collection|Friend[] $friends
+ * @property-read int|null $friends_count
+ * @property-read Collection|LevelComment[] $level_comments
+ * @property-read int|null $level_comments_count
+ * @property-read Collection|Link[] $links
+ * @property-read int|null $links_count
  * @property-read Collection|Message[] $messages
  * @property-read int|null $messages_count
  * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
- * @property-read Group|null $permission
- * @property-read Collection|Message[] $sentMessages
+ * @property-read Collection|PasswordReset[] $password_resets
+ * @property-read int|null $password_resets_count
+ * @property-read Group|null $permission_group
+ * @property-read Collection|FriendRequest[] $sent_friend_requests
+ * @property-read int|null $sent_friend_requests_count
+ * @property-read Collection|Message[] $sent_messages
  * @property-read int|null $sent_messages_count
  * @property-read Setting|null $setting
  * @property-read User|null $user
  * @method static AccountFactory factory(...$parameters)
- * @method static Builder|Account newModelQuery()
- * @method static Builder|Account newQuery()
- * @method static Builder|Account query()
- * @method static Builder|Account whereCreatedAt($value)
- * @method static Builder|Account whereEmail($value)
- * @method static Builder|Account whereEmailVerifiedAt($value)
- * @method static Builder|Account whereId($value)
- * @method static Builder|Account whereName($value)
- * @method static Builder|Account wherePassword($value)
- * @method static Builder|Account whereRememberToken($value)
- * @method static Builder|Account whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Account newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Account query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereUpdatedAt($value)
  * @mixin Eloquent
- * @property-read Collection|Link[] $links
- * @property-read int|null $links_count
  */
 class Account extends Model implements MustVerifyEmailContract, CanResetPasswordContract, AuthenticatableContract, AuthorizableContract
 {
-    use HasFactoryTrait;
-    use NotifiableTrait;
-    use MustVerifyEmailTrait;
-    use CanResetPasswordTrait;
-    use AuthorizableTrait;
-    use AuthenticatableTrait;
+    use HasFactoryTrait, NotifiableTrait, MustVerifyEmailTrait, CanResetPasswordTrait, AuthorizableTrait, AuthenticatableTrait;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_accounts';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'password',
-        'email'
-    ];
+    protected $casts = ['email_verified_at' => 'datetime'];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token'
-    ];
+    protected $hidden = ['email', 'remember_token'];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    protected $fillable = ['name', 'email', 'password'];
 
-    /**
-     * @return Collection
-     */
-    public function getFriendsAttribute(): Collection
-    {
-        $friends = Friend::query()
-            ->orWhere(['account' => $this->id, 'target_account' => $this->id])
-            ->get(['account', 'target_account'])
-            ->map(function (Friend $friend) {
-                return $friend->account === $this->id ? $friend->target_account : $friend->account;
-            })->toArray();
-
-        return self::query()->findMany($friends);
-    }
+    protected $dispatchesEvents = ['created' => Registered::class];
 
     public function permission_group(): HasOneThrough
     {
         return $this->hasOneThrough(Group::class, Assign::class, 'account', 'id', 'id', 'group');
     }
 
-    /**
-     * @return HasOne
-     */
-    public function user(): HasOne
+    public function blocks(): HasMany
     {
-        return $this->hasOne(User::class, 'uuid');
+        return $this->hasMany(Block::class, 'account');
     }
 
-    /**
-     * @return HasOne
-     */
-    public function setting(): HasOne
-    {
-        return $this->hasOne(Setting::class, 'account');
-    }
-
-    /**
-     * @return HasMany
-     */
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class, 'account');
+        return $this->hasMany(AccountComment::class, 'account');
     }
 
-    /**
-     * @return HasMany
-     */
-    public function sentMessages(): HasMany
+    public function friends(): HasMany
     {
-        return $this->hasMany(Message::class, 'account');
+        /** @var Builder $query */
+        $query = $this->hasMany(Friend::class, 'target_account');
+
+        return $this->hasMany(Friend::class, 'account')->union($query);
     }
 
-    /**
-     * @return HasMany
-     */
-    public function messages(): HasMany
+    public function sent_friend_requests(): HasMany
     {
-        return $this->hasMany(Message::class, 'to_account');
+        return $this->hasMany(FriendRequest::class, 'account');
     }
 
-    /**
-     * @return HasOneThrough
-     */
-    public function permission(): HasOneThrough
+    public function friend_requests(): HasMany
     {
-        return $this->hasOneThrough(Group::class, Assign::class, 'account', 'id', null, 'group');
+        return $this->hasMany(FriendRequest::class, 'to_account');
     }
 
-    /**
-     * @return HasMany
-     */
     public function links(): HasMany
     {
         return $this->hasMany(Link::class, 'account');
     }
 
-    /**
-     * @param null $udid
-     * @return User|Builder|Model
-     * @throws InvalidArgumentException
-     */
-    public function resolveUser($udid = null)
+    public function sent_messages(): HasMany
     {
-        if (empty($udid)) {
-            throw new InvalidArgumentException('Udid was empty');
-        }
-
-        return User::query()
-            ->firstOrCreate([
-                'uuid' => $this->id
-            ], [
-                'name' => $this->name,
-                'udid' => $udid
-            ]);
+        return $this->hasMany(Message::class, 'account');
     }
 
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function assignGroup($name): bool
+    public function messages(): HasMany
     {
-        try {
-            $group = Group::whereName($name)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return false;
-        }
+        return $this->hasMany(Message::class, 'to_account');
+    }
 
-        $assign = Assign::query()
-            ->firstOrNew([
-                'account' => $this->id
-            ]);
+    public function password_resets(): HasMany
+    {
+        return $this->hasMany(PasswordReset::class, 'account');
+    }
 
-        $assign->group = $group->id;
-        return $assign->save();
+    public function setting(): HasOne
+    {
+        return $this->hasOne(Setting::class, 'account');
+    }
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'uuid');
+    }
+
+    public function level_comments(): HasMany
+    {
+        return $this->hasMany(LevelComment::class, 'account');
     }
 }

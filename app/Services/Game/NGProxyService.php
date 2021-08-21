@@ -135,6 +135,9 @@ class NGProxyService
         ], '~|~');
     }
 
+    /**
+     * @throws SongNotFoundException
+     */
     protected function getFromSongInfoApi(int $songID, string $uri = '/getGJSongInfo.php'): string
     {
         $response = $this->GDProxy->proxy($uri, [
@@ -149,6 +152,9 @@ class NGProxyService
         return $response;
     }
 
+    /**
+     * @throws SongNotFoundException
+     */
     protected function getFromGetLevelsApi(int $songID, string $uri = '/getGJLevels21.php'): string
     {
         $response = $this->GDProxy->proxy($uri, [

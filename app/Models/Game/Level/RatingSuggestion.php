@@ -2,20 +2,23 @@
 
 namespace App\Models\Game\Level;
 
+use App\Enums\Game\Level\Rating\SuggestionType;
+use App\Models\Game\Level;
+use App\Models\Game\User;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class RatingSuggestion
+ * App\Models\Game\Level\RatingSuggestion
  *
- * @package App\Models\Game\Level
  * @property int $id
- * @property int $user
- * @property int $level
- * @property int $type
+ * @property User $user
+ * @property Level $level
+ * @property SuggestionType $type
  * @property int $rating
  * @property int $featured
  * @property Carbon|null $created_at
@@ -37,19 +40,21 @@ class RatingSuggestion extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_level_rating_suggestions';
 
-    /**
-     * @var string[]
-     */
-    protected $fillable = [
-        'type',
-        'user',
-        'level',
-        'rating',
-        'featured'
+    protected $casts = [
+        'type' => SuggestionType::class
     ];
+
+    protected $fillable = ['type', 'user', 'level', 'rating', 'featured'];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user');
+    }
+
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(Level::class, 'level');
+    }
 }

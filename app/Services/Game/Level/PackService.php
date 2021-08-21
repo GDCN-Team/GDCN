@@ -2,44 +2,26 @@
 
 namespace App\Services\Game\Level;
 
-use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Level\Pack;
-use App\Services\Game\HelperService;
 use GDCN\GDObject;
-use GDCN\Hash\Hasher;
+use GDCN\Hash\Components\LevelPack as LevelPackComponent;
+use GDCN\Hash\Components\PageInfo as PageInfoComponent;
 
-/**
- * Class PackService
- * @package App\Services\Game\Level
- */
 class PackService
 {
-    public function __construct(
-        public HelperService $helper,
-        public Hasher $hash
-    )
-    {
-    }
-
-    /**
-     * @param int $page
-     * @return string
-     * @throws NoItemException
-     */
     public function get(int $page): string
     {
-        $packs = Pack::query();
-        $count = $packs->count();
-
-        if ($count <= 0) {
-            throw new NoItemException();
-        }
-
         $hash = null;
-        $result = $packs->forPage(++$page, $this->helper->perPage)
+        $result = Pack::query()
+            ->forPage(++$page, PageInfoComponent::$per_page)
             ->get()
             ->map(function (Pack $pack) use (&$hash) {
-                $hash .= implode(null, [substr($pack->id, 0, 1), substr($pack->id, -1), $pack->stars, $pack->coins]);
+                $hash .= implode(null, [
+                    substr($pack->id, 0, 1),
+                    substr($pack->id, -1),
+                    $pack->stars,
+                    $pack->coins
+                ]);
 
                 return GDObject::merge([
                     1 => $pack->id,
@@ -53,6 +35,11 @@ class PackService
                 ], ':');
             })->join('|');
 
-        return $result . '#' . $this->helper->generatePageHash($count, $page) . '#' . $this->hash->generateHashForPack($hash);
+        $count = Pack::count();
+        return implode('#', [
+            $result,
+            app(PageInfoComponent::class)->generate($count, $page),
+            app(LevelPackComponent::class)->generateHash($hash)
+        ]);
     }
 }

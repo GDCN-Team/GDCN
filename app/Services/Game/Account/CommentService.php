@@ -2,106 +2,84 @@
 
 namespace App\Services\Game\Account;
 
-use App\Events\AccountCommentUploaded;
-use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Comment as AccountComment;
-use App\Repositories\Game\Account\CommentRepository as AccountCommentRepository;
 use App\Services\Game\HelperService;
 use GDCN\GDObject;
-use GDCN\Hash\Hasher;
-use Illuminate\Support\Facades\Event;
+use GDCN\Hash\Components\PageInfo as PageInfoComponent;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Class CommentService
- * @package App\Services\Game\Account
- */
 class CommentService
 {
-    /**
-     * CommentService constructor.
-     * @param AccountCommentRepository $repository
-     * @param Hasher $hash
-     * @param HelperService $helper
-     */
     public function __construct(
-        protected AccountCommentRepository $repository,
-        protected Hasher                   $hash,
-        protected HelperService            $helper
+        protected HelperService $helper
     )
     {
     }
 
-    /**
-     * @param int|Account $account
-     * @param int $currentPage
-     * @return string
-     * @throws NoItemException
-     */
-    public function get(Account|int $account, int $currentPage): string
+    public function get(int $accountID, int $page): string
     {
-        $accountID = $this->helper->getID($account);
-        $comments = $this->repository->byAccount($accountID);
+        $account = Account::findOrFail($accountID);
+        $result = $account->loadCount('comments')
+            ->comments()
+            ->forPage(++$page, PageInfoComponent::$per_page)
+            ->get()
+            ->map(function (AccountComment $comment) use ($account) {
+                return GDObject::merge([
+                    2 => $comment->content,
+                    4 => $comment->likes,
+                    6 => $comment->id,
+                    7 => $this->helper->checkSpam($comment->content),
+                    9 => $comment->created_at->locale('en')->diffForHumans(syntax: true),
+                    12 => $account->permission_group?->comment_color
+                ], '~');
+            })->join('|');
 
-        $count = $comments->count();
-        if ($count <= 0) {
-            throw new NoItemException();
-        }
+        Log::channel('gdcn')
+            ->info('[Account Comment System] Action: Get Comments', [
+                'accountID' => $accountID,
+                'page' => $page
+            ]);
 
-        $this->helper->setCarbonLocaleToEnglish();
-        return $comments->forPage(++$currentPage, $this->helper->perPage)
-                ->get()
-                ->map(function (AccountComment $comment) {
-                    return GDObject::merge([
-                        2 => $comment->content,
-                        4 => $comment->likes,
-                        6 => $comment->id,
-                        7 => $this->helper->checkSpam($comment->content),
-                        9 => $comment->created_at->diffForHumans(null, true),
-                        12 => $comment->sender->permission->comment_color ?? null
-                    ], '~');
-                })->join('|') .
-            '#' . $this->helper->generatePageHash($count, $currentPage);
+        Log::channel('debug')
+            ->debug('[Account Comment System] Action: Get Comments', [
+                'accountID' => $accountID,
+                'page' => $page,
+                'result' => $result
+            ]);
+
+        return implode('#', [
+            $result,
+            app(PageInfoComponent::class)->generate($account->comments_count, $page)
+        ]);
     }
 
-    /**
-     * @param string $chk
-     * @param int $cType
-     * @param string $userName
-     * @param int|Account $uploader
-     * @param string $comment
-     * @return int|string|null
-     */
-    public function upload(string $chk, int $cType, string $userName, Account|int $uploader, string $comment): int|string|null
+    public function upload(int $accountID, string $comment): Account\Comment
     {
-        $uploader = $this->helper->getModel($uploader, Account::class);
-        if (true /*$this->hash->checkUploadAccountCommentChk($chk, $cType, $userName, $comment)*/) {
-            $commentModel = new AccountComment();
-            $commentModel->account = $uploader->id;
-            $commentModel->content = $comment;
-            $commentModel->save();
+        Log::channel('gdcn')
+            ->info('[Account Comment System] Action: Upload Comment', [
+                'accountID' => $accountID,
+                'comment' => $comment
+            ]);
 
-            $event = Event::dispatch(new AccountCommentUploaded($commentModel), halt: true);
-            return $event ? "temp_0_{$event}" : $commentModel->id;
-        }
-
-        return null;
+        return Account::findOrFail($accountID)
+            ->comments()
+            ->create([
+                'content' => $comment
+            ]);
     }
 
-    /**
-     * @param int|Account $account
-     * @param int|AccountComment $comment
-     * @return bool|null
-     */
-    public function delete(Account|int $account, AccountComment|int $comment): ?bool
+    public function delete(int $accountID, int $commentID): bool
     {
-        $account = $this->helper->getModel($account, Account::class);
-        $comment = $this->helper->getModel($comment, AccountComment::class);
+        Log::channel('gdcn')
+            ->info('[Account Comment System] Action: Delete Comment', [
+                'accountID' => $accountID,
+                'commentID' => $commentID
+            ]);
 
-        if ($account->can('delete', $comment)) {
-            return $comment->delete();
-        }
-
-        return false;
+        return Account::findOrFail($accountID)
+            ->comments()
+            ->whereKey($commentID)
+            ->delete();
     }
 }

@@ -4,27 +4,11 @@ namespace App\Http\Requests\Game\Level;
 
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
+use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
 
 class DailyGetRequest extends Request
 {
-    /**
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        if ($this->filled(['accountID', 'gjp'])) {
-            return $this->validateAccountGJP();
-        }
-
-        return true;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -35,8 +19,11 @@ class DailyGetRequest extends Request
                 'sometimes',
                 Rule::exists(Account::class, 'id')
             ],
-            'gjp' => 'required_with:accountID',
-            'secret' => Rule::in('Wmfd2893gb7'),
+            'gjp' => [
+                'required_with:accountID',
+                new ValidateAccountCreditRule()
+            ],
+            'secret' => Rule::in(['Wmfd2893gb7']),
             'weekly' => 'boolean'
         ];
     }

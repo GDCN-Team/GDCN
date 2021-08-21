@@ -3,20 +3,17 @@
 namespace App\Models\Game;
 
 use Eloquent;
-use GDCN\GDObject;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
- * Class CustomSong
+ * App\Models\Game\CustomSong
  *
- * @package App\Models\Game
  * @property int $id
  * @property int $song_id
- * @property int $type
+ * @property string $type
  * @property int $uploader
  * @property string $name
  * @property string $author_name
@@ -26,7 +23,6 @@ use Illuminate\Support\Carbon;
  * @property int $disabled
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Account|null $owner
  * @method static Builder|CustomSong newModelQuery()
  * @method static Builder|CustomSong newQuery()
  * @method static Builder|CustomSong query()
@@ -48,42 +44,5 @@ class CustomSong extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_custom_songs';
-
-    /**
-     * @var string[]
-     */
-    protected $fillable = [
-        'hash'
-    ];
-
-    /**
-     * @var string[]
-     */
-    protected $casts = [
-        'uploader' => 'integer'
-    ];
-
-    /**
-     * @return HasOne
-     */
-    public function owner(): HasOne
-    {
-        return $this->hasOne(Account::class, 'id', 'uploader');
-    }
-
-    public function toSongString(): string
-    {
-        return GDObject::merge([
-            1 => $this->song_id,
-            2 => $this->name,
-            3 => 9,
-            4 => $this->author_name,
-            5 => $this->size,
-            10 => $this->download_url
-        ], '~|~');
-    }
 }

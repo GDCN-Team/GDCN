@@ -4,24 +4,11 @@ namespace App\Http\Requests\Game\Account\Message;
 
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
+use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
 
 class GetRequest extends Request
 {
-    /**
-     * @inerhitDoc
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return $this->validateAccountGJP();
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -29,11 +16,11 @@ class GetRequest extends Request
             'binaryVersion' => 'required',
             'gdw' => 'required',
             'accountID' => Rule::exists(Account::class, 'id'),
-            'gjp' => 'required',
+            'gjp' => new ValidateAccountCreditRule(),
             'page' => 'integer',
-            'total' => 'required',
-            'secret' => Rule::in('Wmfd2893gb7'),
-            'getSent' => 'sometimes'
+            'total' => 'nullable',
+            'secret' => Rule::in(['Wmfd2893gb7']),
+            'getSent' => 'sometimes|boolean'
         ];
     }
 }

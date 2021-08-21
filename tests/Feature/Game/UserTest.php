@@ -117,7 +117,7 @@ class UserTest extends TestCase
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'str' => $account->name[1],
+                'str' => $account->name[0],
                 'total' => 0,
                 'page' => 0,
                 'secret' => 'Wmfd2893gb7'
@@ -229,7 +229,7 @@ class UserTest extends TestCase
                 'gdw' => false,
                 'accountID' => $accounts[0]->id,
                 'gjp' => 'AgUGBgMF',
-                'type' => 0,
+                'type' => '0',
                 'secret' => 'Wmfd2893gb7'
             ]
         );
@@ -256,7 +256,7 @@ class UserTest extends TestCase
                 'gdw' => false,
                 'accountID' => $accounts[0]->id,
                 'gjp' => 'AgUGBgMF',
-                'type' => 1,
+                'type' => '1',
                 'secret' => 'Wmfd2893gb7'
             ]
         );

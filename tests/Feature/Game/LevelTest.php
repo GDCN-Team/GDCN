@@ -6,6 +6,8 @@ use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\User;
 use Base64Url\Base64Url;
+use GDCN\Hash\Components\DownloadLevelChk;
+use GDCN\Hash\Components\LevelString;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
@@ -62,7 +64,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => Str::random(),
+                'seed2' => app(LevelString::class)->generateHash($levelString, 50, 49),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
@@ -120,7 +122,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => Str::random(),
+                'seed2' => app(LevelString::class)->generateHash($levelString, 50, 49),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
@@ -178,7 +180,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => Str::random(),
+                'seed2' => app(LevelString::class)->generateHash($levelString, 50, 49),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
@@ -291,7 +293,7 @@ class LevelTest extends TestCase
                 'extras' => 0,
                 'secret' => 'Wmfd2893gb7',
                 'rs' => $rs,
-                'chk' => Str::random()
+                'chk' => app(DownloadLevelChk::class)->encode($level->id, 0, $rs, $account->id, $account->user->udid, $account->user->id)
             ]
         );
 
@@ -316,7 +318,7 @@ class LevelTest extends TestCase
                 'binaryVersion' => 35,
                 'gdw' => false,
                 'uuid' => $level->user,
-                'udid' => $level->creator->udid,
+                'udid' => $level->getRelationValue('user')->udid,
                 'levelID' => $level->id,
                 'secret' => 'Wmfv2898gc9'
             ]

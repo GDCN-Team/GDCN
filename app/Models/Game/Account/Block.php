@@ -2,20 +2,21 @@
 
 namespace App\Models\Game\Account;
 
+use App\Models\Game\Account;
 use Database\Factories\Game\Account\BlockFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Block
+ * App\Models\Game\Account\Block
  *
- * @package App\Models\Game\Account
  * @property int $id
- * @property int $account
- * @property int $target_account
+ * @property Account $account
+ * @property Account $target_account
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static BlockFactory factory(...$parameters)
@@ -33,16 +34,17 @@ class Block extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_account_blocks';
 
-    /**
-     * @var string[]
-     */
-    protected $casts = [
-        'account' => 'integer',
-        'target_account' => 'integer'
-    ];
+    protected $fillable = ['target_account'];
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'account');
+    }
+
+    public function target_account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'target_account');
+    }
 }

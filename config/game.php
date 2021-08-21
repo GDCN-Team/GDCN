@@ -92,21 +92,19 @@ return [
     ],
     'feature' => [
         'command' => [
-            'account_comment' => true,
-            'level_comment' => true
+            'account_comment' => [
+                'enabled' => true
+            ],
+            'level_comment' => [
+                'enabled' => true
+            ]
         ],
         'auto_rate' => [
             'rate' => [
                 'enabled' => true,
-                'mod_only' => false,
                 'least_suggest' => 10
             ],
             'demon' => [
-                'enabled' => true,
-                'mod_only' => false,
-                'least_suggest' => 10
-            ],
-            'suggest' => [
                 'enabled' => true,
                 'least_suggest' => 10
             ]

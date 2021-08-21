@@ -12,9 +12,6 @@ use App\Services\Game\Level\ScoreService;
 
 class ScoresController extends Controller
 {
-    /**
-     * @param ScoreService $service
-     */
     public function __construct(
         public ScoreService $service
     )
@@ -22,17 +19,21 @@ class ScoresController extends Controller
     }
 
     /**
-     * @param ScoreGetRequest $request
-     * @return int|string
-     *
+     * @link http://docs.gdprogra.me/#/endpoints/getGJLevelScores211
      * @throws InvalidArgumentException
-     * @see http://docs.gdprogra.me/#/endpoints/getGJLevelScores211
      */
     public function get(ScoreGetRequest $request): int|string
     {
-        $data = $request->validated();
         try {
-            return $this->service->get($data['accountID'], $data['levelID'], ScoreType::fromValue((int)$data['type']), $data['s1'] - 8354, $data['percent'], $data['s9'] - 5819);
+            $data = $request->validated();
+            return $this->service->get(
+                $data['accountID'],
+                $data['levelID'],
+                ScoreType::fromValue($data['type']),
+                $data['s1'] - 8354,
+                $data['percent'],
+                $data['s9'] - 5819
+            );
         } catch (NoItemException) {
             return ResponseCode::EMPTY_RESULT_FAILED;
         }

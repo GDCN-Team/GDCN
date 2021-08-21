@@ -5,8 +5,8 @@ namespace Tests\Feature\Game;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use Base64Url\Base64Url;
+use GDCN\Hash\Components\CommentUploadChk;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 use function route;
 
@@ -20,6 +20,7 @@ class CommandSystemTest extends TestCase
         $account = Account::factory()
             ->create();
 
+        $content = Base64Url::encode('!test', true);
         $request = $this->post(
             route('game.account.comment.upload'),
             [
@@ -29,10 +30,14 @@ class CommandSystemTest extends TestCase
                 'accountID' => $account->id,
                 'gjp' => 'AgUGBgMF',
                 'userName' => $account->name,
-                'comment' => Base64Url::encode('!test', true),
+                'comment' => $content,
                 'secret' => 'Wmfd2893gb7',
                 'cType' => 1,
-                'chk' => Str::random()
+                'chk' => app(CommentUploadChk::class)->encode(
+                    $account->name,
+                    1,
+                    $content
+                )
             ]
         );
 
@@ -40,12 +45,13 @@ class CommandSystemTest extends TestCase
         $request->assertSee('worked!');
     }
 
-    public function test_account_comment_invalid()
+    public function test_account_comment_not_found()
     {
         /** @var Account $account */
         $account = Account::factory()
             ->create();
 
+        $content = Base64Url::encode('!invalid_command', true);
         $request = $this->post(
             route('game.account.comment.upload'),
             [
@@ -55,15 +61,19 @@ class CommandSystemTest extends TestCase
                 'accountID' => $account->id,
                 'gjp' => 'AgUGBgMF',
                 'userName' => $account->name,
-                'comment' => Base64Url::encode('!invalid_command', true),
+                'comment' => $content,
                 'secret' => 'Wmfd2893gb7',
                 'cType' => 1,
-                'chk' => Str::random()
+                'chk' => app(CommentUploadChk::class)->encode(
+                    $account->name,
+                    1,
+                    $content
+                )
             ]
         );
 
         $request->assertOk();
-        $request->assertSee('Invalid Command!');
+        $request->assertSee('Command Not Found!');
     }
 
     public function test_level_comment(): void
@@ -76,6 +86,7 @@ class CommandSystemTest extends TestCase
         $level = Level::factory()
             ->create();
 
+        $content = Base64Url::encode('!test', true);
         $request = $this->post(
             route('game.level.comment.upload'),
             [
@@ -85,11 +96,17 @@ class CommandSystemTest extends TestCase
                 'accountID' => $account->id,
                 'gjp' => 'AgUGBgMF',
                 'userName' => $account->name,
-                'comment' => Base64Url::encode('!test', true),
+                'comment' => $content,
                 'secret' => 'Wmfd2893gb7',
                 'levelID' => $level->id,
                 'percent' => 0,
-                'chk' => Str::random()
+                'cType' => 0,
+                'chk' => app(CommentUploadChk::class)->encode(
+                    $account->name,
+                    0,
+                    $content,
+                    $level->id
+                )
             ]
         );
 

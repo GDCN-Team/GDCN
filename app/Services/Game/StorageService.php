@@ -14,9 +14,6 @@ class StorageService
 {
     protected array $storages;
 
-    /**
-     * StorageService constructor.
-     */
     public function __construct()
     {
         $this->storages = [
@@ -24,37 +21,26 @@ class StorageService
         ];
     }
 
-    /**
-     * @param string $name
-     * @param string $content
-     * @param bool $cancelWhenFailed
-     * @return bool
-     */
-    public function put(string $name, string $content, bool $cancelWhenFailed = true): bool
+    public function put(string $name, string $content): bool
     {
         /** @var FilesystemAdapter $storage */
 
         foreach ($this->storages as $storage) {
-            if (!$storage->put($name, $content) && $cancelWhenFailed) {
-                return false;
-            }
+            $storage->put($name, $content);
         }
 
         return true;
     }
 
-    /**
-     * @param string $name
-     * @return string|null
-     */
     public function get(string $name): ?string
     {
         /** @var FilesystemAdapter $storage */
 
         foreach ($this->storages as $storage) {
             try {
-                if ($result = $storage->get($name)) {
-                    return $result;
+                $data = $storage->get($name);
+                if (!empty($data)) {
+                    return $data;
                 }
             } catch (FileNotFoundException) {
                 continue;
@@ -64,10 +50,6 @@ class StorageService
         return null;
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
     public function delete(string $name): bool
     {
         /** @var FilesystemAdapter $storage */

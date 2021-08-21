@@ -2,16 +2,13 @@
 
 namespace App\Services\Game\Account;
 
-use App\Exceptions\Game\InvalidCommandException;
+use App\Exceptions\Game\CommandNotFoundException;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Comment as AccountComment;
+use Illuminate\Support\Facades\App;
 
 class CommentCommandService
 {
-    protected array $executable = [
-        'test'
-    ];
-
     public function __construct(
         protected Account        $operator,
         protected AccountComment $comment,
@@ -23,22 +20,18 @@ class CommentCommandService
     }
 
     /**
-     * @return mixed
-     * @throws InvalidCommandException
+     * @throws CommandNotFoundException
      */
     public function execute(): mixed
     {
-        if (in_array($this->command, $this->executable) && method_exists($this, $this->command)) {
+        if (!in_array($this->command, ['__construct', 'execute']) && method_exists($this, $this->command)) {
             $this->comment->delete();
-            return call_user_func([$this, $this->command]);
+            return App::call([$this, $this->command]);
         }
 
-        throw new InvalidCommandException();
+        throw new CommandNotFoundException();
     }
 
-    /**
-     * @return string
-     */
     public function test(): string
     {
         return 'worked!';

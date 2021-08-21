@@ -67,15 +67,6 @@ class AccountTest extends TestCase
         }
     }
 
-    public function test_empty_udid_exception(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        /** @var Account $GameAccount */
-        $GameAccount = Account::factory()->create();
-        $GameAccount->resolveUser();
-    }
-
     public function test_verify(): void
     {
         Notification::fake();

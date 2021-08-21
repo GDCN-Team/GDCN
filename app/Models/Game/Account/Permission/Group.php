@@ -43,6 +43,8 @@ class Group extends Model
 
     protected $table = 'game_account_permission_groups';
 
+    protected $fillable = ['name', 'mod_level'];
+
     public function flags(): HasManyThrough
     {
         return $this->hasManyThrough(Flag::class, FlagAssign::class, 'group', 'id', 'id', 'flag');

@@ -20,6 +20,7 @@ final class ResponseCode extends Enum
     public const ACCOUNT_COMMENT_UPLOAD_FAILED = self::FAILED;
     public const ACCOUNT_COMMENT_DELETE_SUCCESS = self::OK;
     public const ACCOUNT_COMMENT_DELETE_FAILED = self::FAILED;
+    public const ACCOUNT_COMMENT_HISTORY_GET_FAILED = self::FAILED;
 
     // Account Friend Request
     public const FRIEND_REQUEST_UPLOAD_FAILED = self::FAILED;

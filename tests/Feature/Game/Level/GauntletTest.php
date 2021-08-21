@@ -18,7 +18,10 @@ class GauntletTest extends TestCase
     public function test_get(): void
     {
         /** @var Gauntlet $gauntlet */
-        $gauntlet = Gauntlet::factory()->create();
+        $gauntlet = Gauntlet::factory()
+            ->create([
+                'gauntlet_id' => 1
+            ]);
 
         $request = $this->post(
             route('game.level.gauntlet.get'),

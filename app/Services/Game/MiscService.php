@@ -2,79 +2,68 @@
 
 namespace App\Services\Game;
 
-use App\Enums\Game\Log\Types;
-use App\Enums\LikeType;
+use App\Enums\Game\LikeType;
+use App\Enums\Game\LogType;
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Models\Game\Account\Comment as AccountComment;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Comment as LevelComment;
 use App\Models\Game\Log;
+use App\Models\Game\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Request;
 
-/**
- * Class MiscService
- * @package App\Services\Game
- */
 class MiscService
 {
-    public function __construct(
-        public HelperService $helper
-    )
-    {
-    }
-
     /**
-     * @param $user
-     * @param LikeType $type
-     * @param int $itemID
-     * @param bool $like
-     * @return bool
      * @throws InvalidArgumentException
      */
-    public function like($user, LikeType $type, int $itemID, bool $like = true): bool
+    public function like(?string $uuid, LikeType $type, int $itemID, bool $like = true): bool
     {
+        $user = User::whereUuid($uuid)->firstOrFail();
+
         switch ($type->value) {
             case LikeType::LEVEL:
                 $item = Level::findOrFail($itemID);
-                $logType = Types::LIKE_LEVEL;
+                $logType = LogType::LIKE_LEVEL;
                 break;
             case LikeType::LEVEL_COMMENT:
                 $item = LevelComment::findOrFail($itemID);
-                $logType = Types::LIKE_LEVEL_COMMENT;
+                $logType = LogType::LIKE_LEVEL_COMMENT;
                 break;
             case LikeType::ACCOUNT_COMMENT:
                 $item = AccountComment::findOrFail($itemID);
-                $logType = Types::LIKE_ACCOUNT_COMMENT;
+                $logType = LogType::LIKE_ACCOUNT_COMMENT;
                 break;
             default:
                 throw new InvalidArgumentException();
         }
 
-        $log = Log::firstOrNew([
+        Log::where([
             'type' => $logType,
-            'user' => $this->helper->getID($user),
+            'user' => $user->id,
             'value' => $itemID,
             'ip' => Request::ip()
-        ]);
+        ])->existsOr(function () use (&$item, $like, $itemID, $user, $logType) {
+            /** @var Level|LevelComment|AccountComment|Builder $item */
 
-        if (!$log->exists()) {
-            $log->save();
+            Log::create([
+                'type' => $logType,
+                'user' => $user->id,
+                'value' => $itemID,
+                'ip' => Request::ip()
+            ]);
 
-            if ($like) {
+            if ($like === true) {
                 ++$item->likes;
             } else {
                 --$item->likes;
             }
+        });
 
-            return $item->save();
-        }
-
-        return false;
+        return $item->save();
     }
 
-    /**
-     * @return bool
-     */
     public function restore(): bool
     {
         return false;

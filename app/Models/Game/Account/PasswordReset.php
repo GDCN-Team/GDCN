@@ -7,19 +7,17 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class PasswordReset
+ * App\Models\Game\Account\PasswordReset
  *
- * @package App\Models\Game\Account
  * @property int $id
- * @property int $account
+ * @property Account $account
  * @property string $token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Account|null $acc
  * @method static Builder|PasswordReset newModelQuery()
  * @method static Builder|PasswordReset newQuery()
  * @method static Builder|PasswordReset query()
@@ -34,16 +32,10 @@ class PasswordReset extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_account_password_resets';
 
-    /**
-     * @return HasOne
-     */
-    public function acc(): HasOne
+    public function account(): BelongsTo
     {
-        return $this->hasOne(Account::class, 'id', 'account');
+        return $this->belongsTo(Account::class, 'account');
     }
 }

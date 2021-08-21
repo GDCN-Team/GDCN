@@ -6,7 +6,7 @@ use App\Exceptions\Game\Request\AuthorizationException;
 use App\Exceptions\Game\Request\ValidateException;
 use App\Models\Game\Account;
 use App\Models\Game\User;
-use GDCN\Hash\Hasher;
+use GDCN\Hash\Components\GJP as GJPComponent;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +54,7 @@ class Request extends FormRequest
 
         return Auth::once([
             'id' => $this->get('accountID'),
-            'password' => app(Hasher::class)->decodeGJP($this->get('gjp'))
+            'password' => app(GJPComponent::class)->decode($this->get('gjp'))
         ]);
     }
 

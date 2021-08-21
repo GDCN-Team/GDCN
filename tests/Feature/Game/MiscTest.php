@@ -53,23 +53,28 @@ class MiscTest extends TestCase
             $user = $account->user;
         }
 
+        if (!$useAcc) {
+            $user->uuid = $user->udid;
+            $user->save();
+        }
+
         $data = [
             'gameVersion' => 21,
             'binaryVersion' => 35,
             'gdw' => false,
-            'udid' => $user->udid,
-            'uuid' => 0,
+            'udid' => $user?->udid,
+            'uuid' => $user?->id,
             'itemID' => $item->id,
             'like' => (int)$like,
-            'type' => $type,
+            'type' => (string)$type,
             'secret' => 'Wmfd2893gb7',
             'special' => false,
             'rs' => $rs = Str::random(),
-            'chk' => $this->generate_like_chk($item->id, $like, $type, $rs, $useAcc ? $user->account->id : 0, $user->udid, 0)
+            'chk' => $this->generate_like_chk($item->id, $like, $type, $rs, $useAcc ? $user->account->id : 0, $user->udid, $user->id)
         ];
 
         if ($useAcc) {
-            $data['accountID'] = $user->account->id;
+            $data['accountID'] = $user?->account?->id;
             $data['gjp'] = 'AgUGBgMF';
         }
 
@@ -152,7 +157,7 @@ class MiscTest extends TestCase
         /** @var LevelComment $comment */
         $comment = LevelComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, 2, false);
+        $this->test_like($comment->getRelationValue('account')->user, $comment, 2, false);
     }
 
     public function test_dislike_level_comment_with_account(): void
@@ -160,7 +165,7 @@ class MiscTest extends TestCase
         /** @var LevelComment $comment */
         $comment = LevelComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, 2, false, true);
+        $this->test_like($comment->getRelationValue('account')->user, $comment, 2, false, true);
     }
 
     public function test_like_level_comment(): void
@@ -168,7 +173,7 @@ class MiscTest extends TestCase
         /** @var LevelComment $comment */
         $comment = LevelComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, 2, true);
+        $this->test_like($comment->getRelationValue('account')->user, $comment, 2, true);
     }
 
     public function test_like_level_comment_with_account(): void
@@ -176,7 +181,7 @@ class MiscTest extends TestCase
         /** @var LevelComment $comment */
         $comment = LevelComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, 2, true, true);
+        $this->test_like($comment->getRelationValue('account')->user, $comment, 2, true, true);
     }
 
     public function test_dislike_account_comment(): void
@@ -184,7 +189,7 @@ class MiscTest extends TestCase
         /** @var AccountComment $comment */
         $comment = AccountComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, 3, false);
+        $this->test_like($comment->getRelationValue('account')->user, $comment, 3, false);
     }
 
     public function test_dislike_account_comment_with_account(): void
@@ -192,7 +197,7 @@ class MiscTest extends TestCase
         /** @var AccountComment $comment */
         $comment = AccountComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, 3, false, true);
+        $this->test_like($comment->getRelationValue('account')->user, $comment, 3, false, true);
     }
 
     public function test_like_account_comment(): void
@@ -200,7 +205,7 @@ class MiscTest extends TestCase
         /** @var AccountComment $comment */
         $comment = AccountComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, 3, true);
+        $this->test_like($comment->getRelationValue('account')->user, $comment, 3, true);
     }
 
     public function test_like_account_comment_with_account(): void
@@ -208,7 +213,7 @@ class MiscTest extends TestCase
         /** @var AccountComment $comment */
         $comment = AccountComment::factory()->create();
 
-        $this->test_like($comment->sender->user, $comment, 3, true, true);
+        $this->test_like($comment->getRelationValue('account')->user, $comment, 3, true, true);
     }
 
     public function test_restore_items(): void

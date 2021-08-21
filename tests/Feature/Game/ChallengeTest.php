@@ -3,6 +3,7 @@
 namespace Tests\Feature\Game;
 
 use App\Models\Game\Account;
+use App\Models\Game\User;
 use Base64Url\Base64Url;
 use GDCN\XORCipher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,14 +20,17 @@ class ChallengeTest extends TestCase
 
     public function test_get(): void
     {
+        $user = User::factory()
+            ->create();
+
         $request = $this->post(
             route('game.challenge.get'),
             [
                 'gameVersion' => 21,
                 'binaryVersion' => 35,
                 'gdw' => false,
-                'udid' => 'S' . mt_rand(),
-                'uuid' => 0,
+                'udid' => $user->udid,
+                'uuid' => $user->id,
                 'world' => false,
                 'secret' => 'Wmfd2893gb7',
                 'chk' => 'Test_AAgMAQYF' // 114514

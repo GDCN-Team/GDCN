@@ -6,7 +6,9 @@ use App\Exceptions\Game\SongGetException;
 use App\Exceptions\Game\SongNotFoundException;
 use App\Http\Controllers\Game\NGProxyController;
 use App\Models\Game\CustomSong;
+use App\Models\NGProxy\Song;
 use GDCN\GDObject;
+use GDCN\Hash\Components\PageInfo as PageInfoComponent;
 
 /**
  * Class SongService
@@ -21,18 +23,14 @@ class SongService
     }
 
     /**
-     * @param int $songID
-     * @return string
-     * @throws SongNotFoundException
      * @throws SongGetException
+     * @throws SongNotFoundException
      */
     public function get(int $songID): string
     {
-        $offset = config('game.customSongIdOffset');
-        if ($songID >= $offset) {
-            if (!$song = CustomSong::whereSongId($songID)->first()) {
-                throw new SongNotFoundException();
-            }
+        $customSongOffset = config('game.customSongIdOffset');
+        if ($songID >= $customSongOffset) {
+            $song = CustomSong::whereSongId($songID)->firstOrFail();
 
             return GDObject::merge([
                 1 => $song->song_id,
@@ -47,13 +45,20 @@ class SongService
         return $this->NGProxy->object($songID);
     }
 
-    /**
-     * @param int $page
-     * @return string
-     */
     public function getTopArtists(int $page): string
     {
-        # TODO: Fix top artists
-        return $this->NGProxy->getTopArtists($page);
+        $result = Song::forPage(++$page, PageInfoComponent::$per_page)
+            ->get()
+            ->map(function (Song $song) {
+                return GDObject::merge([
+                    4 => $song->artist_name,
+                    7 => $song->author_youtube_url
+                ], ':');
+            })->join('|');
+
+        return implode('#', [
+            $result,
+            app(PageInfoComponent::class)->generate(Song::count(), $page)
+        ]);
     }
 }

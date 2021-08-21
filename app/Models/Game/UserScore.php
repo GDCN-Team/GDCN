@@ -7,16 +7,14 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
-
 /**
- * Class UserScore
+ * App\Models\Game\UserScore
  *
- * @package App\Models\Game
  * @property int $id
- * @property int $user
+ * @property User $user
  * @property int $game_version
  * @property int $binary_version
  * @property int $stars
@@ -40,12 +38,12 @@ use Illuminate\Support\Carbon;
  * @property int $acc_explosion
  * @property int $creator_points
  * @property int $chest1count
- * @property Carbon|null $chest1time
+ * @property string|null $chest1time
  * @property int $chest2count
- * @property Carbon|null $chest2time
+ * @property string|null $chest2time
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User|null $owner
+ * @method static UserScoreFactory factory(...$parameters)
  * @method static Builder|UserScore newModelQuery()
  * @method static Builder|UserScore newQuery()
  * @method static Builder|UserScore query()
@@ -80,30 +78,17 @@ use Illuminate\Support\Carbon;
  * @method static Builder|UserScore whereUser($value)
  * @method static Builder|UserScore whereUserCoins($value)
  * @mixin Eloquent
- * @method static UserScoreFactory factory(...$parameters)
  */
 class UserScore extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_user_scores';
 
-    /**
-     * @var string[]
-     */
-    protected $casts = [
-        'chest1time' => 'datetime',
-        'chest2time' => 'datetime'
-    ];
+    protected $fillable = ['game_version', 'binary_version', 'stars', 'demons', 'diamonds', 'icon', 'color1', 'color2', 'icon_type', 'coins', 'user_coins', 'special', 'acc_icon', 'acc_ship', 'acc_ball', 'acc_bird', 'acc_dart', 'acc_robot', 'acc_glow', 'acc_spider', 'acc_explosion'];
 
-    /**
-     * @return HasOne
-     */
-    public function owner(): HasOne
+    public function user(): BelongsTo
     {
-        return $this->hasOne(User::class, 'id', 'user');
+        return $this->belongsTo(User::class, 'user');
     }
 }

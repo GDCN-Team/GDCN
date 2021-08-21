@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Account;
 
+use App\Casts\Base64UrlCast;
 use App\Models\Game\Account;
 use Database\Factories\Game\Account\CommentFactory;
 use Eloquent;
@@ -11,18 +12,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
-
 /**
- * Class Comment
+ * App\Models\Game\Account\Comment
  *
- * @package App\Models\Game\Account
  * @property int $id
- * @property int $account
+ * @property Account $account
  * @property string $content
  * @property int $likes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Account $sender
  * @method static CommentFactory factory(...$parameters)
  * @method static Builder|Comment newModelQuery()
  * @method static Builder|Comment newQuery()
@@ -39,22 +37,15 @@ class Comment extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_account_comments';
 
-    /**
-     * @var string[]
-     */
     protected $casts = [
-        'account' => 'integer'
+        'content' => Base64UrlCast::class
     ];
 
-    /**
-     * @return BelongsTo
-     */
-    public function sender(): BelongsTo
+    protected $fillable = ['content'];
+
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account');
     }

@@ -4,29 +4,12 @@ namespace App\Http\Requests\Game\Account\Comment;
 
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
-use GDCN\ChkValidationException;
+use App\Rules\ValidateAccountCreditRule;
+use App\Rules\ValidateUploadCommentChkRule;
 use Illuminate\Validation\Rule;
 
-/**
- * Class UploadRequest
- * @package App\Http\Requests
- */
 class UploadRequest extends Request
 {
-    /**
-     * @inerhitDoc
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return $this->validateAccountGJP();
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -34,12 +17,12 @@ class UploadRequest extends Request
             'binaryVersion' => 'required',
             'gdw' => 'required',
             'accountID' => Rule::exists(Account::class, 'id'),
-            'gjp' => 'required_with:accountID',
-            'userName' => 'required',
+            'gjp' => new ValidateAccountCreditRule(),
+            'userName' => Rule::exists(Account::class, 'name'),
             'comment' => 'required',
-            'secret' => Rule::in('Wmfd2893gb7'),
+            'secret' => Rule::in(['Wmfd2893gb7']),
             'cType' => Rule::in(1),
-            'chk' => 'required'
+            'chk' => new ValidateUploadCommentChkRule()
         ];
     }
 }

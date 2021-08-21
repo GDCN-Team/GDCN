@@ -42,15 +42,24 @@ return [
         ],
 
         'gdcn' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/gdcn.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 3,
+        ],
+
+        'debug' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/debug.log'),
+            'level' => 'debug',
+            'days' => 3,
         ],
 
         'single' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 3,
         ],
 
         'daily' => [

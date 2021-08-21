@@ -11,12 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Link
+ * App\Models\Game\Account\Link
  *
- * @package App\Models\Game\Account
  * @property int $id
  * @property string $server
- * @property int $account
+ * @property Account $account
  * @property int $target_account_id
  * @property int $target_user_id
  * @property string $target_name
@@ -34,32 +33,14 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Link whereTargetUserId($value)
  * @method static Builder|Link whereUpdatedAt($value)
  * @mixin Eloquent
- * @property-read Account $owner
  */
 class Link extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_account_links';
 
-    /**
-     * @var string[]
-     */
-    protected $fillable = [
-        'account',
-        'server',
-        'target_name',
-        'target_account_id',
-        'target_user_id'
-    ];
-
-    /**
-     * @return BelongsTo
-     */
-    public function owner(): BelongsTo
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account');
     }

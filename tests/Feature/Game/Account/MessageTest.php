@@ -99,14 +99,11 @@ class MessageTest extends TestCase
         /** @var Account[] $accounts */
         $accounts = Account::factory()
             ->count(2)
-            ->create();
-
-        /** @var Setting $setting */
-        $setting = $accounts[1]->setting()->firstOrNew();
-        $setting->message_state = 2;
-        $setting->friend_request_state = 0;
-        $setting->comment_history_state = 0;
-        $setting->save();
+            ->hasSetting([
+                'message_state' => 2,
+                'friend_request_state' => 0,
+                'comment_history_state' => 0
+            ])->create();
 
         $request = $this->post(
             route('game.account.message.send'),

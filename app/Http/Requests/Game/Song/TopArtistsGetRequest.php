@@ -7,20 +7,15 @@ use Illuminate\Validation\Rule;
 
 class TopArtistsGetRequest extends Request
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'page' => 'required',
-            'total' => 'required',
-            'secret' => Rule::in('Wmfd2893gb7')
+            'page' => 'integer',
+            'total' => 'nullable',
+            'secret' => Rule::in(['Wmfd2893gb7'])
         ];
     }
 }

@@ -10,7 +10,9 @@ use App\Models\Game\Account\Link;
 use App\Models\Game\Level;
 use App\Services\Game\LevelService as GameLevelService;
 use GDCN\GDObject;
-use GDCN\Hash\Hasher;
+use GDCN\Hash\Components\GJP as GJPComponent;
+use GDCN\Hash\Components\LevelPassword as LevelPasswordComponent;
+use GDCN\Hash\Components\LevelString as LevelStringComponent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -68,7 +70,6 @@ class LevelService
             throw new LevelTransInException("与关卡作者的账号链接不存在(或未找到)");
         }
 
-        $hash = app(Hasher::class);
         $service = app(GameLevelService::class);
 
         try {
@@ -83,7 +84,7 @@ class LevelService
                 $levelObject[12] ?? 0,
                 $levelObject[35] ?? 0,
                 false,
-                $hash->decodeLevelPassword($levelObject[27]),
+                app(LevelPasswordComponent::class)->decode($levelObject[27]),
                 $levelObject[1],
                 $levelObject[31] ?? false,
                 $levelObject[45] ?? 0,
@@ -157,14 +158,12 @@ class LevelService
             throw new LevelTransOutException('选择的服务器与链接不匹配');
         }
 
-        $hash = app(Hasher::class);
         $service = app(GameLevelService::class);
-
         $serverUrl = "{$serverProperty['endpoint']}/uploadGJLevel21.php";
         $response = Http::post($serverUrl, [
             'gameVersion' => $level->game_version,
             'accountID' => $link->target_account_id,
-            'gjp' => $hash->encodeGJP($password),
+            'gjp' => app(GJPComponent::class)->decode($password),
             'userName' => $link->target_name,
             'levelID' => 0,
             'levelName' => $level_name ?? $level->name,
@@ -173,7 +172,7 @@ class LevelService
             'levelLength' => $level->length,
             'audioTrack' => $level_song_type === 'audio_track' ? $level_song_id : $level->audio_track,
             'auto' => $level->auto,
-            'password' => $hash->encodeLevelPassword($level_password ?? $level->password),
+            'password' => app(LevelPasswordComponent::class)->encode($level_password ?? $level->password),
             'original' => 0,
             'twoPlayer' => $level->two_player,
             'songID' => $level_song_type === 'newgrounds' ? $level_song_id : $level->song,
@@ -183,7 +182,7 @@ class LevelService
             'unlisted' => $level_unlisted ?? $level->unlisted,
             'ldm' => $level->ldm,
             'levelString' => $levelString = $service->getLevelString($level->id),
-            'seed2' => $hash->generateSeed2ForTransOutLevel($levelString),
+            'seed2' => app(LevelStringComponent::class)->generateHash($levelString),
             'secret' => 'Wmfd2893gb7'
         ])->body();
 

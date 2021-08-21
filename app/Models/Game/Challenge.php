@@ -2,19 +2,18 @@
 
 namespace App\Models\Game;
 
+use App\Enums\Game\ChallengeType;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-
 /**
- * Class Challenge
+ * App\Models\Game\Challenge
  *
- * @package App\Models\Game
  * @property int $id
- * @property int $type
+ * @property ChallengeType $type
  * @property string $name
  * @property int $collect_count
  * @property int $reward_count
@@ -36,8 +35,16 @@ class Challenge extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_challenges';
+
+    protected $casts = [
+        'type' => ChallengeType::class
+    ];
+
+    protected $fillable = [
+        'type',
+        'name',
+        'collect_count',
+        'reward_count'
+    ];
 }

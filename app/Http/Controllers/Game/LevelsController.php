@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\Level\SearchType;
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\InvalidArgumentException;
-use App\Exceptions\Game\LevelUploadException;
-use App\Exceptions\Game\NoItemException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Level\DailyGetRequest;
 use App\Http\Requests\Game\Level\DeleteRequest;
@@ -16,12 +14,10 @@ use App\Http\Requests\Game\Level\SearchRequest;
 use App\Http\Requests\Game\Level\UpdateDescRequest;
 use App\Http\Requests\Game\Level\UploadRequest;
 use App\Services\Game\LevelService;
+use Illuminate\Support\Arr;
 
 class LevelsController extends Controller
 {
-    /**
-     * @param LevelService $service
-     */
     public function __construct(
         public LevelService $service
     )
@@ -29,152 +25,107 @@ class LevelsController extends Controller
     }
 
     /**
-     * Upload Level
-     *
-     * @param UploadRequest $request
-     * @return int
-     *
-     * @throws LevelUploadException
-     * @see http://docs.gdprogra.me/#/endpoints/uploadGJLevel21
+     * @link http://docs.gdprogra.me/#/endpoints/uploadGJLevel21
      */
     public function upload(UploadRequest $request): int
     {
         $data = $request->validated();
-        $level = $this->service->upload(
-            $request->getPlayer(),
-            $data['levelID'],
-            $data['gameVersion'],
-            $data['levelName'],
-            $data['levelDesc'],
-            $data['levelVersion'],
-            $data['levelLength'],
-            $data['audioTrack'],
-            $data['songID'],
-            $data['auto'],
-            $data['password'],
-            $data['original'],
-            $data['twoPlayer'],
-            $data['objects'],
-            $data['coins'],
-            $data['requestedStars'],
-            $data['unlisted'],
-            $data['ldm'],
-            $data['extraString'],
-            $data['levelInfo'],
-            $data['levelString']
-        );
-
-        return $level ? $level->id : ResponseCode::LEVEL_UPLOAD_FAILED;
-    }
-
-    /**
-     * @param SearchRequest $request
-     * @return int|string
-     *
-     * @throws InvalidArgumentException
-     * @see http://docs.gdprogra.me/#/endpoints/getGJLevels21
-     */
-    public function search(SearchRequest $request): int|string
-    {
-        try {
-            $data = $request->validated();
-            return $this->service->search(
-                $request->getPlayer(),
-                SearchType::fromValue((int)$data['type']),
-                $data['str'],
-                $data['page'],
-                $data['accountID'] ?? 0,
-                $data['followed'] ?? null,
-                $data['len'] ?? null,
-                $data['star'] ?? null,
-                $data['diff'] ?? null,
-                $data['demonFilter'] ?? null,
-                $data['unCompleted'] ?? false,
-                $data['onlyCompleted'] ?? false,
-                $data['completedLevels'] ?? null,
-                $data['featured'] ?? false,
-                $data['original'] ?? false,
-                $data['epic'] ?? false,
-                $data['song'] ?? null,
-                $data['customSong'] ?? false,
-                $data['noStar'] ?? false,
-                $data['coins'] ?? false,
-                $data['twoPlayer'] ?? false
-            );
-        } catch (NoItemException) {
-            return ResponseCode::LEVEL_EMPTY_RESULT_STRING;
+        if (!$level = $this->service->upload(Arr::getAny($data, ['accountID', 'udid']), $data['levelID'], $data['gameVersion'], $data['levelName'], $data['levelDesc'], $data['levelVersion'], $data['levelLength'], $data['audioTrack'], $data['songID'], $data['auto'], $data['password'], $data['original'], $data['twoPlayer'], $data['objects'], $data['coins'], $data['requestedStars'], $data['unlisted'], $data['ldm'], $data['extraString'], $data['levelInfo'], $data['levelString'])) {
+            return ResponseCode::LEVEL_UPLOAD_FAILED;
         }
+
+        return $level->id;
     }
 
     /**
-     * @param DownloadRequest $request
-     * @return int|string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/downloadGJLevel22
+     * @link http://docs.gdprogra.me/#/endpoints/getGJLevels21
+     * @throws InvalidArgumentException
      */
-    public function download(DownloadRequest $request): int|string
+    public function search(SearchRequest $request): string
+    {
+        $data = $request->validated();
+        return $this->service->search(
+            SearchType::fromValue((int)$data['type']),
+            $data['str'],
+            $data['page'],
+            $data['accountID'] ?? 0,
+            $data['followed'] ?? null,
+            $data['len'] ?? null,
+            $data['star'] ?? null,
+            $data['diff'] ?? null,
+            $data['demonFilter'] ?? null,
+            $data['unCompleted'] ?? false,
+            $data['onlyCompleted'] ?? false,
+            $data['completedLevels'] ?? null,
+            $data['featured'] ?? false,
+            $data['original'] ?? false,
+            $data['epic'] ?? false,
+            $data['song'] ?? null,
+            $data['customSong'] ?? false,
+            $data['noStar'] ?? false,
+            $data['coins'] ?? false,
+            $data['twoPlayer'] ?? false
+        );
+    }
+
+    /**
+     * @link http://docs.gdprogra.me/#/endpoints/downloadGJLevel22
+     */
+    public function download(DownloadRequest $request): string
     {
         $data = $request->validated();
         return $this->service->download($data['levelID']);
     }
 
     /**
-     * @param DeleteRequest $request
-     * @return int
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/deleteGJLevelUser20
+     * @link http://docs.gdprogra.me/#/endpoints/deleteGJLevelUser20
      */
     public function delete(DeleteRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->delete(
-            $request->getPlayer(),
-            $data['levelID']
-        ) ? ResponseCode::LEVEL_DELETE_SUCCESS : ResponseCode::LEVEL_DELETE_FAILED;
+        if (!$this->service->delete(Arr::getAny($data, ['accountID', 'udid']), $data['levelID'])) {
+            return ResponseCode::LEVEL_DELETE_FAILED;
+        }
+
+        return ResponseCode::LEVEL_DELETE_SUCCESS;
     }
 
     /**
-     * @param DailyGetRequest $request
-     * @return string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/getGJDailyLevel
+     * @link http://docs.gdprogra.me/#/endpoints/getGJDailyLevel
      */
     public function getDaily(DailyGetRequest $request): string
     {
         $data = $request->validated();
-        if ($data['weekly']) {
+        if (!empty($data['weekly'])) {
             return $this->service->getWeekly();
-        } else {
-            return $this->service->getDaily();
         }
+
+        return $this->service->getDaily();
     }
 
     /**
-     * @param ReportRequest $request
-     * @return int
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/reportGJLevel
+     * @link http://docs.gdprogra.me/#/endpoints/reportGJLevel
      */
     public function report(ReportRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->report($data['levelID'])
-            ? ResponseCode::LEVEL_REPORT_SUCCESS : ResponseCode::LEVEL_REPORT_FAILED;
+        if (!$this->service->report($data['levelID'])) {
+            return ResponseCode::LEVEL_REPORT_FAILED;
+        }
+
+        return ResponseCode::LEVEL_REPORT_SUCCESS;
     }
 
     /**
-     * @param UpdateDescRequest $request
-     * @return int
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/updateGJDesc20
+     * @link http://docs.gdprogra.me/#/endpoints/updateGJDesc20
      */
     public function updateDesc(UpdateDescRequest $request): int
     {
         $data = $request->validated();
-        return $this->service->updateDesc(
-            $request->getPlayer(),
-            $data['levelID'],
-            $data['levelDesc']
-        ) ? ResponseCode::LEVEL_UPDATE_DESC_SUCCESS : ResponseCode::LEVEL_UPDATE_DESC_FAILED;
+        if (!$this->service->updateDesc(Arr::getAny($data, ['accountID', 'udid']), $data['levelID'], $data['levelDesc'])) {
+            return ResponseCode::LEVEL_UPDATE_DESC_FAILED;
+        }
+
+        return ResponseCode::LEVEL_UPDATE_DESC_SUCCESS;
     }
 }

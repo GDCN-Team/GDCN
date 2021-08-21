@@ -6,63 +6,39 @@ use App\Enums\Game\Level\ScoreType;
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
+use App\Models\Game\Level;
 use App\Models\Game\Level\Score;
-use App\Services\Game\HelperService;
 use GDCN\GDObject;
-use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class ScoreService
- * @package App\Services\Game\Level
- */
 class ScoreService
 {
-    public function __construct(
-        public HelperService $helper
-    )
-    {
-    }
-
     /**
-     * @param $account
-     * @param $level
-     * @param int $attempts
-     * @param int $percent
-     * @param int $coins
-     * @return Score|Model
      * @throws InvalidArgumentException
      */
-    public function upload($account, $level, int $attempts, int $percent, int $coins): Model|Score
+    public function upload(int $accountID, int $levelID, int $attempts, int $percent, int $coins): Score
     {
-        if ($percent <= 0) {
+        if ($percent <= 0 || $percent > 100) {
             throw new InvalidArgumentException();
         }
 
-        return Score::updateOrCreate([
-            'account' => $this->helper->getID($account),
-            'level' => $this->helper->getID($level)
-        ], [
-            'attempts' => $attempts,
-            'percent' => $percent,
-            'coins' => $coins
-        ]);
+        return Level::findOrFail($levelID)
+            ->scores()
+            ->create([
+                'account' => $accountID,
+                'attempts' => $attempts,
+                'percent' => $percent,
+                'coins' => $coins
+            ]);
     }
 
     /**
-     * @param $account
-     * @param $level
-     * @param ScoreType $type
-     * @param int $attempts
-     * @param int $percent
-     * @param int $coins
-     * @return int|string
      * @throws InvalidArgumentException
      * @throws NoItemException
      */
-    public function get($account, $level, ScoreType $type, int $attempts, int $percent, int $coins): int|string
+    public function get(int $accountID, int $levelID, ScoreType $type, int $attempts, int $percent, int $coins): string
     {
         try {
-            $this->upload($account, $level, $attempts, $percent, $coins);
+            $this->upload($accountID, $levelID, $attempts, $percent, $coins);
         } catch (InvalidArgumentException) {
 
         }
@@ -73,8 +49,15 @@ class ScoreService
         switch ($type->value) {
             case ScoreType::FRIENDS:
                 $query->orderByDesc('percent');
-                $account = $this->helper->getModel($account, Account::class);
-                $query->whereIn('account', $account->friends->pluck('id'));
+                $friends = Account::findOrFail($accountID)->friends;
+
+                $query->whereIn(
+                    'account',
+                    $friends->pluck('account')
+                        ->push(
+                            $friends->pluck('target_account')
+                        )
+                );
                 break;
             case ScoreType::TOP:
                 $query->orderByDesc('percent');
@@ -92,11 +75,13 @@ class ScoreService
             throw new NoItemException();
         }
 
-        $this->helper->setCarbonLocaleToEnglish();
-        return $query->with('owner.user.score')
+        return $query->with('account.user.score')
             ->take(100)
             ->get()
             ->map(function (Score $score) {
+                /** @var Account $account */
+                $account = $score->getRelationValue('account');
+
                 if ($score->percent >= 100) {
                     $rank = 1;
                 } elseif ($score->percent > 75) {
@@ -106,18 +91,18 @@ class ScoreService
                 }
 
                 return GDObject::merge([
-                    1 => $score->owner->name,
-                    2 => $score->owner->user->id,
+                    1 => $account->name,
+                    2 => $account->user->id,
                     3 => $score->percent,
                     6 => $rank,
-                    9 => $score->owner->user->score->icon ?? 0,
-                    10 => $score->owner->user->score->color1 ?? 0,
-                    11 => $score->owner->user->score->color2 ?? 3,
+                    9 => $account->user->score->icon,
+                    10 => $account->user->score->color1,
+                    11 => $account->user->score->color2,
                     13 => $score->coins,
-                    14 => $score->owner->user->score->icon_type ?? 0,
-                    15 => $score->owner->user->score->special ?? 0,
-                    16 => $score->owner->id,
-                    42 => $score->created_at->diffForHumans(null, true)
+                    14 => $account->user->score->icon_type,
+                    15 => $account->user->score->special,
+                    16 => $account->id,
+                    42 => $score->created_at->locale('en')->diffForHumans(syntax: true)
                 ], ':');
             })->join('|');
     }

@@ -3,7 +3,6 @@
 namespace Database\Factories\Game;
 
 use App\Models\Game\Account;
-use Exception;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use function now;
@@ -27,12 +26,12 @@ class AccountFactory extends Factory
     public function configure(): AccountFactory
     {
         return $this->afterCreating(function (Account $account) {
-            try {
-                $udid = 'S' . mt_rand();
-                $account->resolveUser($udid);
-            } catch (Exception $e) {
-
-            }
+            $account->user()
+                ->create([
+                    'name' => $account->name,
+                    'uuid' => $account->id,
+                    'udid' => 'S' . mt_rand()
+                ]);
         });
     }
 

@@ -4,10 +4,6 @@ namespace App\Enums\Game\Level\Rating;
 
 use BenSampo\Enum\Enum;
 
-/**
- * Class SuggestionType
- * @package App\Enums\Game
- */
 final class SuggestionType extends Enum
 {
     public const SUGGEST = 1;

@@ -4,10 +4,6 @@ namespace App\Enums\Game;
 
 use BenSampo\Enum\Enum;
 
-/**
- * Class FriendState
- * @package App\Enums\Game
- */
 final class FriendState extends Enum
 {
     public const NONE = 0;

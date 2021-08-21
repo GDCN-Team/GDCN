@@ -3,30 +3,13 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
-use Illuminate\Http\Request;
 
-/**
- * Class Authenticate
- * @package App\Http\Middleware
- */
 class Authenticate extends Middleware
 {
-    /**
-     * @var string
-     */
     protected string $route = 'auth.login';
 
-    /**
-     * @var string
-     */
     protected string $message = '请先登录';
 
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     *
-     * @param Request $request
-     * @return string|void
-     */
     protected function redirectTo($request)
     {
         if (!$request->expectsJson()) {

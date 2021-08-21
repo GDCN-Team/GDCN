@@ -7,19 +7,14 @@ use Illuminate\Validation\Rule;
 
 class PackGetRequest extends Request
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
             'gameVersion' => 'required',
             'binaryVersion' => 'required',
             'gdw' => 'required',
-            'page' => 'required',
-            'secret' => Rule::in('Wmfd2893gb7')
+            'page' => 'integer',
+            'secret' => Rule::in(['Wmfd2893gb7'])
         ];
     }
 }

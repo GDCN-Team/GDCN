@@ -4,15 +4,11 @@ namespace App\Http\Requests\Game\Level;
 
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
+use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
 
 class SearchRequest extends Request
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -23,11 +19,14 @@ class SearchRequest extends Request
                 'sometimes',
                 Rule::exists(Account::class, 'id')
             ],
-            'gjp' => 'required_with:accountID',
+            'gjp' => [
+                'required_with:accountID',
+                new ValidateAccountCreditRule()
+            ],
             'type' => 'between:1,16',
             'str' => 'nullable',
-            'page' => 'required',
-            'total' => 'required',
+            'page' => 'integer',
+            'total' => 'nullable',
             'followed' => 'nullable',
 
             /* Advanced Options */
@@ -71,7 +70,7 @@ class SearchRequest extends Request
                 'sometimes',
                 'between:1,5'
             ],
-            'secret' => Rule::in('Wmfd2893gb7')
+            'secret' => Rule::in(['Wmfd2893gb7'])
         ];
     }
 }

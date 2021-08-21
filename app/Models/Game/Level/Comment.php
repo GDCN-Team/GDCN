@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Level;
 
+use App\Casts\Base64UrlCast;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use Database\Factories\Game\Level\CommentFactory;
@@ -17,13 +18,12 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property Level $level
- * @property int $account
+ * @property Account $account
  * @property string $content
  * @property int|null $percent
  * @property int $likes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Account $sender
  * @method static CommentFactory factory(...$parameters)
  * @method static Builder|Comment newModelQuery()
  * @method static Builder|Comment newQuery()
@@ -42,31 +42,20 @@ class Comment extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_level_comments';
 
-    /**
-     * @return CommentFactory
-     */
-    protected static function newFactory(): CommentFactory
-    {
-        return CommentFactory::new();
-    }
+    protected $casts = [
+        'content' => Base64UrlCast::class
+    ];
 
-    /**
-     * @return BelongsTo
-     */
+    protected $fillable = ['account', 'content', 'percent'];
+
     public function level(): BelongsTo
     {
         return $this->belongsTo(Level::class, 'level');
     }
 
-    /**
-     * @return BelongsTo
-     */
-    public function sender(): BelongsTo
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account');
     }

@@ -3,20 +3,16 @@
 namespace App\Http\Controllers\Game\Account;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\Game\NoItemException;
-use App\Exceptions\Game\NoPermissionException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Account\Message\DeleteRequest;
 use App\Http\Requests\Game\Account\Message\DownloadRequest;
 use App\Http\Requests\Game\Account\Message\GetRequest;
 use App\Http\Requests\Game\Account\Message\SendRequest;
 use App\Services\Game\Account\MessageService;
+use Illuminate\Support\Arr;
 
 class MessagesController extends Controller
 {
-    /**
-     * @param MessageService $service
-     */
     public function __construct(
         protected MessageService $service
     )
@@ -24,72 +20,50 @@ class MessagesController extends Controller
     }
 
     /**
-     * @param SendRequest $request
-     * @return int
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/uploadGJMessage20
+     * @link http://docs.gdprogra.me/#/endpoints/uploadGJMessage20
      */
     public function send(SendRequest $request): int
     {
         $data = $request->validated();
-        if ($this->service->upload($data['accountID'], $data['toAccountID'], $data['subject'], $data['body'])) {
-            return ResponseCode::MESSAGE_SENT_SUCCESS;
-        } else {
+        if (!$this->service->upload($data['accountID'], $data['toAccountID'], $data['subject'], $data['body'])) {
             return ResponseCode::MESSAGE_SENT_FAILED;
         }
+
+        return ResponseCode::MESSAGE_SENT_SUCCESS;
     }
 
     /**
-     * @param GetRequest $request
-     * @return string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/getGJMessages20
+     * @link http://docs.gdprogra.me/#/endpoints/getGJMessages20
      */
     public function get(GetRequest $request): string
     {
         $data = $request->validated();
-        try {
-            return $this->service->get($data['accountID'], $data['page'], $data['getSent'] ?? false);
-        } catch (NoItemException) {
-            return ResponseCode::EMPTY_RESULT;
-        }
+        return $this->service->get($data['accountID'], $data['getSent'] ?? false, $data['page']);
     }
 
     /**
-     * @param DeleteRequest $request
-     * @return int
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/deleteGJMessages20
+     * @link http://docs.gdprogra.me/#/endpoints/deleteGJMessages20
      */
     public function delete(DeleteRequest $request): int
     {
         $data = $request->validated();
-        if ($request->has('messages')) {
-            $result = $this->service->multiDelete($data['accountID'], explode(',', $data['messages']), $data['isSender']);
-        } else {
-            $result = $this->service->singleDelete($data['accountID'], $data['messageID'], $data['isSender']);
-        }
-
-        if ($result) {
-            return ResponseCode::MESSAGE_DELETE_SUCCESS;
-        } else {
+        if (!$this->service->delete($data['accountID'], Arr::wrap($data['messages'] ?? $data['messageID']), $data['isSender'] ?? false)) {
             return ResponseCode::MESSAGE_DELETE_FAILED;
         }
+
+        return ResponseCode::MESSAGE_DELETE_SUCCESS;
     }
 
     /**
-     * @param DownloadRequest $request
-     * @return int|string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/downloadGJMessageo20
+     * @link http://docs.gdprogra.me/#/endpoints/downloadGJMessageo20
      */
     public function download(DownloadRequest $request): int|string
     {
-        try {
-            $data = $request->validated();
-            return $this->service->download($data['accountID'], $data['messageID'], $data['isSender'] ?? false);
-        } catch (NoPermissionException) {
+        $data = $request->validated();
+        if (!$messageInfo = $this->service->download($data['accountID'], $data['messageID'], $data['isSender'] ?? false)) {
             return ResponseCode::MESSAGE_DOWNLOAD_FAILED;
         }
+
+        return $messageInfo;
     }
 }

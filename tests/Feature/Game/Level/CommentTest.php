@@ -8,9 +8,9 @@ use App\Models\Game\Account\Setting;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Comment;
 use Base64Url\Base64Url;
+use GDCN\Hash\Components\CommentUploadChk;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 use function config;
 use function route;
@@ -38,13 +38,13 @@ class CommentTest extends TestCase
                 'page' => 0,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
-                'mode' => 0,
+                'mode' => '0',
                 'levelID' => $comment->level
             ]
         );
 
         $request->assertOk();
-        $request->assertSee("2~$comment->content~3~{$comment->sender->user->id}~4~$comment->likes");
+        $request->assertSee("2~$comment->content~3~{$comment->getRelationValue('account')->user->id}~4~$comment->likes");
     }
 
     public function test_get_with_page(): void
@@ -65,7 +65,7 @@ class CommentTest extends TestCase
                 'page' => 1,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
-                'mode' => 0,
+                'mode' => '0',
                 'levelID' => $level->id
             ]
         );
@@ -101,7 +101,13 @@ class CommentTest extends TestCase
                 'secret' => 'Wmfd2893gb7',
                 'levelID' => $level->id,
                 'percent' => 0,
-                'chk' => Str::random()
+                'cType' => 0,
+                'chk' => app(CommentUploadChk::class)->encode(
+                    $account->name,
+                    0,
+                    $content,
+                    $level->id
+                )
             ]
         );
 
@@ -155,8 +161,8 @@ class CommentTest extends TestCase
                 'page' => 0,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
-                'mode' => 0,
-                'userID' => $comment->sender->user->id,
+                'mode' => '0',
+                'userID' => $comment->getRelationValue('account')->user->id,
                 'count' => 25
             ]
         );
@@ -178,8 +184,8 @@ class CommentTest extends TestCase
                 'page' => 0,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
-                'mode' => 1,
-                'userID' => $comment->sender->user->id,
+                'mode' => '1',
+                'userID' => $comment->getRelationValue('account')->user->id,
                 'count' => 25
             ]
         );
@@ -208,8 +214,8 @@ class CommentTest extends TestCase
                 'page' => 0,
                 'total' => 0,
                 'secret' => 'Wmfd2893gb7',
-                'mode' => 1,
-                'userID' => $comment->sender->user->id,
+                'mode' => '1',
+                'userID' => $comment->getRelationValue('account')->user->id,
                 'count' => 25
             ]
         );

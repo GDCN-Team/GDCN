@@ -3,18 +3,17 @@
 namespace App\Http\Controllers\Game\Account;
 
 use App\Enums\Game\ResponseCode;
-use App\Exceptions\Game\NoItemException;
+use App\Exceptions\Game\CommandNotFoundException;
+use App\Exceptions\Game\InvalidCommandException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Account\Comment\DeleteRequest;
 use App\Http\Requests\Game\Account\Comment\GetRequest;
 use App\Http\Requests\Game\Account\Comment\UploadRequest;
 use App\Services\Game\Account\CommentService;
+use App\Services\Game\CommandService;
 
 class CommentsController extends Controller
 {
-    /**
-     * @param CommentService $service
-     */
     public function __construct(
         protected CommentService $service
     )
@@ -22,46 +21,45 @@ class CommentsController extends Controller
     }
 
     /**
-     * @param GetRequest $request
-     * @return string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/getGJAccountComments20
+     * @link http://docs.gdprogra.me/#/endpoints/getGJAccountComments20
      */
     public function get(GetRequest $request): string
     {
-        try {
-            $data = $request->validated();
-            return $this->service->get($data['accountID'], $data['page']);
-        } catch (NoItemException) {
-            return ResponseCode::EMPTY_RESULT_STRING;
-        }
+        $data = $request->validated();
+        return $this->service->get($data['accountID'], $data['page']);
     }
 
     /**
-     * @param UploadRequest $request
-     * @return int|string
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/uploadGJAccComment20
+     * @link http://docs.gdprogra.me/#/endpoints/uploadGJAccComment20
      */
     public function upload(UploadRequest $request): int|string
     {
         $data = $request->validated();
-        return $this->service->upload($data['chk'], $data['cType'], $data['userName'], $data['accountID'], $data['comment']) ?? ResponseCode::ACCOUNT_COMMENT_UPLOAD_FAILED;
+        if (!$comment = $this->service->upload($data['accountID'], $data['comment'])) {
+            return ResponseCode::ACCOUNT_COMMENT_UPLOAD_FAILED;
+        }
+
+        try {
+            $commandExecuteResult = app(CommandService::class)->execute($comment);
+        } catch (InvalidCommandException) {
+            return $comment->id;
+        } catch (CommandNotFoundException) {
+            $commandExecuteResult = 'Command Not Found!';
+        }
+
+        return 'temp_0_' . $commandExecuteResult;
     }
 
     /**
-     * @param DeleteRequest $request
-     * @return int
-     *
-     * @see http://docs.gdprogra.me/#/endpoints/deleteGJAccComment20
+     * @link http://docs.gdprogra.me/#/endpoints/deleteGJAccComment20
      */
     public function delete(DeleteRequest $request): int
     {
         $data = $request->validated();
-        if ($this->service->delete($data['accountID'], $data['commentID'])) {
-            return ResponseCode::ACCOUNT_COMMENT_DELETE_SUCCESS;
-        } else {
+        if (!$this->service->delete($data['accountID'], $data['commentID'])) {
             return ResponseCode::ACCOUNT_COMMENT_DELETE_FAILED;
         }
+
+        return ResponseCode::ACCOUNT_COMMENT_DELETE_SUCCESS;
     }
 }

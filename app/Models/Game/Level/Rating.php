@@ -11,11 +11,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Rating
+ * App\Models\Game\Level\Rating
  *
- * @package App\Models\Game\Level
  * @property int $id
- * @property int $level
+ * @property Level $level
  * @property int $stars
  * @property int|null $difficulty
  * @property int $featured_score
@@ -47,10 +46,9 @@ class Rating extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_level_ratings';
+
+    protected $fillable = ['stars', 'difficulty', 'featured_score', 'epic', 'coin_verified', 'auto', 'demon', 'demon_difficulty'];
 
     public function level(): BelongsTo
     {

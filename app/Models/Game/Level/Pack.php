@@ -10,9 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Pack
+ * App\Models\Game\Level\Pack
  *
- * @package App\Models\Game\Level
  * @property int $id
  * @property string $name
  * @property string $levels
@@ -43,8 +42,5 @@ class Pack extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_level_packs';
 }

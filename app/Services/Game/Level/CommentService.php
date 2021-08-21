@@ -2,147 +2,31 @@
 
 namespace App\Services\Game\Level;
 
-use App\Enums\Game\Account\Setting\CommentHistoryState;
 use App\Enums\Game\Level\CommentMode;
-use App\Events\LevelCommentUploaded;
-use App\Exceptions\Game\AccountNotFoundException;
 use App\Exceptions\Game\InvalidArgumentException;
-use App\Exceptions\Game\NoItemException;
-use App\Exceptions\Game\UserNotFoundException;
-use App\Models\Game\Account;
+use App\Models\Game\Level;
 use App\Models\Game\Level\Comment;
 use App\Models\Game\User;
 use App\Services\Game\HelperService;
 use GDCN\GDObject;
-use Illuminate\Support\Facades\Event;
+use GDCN\Hash\Components\PageInfo as PageInfoComponent;
 
-/**
- * Class CommentService
- * @package App\Services\Game\Level
- */
 class CommentService
 {
     public function __construct(
-        public Comment       $model,
         public HelperService $helper
     )
     {
     }
 
     /**
-     * @param $level
-     * @param CommentMode $mode
-     * @param int $page
-     * @return string
      * @throws InvalidArgumentException
-     * @throws NoItemException
      */
-    public function list($level, CommentMode $mode, int $page): string
+    public function list(int $levelID, CommentMode $mode, int $page): string
     {
-        $comments = $this->model->whereLevel($level);
-        switch ($mode->value) {
-            case CommentMode::RECENT:
-                $comments->orderByDesc('created_at');
-                break;
-            case CommentMode::MOST_LIKED:
-                $comments->orderByDesc('likes');
-                break;
-            default:
-                throw new InvalidArgumentException();
-        }
-
-        $count = $comments->count();
-        if ($count <= 0) {
-            throw new NoItemException();
-        }
-
-        return $comments->forPage(++$page, $this->helper->perPage)
-                ->get()
-                ->map(function (Comment $comment) {
-                    if (!$user = $comment->sender->user) {
-                        throw new UserNotFoundException();
-                    }
-
-                    $this->helper->setCarbonLocaleToEnglish();
-                    return implode(':', [
-                        GDObject::merge([
-                            2 => $comment->content,
-                            3 => $comment->sender->user->id,
-                            4 => $comment->likes,
-                            6 => $comment->id,
-                            7 => $this->helper->checkSpam($comment->content),
-                            9 => $comment->created_at->diffForHumans(null, true),
-                            10 => $comment->percent
-                        ], '~'),
-                        GDObject::merge([
-                            1 => $user->name,
-                            9 => $user->score->icon ?? 0,
-                            10 => $user->score->color1 ?? 0,
-                            11 => $user->score->color2 ?? 3,
-                            14 => $user->score->icon_type ?? 0,
-                            15 => $user->score->special ?? 0,
-                            16 => $user->account->id
-                        ], '~')
-                    ]);
-                })->join('|') . '#' . $this->helper->generatePageHash($count, $page);
-    }
-
-    /**
-     * @param $account
-     * @param $level
-     * @param string $comment
-     * @return int|string
-     */
-    public function upload($account, $level, string $comment): int|string
-    {
-        $accountID = $this->helper->getID($account);
-        $levelID = $this->helper->getID($level);
-
-        $commentModel = new Comment();
-        $commentModel->account = $accountID;
-        $commentModel->level = $levelID;
-        $commentModel->content = $comment;
-        $commentModel->save();
-
-        $event = Event::dispatch(new LevelCommentUploaded($commentModel), halt: true);
-        return !empty($event) ? "temp_0_{$event}" : $commentModel->id;
-    }
-
-    /**
-     * @param $account
-     * @param $comment
-     * @return bool
-     */
-    public function delete($account, $comment): bool
-    {
-        $account = $this->helper->getModel($account, Account::class);
-        $comment = $this->helper->getModel($comment, Comment::class);
-
-        if ($account->can('delete', $comment)) {
-            return $comment->delete();
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $target
-     * @param CommentMode $mode
-     * @param int $page
-     * @return string
-     * @throws AccountNotFoundException
-     * @throws InvalidArgumentException
-     * @throws NoItemException
-     */
-    public function getHistory($target, CommentMode $mode, int $page): string
-    {
-        /** @var Account $target */
-        $target = $this->helper->getModel($target, User::class)->account;
-        if (!$target) {
-            throw new AccountNotFoundException();
-        }
-
-        $comments = $this->model->whereAccount($target->id);
+        $level = Level::findOrFail($levelID);
+        $comments = $level->loadCount('comments')
+            ->comments();
 
         switch ($mode->value) {
             case CommentMode::RECENT:
@@ -155,44 +39,120 @@ class CommentService
                 throw new InvalidArgumentException();
         }
 
-        if (optional($target->setting->comment_history_state ?? null)->is(CommentHistoryState::NONE)) {
-            return throw new NoItemException();
+        $result = $comments->forPage(++$page, PageInfoComponent::$per_page)
+            ->get()
+            ->map(function (Comment $comment) {
+                /** @var User $user */
+                $user = $comment->getRelationValue('account')->user;
+
+                return implode(':', [
+                    GDObject::merge([
+                        2 => $comment->content,
+                        3 => $user->id,
+                        4 => $comment->likes,
+                        6 => $comment->id,
+                        7 => $this->helper->checkSpam($comment->content),
+                        9 => $comment->created_at->locale('en')->diffForHumans(syntax: true),
+                        10 => $comment->percent
+                    ], '~'),
+                    GDObject::merge([
+                        1 => $user->name,
+                        9 => $user->score->icon,
+                        10 => $user->score->color1,
+                        11 => $user->score->color2,
+                        14 => $user->score->icon_type,
+                        15 => $user->score->special,
+                        16 => $user->account->id
+                    ], '~')
+                ]);
+            })->join('|');
+
+        return implode('#', [
+            $result,
+            app(PageInfoComponent::class)->generate($level->comments_count, $page)
+        ]);
+    }
+
+    public function upload(int $accountID, int $levelID, string $comment, int $percent = 0): Comment
+    {
+        return Level::findOrFail($levelID)
+            ->comments()
+            ->create([
+                'account' => $accountID,
+                'content' => $comment,
+                'percent' => $percent
+            ]);
+    }
+
+    public function delete(int $accountID, int $levelID, int $commentID): bool
+    {
+        return Level::findOrFail($levelID)
+            ->comments()
+            ->where('account', $accountID)
+            ->whereKey($commentID)
+            ->delete();
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function getHistory(int $targetUserID, CommentMode $mode, int $page): ?string
+    {
+        $user = User::findOrFail($targetUserID);
+        if (empty($user->account)) {
+            return null;
         }
 
-        $count = $comments->count();
-        if ($count <= 0) {
-            throw new NoItemException();
+        $comments = $user->account
+            ->loadCount('level_comments')
+            ->level_comments();
+
+        $count = $user->account->level_comments_count;
+        if ($user->account->cant('viewCommentHistory', $user->account)) {
+            $count = 0;
+            $comments->whereKey(0);
         }
 
-        return $comments->forPage(++$page, $this->helper->perPage)
-                ->get()
-                ->map(function (Comment $comment) {
-                    if (!$user = $comment->sender->user) {
-                        throw new UserNotFoundException();
-                    }
+        switch ($mode->value) {
+            case CommentMode::RECENT:
+                $comments->orderByDesc('created_at');
+                break;
+            case CommentMode::MOST_LIKED:
+                $comments->orderByDesc('likes');
+                break;
+            default:
+                throw new InvalidArgumentException();
+        }
 
-                    $this->helper->setCarbonLocaleToEnglish();
-                    return implode(':', [
-                        GDObject::merge([
-                            1 => $comment->level,
-                            2 => $comment->content,
-                            3 => $comment->sender->user->id,
-                            4 => $comment->likes,
-                            6 => $comment->id,
-                            7 => $this->helper->checkSpam($comment->content),
-                            9 => $comment->created_at->diffForHumans(null, true),
-                            10 => $comment->percent
-                        ], '~'),
-                        GDObject::merge([
-                            1 => $user->name,
-                            9 => $user->score->icon ?? 0,
-                            10 => $user->score->color1 ?? 0,
-                            11 => $user->score->color2 ?? 3,
-                            14 => $user->score->icon_type ?? 0,
-                            15 => $user->score->special ?? 0,
-                            16 => $user->account->id
-                        ], '~')
-                    ]);
-                })->join('|') . '#' . $this->helper->generatePageHash($count, $page);
+        $result = $comments->forPage(++$page, PageInfoComponent::$per_page)
+            ->get()
+            ->map(function (Comment $comment) use ($user) {
+                return implode(':', [
+                    GDObject::merge([
+                        1 => $comment->level,
+                        2 => $comment->content,
+                        3 => $user->id,
+                        4 => $comment->likes,
+                        6 => $comment->id,
+                        7 => $this->helper->checkSpam($comment->content),
+                        9 => $comment->created_at->locale('en')->diffForHumans(null, true),
+                        10 => $comment->percent
+                    ], '~'),
+                    GDObject::merge([
+                        1 => $user->name,
+                        9 => $user->score->icon,
+                        10 => $user->score->color1,
+                        11 => $user->score->color2,
+                        14 => $user->score->icon_type,
+                        15 => $user->score->special,
+                        16 => $user->account->id
+                    ], '~')
+                ]);
+            })->join('|');
+
+        return implode('#', [
+            $result,
+            app(PageInfoComponent::class)->generate($count, $page)
+        ]);
     }
 }

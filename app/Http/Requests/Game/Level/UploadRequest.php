@@ -4,28 +4,12 @@ namespace App\Http\Requests\Game\Level;
 
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
+use App\Rules\ValidateAccountCreditRule;
+use App\Rules\ValidateUploadLevelSeed2Rule;
 use Illuminate\Validation\Rule;
 
 class UploadRequest extends Request
 {
-    /**
-     * @inerhitDoc
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        if ($this->filled(['accountID', 'gjp'])) {
-            return $this->validateAccountGJP();
-        }
-
-        return true;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -36,8 +20,11 @@ class UploadRequest extends Request
                 'sometimes',
                 Rule::exists(Account::class, 'id')
             ],
-            'gjp' => 'required_with:accountID',
-            'udid' => 'required_without:accountID,gjp',
+            'gjp' => [
+                'required_with:accountID',
+                new ValidateAccountCreditRule()
+            ],
+            'udid' => 'required_without_all:accountID,gjp',
             'uuid' => 'required_with:udid',
             'userName' => 'required',
             'levelID' => 'nullable',
@@ -60,10 +47,10 @@ class UploadRequest extends Request
             'ldm' => 'boolean',
             'extraString' => 'required',
             'seed' => 'required',
-            'seed2' => 'required',
+            'seed2' => new ValidateUploadLevelSeed2Rule(),
             'levelString' => 'required',
             'levelInfo' => 'nullable',
-            'secret' => Rule::in('Wmfd2893gb7')
+            'secret' => Rule::in(['Wmfd2893gb7'])
         ];
     }
 }

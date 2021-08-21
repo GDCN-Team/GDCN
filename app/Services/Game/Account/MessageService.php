@@ -2,78 +2,68 @@
 
 namespace App\Services\Game\Account;
 
-use App\Exceptions\Game\NoItemException;
-use App\Exceptions\Game\NoPermissionException;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Message;
-use App\Repositories\Game\Account\MessageRepository;
-use App\Services\Game\HelperService;
 use GDCN\GDObject;
+use GDCN\Hash\Components\PageInfo as PageInfoComponent;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Class MessageService
- * @package App\Services\Game\Account
- */
 class MessageService
 {
-
-    /**
-     * MessageService constructor.
-     * @param MessageRepository $repository
-     * @param HelperService $helper
-     */
-    public function __construct(
-        protected MessageRepository $repository,
-        protected HelperService $helper
-    )
+    public function upload(int $accountID, int $targetAccountID, string $subject, string $body): ?Message
     {
-    }
+        $account = Account::findOrFail($accountID);
+        $targetAccount = Account::findOrFail($accountID);
 
-    /**
-     * @param int|Account $account
-     * @param int|Account $targetAccount
-     * @param string $subject
-     * @param string $body
-     * @return null
-     */
-    public function upload(Account|int $account, Account|int $targetAccount, string $subject, string $body)
-    {
-        $account = $this->helper->getModel($account, Account::class);
-        $targetAccount = $this->helper->getModel($targetAccount, Account::class);
+        if ($account->cant('sendMessage', $targetAccount)) {
+            Log::channel('gdcn')
+                ->notice('[Account Message System] Action: Upload Message Failed', [
+                    'accountID' => $accountID,
+                    'targetAccountID' => $targetAccountID,
+                    'subject' => $subject,
+                    'body' => $body,
+                    'reason' => 'Blocked By Account Setting Policy'
+                ]);
 
-        if ($account->can('send_message', $targetAccount)) {
-            $message = new Message();
-            $message->account = $account->id;
-            $message->to_account = $targetAccount->id;
-            $message->subject = $subject;
-            $message->body = $body;
-            return $message->save();
+            return null;
         }
 
-        return null;
+        Log::channel('gdcn')
+            ->info('[Account Message System] Action: Upload Message', [
+                'accountID' => $accountID,
+                'targetAccountID' => $targetAccountID,
+                'subject' => $subject,
+                'body' => $body
+            ]);
+
+        return $account->sent_messages()
+            ->create([
+                'to_account' => $targetAccountID,
+                'subject' => $subject,
+                'body' => $body
+            ]);
     }
 
-    /**
-     * @param int|Account $account
-     * @param int $page
-     * @param bool $getSent
-     * @return string
-     * @throws NoItemException
-     */
-    public function get(Account|int $account, int $page, bool $getSent): string
+    public function get(int $accountID, bool $getSent, int $page): string
     {
-        $messages = $this->repository->getByRelation($account, $getSent)
-            ->forPage($page, $this->helper->perPage)
-            ->get();
-
-        $count = $messages->count();
-        if ($count <= 0) {
-            throw new NoItemException();
+        $account = Account::findOrFail($accountID);
+        if ($getSent === true) {
+            $account->loadCount('sent_messages');
+            $messages = $account->sent_messages();
+            $column = 'to_account';
+            $count = $account->sent_messages_count;
+        } else {
+            $account->loadCount('messages');
+            $messages = $account->messages();
+            $column = 'account';
+            $count = $account->messages_count;
         }
 
-        $this->helper->setCarbonLocaleToEnglish();
-        return $messages->map(function (Message $message) use ($getSent) {
-                $account = Account::whereId($getSent ? $message->to_account : $message->account)->firstOrFail();
+        $result = $messages->forPage(++$page, PageInfoComponent::$per_page)
+            ->get()
+            ->map(function (Message $message) use ($column, $getSent) {
+                /** @var Account $account */
+                $account = $message->getRelationValue($column);
 
                 return GDObject::merge([
                     1 => $message->id,
@@ -81,79 +71,96 @@ class MessageService
                     3 => $account->user->id,
                     4 => $message->subject,
                     6 => $account->name,
-                    7 => $message->created_at->diffForHumans(null, true),
+                    7 => $message->created_at->locale('en')->diffForHumans(null, true),
                     8 => $message->readed,
                     9 => $getSent
                 ], ':');
-            })->join('|') . '#' . $this->helper->generatePageHash($count, $page);
+            })->join('|');
+
+        Log::channel('gdcn')
+            ->info('[Account Message System] Action: Get Messages', [
+                'accountID' => $accountID,
+                'getSent' => $getSent,
+                'page' => $page
+            ]);
+
+        Log::channel('debug')
+            ->info('[Account Message System] Action: Get Messages', [
+                'accountID' => $accountID,
+                'getSent' => $getSent,
+                'page' => $page,
+                'result' => $result
+            ]);
+
+        return implode('#', [
+            $result,
+            app(PageInfoComponent::class)->generate($count, $page)
+        ]);
     }
 
-    /**
-     * @param int|Account $account
-     * @param array $messages
-     * @param bool $isSender
-     * @return bool
-     */
-    public function multiDelete(Account|int $account, array $messages, bool $isSender): bool
+    public function delete(int $accountID, array $messageIDs, bool $isSender): bool
     {
-        foreach ($messages as $message) {
-            $result = $this->singleDelete($account, $message, $isSender);
-            if ($result === false) {
-                return false;
-            }
+        $account = Account::findOrFail($accountID);
+
+        if ($isSender === true) {
+            $query = $account->sent_messages();
+            $column = 'to_account';
+        } else {
+            $query = $account->messages();
+            $column = 'account';
+        }
+
+        foreach ($messageIDs as $messageID) {
+            Log::channel('gdcn')
+                ->info('[Account Message System] Action: Delete Message', [
+                    'accountID' => $accountID,
+                    'messageID' => $messageID,
+                    'isSender' => $isSender,
+                    'result' => $query->where($column, $messageID)->delete()
+                ]);
         }
 
         return true;
     }
 
-    /**
-     * @param int|Account $account
-     * @param int|Message $message
-     * @param bool $isSender
-     * @return bool
-     */
-    public function singleDelete(Account|int $account, int|Message $message, bool $isSender): bool
+    public function download(int $accountID, int $messageID, bool $isSender): string
     {
-        $account = $this->helper->getModel($account, Account::class);
-        $message = $this->helper->getModel($message, Message::class);
+        $account = Account::findOrFail($accountID);
 
-        if ($account->can('delete', [$message, $isSender])) {
-            $message->delete();
-            return true;
+        /** @var Message $message */
+        if ($isSender === true) {
+            $column = 'to_account';
+            $message = $account->sent_messages()
+                ->whereKey($messageID)
+                ->firstOrFail();
+        } else {
+            $column = 'account';
+            $message = $account->messages()
+                ->whereKey($messageID)
+                ->firstOrFail();
         }
 
-        return false;
-    }
+        $message->update([
+            'readed' => true
+        ]);
 
-    /**
-     * @param $account
-     * @param $message
-     * @param bool $isSender
-     * @return string
-     * @throws NoPermissionException
-     */
-    public function download($account, $message, bool $isSender): string
-    {
-        $account = $this->helper->getModel($account, Account::class);
-        $message = $this->helper->getmodel($message, Message::class);
+        Log::channel('gdcn')
+            ->info('[Account Message System] Action: Download Message', [
+                'accountID' => $accountID,
+                'messageID' => $messageID,
+                'isSender' => $isSender
+            ]);
 
-        if ($account->can('download', [$message, $isSender])) {
-            $message->readed = true;
-            $message->save();
-
-            return GDObject::merge([
-                1 => $message->id,
-                2 => $isSender ? $message->to_account : $message->account,
-                3 => $account->user->id,
-                4 => $message->subject,
-                5 => $message->body,
-                6 => $account->name,
-                7 => $message->created_at->diffForHumans(null, true),
-                8 => $message->readed,
-                9 => $isSender
-            ], ':');
-        }
-
-        throw new NoPermissionException();
+        return GDObject::merge([
+            1 => $message->id,
+            2 => $message->{$column},
+            3 => $account->user->id,
+            4 => $message->subject,
+            5 => $message->body,
+            6 => $account->name,
+            7 => $message->created_at->locale('en')->diffForHumans(null, true),
+            8 => $message->readed,
+            9 => $isSender
+        ], ':');
     }
 }

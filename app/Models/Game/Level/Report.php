@@ -2,18 +2,19 @@
 
 namespace App\Models\Game\Level;
 
+use App\Models\Game\Level;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * Class Report
+ * App\Models\Game\Level\Report
  *
- * @package App\Models\Game\Level
  * @property int $id
- * @property int $level
+ * @property Level $level
  * @property int $times
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -31,8 +32,10 @@ class Report extends Model
 {
     use HasFactory;
 
-    /**
-     * @var string
-     */
     protected $table = 'game_level_reports';
+
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(Level::class, 'level');
+    }
 }
