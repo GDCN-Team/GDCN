@@ -182,13 +182,13 @@ class LevelService
                 });
                 break;
             case SearchType::FOLLOWED:
-                $query->whereHas('creator', function (Builder $query) use ($followed) {
+                $query->whereHas('user', function (Builder $query) use ($followed) {
                     $query->whereIn('uuid', explode(',', $followed));
                 });
                 break;
             case SearchType::FRIENDS:
                 $account = Account::findOrFail($accountID);
-                $query->whereHas('creator', function (Builder $query) use ($account) {
+                $query->whereHas('user', function (Builder $query) use ($account) {
                     $query->whereIn('uuid', $account->friends->pluck('id'));
                 });
                 break;
