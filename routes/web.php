@@ -36,8 +36,12 @@ Route::group([
     Route::group([
         'prefix' => 'admin',
         'as' => 'admin.'
-    ], function () {
-        Route::get('/logs', [LogViewerController::class, 'index'])->middleware('permission_can:ADMIN_VIEW_LOGS')->name('logs');
+    ], function () use ($authMiddleware) {
+        Route::group([
+            'middleware' => $authMiddleware
+        ], function () {
+            Route::get('/logs', [LogViewerController::class, 'index'])->middleware('permission_can:ADMIN_VIEW_LOGS')->name('logs');
+        });
     });
 
     Route::group([
