@@ -26,7 +26,7 @@ class CommentService
             ->get()
             ->map(function (AccountComment $comment) use ($account) {
                 return GDObject::merge([
-                    2 => $comment->value('content'),
+                    2 => $comment->getRawOriginal('content'),
                     4 => $comment->likes,
                     6 => $comment->id,
                     7 => $this->helper->checkSpam($comment->content),
