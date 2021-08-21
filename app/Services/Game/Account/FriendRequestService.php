@@ -112,7 +112,7 @@ class FriendRequestService
                     15 => $account->user->score->special,
                     16 => $account->id,
                     32 => $request->id,
-                    35 => $request->comment,
+                    35 => $request->value('comment'),
                     37 => $request->created_at->locale('en')->diffForHumans(syntax: true),
                     41 => $request->new
                 ], ':');

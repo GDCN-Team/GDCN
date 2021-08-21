@@ -47,7 +47,7 @@ class CommentService
 
                 return implode(':', [
                     GDObject::merge([
-                        2 => $comment->content,
+                        2 => $comment->value('content'),
                         3 => $user->id,
                         4 => $comment->likes,
                         6 => $comment->id,
@@ -130,7 +130,7 @@ class CommentService
                 return implode(':', [
                     GDObject::merge([
                         1 => $comment->level,
-                        2 => $comment->content,
+                        2 => $comment->value('content'),
                         3 => $user->id,
                         4 => $comment->likes,
                         6 => $comment->id,
