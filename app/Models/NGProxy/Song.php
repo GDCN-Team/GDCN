@@ -39,6 +39,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Song whereUpdatedAt($value)
  * @method static Builder|Song whereVideoId($value)
  * @mixin Eloquent
+ * @method static \Database\Factories\NGProxy\SongFactory factory(...$parameters)
  */
 class Song extends Model
 {

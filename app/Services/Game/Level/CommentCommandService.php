@@ -6,7 +6,10 @@ use App\Exceptions\Game\CommandNotFoundException;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Comment as LevelComment;
+use App\Models\Game\Level\Daily;
+use App\Models\Game\Level\Weekly;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 
 class CommentCommandService
@@ -117,5 +120,55 @@ class CommentCommandService
         }
 
         return 'Unknown error.';
+    }
+
+    public function set(): string
+    {
+        switch ($this->arguments[1]) {
+            case 'as':
+                switch ($this->arguments[2]) {
+                    case 'daily':
+                        if (!$this->operator->permission_group?->can('COMMAND_SET_AS_DAILY_LEVEL')) {
+                            return 'Permission denied.';
+                        }
+
+                        $time = app(Carbon::class)->addDay();
+                        if ($feature = Level\Daily::latest()) {
+                            $time = $feature->time?->addDay() ?? $time;
+                        }
+
+                        /** @var Daily $daily */
+                        $daily = $this->level
+                            ->daily()
+                            ->create([
+                                'time' => $time
+                            ]);
+
+                        return "Set to daily! ID: $daily->id, time: $daily->time";
+                    case 'weekly':
+                        if (!$this->operator->permission_group?->can('COMMAND_SET_AS_WEEKLY_LEVEL')) {
+                            return 'Permission denied.';
+                        }
+
+                        $time = app(Carbon::class)
+                            ->addWeek()
+                            ->startOfWeek();
+
+                        if ($feature = Weekly::latest()) {
+                            $time = $feature->time?->addWeek()->startOfWeek() ?? $time;
+                        }
+
+                        /** @var Weekly $weekly */
+                        $weekly = $this->level
+                            ->weekly()
+                            ->create([
+                                'time' => $time
+                            ]);
+
+                        return "Set to weekly! ID: $weekly->id, time: $weekly->time";
+                }
+        }
+
+        return 'Error';
     }
 }

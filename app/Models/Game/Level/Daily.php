@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Level $level
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $time
+ * @property Carbon|null $time
  * @method static DailyFactory factory(...$parameters)
  * @method static Builder|Daily newModelQuery()
  * @method static Builder|Daily newQuery()
@@ -35,6 +35,12 @@ class Daily extends Model
     use HasFactory;
 
     protected $table = 'game_daily_levels';
+
+    protected $casts = [
+        'time' => 'datetime'
+    ];
+
+    protected $fillable = ['time'];
 
     public function level(): BelongsTo
     {

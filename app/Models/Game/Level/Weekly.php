@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Level $level
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $time
+ * @property Carbon|null $time
  * @method static WeeklyFactory factory(...$parameters)
  * @method static Builder|Weekly newModelQuery()
  * @method static Builder|Weekly newQuery()
@@ -35,6 +35,12 @@ class Weekly extends Model
     use HasFactory;
 
     protected $table = 'game_weekly_levels';
+
+    protected $casts = [
+        'time' => 'datetime'
+    ];
+
+    protected $fillable = ['time'];
 
     public function level(): BelongsTo
     {
