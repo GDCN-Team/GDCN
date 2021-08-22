@@ -57,14 +57,17 @@ class GDProxyService
     {
         switch ($path) {
             case '/getGJSongInfo.php':
-                try {
-                    return app(NGProxyService::class)->getSongObjectForGDProxy($data['songID']);
-                } catch (SongGetException) {
-                    return ResponseCode::SONG_GET_FAILED;
+                $fromNGProxy = $data['fromNGProxy'] ?? false;
+                if (!$fromNGProxy) {
+                    try {
+                        return app(NGProxyService::class)->getSongObjectForGDProxy($data['songID']);
+                    } catch (SongGetException) {
+                        return ResponseCode::SONG_GET_FAILED;
+                    }
                 }
-            default:
-                return null;
         }
+
+        return null;
     }
 
     protected function processResponse(string $path, array $data = [], string $response = null): ?string

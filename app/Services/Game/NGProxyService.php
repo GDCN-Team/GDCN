@@ -100,11 +100,10 @@ class NGProxyService
     {
         Log::channel('gdcn')
             ->info('[Newgrounds Proxy System] Action: Get Song Object', [
-                'songID' => $songID,
-                'getFromApi' => false
+                'songID' => $songID
             ]);
 
-        $song = $this->getSong($songID, false);
+        $song = $this->getSong($songID);
         return $this->convertSongModelToObject($song);
     }
 
@@ -164,7 +163,8 @@ class NGProxyService
     {
         $response = $this->GDProxy->proxy($uri, [
             'songID' => $songID,
-            'secret' => 'Wmfd2893gb7'
+            'secret' => 'Wmfd2893gb7',
+            'fromNGProxy' => true
         ]);
 
         Log::debug("[NGProxy] Requested $uri", [
