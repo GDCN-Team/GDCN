@@ -5,6 +5,7 @@ namespace App\Services\Game\Level;
 use App\Models\Game\Level\Gauntlet;
 use GDCN\GDObject;
 use GDCN\Hash\Components\LevelGauntlet as LevelGauntletComponent;
+use Illuminate\Support\Facades\Log;
 
 class GauntletService
 {
@@ -33,6 +34,9 @@ class GauntletService
                     ])
                 ], ':');
             })->join('|');
+
+        Log::channel('gdcn')
+            ->info('[Level Gauntlet System] Action: Get Gauntlets');
 
         return implode('#', [
             $result,

@@ -8,6 +8,7 @@ use GDCN\Hash\Components\Challenge as ChallengeComponent;
 use GDCN\Hash\Components\ChallengeChk as ChallengeChkComponent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ChallengeService
@@ -67,6 +68,14 @@ class ChallengeService
             $this->generateChallengeInfo($challenges[1]),
             $this->generateChallengeInfo($challenges[2])
         ]);
+
+        Log::channel('gdcn')
+            ->info('[Challenge System] Action: Get Challenges', [
+                'uuid' => str_repeat('*', strlen($uuid)),
+                'udid' => str_repeat('*', strlen($udid)),
+                'accountID' => $accountID,
+                'chk' => str_repeat('*', strlen($chk))
+            ]);
 
         return implode('|', [
             implode(null, [

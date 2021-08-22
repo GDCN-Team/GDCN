@@ -43,14 +43,6 @@ class FriendRequestService
                 'comment' => $comment
             ]);
 
-        Log::channel('debug')
-            ->debug('[Account Friend Request System] Action: Send Request', [
-                'accountID' => $accountID,
-                'targetAccountID' => $targetAccountID,
-                'comment' => $comment,
-                'model' => $friendRequest->toArray()
-            ]);
-
         $friendRequest->save();
         return $friendRequest;
     }
@@ -123,14 +115,6 @@ class FriendRequestService
                 'accountID' => $accountID,
                 'getSent' => $getSent,
                 'page' => $page
-            ]);
-
-        Log::channel('debug')
-            ->debug('[Account Friend Request System] Action: Get Requests', [
-                'accountID' => $accountID,
-                'getSent' => $getSent,
-                'page' => $page,
-                'result' => $result
             ]);
 
         return implode('#', [

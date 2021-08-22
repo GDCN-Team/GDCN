@@ -41,18 +41,6 @@ class SettingService
                 'twitch' => $twitch
             ]);
 
-        Log::channel('debug')
-            ->debug('[Account Setting System] Action: Update Setting', [
-                'accountID' => $accountID,
-                'messageState' => $messageState,
-                'friendRequestState' => $friendRequestState,
-                'commentState' => $commentState,
-                'youtube' => $youtube,
-                'twitter' => $twitch,
-                'twitch' => $twitch,
-                'model' => $setting
-            ]);
-
         $setting->save();
         return $setting;
     }

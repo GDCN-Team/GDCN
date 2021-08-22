@@ -58,16 +58,17 @@ class CommandService
         /** @var AccountCommentCommandService|LevelCommentCommandService $command */
         $commandExecuteResult = $command->execute();
 
-        Log::notice('[Comment Command System] Command Executed', [
-            'service' => $service,
-            'operatorAccountID' => $account->id,
-            'levelID' => $comment->level,
-            'content' => $comment->content,
-            'name' => $name,
-            'arguments' => $arguments,
-            'options' => $options,
-            'result' => $commandExecuteResult
-        ]);
+        Log::channel('gdcn')
+            ->notice('[Comment Command System] Command Executed', [
+                'service' => $service,
+                'operatorAccountID' => $account->id,
+                'levelID' => $comment->level,
+                'content' => $comment->content,
+                'name' => $name,
+                'arguments' => $arguments,
+                'options' => $options,
+                'result' => $commandExecuteResult
+            ]);
 
         return $commandExecuteResult;
     }

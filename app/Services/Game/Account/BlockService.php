@@ -18,16 +18,9 @@ class BlockService
             ]);
 
         Log::channel('gdcn')
-            ->notice('[Account Block System] Action: Blocked', [
+            ->info('[Account Block System] Action: Blocked', [
                 'accountID' => $accountID,
                 'targetAccountID' => $targetAccountID
-            ]);
-
-        Log::channel('debug')
-            ->debug('[Account Block System] Action: Blocked', [
-                'accountID' => $accountID,
-                'targetAccountID' => $targetAccountID,
-                'model' => $block->toArray()
             ]);
 
         $block->save();
@@ -37,7 +30,7 @@ class BlockService
     public function unblock(int $accountID, int $targetAccountID): bool
     {
         Log::channel('gdcn')
-            ->notice('[Account Block System] Action: UnBlocked', [
+            ->info('[Account Block System] Action: UnBlocked', [
                 'accountID' => $accountID,
                 'targetAccountID' => $targetAccountID
             ]);

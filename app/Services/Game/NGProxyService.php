@@ -24,6 +24,12 @@ class NGProxyService
      */
     public function getSong(int $songID, bool $getFromApi = true): Song
     {
+        Log::channel('gdcn')
+            ->info('[Newgrounds Proxy System] Action: Get Song', [
+                'songID' => $songID,
+                'getFromApi' => $getFromApi
+            ]);
+
         $song = $this->getSongModel($songID);
         if (empty($song)) {
             if ($getFromApi) {
@@ -63,6 +69,11 @@ class NGProxyService
      */
     public function getSongInfo(int $songID): string
     {
+        Log::channel('gdcn')
+            ->info('[Newgrounds Proxy System] Action: Get Song Info', [
+                'songID' => $songID
+            ]);
+
         return $this->getSong($songID)->toJson();
     }
 
@@ -72,6 +83,11 @@ class NGProxyService
      */
     public function getSongObjectForGD(int $songID): string
     {
+        Log::channel('gdcn')
+            ->info('[Newgrounds Proxy System] Action: Get Song Object', [
+                'songID' => $songID
+            ]);
+
         $song = $this->getSong($songID);
         return $this->convertSongModelToObject($song);
     }
@@ -82,6 +98,12 @@ class NGProxyService
      */
     public function getSongObjectForGDProxy(int $songID): string
     {
+        Log::channel('gdcn')
+            ->info('[Newgrounds Proxy System] Action: Get Song Object', [
+                'songID' => $songID,
+                'getFromApi' => false
+            ]);
+
         $song = $this->getSong($songID, false);
         return $this->convertSongModelToObject($song);
     }

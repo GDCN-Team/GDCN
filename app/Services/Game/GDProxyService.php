@@ -24,9 +24,8 @@ class GDProxyService
     public function proxy(string $path, array $data = []): string
     {
         if ($result = $this->preProcessRequest($path, $data)) {
-            Log::debug('[GDProxy] Request preprocessed.', [
-                'data' => $result
-            ]);
+            Log::channel('gdcn')
+                ->info('[Geometry Dash Proxy System] Request preprocessed.');
 
             return $result;
         }
@@ -38,14 +37,12 @@ class GDProxyService
                 $data
             )->body();
 
-        Log::debug('[GDProxy] Requested to official server.', [
-            'data' => $response
-        ]);
+        Log::channel('gdcn')
+            ->info('[Geometry Dash Proxy System] Requested to official server.');
 
         if ($result = $this->processResponse($path, $data, $response)) {
-            Log::debug('[GDProxy] Processed response.', [
-                'data' => $result
-            ]);
+            Log::channel('gdcn')
+                ->info('[Geometry Dash Proxy System] Processed response.');
 
             return $result;
         }

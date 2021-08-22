@@ -84,14 +84,6 @@ class MessageService
                 'page' => $page
             ]);
 
-        Log::channel('debug')
-            ->info('[Account Message System] Action: Get Messages', [
-                'accountID' => $accountID,
-                'getSent' => $getSent,
-                'page' => $page,
-                'result' => $result
-            ]);
-
         return implode('#', [
             $result,
             app(PageInfoComponent::class)->generate($count, $page)

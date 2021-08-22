@@ -6,6 +6,7 @@ use App\Enums\Game\RewardType;
 use Exception;
 use GDCN\Hash\Components\Reward as RewardComponent;
 use GDCN\Hash\Components\RewardChk as RewardChkComponent;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class RewardService
@@ -63,6 +64,15 @@ class RewardService
             ++$user->score->chest2count,
             $type->value
         ]);
+
+        Log::channel('gdcn')
+            ->info('[Reward System] Action: Get Reward', [
+                'userID' => $user->id,
+                'type' => $type->value,
+                'udid' => str_repeat('*', strlen($udid)),
+                'accountID' => $accountID,
+                'chk' => str_repeat('*', strlen($chk))
+            ]);
 
         $rewardComponent = app(RewardComponent::class);
         return implode('|', [

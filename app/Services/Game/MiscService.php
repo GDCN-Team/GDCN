@@ -10,6 +10,7 @@ use App\Models\Game\Level;
 use App\Models\Game\Level\Comment as LevelComment;
 use App\Models\Game\Log;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log as LogFacade;
 use Illuminate\Support\Facades\Request;
 
 class MiscService
@@ -66,11 +67,22 @@ class MiscService
             }
         });
 
+        LogFacade::channel('gdcn')
+            ->info('[Misc System] Action: Like Item', [
+                'userID' => $user->id,
+                'type' => $type->value,
+                'itemID' => $itemID,
+                'like' => $like
+            ]);
+
         return $item->save();
     }
 
     public function restore(): bool
     {
+        LogFacade::channel('gdcn')
+            ->info('[Misc System] Action: Restore Item');
+
         return false;
     }
 }

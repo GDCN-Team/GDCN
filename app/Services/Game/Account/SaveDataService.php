@@ -20,12 +20,6 @@ class SaveDataService
                 'userName' => $userName
             ]);
 
-        Log::channel('debug')
-            ->debug('[Account SaveData System] Action: Save Data', [
-                'userName' => $userName,
-                'saveData' => $saveData
-            ]);
-
         return $this->storage->put(
             $this->getObjectNameForOss($userName),
             $saveData

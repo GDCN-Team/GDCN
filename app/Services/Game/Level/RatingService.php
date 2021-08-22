@@ -7,6 +7,7 @@ use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\RatingSuggestion;
 use App\Services\Game\HelperService;
+use Illuminate\Support\Facades\Log;
 
 class RatingService
 {
@@ -20,8 +21,25 @@ class RatingService
     {
         $account = Account::findOrFail($accountID);
         if (!$account->user || !$account->permission_group?->can('CREATE_LEVEL_SUGGESTION')) {
+            Log::channel('gdcn')
+                ->notice('[Level Rating System] Action: Suggest Rating Failed', [
+                    'accountID' => $accountID,
+                    'levelID' => $levelID,
+                    'stars' => $stars,
+                    'feature' => $feature,
+                    'reason' => 'No Permission',
+                ]);
+
             return null;
         }
+
+        Log::channel('gdcn')
+            ->info('[Level Rating System] Action: Suggest Rating', [
+                'accountID' => $accountID,
+                'levelID' => $levelID,
+                'stars' => $stars,
+                'feature' => $feature
+            ]);
 
         return Level::findOrFail($levelID)
             ->rating_suggestions()
@@ -41,9 +59,10 @@ class RatingService
         $level = Level::findOrFail($levelID);
         $suggestions = $level->rating_suggestions();
 
-        $suggestions->create([
-            'type' => SuggestionType::RATE,
+        $suggestions->firstOrCreate([
             'user' => $user->id,
+        ], [
+            'type' => SuggestionType::RATE,
             'level' => $levelID,
             'rating' => $stars,
             'featured' => false
@@ -52,6 +71,13 @@ class RatingService
         if (config('game.feature.auto_rate.rate.enabled') && $suggestions->count() >= config('game.feature.auto_rate.rate.least_suggest')) {
             $stars = round($suggestions->average('rating'));
             $suggestions->delete();
+
+            Log::channel('gdcn')
+                ->notice('[Level Rating System] Action: Auto Rate Face', [
+                    'userID' => $user->id,
+                    'levelID' => $levelID,
+                    'stars' => $stars
+                ]);
 
             return $level->rating()
                 ->firstOrCreate([], [
@@ -65,6 +91,13 @@ class RatingService
                     'demon_difficulty' => 0
                 ])->save();
         }
+
+        Log::channel('gdcn')
+            ->info('[Level Rating System] Action: Suggest Rate', [
+                'userID' => $user->id,
+                'levelID' => $levelID,
+                'stars' => $stars
+            ]);
 
         return true;
     }
@@ -80,9 +113,10 @@ class RatingService
             return false;
         }
 
-        $suggestions->create([
-            'type' => SuggestionType::DEMON,
+        $suggestions->firstOrCreate([
             'user' => $user->id,
+        ], [
+            'type' => SuggestionType::DEMON,
             'level' => $levelID,
             'rating' => $rating,
             'featured' => false
@@ -92,11 +126,25 @@ class RatingService
             $rating = round($suggestions->average('rating'));
             $suggestions->delete();
 
-            return $level->rating
+            Log::channel('gdcn')
+                ->notice('[Level Rating System] Action: Auto Rate Demon Face', [
+                    'userID' => $user->id,
+                    'levelID' => $levelID,
+                    'rating' => $rating
+                ]);
+
+            return $level->rating()
                 ->update([
                     'demon_difficulty' => $this->guessDemonDifficultyFromRating($rating)
                 ]);
         }
+
+        Log::channel('gdcn')
+            ->info('[Level Rating System] Action: Suggest Demon', [
+                'userID' => $user->id,
+                'levelID' => $levelID,
+                'rating' => $rating
+            ]);
 
         return true;
     }

@@ -41,13 +41,6 @@ class CommentService
                 'page' => $page
             ]);
 
-        Log::channel('debug')
-            ->debug('[Account Comment System] Action: Get Comments', [
-                'accountID' => $accountID,
-                'page' => $page,
-                'result' => $result
-            ]);
-
         return implode('#', [
             $result,
             app(PageInfoComponent::class)->generate($account->comments_count, $page)

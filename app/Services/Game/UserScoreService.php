@@ -5,6 +5,7 @@ namespace App\Services\Game;
 use App\Models\Game\User;
 use App\Models\Game\UserScore;
 use GDCN\GDObject;
+use Illuminate\Support\Facades\Log;
 
 class UserScoreService
 {
@@ -68,6 +69,34 @@ class UserScoreService
                 'acc_explosion' => $accExplosion
             ]);
 
+        Log::channel('gdcn')
+            ->info('[User Score System] Action: Upload Score', [
+                'uuid' => str_repeat('*', strlen($uuid)),
+                'name' => $name,
+                'udid' => str_repeat('*', strlen($udid)),
+                'gameVersion' => $gameVersion,
+                'binaryVersion' => $binaryVersion,
+                'stars' => $stars,
+                'demons' => $demons,
+                'diamonds' => $diamonds,
+                'icon' => $icon,
+                'color1' => $color1,
+                'color2' => $color2,
+                'iconType' => $iconType,
+                'coins' => $coins,
+                'userCoins' => $userCoins,
+                'special' => $special,
+                'accIcon' => $accIcon,
+                'accShip' => $accShip,
+                'accBall' => $accBall,
+                'accBird' => $accBird,
+                'accDart' => $accDart,
+                'accRobot' => $accRobot,
+                'accGlow' => $accGlow,
+                'accSpider' => $accSpider,
+                'accExplosion' => $accExplosion
+            ]);
+
         $score->save();
         return $score;
     }
@@ -107,6 +136,13 @@ class UserScoreService
                 $query = UserScore::orderByDesc('stars');
                 break;
         }
+
+        Log::channel('gdcn')
+            ->info('[User Score System] Action: Get Scores', [
+                'userID' => $user->id,
+                'type' => $type,
+                'count' => $count
+            ]);
 
         return $query->with('user')
             ->take($count)

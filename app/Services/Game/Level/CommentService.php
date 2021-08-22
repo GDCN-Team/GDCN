@@ -10,6 +10,7 @@ use App\Models\Game\User;
 use App\Services\Game\HelperService;
 use GDCN\GDObject;
 use GDCN\Hash\Components\PageInfo as PageInfoComponent;
+use Illuminate\Support\Facades\Log;
 
 class CommentService
 {
@@ -67,6 +68,13 @@ class CommentService
                 ]);
             })->join('|');
 
+        Log::channel('gdcn')
+            ->info('[Level Comment System] Action: Get Comments', [
+                'levelID' => $levelID,
+                'mode' => $mode->value,
+                'page' => $page
+            ]);
+
         return implode('#', [
             $result,
             app(PageInfoComponent::class)->generate($level->comments_count, $page)
@@ -75,6 +83,14 @@ class CommentService
 
     public function upload(int $accountID, int $levelID, string $comment, int $percent = 0): Comment
     {
+        Log::channel('gdcn')
+            ->info('[Level Comment System] Action: Upload Comment', [
+                'accountID' => $accountID,
+                'levelID' => $levelID,
+                'comment' => $comment,
+                'percent' => $percent
+            ]);
+
         return Level::findOrFail($levelID)
             ->comments()
             ->create([
@@ -86,6 +102,13 @@ class CommentService
 
     public function delete(int $accountID, int $levelID, int $commentID): bool
     {
+        Log::channel('gdcn')
+            ->info('[Level Comment System] Action: Delete Comment', [
+                'accountID' => $accountID,
+                'levelID' => $levelID,
+                'commentID' => $commentID
+            ]);
+
         return Level::findOrFail($levelID)
             ->comments()
             ->where('account', $accountID)
@@ -149,6 +172,13 @@ class CommentService
                     ], '~')
                 ]);
             })->join('|');
+
+        Log::channel('gdcn')
+            ->info('[Level Comment System] Action: Get Comment Histories', [
+                'targetUserID' => $targetUserID,
+                'mode' => $mode->value,
+                'page' => $page
+            ]);
 
         return implode('#', [
             $result,

@@ -13,6 +13,7 @@ use App\Models\Game\User;
 use App\Models\Game\UserScore;
 use GDCN\GDObject;
 use GDCN\Hash\Components\PageInfo as PageInfoComponent;
+use Illuminate\Support\Facades\Log;
 
 class UserService
 {
@@ -132,6 +133,12 @@ class UserService
                 ])->count();
         }
 
+        Log::channel('gdcn')
+            ->info('[User System] Action: Get Info', [
+                'viewerAccountID' => $viewerAccountID,
+                'targetAccountID' => $targetAccountID
+            ]);
+
         return GDObject::merge($userInfo, ':');
     }
 
@@ -161,6 +168,12 @@ class UserService
                 ], ':');
             })->join('|');
 
+        Log::channel('gdcn')
+            ->info('[User System] Action: Search Users', [
+                'str' => $str,
+                'page' => $page
+            ]);
+
         return implode('#', [
             $result,
             app(PageInfoComponent::class)->generate($users->count(), $page)
@@ -169,6 +182,11 @@ class UserService
 
     public function requestAccess(int $accountID): int
     {
+        Log::channel('gdcn')
+            ->info('[User System] Action: Request Access', [
+                'accountID' => $accountID
+            ]);
+
         return Account::findOrFail($accountID)
             ->permission_group
             ?->mod_level;
@@ -186,6 +204,12 @@ class UserService
             UserListType::BLOCKS => $account->blocks(),
             default => throw new InvalidArgumentException()
         };
+
+        Log::channel('gdcn')
+            ->info('[User System] Action: Get Users', [
+                'accountID' => $accountID,
+                'type' => $type->value
+            ]);
 
         return $query
             ->get()

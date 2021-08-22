@@ -4,6 +4,7 @@ namespace App\Services\Game;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ProxyService
 {
@@ -12,6 +13,9 @@ class ProxyService
 
     public function getProxyInstance(): PendingRequest
     {
+        Log::channel('gdcn')
+            ->info('[Base Proxy System] Action: Get Base Proxy Instance');
+
         return Http::asForm()
             ->withUserAgent(null)
             ->withOptions([

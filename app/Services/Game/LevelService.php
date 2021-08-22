@@ -20,6 +20,7 @@ use GDCN\Hash\Components\LevelString as LevelStringComponent;
 use GDCN\Hash\Components\PageInfo as PageInfoComponent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log as LogFacade;
 use Illuminate\Support\Facades\Request;
 
 class LevelService
@@ -64,11 +65,31 @@ class LevelService
         $user = $this->helper->resolveUser($uuid);
 
         if (!$levelInfo) {
-            \Illuminate\Support\Facades\Log::notice('[Level Upload] Detected Verify Hack', [
-                'userID' => $user->id,
-                'levelID' => $levelID,
-                'levelName' => $levelName
-            ]);
+            LogFacade::channel('gdcn')
+                ->notice('[Level System] Action: Upload Level Failed', [
+                    'userID' => $user->id,
+                    'levelID' => $levelID,
+                    'gameVersion' => $gameVersion,
+                    'name' => $levelName,
+                    'desc' => $levelDesc,
+                    'version' => $levelVersion,
+                    'length' => $levelLength,
+                    'audioTrack' => $audioTrack,
+                    'song' => $songID,
+                    'auto' => $auto,
+                    'password' => $password,
+                    'original' => $original,
+                    'twoPlayer' => $twoPlayer,
+                    'objects' => $objects,
+                    'coins' => $coins,
+                    'requestedStars' => $requestedStars,
+                    'unlisted' => $unlisted,
+                    'ldm' => $ldm,
+                    'extraString' => $extraString,
+                    'levelInfo' => $levelInfo,
+                    'levelString' => $levelString,
+                    'reason' => 'Detected Verify Hack'
+                ]);
 
             return null;
         }
@@ -106,6 +127,31 @@ class LevelService
             $this->generateObjectNameForOss($level->id),
             $levelString
         );
+
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Upload Level', [
+                'userID' => $user->id,
+                'levelID' => $levelID,
+                'gameVersion' => $gameVersion,
+                'name' => $levelName,
+                'desc' => $levelDesc,
+                'version' => $levelVersion,
+                'length' => $levelLength,
+                'audioTrack' => $audioTrack,
+                'song' => $songID,
+                'auto' => $auto,
+                'password' => $password,
+                'original' => $original,
+                'twoPlayer' => $twoPlayer,
+                'objects' => $objects,
+                'coins' => $coins,
+                'requestedStars' => $requestedStars,
+                'unlisted' => $unlisted,
+                'ldm' => $ldm,
+                'extraString' => $extraString,
+                'levelInfo' => $levelInfo,
+                'levelString' => $levelString
+            ]);
 
         return $level;
     }
@@ -349,6 +395,11 @@ class LevelService
                 ], ':');
             })->join('|');
 
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Search Level', [
+                'query' => $query->toSql()
+            ]);
+
         return implode('#', [
             $result,
             implode('|', $users),
@@ -458,6 +509,12 @@ class LevelService
             ]);
         }
 
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Download Level', [
+                'ip' => Request::ip(),
+                'levelID' => $level->id
+            ]);
+
         return implode('#', [
             $result,
             app(LevelStringComponent::class)->generateHash($levelString),
@@ -468,6 +525,11 @@ class LevelService
 
     public function delete(?string $uuid, int $levelID): bool
     {
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Delete Level', [
+                'levelID' => $levelID
+            ]);
+
         return $this->helper->resolveUser($uuid)
             ->levels()
             ->whereKey($levelID)
@@ -488,6 +550,12 @@ class LevelService
         $seconds = app(Carbon::class)
             ->secondsUntilEndOfDay();
 
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Get Daily Level', [
+                'dailyID' => $featureID,
+                'seconds' => $seconds
+            ]);
+
         return $featureID . '|' . $seconds;
     }
 
@@ -506,6 +574,12 @@ class LevelService
             ->addWeek()
             ->startOfWeek()
             ->diffInSeconds();
+
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Get Weekly Level', [
+                'weeklyID' => $featureID,
+                'seconds' => $seconds
+            ]);
 
         return $featureID . '|' . $seconds;
     }
@@ -531,11 +605,23 @@ class LevelService
             ]);
         });
 
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Report Level', [
+                'ip' => Request::ip(),
+                'levelID' => $levelID
+            ]);
+
         return $report->save();
     }
 
     public function updateDesc(?string $uuid, int $levelID, ?string $desc): bool
     {
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Upload Desc', [
+                'levelID' => $levelID,
+                'desc' => $desc
+            ]);
+
         return $this->helper->resolveUser($uuid)
             ->levels()
             ->whereKey($levelID)

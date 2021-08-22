@@ -6,6 +6,7 @@ use App\Models\Game\Level\Pack;
 use GDCN\GDObject;
 use GDCN\Hash\Components\LevelPack as LevelPackComponent;
 use GDCN\Hash\Components\PageInfo as PageInfoComponent;
+use Illuminate\Support\Facades\Log;
 
 class PackService
 {
@@ -34,6 +35,11 @@ class PackService
                     8 => $pack->bar_color
                 ], ':');
             })->join('|');
+
+        Log::channel('gdcn')
+            ->info('[Level Pack System] Action: Get Packs', [
+                'page' => $page
+            ]);
 
         $count = Pack::count();
         return implode('#', [

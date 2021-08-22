@@ -9,6 +9,7 @@ use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Score;
 use GDCN\GDObject;
+use Illuminate\Support\Facades\Log;
 
 class ScoreService
 {
@@ -18,8 +19,27 @@ class ScoreService
     public function upload(int $accountID, int $levelID, int $attempts, int $percent, int $coins): Score
     {
         if ($percent <= 0 || $percent > 100) {
+            Log::channel('gdcn')
+                ->notice('[Level Score System] Action: Upload Score Failed', [
+                    'accountID' => $accountID,
+                    'levelID' => $levelID,
+                    'attempts' => $attempts,
+                    'percent' => $percent,
+                    'coins' => $coins,
+                    'reason' => 'Illegal Percent'
+                ]);
+
             throw new InvalidArgumentException();
         }
+
+        Log::channel('gdcn')
+            ->info('[Level Score System] Action: Upload Score', [
+                'accountID' => $accountID,
+                'levelID' => $levelID,
+                'attempts' => $attempts,
+                'percent' => $percent,
+                'coins' => $coins
+            ]);
 
         return Level::findOrFail($levelID)
             ->scores()
@@ -74,6 +94,16 @@ class ScoreService
         if ($count <= 0) {
             throw new NoItemException();
         }
+        Log::channel('gdcn')
+            ->info('[Level Score System] Action: Get Scores', [
+                'accountID' => $accountID,
+                'levelID' => $levelID,
+                'type' => $type->value,
+                'attempts' => $attempts,
+                'percent' => $percent,
+                'coins' => $coins
+            ]);
+
 
         return $query->with('account.user.score')
             ->take(100)

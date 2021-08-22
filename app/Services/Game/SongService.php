@@ -9,11 +9,8 @@ use App\Models\Game\CustomSong;
 use App\Models\NGProxy\Song;
 use GDCN\GDObject;
 use GDCN\Hash\Components\PageInfo as PageInfoComponent;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Class SongService
- * @package App\Services\Game
- */
 class SongService
 {
     public function __construct(
@@ -28,6 +25,11 @@ class SongService
      */
     public function get(int $songID): string
     {
+        Log::channel('gdcn')
+            ->info('[Song System] Action: Get Song', [
+                'songID' => $songID
+            ]);
+
         $customSongOffset = config('game.customSongIdOffset');
         if ($songID >= $customSongOffset) {
             $song = CustomSong::whereSongId($songID)->firstOrFail();
@@ -47,6 +49,11 @@ class SongService
 
     public function getTopArtists(int $page): string
     {
+        Log::channel('gdcn')
+            ->info('[Song System] Action: Get Top Artists', [
+                'page' => $page
+            ]);
+
         $result = Song::forPage(++$page, PageInfoComponent::$per_page)
             ->get()
             ->map(function (Song $song) {
