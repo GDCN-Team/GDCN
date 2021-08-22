@@ -35,20 +35,20 @@ class DashboardPresenter
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['id', 'name', 'created_at']),
             'dynamic.new_levels' => Level::query()
-                ->with('creator:id,name')
+                ->with('user:id,name')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['id', 'name', 'user', 'created_at']),
             'dynamic.new_rated_levels' => LevelRating::query()
-                ->with(['level:id,name,user', 'level.creator:id,name'])
+                ->with(['level:id,name,user', 'level.user:id,name'])
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['level', 'created_at']),
             'dynamic.new_rated_featured_levels' => LevelRating::query()
-                ->with(['level:id,name,user', 'level.creator:id,name'])
+                ->with(['level:id,name,user', 'level.user:id,name'])
                 ->where('featured_score', '>', 0)
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['level', 'created_at']),
             'dynamic.new_rated_epic_levels' => LevelRating::query()
-                ->with(['level:id,name,user', 'level.creator:id,name'])
+                ->with(['level:id,name,user', 'level.user:id,name'])
                 ->whereEpic(true)
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['level', 'created_at']),
@@ -122,7 +122,7 @@ class DashboardPresenter
      */
     public function renderLevelInfoPage(Level $level, array $props = []): Response
     {
-        $level->load('creator');
+        $level->load('user');
 
         Inertia::share('level', $level);
         return Inertia::render('Dashboard/LevelInfo', $props);

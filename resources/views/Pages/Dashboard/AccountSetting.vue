@@ -42,8 +42,7 @@
 <script>
 import PageLayout from "../Components/PageLayout";
 import {NButton, NCard, NForm, NFormItem, NInput, NTabPane, NTabs} from "naive-ui";
-import {useForm, usePage} from "@inertiajs/inertia-vue3";
-import {computed} from "vue";
+import {useForm} from "@inertiajs/inertia-vue3";
 
 export default {
     name: "AccountSetting",

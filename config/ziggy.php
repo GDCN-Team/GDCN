@@ -5,6 +5,7 @@ return [
         'home',
         'auth.*',
         'dashboard.*',
-        'tools.*'
+        'tools.*',
+        'ngproxy.query.api'
     ],
 ];

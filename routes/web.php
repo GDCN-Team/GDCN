@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Game\GDProxyController;
+use App\Http\Controllers\Game\NGProxyApiController;
 use App\Http\Controllers\Game\NGProxyController;
 use App\Http\Controllers\Web\Auth\ApiController as AuthApiController;
 use App\Http\Controllers\Web\Dashboard\ApiController as DashboardApiController;
@@ -8,7 +9,9 @@ use App\Http\Controllers\Web\Tools\ApiController as ToolsApiController;
 use App\Http\Middleware\Auth as AuthMiddleWare;
 use App\Presenters\Web\AuthPresenter;
 use App\Presenters\Web\DashboardPresenter;
+use App\Presenters\Web\GDProxyPresenter;
 use App\Presenters\Web\HomePresenter;
+use App\Presenters\Web\NGProxyPresenter;
 use App\Presenters\Web\ToolsPresenter;
 use Illuminate\Support\Facades\Route;
 
@@ -121,6 +124,7 @@ Route::group([
     'domain' => 'dl.geometrydashchinese.com',
     'as' => 'gdproxy.'
 ], function () {
+    Route::get('/', [GDProxyPresenter::class, 'home'])->name('home');
     Route::post('/{path}', [GDProxyController::class, 'proxy'])->where('path', '.*')->name('proxy');
 });
 
@@ -128,6 +132,8 @@ Route::group([
     'domain' => 'ng.geometrydashchinese.com',
     'as' => 'ngproxy.'
 ], function () {
-    Route::get('/info/{songID}', [NGProxyController::class, 'info'])->name('info');
-    Route::get('/object/{songID}', [NGProxyController::class, 'object'])->name('object');
+    Route::get('/', [NGProxyPresenter::class, 'home'])->name('home');
+    Route::post('/query', [NGProxyApiController::class, 'getSongInfo'])->name('query.api');
+    Route::get('/{songID}/info', [NGProxyController::class, 'info'])->name('info');
+    Route::get('/{songID}/object', [NGProxyController::class, 'object'])->name('object');
 });

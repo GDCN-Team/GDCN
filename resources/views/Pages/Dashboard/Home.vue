@@ -36,7 +36,7 @@
                                         </n-button>
                                     </template>
 
-                                    <n-thing :title="level.name + ' - ' + (level?.creator?.name ?? '未知')"
+                                    <n-thing :title="level.name + ' - ' + (level?.user?.name ?? '未知')"
                                              :description="'上传于 '+formatTime(level.created_at, '未知')"></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -57,7 +57,7 @@
                                     </template>
 
                                     <n-thing
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.creator?.name ?? '未知')"
+                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"
                                         :description="'Rate于 '+formatTime(rating.created_at, '未知')"></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -72,7 +72,7 @@
                                     </template>
 
                                     <n-thing
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.creator?.name ?? '未知')"
+                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"
                                         :description="'Rate于 '+formatTime(rating.created_at, '未知')"></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -87,7 +87,7 @@
                                     </template>
 
                                     <n-thing
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.creator?.name ?? '未知')"
+                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"
                                         :description="'Rate于 '+formatTime(rating.created_at, '未知')"></n-thing>
                                 </n-list-item>
                             </n-list>

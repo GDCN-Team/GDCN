@@ -16,7 +16,7 @@
                 <slot></slot>
             </n-layout-content>
             <n-layout-footer position="absolute" class="text-center w-full">
-                <n-button text @click="redirectToRoute('home')">GDCN</n-button> &copy; 2020 - {{ year }} |
+                <n-button text @click="redirectToRoute('home')">Geometry Dash Chinese</n-button> &copy; 2020 - {{ year }} |
                 <n-button text @click="redirect('https://beian.miit.gov.cn')">吉ICP备18006293号</n-button>
             </n-layout-footer>
         </n-layout>
