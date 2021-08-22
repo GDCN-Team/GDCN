@@ -119,7 +119,7 @@ class ToolsPresenter
     {
         Inertia::share('accountID', Auth::id());
         Inertia::share('songs', function () {
-            return CustomSong::with('owner:id,name')->paginate();
+            return CustomSong::with('uploader:id,name')->paginate();
         });
 
         return Inertia::render('Tools/Song/List', $props);

@@ -48,10 +48,10 @@ export default {
             },
             {
                 title: '上传者',
-                key: 'owner.name',
+                key: 'uploader.name',
                 render: function (row) {
                     return h(NText, null, {
-                        default: () => row.owner.name
+                        default: () => row.uploader.name
                     });
                 }
             },
@@ -76,7 +76,7 @@ export default {
                                 default: () => '试听'
                             }),
                             function () {
-                                if (row.owner.id === props.accountID) {
+                                if (row.uploader.id === props.accountID) {
                                     return h(NButton, {
                                         onClick: () => redirectToRoute('tools.song.edit', row.id)
                                     }, {
@@ -85,7 +85,7 @@ export default {
                                 }
                             }(),
                             function () {
-                                if (row.owner.id === props.accountID) {
+                                if (row.uploader.id === props.accountID) {
                                     return h(NButton, {
                                         type: 'error',
                                         loading: deleteForm.processing,

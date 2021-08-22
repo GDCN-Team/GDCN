@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -14,7 +15,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $song_id
  * @property string $type
- * @property int $uploader
+ * @property Account $uploader
  * @property string $name
  * @property string $author_name
  * @property string $size
@@ -45,4 +46,9 @@ class CustomSong extends Model
     use HasFactory;
 
     protected $table = 'game_custom_songs';
+
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'uploader');
+    }
 }
