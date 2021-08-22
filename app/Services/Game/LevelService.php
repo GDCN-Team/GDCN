@@ -5,6 +5,8 @@ namespace App\Services\Game;
 use App\Enums\Game\Level\SearchType;
 use App\Enums\Game\LogType;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\SongGetException;
+use App\Exceptions\Game\SongNotFoundException;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Daily;
@@ -362,7 +364,11 @@ class LevelService
                 ]);
 
                 if ($level->song > 0) {
-                    $songs[] = $this->songService->get($level->song);
+                    try {
+                        $songs[] = $this->songService->get($level->song);
+                    } catch (SongGetException | SongNotFoundException) {
+
+                    }
                 }
 
                 return GDObject::merge([
