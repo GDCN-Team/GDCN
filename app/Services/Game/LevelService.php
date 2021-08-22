@@ -435,15 +435,15 @@ class LevelService
             45 => $level->objects
         ], ':');
 
-        $hash = implode(',', [
+        $levelInfo = implode(',', [
             $level->user,
-            $level->rating?->stars,
-            $level->rating?->demon,
+            $level->rating?->stars ?? 0,
+            $level->rating?->demon ?? 0,
             $level->id,
-            $level->rating?->coin_verified,
-            $level->rating?->featured_score,
+            $level->rating?->coin_verified ?? 0,
+            $level->rating?->featured_score ?? 0,
             $level->password,
-            $levelInfo[41] ?? 0
+            $feature?->id ?? 0
         ]);
 
         $moreHash = config('app.name');
@@ -461,7 +461,7 @@ class LevelService
         return implode('#', [
             $result,
             app(LevelStringComponent::class)->generateHash($levelString),
-            app(LevelInfoComponent::class)->generateHash($hash),
+            app(LevelInfoComponent::class)->generateHash($levelInfo),
             $moreHash
         ]);
     }
