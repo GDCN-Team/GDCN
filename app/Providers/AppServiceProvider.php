@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
 
             return false;
         });
+
+        if (!App::isLocal()) {
+            URL::forceScheme('https');
+        }
     }
 
     /**
