@@ -38,32 +38,32 @@ Route::group([
     Route::get('/', [HomePresenter::class, 'renderHomePage'])->name('home');
 
     Route::group([
-        #'middleware' => [$authMiddleware, 'permission_can:ADMIN_MANAGE_GROUPS'],
+        'middleware' => [$authMiddleware, 'permission_can:ADMIN_MANAGE_GROUPS'],
         'prefix' => 'admin',
         'as' => 'admin.'
     ], function () {
         Route::get('/group/list', [GroupManagerPresenter::class, 'renderGroupListPage'])
-            #->middleware('permission_can:ADMIN_LIST_GROUP')
+            ->middleware('permission_can:ADMIN_LIST_GROUP')
             ->name('group.list');
 
         Route::get('/group/{group}', [GroupManagerPresenter::class, 'renderGroupManagePage'])
-            #->middleware('permission_can:ADMIN_MANAGE_GROUP')
+            ->middleware('permission_can:ADMIN_MANAGE_GROUP')
             ->name('group.manage');
 
         Route::put('/group/{group}/member/{account}', [AdminApiController::class, 'addMemberToGroup'])
-            #->middleware('permission_can:ADMIN_ADD_MEMBER_TO_GROUP')
+            ->middleware('permission_can:ADMIN_ADD_MEMBER_TO_GROUP')
             ->name('group.manage.add.member');
 
         Route::delete('/group/{group}/member/{account}', [AdminApiController::class, 'deleteMemberFromGroup'])
-            #->middleware('permission_can:ADMIN_DELETE_MEMBER_FROM_GROUP')
+            ->middleware('permission_can:ADMIN_DELETE_MEMBER_FROM_GROUP')
             ->name('group.manage.delete.member');
 
         Route::put('/group/{group}/flag/{flag}', [AdminApiController::class, 'addFlagToGroup'])
-            #->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
+            ->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
             ->name('group.manage.add.flag');
 
         Route::delete('/group/{group}/flag/{flag}', [AdminApiController::class, 'deleteFlagToGroup'])
-            #->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
+            ->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
             ->name('group.manage.delete.flag');
     });
 
