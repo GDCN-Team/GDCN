@@ -122,7 +122,7 @@ class SongService
     public function delete(CustomSong $song): ?bool
     {
         $account = Auth::user();
-        if ($song->owner->is($account)) {
+        if ($song->getRelationValue('uploader')->is($account)) {
             return $song->delete();
         }
 

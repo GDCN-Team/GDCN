@@ -79,7 +79,7 @@ class AccountService
     public function unlink(Link $link): bool
     {
         $account = Auth::user();
-        if (!$link->owner->is($account)) {
+        if (!$link->getRelationValue('account')->is($account)) {
             throw new AccountUnLinkException('这个链接不属于你');
         }
 

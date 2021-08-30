@@ -5,6 +5,7 @@ namespace App\Exceptions\Game\Request;
 use App\Enums\Game\ResponseCode;
 use Exception;
 use Illuminate\Contracts\Validation\Validator;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class ValidateException
@@ -17,7 +18,7 @@ class ValidateException extends Exception
      * ValidateException constructor.
      * @param Validator $validator
      */
-    public function __construct(
+    #[Pure] public function __construct(
         protected Validator $validator
     )
     {

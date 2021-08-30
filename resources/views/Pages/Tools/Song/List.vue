@@ -1,6 +1,17 @@
 <template>
-    <page-layout class="lg:w-2/3" title="链接列表">
+    <page-layout class="lg:w-2/3" title="歌曲列表">
         <n-card>
+            <n-space justify="space-between">
+                <n-button tag="a" href="?me=1">我上传的</n-button>
+                <n-space>
+                    <n-input v-model:value="searchSongForm.search" placeholder="搜索..."></n-input>
+                    <n-button
+                        @click="searchSongForm.get(route('tools.song.list'), { only: ['songs'], preserveState: true})">
+                        搜索
+                    </n-button>
+                </n-space>
+            </n-space>
+            <br>
             <n-data-table
                 remote
                 :columns="columns"
@@ -15,7 +26,7 @@
 
 <script>
 import PageLayout from "../../Components/PageLayout";
-import {NButton, NButtonGroup, NCard, NDataTable, NText} from "naive-ui";
+import {NButton, NButtonGroup, NCard, NDataTable, NInput, NSpace, NText} from "naive-ui";
 import {h} from "vue";
 import {redirect, redirectToRoute} from "../../../../js/helper";
 import {useForm} from "@inertiajs/inertia-vue3";
@@ -28,10 +39,6 @@ export default {
     },
     setup: function (props) {
         const deleteForm = useForm({});
-        const deleteSong = function (id) {
-            const api = $route('tools.song.delete.api', id);
-            deleteForm.delete(api);
-        }
 
         const columns = [
             {
@@ -89,7 +96,7 @@ export default {
                                     return h(NButton, {
                                         type: 'error',
                                         loading: deleteForm.processing,
-                                        onClick: () => deleteSong(row.id)
+                                        onClick: () => deleteForm.delete($route('tools.song.delete.api', row.id))
                                     }, {
                                         default: () => '删除'
                                     });
@@ -103,13 +110,7 @@ export default {
 
         const updatePageForm = useForm({});
         const updatePage = function (page) {
-            const url = $route('tools.song.list', {
-                _query: {
-                    page
-                }
-            });
-
-            updatePageForm.get(url);
+            updatePageForm.get($route('tools.song.list', {_query: {page}}));
         }
 
         const pagination = {
@@ -118,13 +119,19 @@ export default {
             itemCount: props.songs.total
         }
 
-        return {columns, pagination, updatePage, updatePageForm}
+        const searchSongForm = useForm({
+            search: null
+        });
+
+        return {columns, pagination, updatePage, updatePageForm, searchSongForm}
     },
     components: {
         PageLayout,
         NCard,
         NButton,
-        NDataTable
+        NDataTable,
+        NSpace,
+        NInput
     }
 }
 </script>

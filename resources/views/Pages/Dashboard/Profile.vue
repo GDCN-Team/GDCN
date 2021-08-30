@@ -15,7 +15,7 @@
                                 {{ account.email }}
                             </n-descriptions-item>
                             <n-descriptions-item label="注册时间">
-                                {{ formatTime(account.created_at, '无') }}
+                                {{ formatTime(account.created_at, '未知') }}
                             </n-descriptions-item>
                             <n-descriptions-item label="邮箱验证时间">
                                 {{ formatTime(account.email_verified_at, '无') }}
@@ -37,7 +37,7 @@
                                 <n-button type="primary" text
                                           :loading="syncUserNameForm.processing"
                                           :disabled="syncUserNameForm.processing || account.name === account.user.name"
-                                          @click="syncUserName">
+                                          @click="syncUserNameForm.get(route('dashboard.profile.name.sync.api'))">
                                     (同步)
                                 </n-button>
                             </n-descriptions-item>
@@ -64,7 +64,7 @@
                                 </n-button>
                             </n-descriptions-item>
                             <n-descriptions-item label="创建时间">
-                                {{ formatTime(account.user.created_at, '无') }}
+                                {{ formatTime(account.user.created_at, '未知') }}
                             </n-descriptions-item>
                         </n-descriptions>
                     </div>
@@ -77,7 +77,8 @@
                 <n-space justify="space-between">
                     <n-space justify="left">
                         <n-button @click="redirectToRoute('dashboard.profile.setting')">账号设置</n-button>
-                        <n-button :loading="logoutForm.processing" :disabled="logoutForm.processing" @click="logout">
+                        <n-button :loading="logoutForm.processing" :disabled="logoutForm.processing"
+                                  @click="logoutForm.post(route('auth.logout.api'))">
                             登出
                         </n-button>
                     </n-space>
@@ -85,7 +86,7 @@
                     <n-button
                         :loading="resendVerificationEmailForm.processing"
                         :disabled="resendVerificationEmailForm.processing || account.email_verified_at !== null"
-                        @click="resendVerificationEmail">
+                        @click="resendVerificationEmailForm.get(route('dashboard.profile.verification.email.resend.api'))">
                         重发验证邮件
                     </n-button>
                 </n-space>
@@ -121,30 +122,12 @@ export default {
         const resendVerificationEmailForm = useForm(null);
         const syncUserNameForm = useForm(null);
 
-        const logout = function () {
-            const api = $route('auth.logout.api');
-            logoutForm.post(api);
-        }
-
-        const resendVerificationEmail = function () {
-            const api = $route('dashboard.profile.verification.email.resend.api');
-            resendVerificationEmailForm.get(api);
-        }
-
-        const syncUserName = function () {
-            const api = $route('dashboard.profile.name.sync.api');
-            syncUserNameForm.get(api);
-        }
-
         return {
             formatTime,
             invertValue,
             redirectToRoute,
-            logout,
             logoutForm,
-            resendVerificationEmail,
             resendVerificationEmailForm,
-            syncUserName,
             syncUserNameForm,
             visible
         }

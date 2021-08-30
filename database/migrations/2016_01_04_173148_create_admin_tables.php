@@ -21,7 +21,7 @@ class CreateAdminTables extends Migration
      *
      * @return void
      */
-    public function up()
+    public function _up()
     {
         Schema::create($this->config('database.users_table'), function (Blueprint $table) {
             $table->bigIncrements('id');

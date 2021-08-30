@@ -2,6 +2,7 @@
 
 namespace App\Models\NGProxy;
 
+use Database\Factories\NGProxy\SongFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,7 +40,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Song whereUpdatedAt($value)
  * @method static Builder|Song whereVideoId($value)
  * @mixin Eloquent
- * @method static \Database\Factories\NGProxy\SongFactory factory(...$parameters)
+ * @method static SongFactory factory(...$parameters)
  */
 class Song extends Model
 {

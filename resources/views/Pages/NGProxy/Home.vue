@@ -17,7 +17,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('ngproxy.query.api'))">
                         查询
                     </n-button>
                 </n-form-item>
@@ -41,12 +41,12 @@
                 </n-descriptions-item>
                 <n-descriptions-item v-if="song.author_youtube_url" label="作者Youtube">
                     <n-button @click="redirect('https://youtube.com/channel/'+song.author_youtube_url)">
-                        https://youtube.com/channel/{{ song.author_youtube_url }}
+                        查看
                     </n-button>
                 </n-descriptions-item>
                 <n-descriptions-item v-if="song.video_id" label="歌曲视频">
                     <n-button text @click="redirect('https://www.youtube.com/watch?v='+song.video_id)">
-                        https://www.youtube.com/watch?v={{ song.video_id }}
+                        查看
                     </n-button>
                 </n-descriptions-item>
                 <n-descriptions-item label="禁用">
@@ -81,12 +81,7 @@ export default {
             songID: null
         });
 
-        const submit = function () {
-            const api = $route('ngproxy.query.api');
-            form.post(api);
-        }
-
-        return {form, submit, redirect}
+        return {form, redirect}
     },
     components: {
         PageLayout,

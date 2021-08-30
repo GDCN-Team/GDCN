@@ -24,7 +24,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing || form.password !== form.password_confirmation"
-                        @click="submit">
+                        @click="form.post(route('auth.password.reset.api'));">
                         重置
                     </n-button>
                 </n-form-item>
@@ -48,12 +48,7 @@ export default {
             password_confirmation: null
         });
 
-        const submit = function () {
-            const api = $route('auth.password.reset.api');
-            form.post(api);
-        }
-
-        return {form, submit}
+        return {form}
     },
     components: {
         PageLayout,

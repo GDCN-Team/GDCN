@@ -27,10 +27,6 @@ export default {
     },
     setup: function (props) {
         const unlinkForm = useForm(null);
-        const unlink = function (id) {
-            const api = $route('tools.account.unlink.api', id);
-            unlinkForm.delete(api);
-        }
 
         const columns = [
             {
@@ -65,7 +61,7 @@ export default {
                     return h(NButton, {
                         type: 'error',
                         loading: unlinkForm.processing,
-                        onClick: () => unlink(row.id),
+                        onClick: () => unlinkForm.delete($route('tools.account.unlink.api', row.id))
                     }, {
                         default: () => '解绑'
                     });
@@ -75,13 +71,7 @@ export default {
 
         const updatePageForm = useForm(null);
         const updatePage = function (page) {
-            const url = $route('tools.account.link.list', {
-                _query: {
-                    page
-                }
-            });
-
-            updatePageForm.get(url);
+            updatePageForm.get($route('tools.account.link.list', {_query: {page}}));
         }
 
         const pagination = {

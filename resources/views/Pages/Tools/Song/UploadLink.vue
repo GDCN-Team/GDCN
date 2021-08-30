@@ -43,7 +43,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('tools.song.upload.link.api'))">
                         上传
                     </n-button>
                 </n-form-item>
@@ -71,11 +71,6 @@ export default {
             link: null
         });
 
-        const submit = function () {
-            const api = $route('tools.song.upload.link.api');
-            form.post(api);
-        }
-
         const getLatestSongID = function () {
             Inertia.reload({
                 only: ['song_id'],
@@ -85,7 +80,7 @@ export default {
             });
         }
 
-        return {form, submit, getLatestSongID}
+        return {form, getLatestSongID}
     },
     components: {
         PageLayout,

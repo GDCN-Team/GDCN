@@ -32,7 +32,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('tools.song.edit.api'))">
                         修改
                     </n-button>
                 </n-form-item>
@@ -58,11 +58,7 @@ export default {
             author_name: props.song.author_name
         });
 
-        const submit = function () {
-
-        }
-
-        return {form, submit}
+        return {form}
     },
     components: {
         PageLayout,

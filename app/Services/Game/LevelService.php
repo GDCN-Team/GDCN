@@ -190,7 +190,7 @@ class LevelService
         switch ($type->value) {
             case SearchType::SEARCH:
                 $query->whereKey($str);
-                $query->where('name', 'LIKE', $str . '%');
+                $query->where('name', 'LIKE', '%' . $str . '%');
                 break;
             case SearchType::MOST_DOWNLOADED:
                 $query->orderByDesc('downloads');

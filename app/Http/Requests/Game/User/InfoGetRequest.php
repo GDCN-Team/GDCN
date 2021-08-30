@@ -6,10 +6,11 @@ use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class InfoGetRequest extends Request
 {
-    public function rules(): array
+    #[ArrayShape(['gameVersion' => "string", 'binaryVersion' => "string", 'gdw' => "string", 'accountID' => "array", 'gjp' => "array", 'uuid' => "string", 'udid' => "string", 'targetAccountID' => "\Illuminate\Validation\Rules\Exists", 'secret' => "\Illuminate\Validation\Rules\In"])] public function rules(): array
     {
         return [
             'gameVersion' => 'required',

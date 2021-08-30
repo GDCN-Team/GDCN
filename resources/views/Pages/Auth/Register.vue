@@ -42,7 +42,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing || form.password !== form.password_confirmation"
-                        @click="submit">
+                        @click="form.post(route('auth.register.api'))">
                         注册
                     </n-button>
                 </n-form-item>
@@ -71,13 +71,7 @@ export default {
             password_confirmation: null
         });
 
-        const submit = function () {
-            const api = $route('auth.register.api');
-            form.post(api);
-        }
-
-
-        return {redirectToRoute, form, submit}
+        return {redirectToRoute, form}
     },
     components: {
         PageLayout,

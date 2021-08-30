@@ -4,10 +4,11 @@ namespace App\Http\Requests\Game\Item;
 
 use App\Http\Requests\Game\Request;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class RestoreRequest extends Request
 {
-    public function rules(): array
+    #[ArrayShape(['udid' => "string", 'secret' => "\Illuminate\Validation\Rules\In"])] public function rules(): array
     {
         return [
             'udid' => 'required',

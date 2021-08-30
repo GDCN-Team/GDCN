@@ -26,7 +26,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('tools.song.upload.netease.api'))">
                         上传
                     </n-button>
                 </n-form-item>
@@ -80,11 +80,6 @@ export default {
             });
         }
 
-        const submit = function () {
-            const api = $route('tools.song.upload.netease.api');
-            form.post(api);
-        }
-
         const getLatestSongID = function () {
             Inertia.reload({
                 only: ['song_id'],
@@ -94,7 +89,7 @@ export default {
             });
         }
 
-        return {form, submit, getLatestSongID, showDialogForParseLink}
+        return {form, getLatestSongID, showDialogForParseLink}
     },
     components: {
         PageLayout,

@@ -34,6 +34,11 @@ class Assign extends Model
 
     protected $table = 'game_account_permission_assigns';
 
+    protected $fillable = [
+        'group',
+        'account'
+    ];
+
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account');

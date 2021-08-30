@@ -72,33 +72,29 @@ class LevelService
 
         $service = app(GameLevelService::class);
 
-        try {
-            $level = $service->upload(
-                Auth::user(),
-                $levelID,
-                $levelObject[13],
-                $levelObject[2],
-                $levelObject[3],
-                $levelObject[5] ?? 1,
-                $levelObject[15] ?? 0,
-                $levelObject[12] ?? 0,
-                $levelObject[35] ?? 0,
-                false,
-                app(LevelPasswordComponent::class)->decode($levelObject[27]),
-                $levelObject[1],
-                $levelObject[31] ?? false,
-                $levelObject[45] ?? 0,
-                $levelObject[37] ?? 0,
-                $levelObject[39] ?? 0,
-                false,
-                $levelObject[40] ?? false,
-                $levelObject[36] ?? 'Unknown',
-                'Unknown',
-                $levelObject[4]
-            );
-        } catch (LevelUploadException $e) {
-            throw new LevelTransInException($e->getMessage());
-        }
+        $level = $service->upload(
+            Auth::user(),
+            $levelID,
+            $levelObject[13],
+            $levelObject[2],
+            $levelObject[3],
+            $levelObject[5] ?? 1,
+            $levelObject[15] ?? 0,
+            $levelObject[12] ?? 0,
+            $levelObject[35] ?? 0,
+            false,
+            app(LevelPasswordComponent::class)->decode($levelObject[27]),
+            $levelObject[1],
+            $levelObject[31] ?? false,
+            $levelObject[45] ?? 0,
+            $levelObject[37] ?? 0,
+            $levelObject[39] ?? 0,
+            false,
+            $levelObject[40] ?? false,
+            $levelObject[36] ?? 'Unknown',
+            'Unknown',
+            $levelObject[4]
+        );
 
         return $level->id;
     }

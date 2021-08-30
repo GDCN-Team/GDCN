@@ -4,10 +4,11 @@ namespace App\Http\Requests\Game\Song;
 
 use App\Http\Requests\Game\Request;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class TopArtistsGetRequest extends Request
 {
-    public function rules(): array
+    #[ArrayShape(['gameVersion' => "string", 'binaryVersion' => "string", 'gdw' => "string", 'page' => "string", 'total' => "string", 'secret' => "\Illuminate\Validation\Rules\In"])] public function rules(): array
     {
         return [
             'gameVersion' => 'required',

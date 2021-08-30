@@ -30,6 +30,6 @@ class NGProxyService
             $this->notification->sendMessage('error', '歌曲不存在(或未找到)');
         }
 
-        return $this->presenter->home();
+        return $this->presenter->renderHomePage();
     }
 }

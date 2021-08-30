@@ -21,7 +21,7 @@ class UpdateAdminMenuTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function _up()
     {
         Schema::table($this->config('database.menu_table'), function (Blueprint $table) {
             $table->tinyInteger('show')->default(1)->after('uri');

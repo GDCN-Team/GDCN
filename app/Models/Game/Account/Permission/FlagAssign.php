@@ -33,9 +33,7 @@ class FlagAssign extends Model
 
     protected $table = 'game_account_permission_flag_assigns';
 
-    protected $fillable = [
-        'group'
-    ];
+    protected $fillable = ['group', 'flag'];
 
     public function flag(): BelongsTo
     {

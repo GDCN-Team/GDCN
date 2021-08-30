@@ -41,7 +41,7 @@ class CommentTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("2~$comment->content");
+        $request->assertSee("2~{$comment->getRawOriginal('content')}");
         $request->assertSee("4~$comment->likes");
         $request->assertSee("6~$comment->id");
     }

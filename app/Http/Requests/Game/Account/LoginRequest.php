@@ -6,10 +6,11 @@ use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class LoginRequest extends Request
 {
-    public function rules(): array
+    #[ArrayShape(['userName' => "\Illuminate\Validation\Rules\Exists", 'password' => "\App\Rules\ValidateAccountCreditRule", 'udid' => "string", 'sID' => "string", 'secret' => "\Illuminate\Validation\Rules\In"])] public function rules(): array
     {
         return [
             'userName' => Rule::exists(Account::class, 'name'),

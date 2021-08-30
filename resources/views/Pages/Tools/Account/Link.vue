@@ -33,7 +33,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('tools.account.link.api'))">
                         链接
                     </n-button>
                 </n-form-item>
@@ -67,12 +67,7 @@ export default {
             };
         });
 
-        const submit = function () {
-            const api = $route('tools.account.link.api');
-            form.post(api);
-        }
-
-        return {form, serverOptions, submit}
+        return {form, serverOptions}
     },
     components: {
         PageLayout,

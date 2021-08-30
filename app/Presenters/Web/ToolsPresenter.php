@@ -8,6 +8,7 @@ use App\Services\Web\ToolsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -117,9 +118,17 @@ class ToolsPresenter
      */
     public function renderSongListPage(array $props = []): Response
     {
-        Inertia::share('accountID', Auth::id());
-        Inertia::share('songs', function () {
-            return CustomSong::with('uploader:id,name')->paginate();
+        $accountID = Auth::id();
+        Inertia::share('accountID', $accountID);
+
+        Inertia::share('songs', function () use ($accountID) {
+            if (Request::boolean('me')) {
+                return CustomSong::with('uploader:id,name')
+                    ->where('uploader', $accountID)
+                    ->paginate();
+            }
+
+            return CustomSong::with('uploader:id,name')->where('name', 'LIKE', '%' . Request::get('search') . '%')->paginate();
         });
 
         return Inertia::render('Tools/Song/List', $props);
@@ -133,9 +142,9 @@ class ToolsPresenter
     public function renderSongEditPage(CustomSong $song, array $props = []): Response|RedirectResponse
     {
         $account = Auth::user();
-        abort_if(!$song->owner->is($account), 403);
+        abort_if(!$song->getRelationValue('uploader')->is($account), 403);
 
-        if ($song->type === 'netease') {
+        if (Str::contains($song->type, 'netease')) {
             $this->service->notification->sendMessage('error', '该歌曲不可修改');
             return back();
         }

@@ -7,10 +7,11 @@ use App\Models\Game\Account;
 use App\Models\Game\Account\FriendRequest;
 use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class ReadRequest extends Request
 {
-    public function rules(): array
+    #[ArrayShape(['gameVersion' => "string", 'binaryVersion' => "string", 'gdw' => "string", 'accountID' => "\Illuminate\Validation\Rules\Exists", 'gjp' => "\App\Rules\ValidateAccountCreditRule", 'requestID' => "\Illuminate\Validation\Rules\Exists", 'secret' => "\Illuminate\Validation\Rules\In"])] public function rules(): array
     {
         return [
             'gameVersion' => 'required',

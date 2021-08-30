@@ -24,7 +24,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('auth.login.api'));">
                         登录
                     </n-button>
                 </n-form-item>
@@ -55,12 +55,7 @@ export default {
             password: null
         });
 
-        const submit = function () {
-            const api = window.$route('auth.login.api');
-            form.post(api);
-        }
-
-        return {form, submit, redirectToRoute}
+        return {form, redirectToRoute}
     },
     components: {
         PageLayout,

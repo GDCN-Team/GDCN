@@ -6,10 +6,11 @@ use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
 use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class DailyGetRequest extends Request
 {
-    public function rules(): array
+    #[ArrayShape(['gameVersion' => "string", 'binaryVersion' => "string", 'gdw' => "string", 'accountID' => "array", 'gjp' => "array", 'secret' => "\Illuminate\Validation\Rules\In", 'weekly' => "string"])] public function rules(): array
     {
         return [
             'gameVersion' => 'required',

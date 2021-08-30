@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ config('app.locale') }}">
+<html lang="{{ strtr(config('app.locale'), '_', '-') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="keywords" content="GDCN,Geometry Dash Chinese,几何冲刺,GD,渣渣120,私服,好玩">

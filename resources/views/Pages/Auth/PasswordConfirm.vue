@@ -15,7 +15,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('auth.password.confirm.api'));">
                         确认
                     </n-button>
                 </n-form-item>
@@ -36,12 +36,7 @@ export default {
             password: null
         });
 
-        const submit = function () {
-            const api = $route('auth.password.confirm.api');
-            form.post(api);
-        };
-
-        return {form, submit};
+        return {form};
     },
     components: {
         PageLayout,

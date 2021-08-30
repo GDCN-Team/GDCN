@@ -98,7 +98,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('tools.level.trans.out.api'))">
                         搬运
                     </n-button>
                 </n-form-item>
@@ -224,12 +224,7 @@ export default {
             level_password: null
         });
 
-        const submit = function () {
-            const api = $route('tools.level.trans.out.api');
-            form.post(api);
-        }
-
-        return {linkAccountOptions, reloadLinkAccounts, serverOptions, levelSongTypes, levelAudioTracks, form, submit}
+        return {linkAccountOptions, reloadLinkAccounts, serverOptions, levelSongTypes, levelAudioTracks, form}
     },
     components: {
         PageLayout,

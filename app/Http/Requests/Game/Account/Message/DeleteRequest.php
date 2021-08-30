@@ -7,10 +7,11 @@ use App\Models\Game\Account;
 use App\Models\Game\Account\Message;
 use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class DeleteRequest extends Request
 {
-    public function rules(): array
+    #[ArrayShape(['gameVersion' => "string", 'binaryVersion' => "string", 'gdw' => "string", 'accountID' => "\Illuminate\Validation\Rules\Exists", 'gjp' => "\App\Rules\ValidateAccountCreditRule", 'secret' => "\Illuminate\Validation\Rules\In", 'isSender' => "string", 'messageID' => "array", 'messages' => "string"])] public function rules(): array
     {
         return [
             'gameVersion' => 'required',

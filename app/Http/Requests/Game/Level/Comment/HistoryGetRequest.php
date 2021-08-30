@@ -5,10 +5,11 @@ namespace App\Http\Requests\Game\Level\Comment;
 use App\Http\Requests\Game\Request;
 use App\Models\Game\User;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class HistoryGetRequest extends Request
 {
-    public function rules(): array
+    #[ArrayShape(['gameVersion' => "string", 'binaryVersion' => "string", 'gdw' => "string", 'userID' => "\Illuminate\Validation\Rules\Exists", 'mode' => "\Illuminate\Validation\Rules\In", 'page' => "string", 'total' => "string", 'secret' => "\Illuminate\Validation\Rules\In", 'count' => "string"])] public function rules(): array
     {
         return [
             'gameVersion' => 'required',

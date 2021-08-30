@@ -24,7 +24,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('tools.level.trans.in.api'))">
                         搬运
                     </n-button>
                 </n-form-item>
@@ -37,6 +37,7 @@
 import PageLayout from "../../Components/PageLayout";
 import {NButton, NCard, NForm, NFormItem, NInput, NSelect} from "naive-ui";
 import {useForm} from "@inertiajs/inertia-vue3";
+import _ from "lodash";
 
 export default {
     name: "TransIn",
@@ -56,12 +57,7 @@ export default {
             levelID: null
         });
 
-        const submit = function () {
-            const api = $route('tools.level.trans.in.api');
-            form.post(api);
-        }
-
-        return {serverOptions, form, submit}
+        return {serverOptions, form}
     },
     components: {
         PageLayout,

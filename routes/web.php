@@ -3,10 +3,12 @@
 use App\Http\Controllers\Game\GDProxyController;
 use App\Http\Controllers\Game\NGProxyApiController;
 use App\Http\Controllers\Game\NGProxyController;
+use App\Http\Controllers\Web\Admin\ApiController as AdminApiController;
 use App\Http\Controllers\Web\Auth\ApiController as AuthApiController;
 use App\Http\Controllers\Web\Dashboard\ApiController as DashboardApiController;
 use App\Http\Controllers\Web\Tools\ApiController as ToolsApiController;
 use App\Http\Middleware\Auth as AuthMiddleWare;
+use App\Presenters\Web\Admin\GroupManagerPresenter;
 use App\Presenters\Web\AuthPresenter;
 use App\Presenters\Web\DashboardPresenter;
 use App\Presenters\Web\GDProxyPresenter;
@@ -34,6 +36,36 @@ Route::group([
     $passwordConfirmMiddleware = 'password.confirm:auth.password.confirm';
 
     Route::get('/', [HomePresenter::class, 'renderHomePage'])->name('home');
+
+    Route::group([
+        #'middleware' => [$authMiddleware, 'permission_can:ADMIN_MANAGE_GROUPS'],
+        'prefix' => 'admin',
+        'as' => 'admin.'
+    ], function () {
+        Route::get('/group/list', [GroupManagerPresenter::class, 'renderGroupListPage'])
+            #->middleware('permission_can:ADMIN_LIST_GROUP')
+            ->name('group.list');
+
+        Route::get('/group/{group}', [GroupManagerPresenter::class, 'renderGroupManagePage'])
+            #->middleware('permission_can:ADMIN_MANAGE_GROUP')
+            ->name('group.manage');
+
+        Route::put('/group/{group}/member/{account}', [AdminApiController::class, 'addMemberToGroup'])
+            #->middleware('permission_can:ADMIN_ADD_MEMBER_TO_GROUP')
+            ->name('group.manage.add.member');
+
+        Route::delete('/group/{group}/member/{account}', [AdminApiController::class, 'deleteMemberFromGroup'])
+            #->middleware('permission_can:ADMIN_DELETE_MEMBER_FROM_GROUP')
+            ->name('group.manage.delete.member');
+
+        Route::put('/group/{group}/flag/{flag}', [AdminApiController::class, 'addFlagToGroup'])
+            #->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
+            ->name('group.manage.add.flag');
+
+        Route::delete('/group/{group}/flag/{flag}', [AdminApiController::class, 'deleteFlagToGroup'])
+            #->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
+            ->name('group.manage.delete.flag');
+    });
 
     Route::group([
         'prefix' => 'auth',
@@ -124,7 +156,7 @@ Route::group([
     'domain' => 'dl.geometrydashchinese.com',
     'as' => 'gdproxy.'
 ], function () {
-    Route::get('/', [GDProxyPresenter::class, 'home'])->name('home');
+    Route::get('/', [GDProxyPresenter::class, 'renderHomePage'])->name('home');
     Route::post('/{path}', [GDProxyController::class, 'proxy'])->where('path', '.*')->name('proxy');
 });
 
@@ -132,7 +164,7 @@ Route::group([
     'domain' => 'ng.geometrydashchinese.com',
     'as' => 'ngproxy.'
 ], function () {
-    Route::get('/', [NGProxyPresenter::class, 'home'])->name('home');
+    Route::get('/', [NGProxyPresenter::class, 'renderHomePage'])->name('home');
     Route::post('/query', [NGProxyApiController::class, 'getSongInfo'])->name('query.api');
     Route::get('/{songID}/info', [NGProxyController::class, 'info'])->name('info');
     Route::get('/{songID}/object', [NGProxyController::class, 'object'])->name('object');

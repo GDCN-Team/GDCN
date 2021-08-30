@@ -24,7 +24,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('auth.password.forgot.api'));">
                         发送重置邮件
                     </n-button>
                 </n-form-item>
@@ -46,12 +46,7 @@ export default {
             email: null
         });
 
-        const submit = function () {
-            const api = $route('auth.password.forgot.api');
-            form.post(api);
-        }
-
-        return {form, submit}
+        return {form}
     },
     components: {
         PageLayout,

@@ -30,7 +30,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('dashboard.profile.setting.api'))">
                         修改
                     </n-button>
                 </n-form-item>
@@ -53,12 +53,7 @@ export default {
             password: null
         });
 
-        const submit = function () {
-            const api = $route('dashboard.profile.setting.api');
-            form.post(api);
-        }
-
-        return {form, submit}
+        return {form}
     },
     components: {
         PageLayout,

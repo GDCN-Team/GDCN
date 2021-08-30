@@ -24,7 +24,7 @@
                     <n-button
                         :loading="form.processing"
                         :disabled="form.processing"
-                        @click="submit">
+                        @click="form.post(route('auth.name.forgot.api'));">
                         查找账号
                     </n-button>
                 </n-form-item>
@@ -46,12 +46,7 @@ export default {
             password: null
         });
 
-        const submit = function () {
-            const api = $route('auth.name.forgot.api');
-            form.post(api);
-        }
-
-        return {form, submit}
+        return {form}
     },
     components: {
         PageLayout,

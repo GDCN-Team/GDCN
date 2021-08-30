@@ -145,7 +145,7 @@ class UserService
     public function search(string $str, int $page): string
     {
         $users = User::whereKey($str)
-            ->orWhere('name', 'LIKE', $str . '%');
+            ->orWhere('name', 'LIKE', '%' . $str . '%');
 
         $result = $users->forPage(++$page, PageInfoComponent::$per_page)
             ->with('score')

@@ -290,7 +290,7 @@ class RequestTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("32:$friendRequest->id:35:$friendRequest->comment");
+        $request->assertSee("32:$friendRequest->id:35:{$friendRequest->getRawOriginal('comment')}");
     }
 
     public function test_read(): void

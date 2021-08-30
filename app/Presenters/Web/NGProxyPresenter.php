@@ -7,7 +7,7 @@ use Inertia\Response;
 
 class NGProxyPresenter
 {
-    public function home(array $props = []): Response
+    public function renderHomePage(array $props = []): Response
     {
         return Inertia::render('NGProxy/Home', $props);
     }

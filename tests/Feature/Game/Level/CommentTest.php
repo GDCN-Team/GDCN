@@ -44,7 +44,7 @@ class CommentTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("2~$comment->content~3~{$comment->getRelationValue('account')->user->id}~4~$comment->likes");
+        $request->assertSee("2~{$comment->getRawOriginal('content')}~3~{$comment->getRelationValue('account')->user->id}~4~$comment->likes");
     }
 
     public function test_get_with_page(): void
@@ -167,7 +167,7 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->assertSee("1~$comment->level~2~$comment->content");
+        $request->assertSee("1~$comment->level~2~{$comment->getRawOriginal('content')}");
     }
 
     public function test_get_history_most_liked(): void
@@ -190,7 +190,7 @@ class CommentTest extends TestCase
             ]
         );
 
-        $request->assertSee("1~$comment->level~2~$comment->content");
+        $request->assertSee("1~$comment->level~2~{$comment->getRawOriginal('content')}");
     }
 
     public function test_get_history_use_none_policy(): void

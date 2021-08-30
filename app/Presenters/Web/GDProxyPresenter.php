@@ -7,7 +7,7 @@ use Inertia\Response;
 
 class GDProxyPresenter
 {
-    public function home(array $props = []): Response
+    public function renderHomePage(array $props = []): Response
     {
         Inertia::share('server', [
             'cdn_url' => config('app.asset_url')
