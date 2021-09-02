@@ -13,8 +13,8 @@ class MessageService
 {
     public function upload(int $accountID, int $targetAccountID, string $subject, string $body): ?Message
     {
-        $account = Account::findOrFail($accountID);
-        $targetAccount = Account::findOrFail($accountID);
+        $account = Account::find($accountID);
+        $targetAccount = Account::find($accountID);
 
         if ($account->cant('sendMessage', $targetAccount)) {
             Log::channel('gdcn')
@@ -50,7 +50,7 @@ class MessageService
      */
     public function get(int $accountID, bool $getSent, int $page): string
     {
-        $account = Account::findOrFail($accountID);
+        $account = Account::find($accountID);
         if ($getSent === true) {
             $account->loadCount('sent_messages');
             $messages = $account->sent_messages();
@@ -100,7 +100,7 @@ class MessageService
 
     public function delete(int $accountID, array $messageIDs, bool $isSender): bool
     {
-        $account = Account::findOrFail($accountID);
+        $account = Account::find($accountID);
         $query = $isSender === true ? $account->sent_messages() : $account->messages();
 
         foreach ($messageIDs as $messageID) {
@@ -118,19 +118,19 @@ class MessageService
 
     public function download(int $accountID, int $messageID, bool $isSender): string
     {
-        $account = Account::findOrFail($accountID);
+        $account = Account::find($accountID);
 
         /** @var Message $message */
         if ($isSender === true) {
             $column = 'to_account';
             $message = $account->sent_messages()
                 ->whereKey($messageID)
-                ->firstOrFail();
+                ->first();
         } else {
             $column = 'account';
             $message = $account->messages()
                 ->whereKey($messageID)
-                ->firstOrFail();
+                ->first();
         }
 
         $message->update([

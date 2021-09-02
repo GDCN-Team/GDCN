@@ -26,7 +26,7 @@ class DashboardService
     public function getAccount(int $accountID = null): Account
     {
         if (!empty($accountID)) {
-            $account = Account::findOrFail($accountID);
+            $account = Account::find($accountID);
         } else {
             /** @var Account $account */
             $account = Auth::user();

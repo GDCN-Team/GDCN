@@ -32,7 +32,7 @@ class AccountService
         $account = Account::where([
             'id' => $accountID,
             'email' => $email
-        ])->firstOrFail();
+        ])->first();
 
         $account->markEmailAsVerified();
         Auth::login($account, true);
@@ -49,7 +49,7 @@ class AccountService
     public function login(string $name, string $password, string $udid): bool
     {
         $account = Account::whereName($name)
-            ->firstOrFail();
+            ->first();
 
         $account->user()
             ->updateOrCreate([
@@ -58,7 +58,7 @@ class AccountService
                 'name' => $name,
                 'udid' => $udid
             ]);
-        
+
         Log::channel('gdcn')
             ->info('[Account System] Action: Login', [
                 'name' => $name,

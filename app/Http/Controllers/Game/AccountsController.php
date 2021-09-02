@@ -52,7 +52,7 @@ class AccountsController extends Controller
             return ResponseCode::ACCOUNT_LOGIN_FAILED;
         }
 
-        $account = Account::whereName($data['userName'])->firstOrFail();
+        $account = Account::whereName($data['userName'])->first();
         if (empty($account->user)) {
             return ResponseCode::USER_NOT_FOUND;
         }

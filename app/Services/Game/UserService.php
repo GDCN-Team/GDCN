@@ -22,10 +22,10 @@ class UserService
     {
         $viewer = null;
         if (!empty($viewerAccountID)) {
-            $viewer = Account::findOrFail($viewerAccountID);
+            $viewer = Account::find($viewerAccountID);
         }
 
-        $target = Account::findOrFail($targetAccountID);
+        $target = Account::find($targetAccountID);
 
         $friendState = FriendState::NONE;
         if (!empty($viewer) && !empty($target)) {
@@ -188,7 +188,7 @@ class UserService
                 'accountID' => $accountID
             ]);
 
-        return Account::findOrFail($accountID)
+        return Account::find($accountID)
             ->permission_group
             ?->mod_level;
     }
@@ -199,7 +199,7 @@ class UserService
      */
     public function list(int $accountID, UserListType $type): string
     {
-        $account = Account::findOrFail($accountID);
+        $account = Account::find($accountID);
 
         $query = match ($type->value) {
             UserListType::FRIENDS => $account->friends(),

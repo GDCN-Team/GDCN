@@ -25,7 +25,7 @@ class CommentService
      */
     public function list(int $levelID, CommentMode $mode, int $page): string
     {
-        $level = Level::findOrFail($levelID);
+        $level = Level::find($levelID);
         $comments = $level->loadCount('comments')
             ->comments();
 
@@ -91,7 +91,7 @@ class CommentService
                 'percent' => $percent
             ]);
 
-        return Level::findOrFail($levelID)
+        return Level::find($levelID)
             ->comments()
             ->create([
                 'account' => $accountID,
@@ -109,7 +109,7 @@ class CommentService
                 'commentID' => $commentID
             ]);
 
-        return Level::findOrFail($levelID)
+        return Level::find($levelID)
             ->comments()
             ->where('account', $accountID)
             ->whereKey($commentID)
@@ -121,7 +121,7 @@ class CommentService
      */
     public function getHistory(int $targetUserID, CommentMode $mode, int $page): ?string
     {
-        $user = User::findOrFail($targetUserID);
+        $user = User::find($targetUserID);
         if (empty($user->account)) {
             return null;
         }

@@ -32,7 +32,7 @@ class SongService
 
         $customSongOffset = config('game.customSongIdOffset');
         if ($songID >= $customSongOffset) {
-            $song = CustomSong::whereSongId($songID)->firstOrFail();
+            $song = CustomSong::whereSongId($songID)->first();
 
             return GDObject::merge([
                 1 => $song->song_id,

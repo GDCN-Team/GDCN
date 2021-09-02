@@ -19,7 +19,7 @@ class RatingService
 
     public function suggest(int $accountID, int $levelID, int $stars, bool $feature): ?RatingSuggestion
     {
-        $account = Account::findOrFail($accountID);
+        $account = Account::find($accountID);
         if (!$account->user || !$account->permission_group?->can('CREATE_LEVEL_SUGGESTION')) {
             Log::channel('gdcn')
                 ->notice('[Level Rating System] Action: Suggest Rating Failed', [
@@ -41,7 +41,7 @@ class RatingService
                 'feature' => $feature
             ]);
 
-        return Level::findOrFail($levelID)
+        return Level::find($levelID)
             ->rating_suggestions()
             ->create([
                 'type' => SuggestionType::SUGGEST,
@@ -56,7 +56,7 @@ class RatingService
     {
         $user = $this->helper->resolveUser($uuid);
 
-        $level = Level::findOrFail($levelID);
+        $level = Level::find($levelID);
         $suggestions = $level->rating_suggestions();
 
         $suggestions->firstOrCreate([
@@ -106,7 +106,7 @@ class RatingService
     {
         $user = $this->helper->resolveUser($uuid);
 
-        $level = Level::findOrFail($levelID);
+        $level = Level::find($levelID);
         $suggestions = $level->rating_suggestions();
 
         if (!$level->rating || $level->rating?->demon_difficulty !== '0') {

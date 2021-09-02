@@ -617,7 +617,7 @@ class LevelService
     public function report(int $levelID): bool
     {
         /** @var Report|Builder $report */
-        $report = Level::findOrFail($levelID)
+        $report = Level::find($levelID)
             ->report()
             ->firstOrCreate();
 

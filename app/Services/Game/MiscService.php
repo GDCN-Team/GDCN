@@ -30,15 +30,15 @@ class MiscService
 
         switch ($type->value) {
             case LikeType::LEVEL:
-                $item = Level::findOrFail($itemID);
+                $item = Level::find($itemID);
                 $logType = LogType::LIKE_LEVEL;
                 break;
             case LikeType::LEVEL_COMMENT:
-                $item = LevelComment::findOrFail($itemID);
+                $item = LevelComment::find($itemID);
                 $logType = LogType::LIKE_LEVEL_COMMENT;
                 break;
             case LikeType::ACCOUNT_COMMENT:
-                $item = AccountComment::findOrFail($itemID);
+                $item = AccountComment::find($itemID);
                 $logType = LogType::LIKE_ACCOUNT_COMMENT;
                 break;
             default:

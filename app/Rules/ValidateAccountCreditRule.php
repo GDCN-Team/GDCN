@@ -15,11 +15,11 @@ class ValidateAccountCreditRule implements Rule
         switch ($attribute) {
             case 'password':
                 $userName = Request::get('userName');
-                $account = Account::whereName($userName)->firstOrFail();
+                $account = Account::whereName($userName)->first();
                 return Hash::check($value, $account->password);
             case 'gjp':
                 $accountID = Request::get('accountID');
-                $account = Account::findOrFail($accountID);
+                $account = Account::find($accountID);
                 $password = app(GJPComponent::class)->decode($value);
                 return Hash::check($password, $account->password);
             default:
