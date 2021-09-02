@@ -356,6 +356,7 @@ class LevelService
         $users = [];
         $songs = [];
 
+        $count = $query->count();
         $result = $query->forPage(++$page, PageInfoComponent::$per_page)
             ->with('rating')
             ->get()
@@ -422,7 +423,7 @@ class LevelService
             $result,
             implode('|', $users),
             implode('~:~', $songs),
-            app(PageInfoComponent::class)->generate(Level::count(), $page),
+            app(PageInfoComponent::class)->generate($count, $page),
             app(LevelInfoComponent::class)->generateHash($hash)
         ]);
     }
