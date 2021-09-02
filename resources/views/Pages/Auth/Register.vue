@@ -3,45 +3,41 @@
         <n-card>
             <n-form :model="form">
                 <n-form-item
-                    required
-                    :validation-status="form.errors.name ? 'error' : null"
                     :feedback="form.errors.name ?? null"
-                    path="form.name"
-                    label="用户名">
+                    :validation-status="form.errors.name ? 'error' : null"
+                    label="用户名"
+                    required>
                     <n-input v-model:value="form.name" placeholder="用户名"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.email ? 'error' : null"
                     :feedback="form.errors.email ?? null"
-                    path="form.email"
-                    label="邮箱">
-                    <n-input type="email" v-model:value="form.email" placeholder="邮箱"></n-input>
+                    :validation-status="form.errors.email ? 'error' : null"
+                    label="邮箱"
+                    required>
+                    <n-input v-model:value="form.email" placeholder="邮箱" type="email"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.password ? 'error' : null"
                     :feedback="form.errors.password ?? null"
-                    path="form.password"
-                    label="密码">
-                    <n-input type="password" v-model:value="form.password" placeholder="密码"></n-input>
+                    :validation-status="form.errors.password ? 'error' : null"
+                    label="密码"
+                    required>
+                    <n-input v-model:value="form.password" placeholder="密码" type="password"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.password_confirmation ? 'error' : null"
                     :feedback="form.errors.password_confirmation ?? null"
-                    path="form.password_confirmation"
-                    label="密码确认">
-                    <n-input type="password" v-model:value="form.password_confirmation" placeholder="密码确认"></n-input>
+                    :validation-status="form.errors.password_confirmation ? 'error' : null"
+                    label="密码确认"
+                    required>
+                    <n-input v-model:value="form.password_confirmation" placeholder="密码确认" type="password"></n-input>
                 </n-form-item>
 
                 <n-form-item>
                     <n-button
-                        :loading="form.processing"
                         :disabled="form.processing || form.password !== form.password_confirmation"
+                        :loading="form.processing"
                         @click="form.post(route('auth.register.api'))">
                         注册
                     </n-button>

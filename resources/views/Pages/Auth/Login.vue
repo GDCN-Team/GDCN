@@ -3,27 +3,25 @@
         <n-card>
             <n-form :model="form">
                 <n-form-item
-                    required
-                    :validation-status="form.errors.name ? 'error' : null"
                     :feedback="form.errors.name ?? null"
-                    path="form.name"
-                    label="用户名">
+                    :validation-status="form.errors.name ? 'error' : null"
+                    label="用户名"
+                    required>
                     <n-input v-model:value="form.name" placeholder="用户名"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.password ? 'error' : null"
                     :feedback="form.errors.password ?? null"
-                    path="form.password"
-                    label="密码">
-                    <n-input type="password" v-model:value="form.password" placeholder="密码"></n-input>
+                    :validation-status="form.errors.password ? 'error' : null"
+                    label="密码"
+                    required>
+                    <n-input v-model:value="form.password" placeholder="密码" type="password"></n-input>
                 </n-form-item>
 
                 <n-form-item>
                     <n-button
-                        :loading="form.processing"
                         :disabled="form.processing"
+                        :loading="form.processing"
                         @click="form.post(route('auth.login.api'));">
                         登录
                     </n-button>

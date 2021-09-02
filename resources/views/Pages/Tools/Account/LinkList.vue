@@ -2,11 +2,11 @@
     <page-layout class="lg:w-1/3" title="链接列表">
         <n-card>
             <n-data-table
-                remote
                 :columns="columns"
                 :data="links.data"
-                :pagination="pagination"
                 :loading="updatePageForm.processing"
+                :pagination="pagination"
+                remote
                 @update:page="updatePage"
             ></n-data-table>
         </n-card>

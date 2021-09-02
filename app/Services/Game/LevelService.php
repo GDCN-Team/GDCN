@@ -22,6 +22,7 @@ use GDCN\Hash\Components\LevelString as LevelStringComponent;
 use GDCN\Hash\Components\PageInfo as PageInfoComponent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log as LogFacade;
 use Illuminate\Support\Facades\Request;
 
@@ -130,6 +131,7 @@ class LevelService
             $levelString
         );
 
+        $this->putCache($level, $levelString);
         LogFacade::channel('gdcn')
             ->info('[Level System] Action: Upload Level', [
                 'userID' => $user->id,
@@ -415,11 +417,22 @@ class LevelService
         ]);
     }
 
-    public function getLevelString(int $levelID): ?string
+    public function getLevelString(Level $level): ?string
     {
-        return $this->storage->get(
-            $this->generateObjectNameForOss($levelID)
+        $cache = unserialize(
+            Cache::get("level.$level->id")
         );
+
+        if (empty($cache) || $cache['version'] !== $level->version) {
+            $levelString = $this->storage->get(
+                $this->generateObjectNameForOss($level->id)
+            );
+
+            $this->putCache($level, $levelString);
+            return $levelString;
+        }
+
+        return $cache['levelString'];
     }
 
     public function download(int $levelID): string
@@ -440,7 +453,7 @@ class LevelService
         }
 
         $level = Level::findOrFail($levelID);
-        $levelString = $this->getLevelString($level->id);
+        $levelString = $this->getLevelString($level);
 
         Log::where([
             'type' => LogType::DOWNLOADED_LEVEL,
@@ -634,5 +647,16 @@ class LevelService
             ->update([
                 'desc' => $desc
             ]);
+    }
+
+    protected function putCache(Level $level, string $levelString)
+    {
+        Cache::put(
+            "level.$level->id",
+            serialize([
+                'version' => $level->version,
+                'levelString' => $levelString
+            ])
+        );
     }
 }

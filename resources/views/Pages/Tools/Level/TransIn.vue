@@ -3,27 +3,25 @@
         <n-card>
             <n-form :model="form">
                 <n-form-item
-                    required
-                    :validation-status="form.errors.server ? 'error' : null"
                     :feedback="form.errors.server ?? null"
-                    path="form.server"
-                    label="服务器">
+                    :validation-status="form.errors.server ? 'error' : null"
+                    label="服务器"
+                    required>
                     <n-select v-model:value="form.server" :options="serverOptions" placeholder="服务器"></n-select>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.levelID ? 'error' : null"
                     :feedback="form.errors.levelID ?? null"
-                    path="form.levelID"
-                    label="关卡ID">
-                    <n-input type="number" v-model:value="form.levelID" placeholder="关卡ID"></n-input>
+                    :validation-status="form.errors.levelID ? 'error' : null"
+                    label="关卡ID"
+                    required>
+                    <n-input v-model:value="form.levelID" placeholder="关卡ID" type="number"></n-input>
                 </n-form-item>
 
                 <n-form-item>
                     <n-button
-                        :loading="form.processing"
                         :disabled="form.processing"
+                        :loading="form.processing"
                         @click="form.post(route('tools.level.trans.in.api'))">
                         搬运
                     </n-button>

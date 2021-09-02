@@ -1,27 +1,54 @@
 <template>
     <page-layout class="lg:w-2/3" title="权限组管理">
         <n-card>
-            <n-descriptions :columns="columns" bordered :title="group.name">
-                <n-descriptions-item label="ID">
-                    {{ group.id }}
-                </n-descriptions-item>
-                <n-descriptions-item label="名称">
-                    {{ group.name }}
-                </n-descriptions-item>
-                <n-descriptions-item label="Mod等级">
-                    {{ mod_level_name }}
-                </n-descriptions-item>
-                <n-descriptions-item label="评论颜色">
-                    <span :style="{ color: `rgb(${group.comment_color})` }">{{ group.comment_color }}</span>
-                </n-descriptions-item>
-                <n-descriptions-item label="创建时间">
-                    {{ formatTime(group.created_at, '未知') }}
-                </n-descriptions-item>
-                <n-descriptions-item label="更新时间">
-                    {{ formatTime(group.updated_at, '未知') }}
-                </n-descriptions-item>
-            </n-descriptions>
-            <n-grid x-gap="10" y-gap="10" cols="1 768:2" class="mt-5">
+            <n-form :model="updateGroupForm">
+                <n-descriptions :columns="columns" :title="group.name" bordered>
+                    <n-descriptions-item label="ID">
+                        {{ group.id }}
+                    </n-descriptions-item>
+                    <n-descriptions-item label="名称">
+                        <n-form-item
+                            :feedback="updateGroupForm.errors.name ?? null"
+                            :validation-status="updateGroupForm.errors.name ? 'error' : null"
+                            required>
+                            <n-input v-model:value="updateGroupForm.name" placeholder="名称"></n-input>
+                        </n-form-item>
+                    </n-descriptions-item>
+                    <n-descriptions-item label="Mod等级">
+                        <n-form-item
+                            :feedback="updateGroupForm.errors.mod_level ?? null"
+                            :validation-status="updateGroupForm.errors.mod_level ? 'error' : null"
+                            required>
+                            <n-select v-model:value="updateGroupForm.mod_level" :options="mod_level_aliases"
+                                      placeholder="Mod等级"></n-select>
+                        </n-form-item>
+                    </n-descriptions-item>
+                    <n-descriptions-item label="评论颜色">
+                        <n-form-item
+                            :feedback="updateGroupForm.errors.comment_color ?? null"
+                            :validation-status="updateGroupForm.errors.comment_color ? 'error' : null"
+                            required>
+                            <n-color-picker :show-alpha="false"
+                                            v-model:value="updateGroupForm.comment_color"></n-color-picker>
+                        </n-form-item>
+                    </n-descriptions-item>
+                    <n-descriptions-item label="创建时间">
+                        {{ formatTime(group.created_at, '未知') }}
+                    </n-descriptions-item>
+                    <n-descriptions-item label="更新时间">
+                        {{ formatTime(group.updated_at, '未知') }}
+                    </n-descriptions-item>
+                </n-descriptions>
+                <br>
+                <n-space>
+                    <n-button @click="updateGroupForm.reset()">取消</n-button>
+                    <n-button :loading="updateGroupForm.processing"
+                              :disabled="updateGroupForm.processing || !updateGroupForm.isDirty"
+                              @click="updateGroupForm.patch(route('admin.group.update', group.id))">更改
+                    </n-button>
+                </n-space>
+            </n-form>
+            <n-grid class="mt-5" cols="1 768:2" x-gap="10" y-gap="10">
                 <n-grid-item>
                     <n-h4>
                         成员
@@ -38,6 +65,7 @@
 
                             <template #suffix>
                                 <n-button :loading="removeAccountFromGroupForm.processing" type="error"
+                                          :disabled="removeAccountFromGroupForm.processing"
                                           @click="removeAccountFromGroupForm.delete(route('admin.group.manage.delete.member', [group.id, account.id]))">
                                     移除
                                 </n-button>
@@ -61,6 +89,7 @@
 
                             <template #suffix>
                                 <n-button :loading="removeFlagFromGroupForm.processing" type="error"
+                                          :disabled="removeFlagFromGroupForm.processing"
                                           @click="removeFlagFromGroupForm.delete(route('admin.group.manage.delete.flag', [group.id, flag.id]))">
                                     移除
                                 </n-button>
@@ -72,64 +101,62 @@
         </n-card>
 
         <n-modal v-model:show="modalShow.addMember">
-            <n-card title="添加成员" class="lg:w-1/3">
-                <n-form inline :model="searchAccountForm">
+            <n-card class="lg:w-1/3" title="添加成员">
+                <n-form :model="searchAccountForm" inline>
                     <n-form-item
-                        required
-                        :validation-status="searchAccountForm.errors.accountSearchText ? 'error' : null"
                         :feedback="searchAccountForm.errors.accountSearchText ?? null"
-                        path="searchAccountForm.accountSearchText"
-                        label="用户名">
+                        :validation-status="searchAccountForm.errors.accountSearchText ? 'error' : null"
+                        label="用户名"
+                        required>
                         <n-input v-model:value="searchAccountForm.accountSearchText" placeholder="用户名"></n-input>
                     </n-form-item>
 
                     <n-form-item>
                         <n-button
-                            :loading="searchAccountForm.processing"
                             :disabled="searchAccountForm.processing"
+                            :loading="searchAccountForm.processing"
                             @click="searchAccountForm.get(route('admin.group.manage', group.id), { only: ['accounts'], preserveState: true });">
                             搜索
                         </n-button>
                     </n-form-item>
                 </n-form>
                 <n-data-table
-                    remote
                     :columns="accounts_search_table.columns"
                     :data="accounts?.data"
-                    :pagination="accounts_search_table.pagination"
                     :loading="accounts_search_table.updatePageForm.processing"
+                    :pagination="accounts_search_table.pagination"
+                    remote
                     @update:page="accounts_search_table.updatePage"
                 ></n-data-table>
             </n-card>
         </n-modal>
 
         <n-modal v-model:show="modalShow.addFlag">
-            <n-card title="添加权限" class="lg:w-1/3">
-                <n-form inline :model="searchFlagForm">
+            <n-card class="lg:w-1/3" title="添加权限">
+                <n-form :model="searchFlagForm" inline>
                     <n-form-item
-                        required
-                        :validation-status="searchFlagForm.errors.flagSearchText ? 'error' : null"
                         :feedback="searchFlagForm.errors.flagSearchText ?? null"
-                        path="searchFlagForm.flagSearchText"
-                        label="权限名">
+                        :validation-status="searchFlagForm.errors.flagSearchText ? 'error' : null"
+                        label="权限名"
+                        required>
                         <n-input v-model:value="searchFlagForm.flagSearchText" placeholder="权限名"></n-input>
                     </n-form-item>
 
                     <n-form-item>
                         <n-button
-                            :loading="searchFlagForm.processing"
                             :disabled="searchFlagForm.processing"
+                            :loading="searchFlagForm.processing"
                             @click="searchFlagForm.get(route('admin.group.manage', group.id), { only: ['flags'], preserveState: true });">
                             搜索
                         </n-button>
                     </n-form-item>
                 </n-form>
                 <n-data-table
-                    remote
                     :columns="flags_search_table.columns"
                     :data="flags?.data"
-                    :pagination="flags_search_table.pagination"
                     :loading="flags_search_table.updatePageForm.processing"
+                    :pagination="flags_search_table.pagination"
+                    remote
                     @update:page="flags_search_table.updatePage"
                 ></n-data-table>
             </n-card>
@@ -142,6 +169,7 @@ import PageLayout from "../../Components/PageLayout";
 import {
     NButton,
     NCard,
+    NColorPicker,
     NDataTable,
     NDescriptions,
     NDescriptionsItem,
@@ -154,7 +182,9 @@ import {
     NInput,
     NList,
     NListItem,
-    NModal
+    NModal,
+    NSelect,
+    NSpace
 } from "naive-ui";
 import {formatTime, isMobile} from "../../../../js/helper";
 import {Add} from "@vicons/carbon";
@@ -317,6 +347,26 @@ export default {
 
         const removeAccountFromGroupForm = useForm(null);
         const removeFlagFromGroupForm = useForm(null);
+        const updateGroupForm = useForm({
+            name: props.group.name,
+            mod_level: props.group.mod_level,
+            comment_color: `rgb(${props.group.comment_color})`
+        });
+
+        const mod_level_aliases = [
+            {
+                label: 'Player',
+                value: 0
+            },
+            {
+                label: 'Normal Mod',
+                value: 1
+            },
+            {
+                label: 'Elder Mod',
+                value: 2
+            }
+        ];
 
         return {
             formatTime,
@@ -329,7 +379,9 @@ export default {
             removeFlagFromGroupForm,
             searchFlagForm,
             flags_search_table,
-            flags
+            flags,
+            updateGroupForm,
+            mod_level_aliases
         }
     },
     components: {
@@ -349,7 +401,10 @@ export default {
         NFormItem,
         NDataTable,
         NList,
-        NListItem
+        NListItem,
+        NSelect,
+        NColorPicker,
+        NSpace
     }
 }
 </script>

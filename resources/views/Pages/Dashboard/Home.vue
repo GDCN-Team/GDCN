@@ -9,7 +9,7 @@
                 <n-statistic label="Moderator">{{ dynamic['moderators_count'] }}</n-statistic>
             </n-space>
         </n-card>
-        <n-grid class="mt-5" x-gap="10" y-gap="10" cols="1 768:3">
+        <n-grid class="mt-5" cols="1 768:3" x-gap="10" y-gap="10">
             <n-grid-item>
                 <n-card title="服务器动态">
                     <n-tabs justify-content="space-evenly" type="line">
@@ -22,8 +22,8 @@
                                         </n-button>
                                     </template>
 
-                                    <n-thing :title="account.name"
-                                             :description="'注册于 '+formatTime(account.created_at, '未知')"></n-thing>
+                                    <n-thing :description="'注册于 '+formatTime(account.created_at, '未知')"
+                                             :title="account.name"></n-thing>
                                 </n-list-item>
                             </n-list>
                         </n-tab-pane>
@@ -36,8 +36,8 @@
                                         </n-button>
                                     </template>
 
-                                    <n-thing :title="level.name + ' - ' + (level?.user?.name ?? '未知')"
-                                             :description="'上传于 '+formatTime(level.created_at, '未知')"></n-thing>
+                                    <n-thing :description="'上传于 '+formatTime(level.created_at, '未知')"
+                                             :title="level.name + ' - ' + (level?.user?.name ?? '未知')"></n-thing>
                                 </n-list-item>
                             </n-list>
                         </n-tab-pane>
@@ -57,8 +57,8 @@
                                     </template>
 
                                     <n-thing
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"
-                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"></n-thing>
+                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"
+                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"></n-thing>
                                 </n-list-item>
                             </n-list>
                         </n-tab-pane>
@@ -72,8 +72,8 @@
                                     </template>
 
                                     <n-thing
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"
-                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"></n-thing>
+                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"
+                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"></n-thing>
                                 </n-list-item>
                             </n-list>
                         </n-tab-pane>
@@ -87,8 +87,8 @@
                                     </template>
 
                                     <n-thing
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"
-                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"></n-thing>
+                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"
+                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"></n-thing>
                                 </n-list-item>
                             </n-list>
                         </n-tab-pane>
@@ -102,8 +102,8 @@
                             <n-list bordered>
                                 <n-list-item v-for="(score, index) in dynamic['top_stars'].data">
                                     <n-thing
-                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.stars"
                                         :description="'TOP ' + (index + 1)"
+                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.stars"
                                     ></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -112,8 +112,8 @@
                             <n-list bordered>
                                 <n-list-item v-for="(score, index) in dynamic['top_diamonds'].data">
                                     <n-thing
-                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.diamonds"
                                         :description="'TOP ' + (index + 1)"
+                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.diamonds"
                                     ></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -122,8 +122,8 @@
                             <n-list bordered>
                                 <n-list-item v-for="(score, index) in dynamic['top_demons'].data">
                                     <n-thing
-                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.demons"
                                         :description="'TOP ' + (index + 1)"
+                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.demons"
                                     ></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -132,8 +132,8 @@
                             <n-list bordered>
                                 <n-list-item v-for="(score, index) in dynamic['top_creator_points'].data">
                                     <n-thing
-                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.creator_points"
                                         :description="'TOP ' + (index + 1)"
+                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.creator_points"
                                     ></n-thing>
                                 </n-list-item>
                             </n-list>

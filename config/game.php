@@ -8,6 +8,7 @@ return [
     'perPage' => 10,
     'customSongIdOffset' => 5000000,
     'weeklyIdOffset' => 100000,
+    'defaultPermissionGroupID' => 1,
     'creator_points_count' => [
         'rated' => 1,
         'featured' => 2,

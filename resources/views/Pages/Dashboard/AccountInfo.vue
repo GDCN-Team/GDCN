@@ -1,7 +1,7 @@
 <template>
-    <page-layout class="lg:w-1/3" :title="title">
+    <page-layout :title="title" class="lg:w-1/3">
         <n-card>
-            <n-descriptions bordered :column="columns">
+            <n-descriptions :column="columns" bordered>
                 <n-descriptions-item label="账号ID">
                     {{ account.id }}
                 </n-descriptions-item>
@@ -35,8 +35,8 @@
         <n-card class="mt-2.5" title="评论">
             <n-list bordered>
                 <n-list-item v-for="comment in account.comments">
-                    <n-thing :title="Base64.decode(comment.content)"
-                             :description="'评论于 '+formatTime(comment.created_at, '未知')"></n-thing>
+                    <n-thing :description="'评论于 '+formatTime(comment.created_at, '未知')"
+                             :title="Base64.decode(comment.content)"></n-thing>
                 </n-list-item>
             </n-list>
         </n-card>

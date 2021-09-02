@@ -2,7 +2,6 @@
 
 namespace App\Services\Web\Tools;
 
-use App\Exceptions\Game\LevelUploadException;
 use App\Exceptions\Web\Tools\LevelTransInException;
 use App\Exceptions\Web\Tools\LevelTransOutException;
 use App\Models\Game\Account;
@@ -177,7 +176,7 @@ class LevelService
             'requestedStars' => $level->requested_stars,
             'unlisted' => $level_unlisted ?? $level->unlisted,
             'ldm' => $level->ldm,
-            'levelString' => $levelString = $service->getLevelString($level->id),
+            'levelString' => $levelString = $service->getLevelString($level),
             'seed2' => app(LevelStringComponent::class)->generateHash($levelString),
             'secret' => 'Wmfd2893gb7'
         ])->body();

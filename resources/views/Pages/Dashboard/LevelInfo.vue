@@ -1,7 +1,7 @@
 <template>
-    <page-layout class="lg:w-1/3" :title="title">
+    <page-layout :title="title" class="lg:w-1/3">
         <n-card>
-            <n-descriptions bordered :column="columns">
+            <n-descriptions :column="columns" bordered>
                 <n-descriptions-item label="关卡ID">
                     {{ level.id }}
                 </n-descriptions-item>
@@ -12,7 +12,7 @@
                     {{ Base64.decode(level.desc) }}
                 </n-descriptions-item>
                 <n-descriptions-item label="作者">
-                    {{ level?.creator?.name ?? '未知' }}
+                    {{ level?.user?.name ?? '未知' }}
                 </n-descriptions-item>
                 <n-descriptions-item label="下载量">
                     {{ level.downloads }}
@@ -47,8 +47,8 @@
         <n-card class="mt-2.5" title="评论">
             <n-list bordered>
                 <n-list-item v-for="comment in level.comments">
-                    <n-thing :title="comment.sender.name + ': ' + Base64.decode(comment.content)"
-                             :description="'评论于 '+formatTime(comment.created_at, '未知')">
+                    <n-thing :description="'评论于 '+formatTime(comment.created_at, '未知')"
+                             :title="comment.sender.name + ': ' + Base64.decode(comment.content)">
                         <template #action>
                             <n-button @click="redirectToRoute('dashboard.account.info', comment.sender.id)">
                                 查看 {{ comment.sender.name }} 的个人资料
@@ -74,7 +74,7 @@ export default {
     },
     computed: {
         title: function () {
-            return `${this.level.name} - ${this.level?.creator?.name ?? '未知'}`;
+            return `${this.level.name} - ${this.level?.user?.name ?? '未知'}`;
         },
         columns: function () {
             return isMobile() ? 3 : 1;

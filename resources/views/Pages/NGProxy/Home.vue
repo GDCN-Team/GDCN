@@ -6,18 +6,17 @@
             <br>
             <n-form :model="form">
                 <n-form-item
-                    :validation-status="form.errors.songID ? 'error' : null"
-                    :feedback="form.errors.songID ?? null"
-                    path="form.songID"
+                    :feedback="form.errors.query ?? null"
+                    :validation-status="form.errors.query ? 'error' : null"
                     label="歌曲ID">
-                    <n-input type="number" v-model:value="form.songID" placeholder="歌曲ID"></n-input>
+                    <n-input v-model:value="form.query" placeholder="歌曲ID" type="number"></n-input>
                 </n-form-item>
 
                 <n-form-item>
                     <n-button
-                        :loading="form.processing"
                         :disabled="form.processing"
-                        @click="form.post(route('ngproxy.query.api'))">
+                        :loading="form.processing"
+                        @click="form.get(route('ngproxy.home'), { only: ['song'] })">
                         查询
                     </n-button>
                 </n-form-item>
@@ -78,7 +77,7 @@ export default {
     },
     setup: function () {
         const form = useForm({
-            songID: null
+            query: null
         });
 
         return {form, redirect}

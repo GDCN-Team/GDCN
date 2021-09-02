@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\Game\GDProxyController;
-use App\Http\Controllers\Game\NGProxyApiController;
 use App\Http\Controllers\Game\NGProxyController;
 use App\Http\Controllers\Web\Admin\ApiController as AdminApiController;
 use App\Http\Controllers\Web\Auth\ApiController as AuthApiController;
 use App\Http\Controllers\Web\Dashboard\ApiController as DashboardApiController;
 use App\Http\Controllers\Web\Tools\ApiController as ToolsApiController;
 use App\Http\Middleware\Auth as AuthMiddleWare;
+use App\Presenters\AdminPresenter;
 use App\Presenters\Web\Admin\GroupManagerPresenter;
+use App\Presenters\Web\Admin\LevelGauntletManagerPresenter;
 use App\Presenters\Web\AuthPresenter;
 use App\Presenters\Web\DashboardPresenter;
 use App\Presenters\Web\GDProxyPresenter;
@@ -31,48 +32,87 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'domain' => 'gf.geometrydashchinese.com'
 ], function () {
-    $guestMiddleware = 'guest';
-    $authMiddleware = AuthMiddleWare::class;
-    $passwordConfirmMiddleware = 'password.confirm:auth.password.confirm';
-
+    Route::redirect('password.confirm', 'auth.password.confirm');
     Route::get('/', [HomePresenter::class, 'renderHomePage'])->name('home');
 
     Route::group([
-        'middleware' => [$authMiddleware, 'permission_can:ADMIN_MANAGE_GROUPS'],
+        'middleware' => AuthMiddleWare::class,
         'prefix' => 'admin',
         'as' => 'admin.'
     ], function () {
-        Route::get('/group/list', [GroupManagerPresenter::class, 'renderGroupListPage'])
-            ->middleware('permission_can:ADMIN_LIST_GROUP')
-            ->name('group.list');
+        Route::get('/', [AdminPresenter::class, 'renderHomePage'])->name('home');
 
-        Route::get('/group/{group}', [GroupManagerPresenter::class, 'renderGroupManagePage'])
-            ->middleware('permission_can:ADMIN_MANAGE_GROUP')
-            ->name('group.manage');
+        Route::group([
+            'middleware' => 'permission_can:ADMIN_MANAGE_GROUPS'
+        ], function () {
+            Route::get('/groups', [GroupManagerPresenter::class, 'renderGroupListPage'])
+                ->middleware('permission_can:ADMIN_LIST_GROUP')
+                ->name('group.list');
 
-        Route::put('/group/{group}/member/{account}', [AdminApiController::class, 'addMemberToGroup'])
-            ->middleware('permission_can:ADMIN_ADD_MEMBER_TO_GROUP')
-            ->name('group.manage.add.member');
+            Route::put('/group', [AdminApiController::class, 'createGroup'])
+                ->middleware('permission_can:ADMIN_CREATE_GROUP')
+                ->name('group.create');
 
-        Route::delete('/group/{group}/member/{account}', [AdminApiController::class, 'deleteMemberFromGroup'])
-            ->middleware('permission_can:ADMIN_DELETE_MEMBER_FROM_GROUP')
-            ->name('group.manage.delete.member');
+            Route::get('/group/{group}', [GroupManagerPresenter::class, 'renderGroupManagePage'])
+                ->middleware('permission_can:ADMIN_MANAGE_GROUP')
+                ->name('group.manage');
 
-        Route::put('/group/{group}/flag/{flag}', [AdminApiController::class, 'addFlagToGroup'])
-            ->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
-            ->name('group.manage.add.flag');
+            Route::patch('/group/{group}', [AdminApiController::class, 'updateGroup'])
+                ->middleware('permission_can:ADMIN_UPDATE_GROUP')
+                ->name('group.update');
 
-        Route::delete('/group/{group}/flag/{flag}', [AdminApiController::class, 'deleteFlagToGroup'])
-            ->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
-            ->name('group.manage.delete.flag');
+            Route::delete('/group/{group}', [AdminApiController::class, 'deleteGroup'])
+                ->middleware('permission_can:ADMIN_DELETE_GROUP')
+                ->name('group.delete');
+
+            Route::put('/group/{group}/member/{account}', [AdminApiController::class, 'addMemberToGroup'])
+                ->middleware('permission_can:ADMIN_ADD_MEMBER_TO_GROUP')
+                ->name('group.manage.add.member');
+
+            Route::delete('/group/{group}/member/{account}', [AdminApiController::class, 'deleteMemberFromGroup'])
+                ->middleware('permission_can:ADMIN_DELETE_MEMBER_FROM_GROUP')
+                ->name('group.manage.delete.member');
+
+            Route::put('/group/{group}/flag/{flag}', [AdminApiController::class, 'addFlagToGroup'])
+                ->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
+                ->name('group.manage.add.flag');
+
+            Route::delete('/group/{group}/flag/{flag}', [AdminApiController::class, 'deleteFlagToGroup'])
+                ->middleware('permission_can:ADMIN_ADD_FLAG_TO_GROUP')
+                ->name('group.manage.delete.flag');
+        });
+
+        Route::group([
+            'middleware' => 'permission_can:ADMIN_MANAGE_LEVEL_GAUNTLETS'
+        ], function () {
+            Route::get('/level/gauntlets', [LevelGauntletManagerPresenter::class, 'renderListPage'])
+                ->middleware('permission_can:ADMIN_LIST_LEVEL_GAUNTLETS')
+                ->name('level.gauntlet.list');
+
+            Route::get('/level/gauntlet/{gauntlet}', [LevelGauntletManagerPresenter::class, 'renderManagePage'])
+                ->middleware('permission_can:ADMIN_MANAGE_LEVEL_GAUNTLET')
+                ->name('level.gauntlet.manage');
+
+            Route::put('/level/gauntlet', [AdminApiController::class, 'createLevelGauntlet'])
+                ->middleware('permission_can:ADMIN_CREATE_LEVEL_GAUNTLET')
+                ->name('level.gauntlet.create');
+
+            Route::patch('/level/gauntlet/{gauntlet}', [AdminApiController::class, 'updateLevelGauntlet'])
+                ->middleware('permission_can:ADMIN_UPDATE_LEVEL_GAUNTLET')
+                ->name('level.gauntlet.update');
+
+            Route::delete('/level/gauntlet/{gauntlet}', [AdminApiController::class, 'deleteLevelGauntlet'])
+                ->middleware('permission_can:ADMIN_DELETE_LEVEL_GAUNTLET')
+                ->name('level.gauntlet.delete');
+        });
     });
 
     Route::group([
         'prefix' => 'auth',
         'as' => 'auth.'
-    ], function () use ($guestMiddleware, $authMiddleware) {
+    ], function () {
         Route::group([
-            'middleware' => $guestMiddleware
+            'middleware' => 'guest'
         ], function () {
             Route::get('/register', [AuthPresenter::class, 'renderRegisterPage'])->name('register');
             Route::get('/login', [AuthPresenter::class, 'renderLoginPage'])->name('login');
@@ -88,7 +128,7 @@ Route::group([
         });
 
         Route::group([
-            'middleware' => $authMiddleware
+            'middleware' => AuthMiddleWare::class
         ], function () {
             Route::get('/password/confirm', [AuthPresenter::class, 'renderPasswordConfirmPage'])->name('password.confirm');
 
@@ -100,18 +140,18 @@ Route::group([
     Route::group([
         'prefix' => 'dashboard',
         'as' => 'dashboard.'
-    ], function () use ($passwordConfirmMiddleware, $authMiddleware) {
+    ], function () {
         Route::get('/', [DashboardPresenter::class, 'renderHomePage'])->name('home');
         Route::get('/account/{account}', [DashboardPresenter::class, 'renderAccountInfoPage'])->name('account.info');
         Route::get('/level/{level}', [DashboardPresenter::class, 'renderLevelInfoPage'])->name('level.info');
 
         Route::group([
-            'middleware' => $authMiddleware
-        ], function () use ($passwordConfirmMiddleware) {
+            'middleware' => AuthMiddleWare::class
+        ], function () {
             Route::get('player', [DashboardPresenter::class, 'renderProfilePage'])->name('profile');
 
             Route::group([
-                'middleware' => $passwordConfirmMiddleware
+                'middleware' => 'password.confirm'
             ], function () {
                 Route::get('/player/setting', [DashboardPresenter::class, 'renderProfileSettingPage'])->name('profile.setting');
 
@@ -125,11 +165,11 @@ Route::group([
     Route::group([
         'prefix' => 'tools',
         'as' => 'tools.'
-    ], function () use ($authMiddleware) {
+    ], function () {
         Route::get('/', [ToolsPresenter::class, 'renderHomePage'])->name('home');
 
         Route::group([
-            'middleware' => $authMiddleware
+            'middleware' => AuthMiddleWare::class
         ], function () {
             Route::get('/account/link', [ToolsPresenter::class, 'renderAccountLinkPage'])->name('account.link');
             Route::get('/account/links', [ToolsPresenter::class, 'renderAccountLinkListPage'])->name('account.link.list');
@@ -141,13 +181,13 @@ Route::group([
             Route::get('/song/edit/{song}', [ToolsPresenter::class, 'renderSongEditPage'])->name('song.edit');
 
             Route::post('/account/link', [ToolsApiController::class, 'linkAccount'])->name('account.link.api');
-            Route::delete('/account/unlink/{link}', [ToolsApiController::class, 'unlinkAccount'])->name('account.unlink.api');
+            Route::delete('/account/{link}', [ToolsApiController::class, 'unlinkAccount'])->name('account.unlink.api');
             Route::post('/level/trans:in', [ToolsApiController::class, 'transInLevel'])->name('level.trans.in.api');
             Route::post('/level/trans:out', [ToolsApiController::class, 'transOutLevel'])->name('level.trans.out.api');
             Route::post('/song/upload:link', [ToolsApiController::class, 'uploadSongUsingLink'])->name('song.upload.link.api');
             Route::post('/song/upload:netease', [ToolsApiController::class, 'uploadSongUsingNeteaseMusic'])->name('song.upload.netease.api');
             Route::post('/song/edit', [ToolsApiController::class, 'editSong'])->name('song.edit.api');
-            Route::delete('/song/delete/{song}', [ToolsApiController::class, 'deleteSong'])->name('song.delete.api');
+            Route::delete('/song/{song}', [ToolsApiController::class, 'deleteSong'])->name('song.delete.api');
         });
     });
 });
@@ -165,7 +205,6 @@ Route::group([
     'as' => 'ngproxy.'
 ], function () {
     Route::get('/', [NGProxyPresenter::class, 'renderHomePage'])->name('home');
-    Route::post('/query', [NGProxyApiController::class, 'getSongInfo'])->name('query.api');
     Route::get('/{songID}/info', [NGProxyController::class, 'info'])->name('info');
     Route::get('/{songID}/object', [NGProxyController::class, 'object'])->name('object');
 });

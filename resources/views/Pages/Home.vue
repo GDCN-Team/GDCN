@@ -1,9 +1,9 @@
 <template>
     <layout>
         <div class="container p-2 lg:mx-auto">
-            <img :src="server.cdn_url + '/images/title.png'" :alt="server.app_name">
+            <img :alt="server.app_name" :src="server.cdn_url + '/images/title.png'">
 
-            <n-grid x-gap="10" y-gap="10" cols="1 768:2 1024:4" class="mt-5">
+            <n-grid class="mt-5" cols="1 768:2 1024:4" x-gap="10" y-gap="10">
                 <n-grid-item :span="2">
                     <n-card title="GDCN 介绍">
                         <p class="font-bold">
@@ -54,7 +54,7 @@
                             </n-dropdown>
 
                             <n-button disabled>
-                                <template @click="redirect(server.cdn_url + '/../download/GDCN.ipa')" #icon>
+                                <template #icon @click="redirect(server.cdn_url + '/../download/GDCN.ipa')">
                                     <n-icon>
                                         <apple-outlined></apple-outlined>
                                     </n-icon>
@@ -116,7 +116,7 @@
                 </n-grid-item>
             </n-grid>
             <n-card class="mt-2.5" title="GDCN 团队">
-                <n-grid x-gap="10" y-gap="10" cols="1 768:2">
+                <n-grid cols="1 768:2" x-gap="10" y-gap="10">
                     <n-grid-item>
                         <n-descriptions :column="1" title="xyzlol">
                             <n-descriptions-item label="职位">

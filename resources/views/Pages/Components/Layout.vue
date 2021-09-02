@@ -1,6 +1,6 @@
 <template>
     <n-config-provider :theme="theme">
-        <n-layout position="absolute" class="h-screen">
+        <n-layout class="h-screen" position="absolute">
             <n-layout-header>
                 <nav-bar @switch-theme="switchTheme"></nav-bar>
             </n-layout-header>
@@ -15,8 +15,10 @@
 
                 <slot></slot>
             </n-layout-content>
-            <n-layout-footer position="absolute" class="text-center w-full">
-                <n-button text @click="redirectToRoute('home')">Geometry Dash Chinese</n-button> &copy; 2020 - {{ year }} |
+            <n-layout-footer class="text-center w-full" position="absolute">
+                <n-button text @click="redirectToRoute('home')">Geometry Dash Chinese</n-button> &copy; 2020 - {{
+                    year
+                }} |
                 <n-button text @click="redirect('https://beian.miit.gov.cn')">吉ICP备18006293号</n-button>
             </n-layout-footer>
         </n-layout>

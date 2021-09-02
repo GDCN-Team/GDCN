@@ -49,6 +49,8 @@ class Gauntlet extends Model
         'gauntlet_id' => GauntletType::class
     ];
 
+    protected $fillable = ['gauntlet_id', 'level1', 'level2', 'level3', 'level4', 'level5'];
+
     public function level1(): BelongsTo
     {
         return $this->belongsTo(Level::class, 'level1');

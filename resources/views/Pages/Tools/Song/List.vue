@@ -2,7 +2,7 @@
     <page-layout class="lg:w-2/3" title="歌曲列表">
         <n-card>
             <n-space justify="space-between">
-                <n-button tag="a" href="?me=1">我上传的</n-button>
+                <n-button href="?me=1" tag="a">我上传的</n-button>
                 <n-space>
                     <n-input v-model:value="searchSongForm.search" placeholder="搜索..."></n-input>
                     <n-button
@@ -13,11 +13,11 @@
             </n-space>
             <br>
             <n-data-table
-                remote
                 :columns="columns"
                 :data="songs.data"
-                :pagination="pagination"
                 :loading="updatePageForm.processing"
+                :pagination="pagination"
+                remote
                 @update:page="updatePage"
             ></n-data-table>
         </n-card>

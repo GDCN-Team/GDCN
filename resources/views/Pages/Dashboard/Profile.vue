@@ -1,7 +1,7 @@
 <template>
     <page-layout class="lg:w-2/3" title="个人资料">
         <n-card class="mt-5">
-            <n-grid x-gap="10" y-gap="10" cols="1 768:2">
+            <n-grid cols="1 768:2" x-gap="10" y-gap="10">
                 <n-grid-item>
                     <div v-if="account">
                         <n-descriptions :columns="columns" bordered title="账号信息">
@@ -23,7 +23,7 @@
                         </n-descriptions>
                     </div>
 
-                    <span class="text-red-700 font-bold text-lg" v-else>载入失败</span>
+                    <span v-else class="text-red-700 font-bold text-lg">载入失败</span>
                 </n-grid-item>
 
                 <n-grid-item>
@@ -34,9 +34,9 @@
                             </n-descriptions-item>
                             <n-descriptions-item label="用户名">
                                 {{ account.user.name }}
-                                <n-button type="primary" text
-                                          :loading="syncUserNameForm.processing"
-                                          :disabled="syncUserNameForm.processing || account.name === account.user.name"
+                                <n-button :disabled="syncUserNameForm.processing || account.name === account.user.name" :loading="syncUserNameForm.processing"
+                                          text
+                                          type="primary"
                                           @click="syncUserNameForm.get(route('dashboard.profile.name.sync.api'))">
                                     (同步)
                                 </n-button>
@@ -44,22 +44,22 @@
                             <n-descriptions-item label="用户唯一识别码">
                                         <span v-if="visible.uuid">
                                             {{ account.user.uuid }}
-                                            <n-button type="primary" text
+                                            <n-button text type="primary"
                                                       @click="invertValue(visible, 'uuid')">(隐藏)</n-button>
                                         </span>
 
-                                <n-button type="primary" v-else text @click="invertValue(visible, 'uuid')">
+                                <n-button v-else text type="primary" @click="invertValue(visible, 'uuid')">
                                     显示
                                 </n-button>
                             </n-descriptions-item>
                             <n-descriptions-item label="设备唯一识别码">
                                         <span v-if="visible.udid">
                                             {{ account.user.udid }}
-                                            <n-button type="primary" text
+                                            <n-button text type="primary"
                                                       @click="invertValue(visible, 'udid')">(隐藏)</n-button>
                                         </span>
 
-                                <n-button type="primary" v-else text @click="invertValue(visible, 'udid')">
+                                <n-button v-else text type="primary" @click="invertValue(visible, 'udid')">
                                     显示
                                 </n-button>
                             </n-descriptions-item>
@@ -69,7 +69,7 @@
                         </n-descriptions>
                     </div>
 
-                    <span class="text-red-700 font-bold text-lg" v-else>载入失败</span>
+                    <span v-else class="text-red-700 font-bold text-lg">载入失败</span>
                 </n-grid-item>
             </n-grid>
 
@@ -77,15 +77,15 @@
                 <n-space justify="space-between">
                     <n-space justify="left">
                         <n-button @click="redirectToRoute('dashboard.profile.setting')">账号设置</n-button>
-                        <n-button :loading="logoutForm.processing" :disabled="logoutForm.processing"
+                        <n-button :disabled="logoutForm.processing" :loading="logoutForm.processing"
                                   @click="logoutForm.post(route('auth.logout.api'))">
                             登出
                         </n-button>
                     </n-space>
 
                     <n-button
-                        :loading="resendVerificationEmailForm.processing"
                         :disabled="resendVerificationEmailForm.processing || account.email_verified_at !== null"
+                        :loading="resendVerificationEmailForm.processing"
                         @click="resendVerificationEmailForm.get(route('dashboard.profile.verification.email.resend.api'))">
                         重发验证邮件
                     </n-button>

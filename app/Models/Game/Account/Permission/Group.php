@@ -2,6 +2,8 @@
 
 namespace App\Models\Game\Account\Permission;
 
+use App\Events\DeleteingGroupEvent;
+use App\Events\GroupDeleting;
 use App\Models\Game\Account;
 use Database\Factories\Game\Account\Permission\GroupFactory;
 use Eloquent;
@@ -43,7 +45,9 @@ class Group extends Model
 
     protected $table = 'game_account_permission_groups';
 
-    protected $fillable = ['name', 'mod_level'];
+    protected $fillable = ['name', 'mod_level', 'comment_color'];
+
+    protected $dispatchesEvents = ['deleting' => GroupDeleting::class];
 
     public function flags(): HasManyThrough
     {

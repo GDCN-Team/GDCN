@@ -3,33 +3,30 @@
         <n-card>
             <n-form :model="form">
                 <n-form-item
-                    :validation-status="form.errors.name ? 'error' : null"
                     :feedback="form.errors.name ?? null"
-                    path="form.name"
+                    :validation-status="form.errors.name ? 'error' : null"
                     label="新用户名">
                     <n-input v-model:value="form.name" placeholder="新用户名(留空不变)"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    :validation-status="form.errors.email ? 'error' : null"
                     :feedback="form.errors.email ?? null"
-                    path="form.email"
+                    :validation-status="form.errors.email ? 'error' : null"
                     label="新邮箱">
-                    <n-input type="email" v-model:value="form.email" placeholder="新邮箱(留空不变)"></n-input>
+                    <n-input v-model:value="form.email" placeholder="新邮箱(留空不变)" type="email"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    :validation-status="form.errors.password ? 'error' : null"
                     :feedback="form.errors.password ?? null"
-                    path="form.password"
+                    :validation-status="form.errors.password ? 'error' : null"
                     label="新密码">
-                    <n-input type="password" v-model:value="form.password" placeholder="新密码(留空不变)"></n-input>
+                    <n-input v-model:value="form.password" placeholder="新密码(留空不变)" type="password"></n-input>
                 </n-form-item>
 
                 <n-form-item>
                     <n-button
-                        :loading="form.processing"
                         :disabled="form.processing"
+                        :loading="form.processing"
                         @click="form.post(route('dashboard.profile.setting.api'))">
                         修改
                     </n-button>

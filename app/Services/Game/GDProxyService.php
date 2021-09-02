@@ -81,12 +81,12 @@ class GDProxyService
                 $parts[0] = GDObject::merge($levelObject, ':');
 
                 $levelHash = implode(',', [
-                    $levelObject[6],
-                    $levelObject[18],
-                    $levelObject[17],
+                    $levelObject[6] ?? 0,
+                    $levelObject[18] ?? 0,
+                    $levelObject[17] ?? 0,
                     $levelObject[1] ?? $data['levelID'],
                     $levelObject[38] ?? 0,
-                    $levelObject[19],
+                    $levelObject[19] ?? 0,
                     1,
                     $levelObject[41] ?? 0
                 ]);

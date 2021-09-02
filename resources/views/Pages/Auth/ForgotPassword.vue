@@ -3,27 +3,25 @@
         <n-card>
             <n-form :model="form">
                 <n-form-item
-                    required
-                    :validation-status="form.errors.name ? 'error' : null"
                     :feedback="form.errors.name ?? null"
-                    path="form.name"
-                    label="用户名">
+                    :validation-status="form.errors.name ? 'error' : null"
+                    label="用户名"
+                    required>
                     <n-input v-model:value="form.name" placeholder="用户名"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.email ? 'error' : null"
                     :feedback="form.errors.email ?? null"
-                    path="form.email"
-                    label="邮箱">
-                    <n-input type="email" v-model:value="form.email" placeholder="邮箱"></n-input>
+                    :validation-status="form.errors.email ? 'error' : null"
+                    label="邮箱"
+                    required>
+                    <n-input v-model:value="form.email" placeholder="邮箱" type="email"></n-input>
                 </n-form-item>
 
                 <n-form-item>
                     <n-button
-                        :loading="form.processing"
                         :disabled="form.processing"
+                        :loading="form.processing"
                         @click="form.post(route('auth.password.forgot.api'));">
                         发送重置邮件
                     </n-button>

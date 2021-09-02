@@ -2,7 +2,7 @@
     <layout>
         <div :class="container_class">
             <div class="py-5 lg:px-0 px-2.5">
-                <n-page-header @back="back" :title="title"/>
+                <n-page-header :title="title" @back="back"/>
                 <div class="my-5">
                     <slot></slot>
                 </div>

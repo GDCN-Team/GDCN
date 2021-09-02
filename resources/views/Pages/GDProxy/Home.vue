@@ -33,7 +33,7 @@
                 </n-dropdown>
 
                 <n-button disabled>
-                    <template @click="redirect(server.cdn_url + '/../download/GDProxy.ipa')" #icon>
+                    <template #icon @click="redirect(server.cdn_url + '/../download/GDProxy.ipa')">
                         <n-icon>
                             <apple-outlined></apple-outlined>
                         </n-icon>

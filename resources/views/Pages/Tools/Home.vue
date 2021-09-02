@@ -1,6 +1,6 @@
 <template>
     <page-layout class="lg:w-2/3" title="Tools">
-        <n-grid x-gap="10" y-gap="10" cols="1 768:2">
+        <n-grid cols="1 768:2" x-gap="10" y-gap="10">
             <n-grid-item>
                 <n-card title="账号">
                     <n-space justify="left">

@@ -2,30 +2,28 @@
     <page-layout class="lg:w-1/3" title="歌曲上传(外链版)">
         <n-card>
             <n-form-item
-                required
-                :validation-status="form.errors.musicID ? 'error' : null"
                 :feedback="form.errors.musicID ?? null"
-                path="form.musicID"
-                label="音乐ID">
-                <n-input type="number" v-model:value="form.musicID" placeholder="音乐ID"></n-input>
+                :validation-status="form.errors.musicID ? 'error' : null"
+                label="音乐ID"
+                required>
+                <n-input v-model:value="form.musicID" placeholder="音乐ID" type="number"></n-input>
                 <n-button class="ml-2" @click="showDialogForParseLink">分享链接解析</n-button>
             </n-form-item>
 
             <n-form :model="form">
                 <n-form-item
-                    required
-                    :validation-status="form.errors.song_id ? 'error' : null"
                     :feedback="form.errors.song_id ?? null"
-                    path="form.song_id"
-                    label="歌曲ID">
-                    <n-input type="number" v-model:value="form.song_id" placeholder="歌曲ID"></n-input>
+                    :validation-status="form.errors.song_id ? 'error' : null"
+                    label="歌曲ID"
+                    required>
+                    <n-input v-model:value="form.song_id" placeholder="歌曲ID" type="number"></n-input>
                     <n-button class="ml-2" @click="getLatestSongID">自动获取</n-button>
                 </n-form-item>
 
                 <n-form-item>
                     <n-button
-                        :loading="form.processing"
                         :disabled="form.processing"
+                        :loading="form.processing"
                         @click="form.post(route('tools.song.upload.netease.api'))">
                         上传
                     </n-button>

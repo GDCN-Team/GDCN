@@ -2,13 +2,13 @@
     <n-space :justify="justify">
         <n-menu
             v-model:value="menu.left.active"
-            mode="horizontal"
-            :options="menu.left.options"/>
+            :options="menu.left.options"
+            mode="horizontal"/>
 
         <n-menu
             v-model:value="menu.right.active"
-            mode="horizontal"
-            :options="menu.right.options"/>
+            :options="menu.right.options"
+            mode="horizontal"/>
     </n-space>
 </template>
 

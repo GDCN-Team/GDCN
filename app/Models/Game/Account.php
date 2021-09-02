@@ -102,7 +102,10 @@ class Account extends Model implements MustVerifyEmailContract, CanResetPassword
 
     public function permission_group(): HasOneThrough
     {
-        return $this->hasOneThrough(Group::class, Assign::class, 'account', 'id', 'id', 'group');
+        return $this->hasOneThrough(Group::class, Assign::class, 'account', 'id', 'id', 'group')
+            ->withDefault(function () {
+                return Group::find(config('game.defaultPermissionGroupID'));
+            });
     }
 
     public function blocks(): HasMany

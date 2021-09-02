@@ -3,46 +3,42 @@
         <n-card>
             <n-form :model="form">
                 <n-form-item
-                    required
-                    :validation-status="form.errors.song_id ? 'error' : null"
                     :feedback="form.errors.song_id ?? null"
-                    path="form.song_id"
-                    label="歌曲ID">
-                    <n-input type="number" v-model:value="form.song_id" placeholder="歌曲ID"></n-input>
+                    :validation-status="form.errors.song_id ? 'error' : null"
+                    label="歌曲ID"
+                    required>
+                    <n-input v-model:value="form.song_id" placeholder="歌曲ID" type="number"></n-input>
                     <n-button class="ml-2" @click="getLatestSongID">自动获取</n-button>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.name ? 'error' : null"
                     :feedback="form.errors.name ?? null"
-                    path="form.name"
-                    label="歌曲名">
+                    :validation-status="form.errors.name ? 'error' : null"
+                    label="歌曲名"
+                    required>
                     <n-input v-model:value="form.name" placeholder="歌曲名"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.author_name ? 'error' : null"
                     :feedback="form.errors.author_name ?? null"
-                    path="form.author_name"
-                    label="歌手名">
+                    :validation-status="form.errors.author_name ? 'error' : null"
+                    label="歌手名"
+                    required>
                     <n-input v-model:value="form.author_name" placeholder="歌手名"></n-input>
                 </n-form-item>
 
                 <n-form-item
-                    required
-                    :validation-status="form.errors.link ? 'error' : null"
                     :feedback="form.errors.link ?? null"
-                    path="form.link"
-                    label="外链地址">
-                    <n-input type="url" v-model:value="form.link" placeholder="外链地址"></n-input>
+                    :validation-status="form.errors.link ? 'error' : null"
+                    label="外链地址"
+                    required>
+                    <n-input v-model:value="form.link" placeholder="外链地址" type="url"></n-input>
                 </n-form-item>
 
                 <n-form-item>
                     <n-button
-                        :loading="form.processing"
                         :disabled="form.processing"
+                        :loading="form.processing"
                         @click="form.post(route('tools.song.upload.link.api'))">
                         上传
                     </n-button>
