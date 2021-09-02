@@ -137,7 +137,7 @@ class LevelService
         /** @var Account $account */
         $account = Auth::user();
 
-        if (!$level->creator->is($account->user)) {
+        if (!$level->getRelationValue('user')->is($account->user)) {
             throw new LevelTransOutException('这个关卡不属于你');
         }
 
@@ -145,7 +145,7 @@ class LevelService
             throw new LevelTransOutException('账号不存在(或未找到)');
         }
 
-        if (!$link->owner->is($account)) {
+        if (!$link->getRelationValue('account')->is($account)) {
             throw new LevelTransOutException('这个链接不属于你');
         }
 

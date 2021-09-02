@@ -53,22 +53,22 @@ class DashboardPresenter
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['level', 'created_at']),
             'dynamic.top_stars' => UserScore::query()
-                ->with('owner:id,name')
+                ->with('user:id,name')
                 ->orderByDesc('stars')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'stars']),
             'dynamic.top_diamonds' => UserScore::query()
-                ->with('owner:id,name')
+                ->with('user:id,name')
                 ->orderByDesc('diamonds')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'diamonds']),
             'dynamic.top_demons' => UserScore::query()
-                ->with('owner:id,name')
+                ->with('user:id,name')
                 ->orderByDesc('demons')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'demons']),
             'dynamic.top_creator_points' => UserScore::query()
-                ->with('owner:id,name')
+                ->with('user:id,name')
                 ->orderByDesc('creator_points')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'creator_points'])

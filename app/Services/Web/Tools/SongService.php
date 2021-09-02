@@ -143,7 +143,7 @@ class SongService
         }
 
         $account = Auth::user();
-        if (!$song->owner->is($account)) {
+        if (!$song->getRelationValue('uploader')->is($account)) {
             throw new SongEditException('该歌曲不属于你');
         }
 
