@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\ResponseCode;
 use App\Enums\Game\UserListType;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\NoItemException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\User\InfoGetRequest;
 use App\Http\Requests\Game\User\ListGetRequest;
@@ -57,10 +58,14 @@ class UsersController extends Controller
      */
     public function list(ListGetRequest $request): string
     {
-        $data = $request->validated();
-        return $this->service->list(
-            $data['accountID'],
-            UserListType::fromValue($data['type'])
-        );
+        try {
+            $data = $request->validated();
+            return $this->service->list(
+                $data['accountID'],
+                UserListType::fromValue($data['type'])
+            );
+        } catch (NoItemException) {
+            return ResponseCode::EMPTY_RESULT;
+        }
     }
 }

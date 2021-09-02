@@ -5,6 +5,7 @@ namespace App\Services\Game;
 use App\Enums\Game\FriendState;
 use App\Enums\Game\UserListType;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Block;
 use App\Models\Game\Account\Friend;
@@ -194,6 +195,7 @@ class UserService
 
     /**
      * @throws InvalidArgumentException
+     * @throws NoItemException
      */
     public function list(int $accountID, UserListType $type): string
     {
@@ -204,6 +206,10 @@ class UserService
             UserListType::BLOCKS => $account->blocks(),
             default => throw new InvalidArgumentException()
         };
+
+        if ($query->count() <= 0) {
+            throw new NoItemException();
+        }
 
         Log::channel('gdcn')
             ->info('[User System] Action: Get Users', [

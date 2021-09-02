@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Game\Account;
 
 use App\Enums\Game\ResponseCode;
+use App\Exceptions\Game\NoItemException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Account\Message\DeleteRequest;
 use App\Http\Requests\Game\Account\Message\DownloadRequest;
@@ -37,8 +38,12 @@ class MessagesController extends Controller
      */
     public function get(GetRequest $request): string
     {
-        $data = $request->validated();
-        return $this->service->get($data['accountID'], $data['getSent'] ?? false, $data['page']);
+        try {
+            $data = $request->validated();
+            return $this->service->get($data['accountID'], $data['getSent'] ?? false, $data['page']);
+        } catch (NoItemException) {
+            return ResponseCode::EMPTY_RESULT;
+        }
     }
 
     /**

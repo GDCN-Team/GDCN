@@ -2,6 +2,7 @@
 
 namespace App\Services\Game\Account;
 
+use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Friend;
 use App\Models\Game\Account\FriendRequest;
@@ -72,6 +73,9 @@ class FriendRequestService
         return true;
     }
 
+    /**
+     * @throws NoItemException
+     */
     public function list(int $accountID, bool $getSent, int $page): string
     {
         $account = Account::findOrFail($accountID);
@@ -85,6 +89,10 @@ class FriendRequestService
             $requests = $account->friend_requests();
             $column = 'account';
             $count = $account->friend_requests_count;
+        }
+
+        if ($count <= 0) {
+            throw new NoItemException();
         }
 
         $result = $requests->forPage(++$page, PageInfoComponent::$per_page)

@@ -2,6 +2,7 @@
 
 namespace App\Services\Game\Account;
 
+use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Message;
 use GDCN\GDObject;
@@ -44,6 +45,9 @@ class MessageService
             ]);
     }
 
+    /**
+     * @throws NoItemException
+     */
     public function get(int $accountID, bool $getSent, int $page): string
     {
         $account = Account::findOrFail($accountID);
@@ -57,6 +61,10 @@ class MessageService
             $messages = $account->messages();
             $column = 'account';
             $count = $account->messages_count;
+        }
+
+        if ($count <= 0) {
+            throw new NoItemException();
         }
 
         $result = $messages->forPage(++$page, PageInfoComponent::$per_page)
