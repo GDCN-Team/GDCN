@@ -77,7 +77,7 @@ class MessageService
                     1 => $message->id,
                     2 => $account->id,
                     3 => $account->user->id,
-                    4 => $message->value('subject'),
+                    4 => $message->getRawOriginal('subject'),
                     6 => $account->name,
                     7 => $message->created_at->locale('en')->diffForHumans(null, true),
                     8 => $message->readed,
