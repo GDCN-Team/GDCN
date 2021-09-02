@@ -15,7 +15,7 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
-$app->loadEnvironmentFrom('.env.local');
+// $app->loadEnvironmentFrom('.env.local');
 
 /*
 |--------------------------------------------------------------------------
