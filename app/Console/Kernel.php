@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Models\Game\Account;
 use App\Models\Game\Account\PasswordReset;
+use App\Services\Game\AntiCheatService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -33,14 +34,18 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $now = now();
             $hourLater = $now->addHour();
-            Account::query()->whereNull('email_verified_at')->where('created_at', '<', $hourLater)->delete();
-        })->name('Delete unverified account');
+            Account::whereNull('email_verified_at')->where('created_at', '<', $hourLater)->delete();
+        })->daily();
 
         $schedule->call(function () {
             $now = now();
             $expiredTime = $now->addSeconds(config('auth.password_timeout', 10800));
-            PasswordReset::query()->where('created_at', '<', $expiredTime)->delete();
-        })->name('Delete expired password reset data');
+            PasswordReset::where('created_at', '<', $expiredTime)->delete();
+        })->daily();
+
+        $schedule->call(function () {
+            app(AntiCheatService::class)->run();
+        })->daily();
     }
 
     /**
