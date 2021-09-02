@@ -101,14 +101,7 @@ class MessageService
     public function delete(int $accountID, array $messageIDs, bool $isSender): bool
     {
         $account = Account::findOrFail($accountID);
-
-        if ($isSender === true) {
-            $query = $account->sent_messages();
-            $column = 'to_account';
-        } else {
-            $query = $account->messages();
-            $column = 'account';
-        }
+        $query = $isSender === true ? $account->sent_messages() : $account->messages();
 
         foreach ($messageIDs as $messageID) {
             Log::channel('gdcn')
@@ -116,7 +109,7 @@ class MessageService
                     'accountID' => $accountID,
                     'messageID' => $messageID,
                     'isSender' => $isSender,
-                    'result' => $query->where($column, $messageID)->delete()
+                    'result' => $query->whereKey($messageID)->delete()
                 ]);
         }
 
