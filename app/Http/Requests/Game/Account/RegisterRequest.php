@@ -15,7 +15,7 @@ class RegisterRequest extends Request
             'userName' => Rule::unique(Account::class, 'name'),
             'password' => 'required',
             'email' => Rule::unique(Account::class),
-            'sID' => 'nullable',
+            'sID' => 'sometimes',
             'secret' => Rule::in(['Wmfv3899gc9'])
         ];
     }
