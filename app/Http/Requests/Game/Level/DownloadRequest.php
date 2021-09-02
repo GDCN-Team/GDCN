@@ -28,7 +28,11 @@ class DownloadRequest extends Request
             ],
             'udid' => 'required_with:gjp',
             'uuid' => 'required_with:udid',
-            'levelID' => Rule::exists(Level::class, 'id'),
+            'levelID' => [
+                'exclude_if:levelID,-1', # Daily
+                'exclude_if:levelID,-2', # Weekly
+                Rule::exists(Level::class, 'id')
+            ],
             'inc' => 'required',
             'extras' => 'required',
             'secret' => Rule::in(['Wmfd2893gb7']),

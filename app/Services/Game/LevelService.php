@@ -463,7 +463,7 @@ class LevelService
                 break;
         }
 
-        $level = Level::findOrFail($levelID);
+        $level = Level::find($levelID);
         $levelString = $this->getLevelString($level);
 
         Log::where([

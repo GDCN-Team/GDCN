@@ -6,12 +6,12 @@
 
 
 use App\Http\Controllers\Game\Account\BlocksController;
+use App\Http\Controllers\Game\Account\CommentsController as AccountCommentController;
 use App\Http\Controllers\Game\Account\FriendRequestsController;
 use App\Http\Controllers\Game\Account\FriendsController;
 use App\Http\Controllers\Game\Account\MessagesController;
 use App\Http\Controllers\Game\Account\SaveDataController;
 use App\Http\Controllers\Game\Account\SettingsController;
-use App\Http\Controllers\Game\Account\CommentsController as AccountCommentController;
 use App\Http\Controllers\Game\AccountsController;
 use App\Http\Controllers\Game\ChallengesController;
 use App\Http\Controllers\Game\Level\CommentsController as LevelCommentController;
@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['as' => 'game.'], function () {
+Route::group(['domain' => 'gf.geometrydashchinese.com', 'as' => 'game.'], function () {
     Route::post('/accounts/registerGJAccount.php', [AccountsController::class, 'register'])->name('account.register');
     Route::get('/accounts/verifyGJAccount.php', [AccountsController::class, 'verify'])->middleware(['web', 'signed'])->name('account.verify');
     Route::post('/accounts/loginGJAccount.php', [AccountsController::class, 'login'])->name('account.login');
