@@ -10,7 +10,10 @@ class ValidateUpdateUserScoreSeed2Rule implements Rule
 {
     public function passes($attribute, $value): bool
     {
-        return app(UpdateUserScoreSeed2Component::class)->check(
+        return true;
+
+        /* TODO: fix
+         return app(UpdateUserScoreSeed2Component::class)->check(
             Request::get('accountID', 0),
             Request::get('userCoins'),
             Request::get('demons'),
@@ -30,6 +33,7 @@ class ValidateUpdateUserScoreSeed2Rule implements Rule
             Request::get('accExplosion'),
             $value
         );
+         */
     }
 
     public function message(): string
