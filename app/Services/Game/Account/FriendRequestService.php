@@ -14,8 +14,8 @@ class FriendRequestService
 {
     public function upload(int $accountID, int $targetAccountID, string $comment): ?FriendRequest
     {
-        $account = Account::find($accountID);
-        $targetAccount = Account::find($targetAccountID);
+        $account = Account::findOrFail($accountID);
+        $targetAccount = Account::findOrFail($targetAccountID);
 
         if ($account->cant('sendFriendRequest', $targetAccount)) {
             Log::channel('gdcn')
@@ -50,7 +50,7 @@ class FriendRequestService
 
     public function delete(int $accountID, array $targetAccountIDs, bool $isSender): bool
     {
-        $account = Account::find($accountID);
+        $account = Account::findOrFail($accountID);
 
         if ($isSender === true) {
             $query = $account->sent_friend_requests();
@@ -78,7 +78,7 @@ class FriendRequestService
      */
     public function list(int $accountID, bool $getSent, int $page): string
     {
-        $account = Account::find($accountID);
+        $account = Account::findOrFail($accountID);
         if ($getSent === true) {
             $account->loadCount('sent_friend_requests');
             $requests = $account->sent_friend_requests();
@@ -139,7 +139,7 @@ class FriendRequestService
                 'requestID' => $requestID
             ]);
 
-        return Account::find($accountID)
+        return Account::findOrFail($accountID)
             ->friend_requests()
             ->whereKey($requestID)
             ->update([
@@ -156,7 +156,7 @@ class FriendRequestService
                 'requestID' => $requestID
             ]);
 
-        $account = Account::find($accountID);
+        $account = Account::findOrFail($accountID);
         $friendRequestDeleted = $account->friend_requests()
             ->where('account', $targetAccountID)
             ->whereKey($requestID)

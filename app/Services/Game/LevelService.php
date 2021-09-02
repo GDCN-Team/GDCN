@@ -463,7 +463,7 @@ class LevelService
                 break;
         }
 
-        $level = Level::find($levelID);
+        $level = Level::findOrFail($levelID);
         $levelString = $this->getLevelString($level);
 
         Log::where([
@@ -617,7 +617,7 @@ class LevelService
     public function report(int $levelID): bool
     {
         /** @var Report|Builder $report */
-        $report = Level::find($levelID)
+        $report = Level::findOrFail($levelID)
             ->report()
             ->firstOrCreate();
 

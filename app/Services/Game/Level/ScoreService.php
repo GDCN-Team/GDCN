@@ -41,7 +41,7 @@ class ScoreService
                 'coins' => $coins
             ]);
 
-        return Level::find($levelID)
+        return Level::findOrFail($levelID)
             ->scores()
             ->create([
                 'account' => $accountID,
@@ -69,7 +69,7 @@ class ScoreService
         switch ($type->value) {
             case ScoreType::FRIENDS:
                 $query->orderByDesc('percent');
-                $friends = Account::find($accountID)->friends;
+                $friends = Account::findOrFail($accountID)->friends;
 
                 $query->whereIn(
                     'account',

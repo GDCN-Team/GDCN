@@ -19,7 +19,7 @@ class CommentService
 
     public function get(int $accountID, int $page): string
     {
-        $account = Account::find($accountID);
+        $account = Account::findOrFail($accountID);
         $result = $account->loadCount('comments')
             ->comments()
             ->forPage(++$page, PageInfoComponent::$per_page)
@@ -55,7 +55,7 @@ class CommentService
                 'comment' => $comment
             ]);
 
-        return Account::find($accountID)
+        return Account::findOrFail($accountID)
             ->comments()
             ->create([
                 'content' => $comment
@@ -70,7 +70,7 @@ class CommentService
                 'commentID' => $commentID
             ]);
 
-        return Account::find($accountID)
+        return Account::findOrFail($accountID)
             ->comments()
             ->whereKey($commentID)
             ->delete();

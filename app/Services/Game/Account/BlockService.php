@@ -11,7 +11,7 @@ class BlockService
     public function block(int $accountID, int $targetAccountID): Block
     {
         /** @var Block $block */
-        $block = Account::find($accountID)
+        $block = Account::findOrFail($accountID)
             ->blocks()
             ->firstOrCreate([
                 'target_account' => $targetAccountID
@@ -35,7 +35,7 @@ class BlockService
                 'targetAccountID' => $targetAccountID
             ]);
 
-        return Account::find($accountID)
+        return Account::findOrFail($accountID)
             ->blocks()
             ->where('target_account', $targetAccountID)
             ->delete();

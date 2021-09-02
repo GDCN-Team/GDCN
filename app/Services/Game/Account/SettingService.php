@@ -19,7 +19,7 @@ class SettingService
     ): Setting
     {
         /** @var Setting $setting */
-        $setting = Account::find($accountID)
+        $setting = Account::findOrFail($accountID)
             ->setting()
             ->updateOrCreate([], [
                 'message_state' => $messageState,
