@@ -5,6 +5,7 @@ namespace App\Services\Game;
 use App\Enums\Game\Level\SearchType;
 use App\Enums\Game\LogType;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\NoItemException;
 use App\Exceptions\Game\SongGetException;
 use App\Exceptions\Game\SongNotFoundException;
 use App\Models\Game\Account;
@@ -162,6 +163,7 @@ class LevelService
 
     /**
      * @throws InvalidArgumentException
+     * @throws NoItemException
      */
     public function search(
         SearchType $type,
@@ -201,15 +203,19 @@ class LevelService
                 $query->orderByDesc('likes');
                 break;
             case SearchType::TRENDING:
-                $query->where('created_at', '>', app(Carbon::class)->subWeek());
+                $query->whereDate('created_at', '>', app(Carbon::class)->subWeek());
                 $query->orderByDesc('likes');
                 break;
             case SearchType::RECENT:
                 $query->orderByDesc('created_at');
                 break;
             case SearchType::USER:
-                $account = Account::findOrFail($accountID);
-                if ($account->user->id === $str) {
+                $user = User::find($str);
+                if (empty($user)) {
+                    throw new NoItemException();
+                }
+
+                if ($accountID == $user->id) {
                     $showUnlisted = true;
                 }
 
@@ -237,7 +243,11 @@ class LevelService
                 });
                 break;
             case SearchType::FRIENDS:
-                $account = Account::findOrFail($accountID);
+                $account = Account::find($accountID);
+                if (empty($account)) {
+                    throw new NoItemException();
+                }
+
                 $query->whereHas('user', function (Builder $query) use ($account) {
                     $query->whereIn('uuid', $account->friends->pluck('id'));
                 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Game;
 use App\Enums\Game\Level\SearchType;
 use App\Enums\Game\ResponseCode;
 use App\Exceptions\Game\InvalidArgumentException;
+use App\Exceptions\Game\NoItemException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Game\Level\DailyGetRequest;
 use App\Http\Requests\Game\Level\DeleteRequest;
@@ -15,9 +16,6 @@ use App\Http\Requests\Game\Level\UpdateDescRequest;
 use App\Http\Requests\Game\Level\UploadRequest;
 use App\Services\Game\LevelService;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use Psr\SimpleCache\InvalidArgumentException as CacheInvalidArgumentException;
 
 class LevelsController extends Controller
 {
@@ -47,28 +45,32 @@ class LevelsController extends Controller
     public function search(SearchRequest $request): string
     {
         $data = $request->validated();
-        return $this->service->search(
-            SearchType::fromValue((int)$data['type']),
-            $data['str'],
-            $data['page'],
-            $data['accountID'] ?? 0,
-            $data['followed'] ?? null,
-            $data['len'] ?? null,
-            $data['star'] ?? null,
-            $data['diff'] ?? null,
-            $data['demonFilter'] ?? null,
-            $data['unCompleted'] ?? false,
-            $data['onlyCompleted'] ?? false,
-            $data['completedLevels'] ?? null,
-            $data['featured'] ?? false,
-            $data['original'] ?? false,
-            $data['epic'] ?? false,
-            $data['song'] ?? null,
-            $data['customSong'] ?? false,
-            $data['noStar'] ?? false,
-            $data['coins'] ?? false,
-            $data['twoPlayer'] ?? false
-        );
+        try {
+            return $this->service->search(
+                SearchType::fromValue((int)$data['type']),
+                $data['str'],
+                $data['page'],
+                $data['accountID'] ?? 0,
+                $data['followed'] ?? null,
+                $data['len'] ?? null,
+                $data['star'] ?? null,
+                $data['diff'] ?? null,
+                $data['demonFilter'] ?? null,
+                $data['unCompleted'] ?? false,
+                $data['onlyCompleted'] ?? false,
+                $data['completedLevels'] ?? null,
+                $data['featured'] ?? false,
+                $data['original'] ?? false,
+                $data['epic'] ?? false,
+                $data['song'] ?? null,
+                $data['customSong'] ?? false,
+                $data['noStar'] ?? false,
+                $data['coins'] ?? false,
+                $data['twoPlayer'] ?? false
+            );
+        } catch (NoItemException) {
+            return ResponseCode::EMPTY_RESULT_STRING;
+        }
     }
 
     /**
