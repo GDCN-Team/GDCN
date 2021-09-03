@@ -2,9 +2,11 @@
 
 namespace App\Services\Game;
 
+use App\Enums\Game\BanType;
 use App\Models\Game\User;
 use App\Models\Game\UserScore;
 use GDCN\GDObject;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Log;
 
 class UserScoreService
@@ -143,6 +145,10 @@ class UserScoreService
                 'type' => $type,
                 'count' => $count
             ]);
+
+        $query->whereDoesntHave('user.ban', function (Builder $query) {
+            return $query->where('type', BanType::BAN);
+        });
 
         return $query->with('user')
             ->take($count)

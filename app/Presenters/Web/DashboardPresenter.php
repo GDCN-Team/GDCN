@@ -2,6 +2,7 @@
 
 namespace App\Presenters\Web;
 
+use App\Enums\Game\BanType;
 use App\Models\Game\Account;
 use App\Models\Game\Account\Comment as AccountComment;
 use App\Models\Game\Account\Permission\Assign as AccountPermissionAssign;
@@ -10,6 +11,7 @@ use App\Models\Game\Level\Comment as LevelComment;
 use App\Models\Game\Level\Pack as LevelPack;
 use App\Models\Game\Level\Rating as LevelRating;
 use App\Models\Game\UserScore;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -53,22 +55,30 @@ class DashboardPresenter
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['level', 'created_at']),
             'dynamic.top_stars' => UserScore::query()
-                ->with('user:id,name')
+                ->whereDoesntHave('user.ban', function (Builder $query) {
+                    return $query->where('type', BanType::BAN);
+                })->with('user:id,name')
                 ->orderByDesc('stars')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'stars']),
             'dynamic.top_diamonds' => UserScore::query()
-                ->with('user:id,name')
+                ->whereDoesntHave('user.ban', function (Builder $query) {
+                    return $query->where('type', BanType::BAN);
+                })->with('user:id,name')
                 ->orderByDesc('diamonds')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'diamonds']),
             'dynamic.top_demons' => UserScore::query()
-                ->with('user:id,name')
+                ->whereDoesntHave('user.ban', function (Builder $query) {
+                    return $query->where('type', BanType::BAN);
+                })->with('user:id,name')
                 ->orderByDesc('demons')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'demons']),
             'dynamic.top_creator_points' => UserScore::query()
-                ->with('user:id,name')
+                ->whereDoesntHave('user.ban', function (Builder $query) {
+                    return $query->where('type', BanType::BAN);
+                })->with('user:id,name')
                 ->orderByDesc('creator_points')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'creator_points'])
