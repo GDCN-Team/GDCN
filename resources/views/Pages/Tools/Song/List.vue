@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-1/3" title="歌曲列表">
+    <page-layout class="lg:w-2/3" title="歌曲列表">
         <n-card>
             <n-space justify="space-between">
                 <n-button href="?me=1" tag="a">我上传的</n-button>
