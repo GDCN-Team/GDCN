@@ -48,10 +48,10 @@
             <n-list bordered>
                 <n-list-item v-for="comment in level.comments">
                     <n-thing :description="'评论于 '+formatTime(comment.created_at, '未知')"
-                             :title="comment.sender.name + ': ' + Base64.decode(comment.content)">
+                             :title="comment.account.name + ': ' + Base64.decode(comment.content)">
                         <template #action>
-                            <n-button @click="redirectToRoute('dashboard.account.info', comment.sender.id)">
-                                查看 {{ comment.sender.name }} 的个人资料
+                            <n-button @click="redirectToRoute('dashboard.account.info', comment.account.id)">
+                                查看 {{ comment.account.name }} 的个人资料
                             </n-button>
                         </template>
                     </n-thing>
