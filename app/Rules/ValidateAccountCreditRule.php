@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Enums\Game\BanType;
 use App\Models\Game\Account;
 use GDCN\Hash\Components\GJP as GJPComponent;
 use Illuminate\Contracts\Validation\Rule;
@@ -20,6 +21,10 @@ class ValidateAccountCreditRule implements Rule
                 }
 
                 $account = Account::whereName($userName)->firstOrFail();
+                if ($account->user?->ban?->where('type', BanType::BAN)->exists()) {
+                    return false;
+                }
+
                 return Hash::check($value, $account->password);
             case 'gjp':
                 $accountID = Request::get('accountID');
@@ -28,6 +33,10 @@ class ValidateAccountCreditRule implements Rule
                 }
 
                 $account = Account::findOrFail($accountID);
+                if ($account->user?->ban?->where('type', BanType::BAN)->exists()) {
+                    return false;
+                }
+
                 $password = app(GJPComponent::class)->decode($value);
                 return Hash::check($password, $account->password);
             default:

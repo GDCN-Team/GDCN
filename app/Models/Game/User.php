@@ -23,6 +23,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Account $account
+ * @property-read Collection|BannedUser[] $ban
+ * @property-read int|null $ban_count
  * @property-read Collection|Level[] $levels
  * @property-read int|null $levels_count
  * @property-read UserScore $score
@@ -49,6 +51,11 @@ class User extends Model
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'uuid');
+    }
+
+    public function ban(): HasMany
+    {
+        return $this->hasMany(BannedUser::class, 'user');
     }
 
     public function score(): HasOne
