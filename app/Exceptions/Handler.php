@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Game\Request\AuthorizationException;
+use App\Exceptions\Game\Request\ValidateException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -17,7 +19,8 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-
+        AuthorizationException::class,
+        ValidateException::class
     ];
 
     /**
