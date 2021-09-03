@@ -2,6 +2,7 @@
 
 namespace App\Models\Game;
 
+use App\Casts\Base64UrlCast;
 use App\Models\Game\Level\Comment;
 use App\Models\Game\Level\Daily;
 use App\Models\Game\Level\Gauntlet;
@@ -98,6 +99,8 @@ class Level extends Model
     use HasFactory;
 
     protected $table = 'game_levels';
+
+    protected $casts = ['desc' => Base64UrlCast::class];
 
     protected $fillable = ['user', 'game_version', 'name', 'desc', 'downloads', 'likes', 'version', 'length', 'audio_track', 'song', 'auto', 'password', 'original', 'two_player', 'objects', 'coins', 'requested_stars', 'unlisted', 'ldm', 'extra_string', 'level_info'];
 

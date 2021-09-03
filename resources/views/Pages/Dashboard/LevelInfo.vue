@@ -9,7 +9,7 @@
                     {{ level.name }}
                 </n-descriptions-item>
                 <n-descriptions-item label="关卡简介">
-                    {{ Base64.decode(level.desc) }}
+                    {{ level.desc }}
                 </n-descriptions-item>
                 <n-descriptions-item label="作者">
                     {{ level?.user?.name ?? '未知' }}
@@ -64,7 +64,6 @@
 <script>
 import PageLayout from "../Components/PageLayout";
 import {formatTime, isMobile, redirectToRoute} from "../../../js/helper";
-import {Base64} from "js-base64";
 import {NButton, NCard, NDescriptions, NDescriptionsItem, NList, NListItem, NThing} from "naive-ui";
 
 export default {

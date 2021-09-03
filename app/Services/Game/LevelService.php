@@ -387,7 +387,7 @@ class LevelService
                 return GDObject::merge([
                     1 => $level->id,
                     2 => $level->name,
-                    3 => $level->desc,
+                    3 => $level->getRawOriginal('desc'),
                     5 => $level->version,
                     6 => $level->user,
                     8 => ($level->rating->difficulty ?? 0) > 0 ? 10 : 0,
@@ -484,7 +484,7 @@ class LevelService
         $result = GDObject::merge([
             1 => $level->id,
             2 => $level->name,
-            3 => $level->desc,
+            3 => $level->getRawOriginal('desc'),
             4 => $levelString,
             5 => $level->version,
             6 => $level->user,
