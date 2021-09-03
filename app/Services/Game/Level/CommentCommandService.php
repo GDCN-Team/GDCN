@@ -96,7 +96,7 @@ class CommentCommandService
                 $data['demon'] = $stars === 10;
             }
 
-            if (!empty($featured) && is_bool($featured) || !empty($featured_score) && is_int($featured_score)) {
+            if ((!empty($featured) && is_bool($featured)) || !empty($featured_score) && is_int($featured_score)) {
                 if (!empty($featured_score)) {
                     $data['featured_score'] = $featured_score;
                 } else {

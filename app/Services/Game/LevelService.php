@@ -6,8 +6,6 @@ use App\Enums\Game\Level\SearchType;
 use App\Enums\Game\LogType;
 use App\Exceptions\Game\InvalidArgumentException;
 use App\Exceptions\Game\NoItemException;
-use App\Exceptions\Game\SongGetException;
-use App\Exceptions\Game\SongNotFoundException;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Daily;
@@ -289,7 +287,7 @@ class LevelService
                     });
                     break;
                 case -3: // Auto
-                    $query->whereHas('rating', function (Builder $query) use ($demonFilter) {
+                    $query->whereHas('rating', function (Builder $query) {
                         $query->where('stars', 1);
                         $query->where('auto', true);
                     });
@@ -377,11 +375,7 @@ class LevelService
                 ]);
 
                 if ($level->song > 0) {
-                    try {
-                        $songs[] = $this->songService->get($level->song);
-                    } catch (SongGetException | SongNotFoundException) {
-
-                    }
+                    $songs[] = $this->songService->get($level->song);
                 }
 
                 return GDObject::merge([
@@ -430,9 +424,7 @@ class LevelService
 
     public function getLevelString(Level $level): ?string
     {
-        $cache = unserialize(
-            Cache::get("level.$level->id")
-        );
+        $cache = Cache::get("level.$level->id");
 
         if (empty($cache) || $cache['version'] !== $level->version) {
             $levelString = $this->storage->get(
@@ -450,17 +442,14 @@ class LevelService
     {
         /** @var Daily|Weekly $feature */
         $feature = null;
-        switch ($levelID) {
-            case -1: # Daily
-                $today = Carbon::today();
-                $feature = Daily::whereDate('time', $today)
-                    ->first();
-                break;
-            case -2: # Weekly
-                $monday = app(Carbon::class)->startOfWeek();
-                $feature = Weekly::whereDate('time', $monday)
-                    ->first();
-                break;
+        if ($levelID == -1) { # Daily
+            $today = Carbon::today();
+            $feature = Daily::whereDate('time', $today)
+                ->first();
+        } elseif ($levelID == -2) { # Weekly
+            $monday = app(Carbon::class)->startOfWeek();
+            $feature = Weekly::whereDate('time', $monday)
+                ->first();
         }
 
         $level = Level::findOrFail($levelID);
@@ -572,11 +561,7 @@ class LevelService
             ->latest()
             ->first();
 
-        $featureID = 0;
-        if (!empty($feature)) {
-            $featureID = $feature->id;
-        }
-
+        $featureID = $feature->id ?? 0;
         $seconds = app(Carbon::class)
             ->secondsUntilEndOfDay();
 
@@ -660,14 +645,11 @@ class LevelService
             ]);
     }
 
-    protected function putCache(Level $level, string $levelString)
+    protected function putCache(Level $level, string $levelString): void
     {
-        Cache::put(
-            "level.$level->id",
-            serialize([
-                'version' => $level->version,
-                'levelString' => $levelString
-            ])
-        );
+        Cache::put("level.$level->id", [
+            'version' => $level->version,
+            'levelString' => $levelString
+        ]);
     }
 }

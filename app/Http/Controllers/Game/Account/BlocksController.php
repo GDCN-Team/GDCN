@@ -24,7 +24,6 @@ class BlocksController extends Controller
         $data = $request->validated();
         if (!$this->service->block($data['accountID'], $data['targetAccountID'])) {
             return ResponseCode::BLOCK_FAILED;
-
         }
 
         return ResponseCode::BLOCK_SUCCESS;
@@ -38,7 +37,6 @@ class BlocksController extends Controller
         $data = $request->validated();
         if (!$this->service->unblock($data['accountID'], $data['targetAccountID'])) {
             return ResponseCode::UNBLOCK_FAILED;
-
         }
 
         return ResponseCode::UNBLOCK_SUCCESS;

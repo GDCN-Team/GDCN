@@ -31,37 +31,37 @@ class NGProxyService
             ]);
 
         $song = $this->getSongModel($songID);
-        if (empty($song)) {
-            if ($getFromApi) {
-                $songObjectData = $this->getFromSongInfoApi($songID);
-                if (empty($songObjectData) || $songObjectData <= 0) {
-                    if ($songObjectData === '-2') {
-                        $disabled = true;
-                    }
-
-                    $songObjectData = $this->getFromGetLevelsApi($songID);
-                    if (empty($songObjectData) || $songObjectData <= 0) {
-                        throw new SongGetException('[NGProxy] Failed to get song.');
-                    }
-                }
-
-                $songObject = GDObject::split($songObjectData, '~|~');
-                Log::channel('gdcn')
-                    ->debug('[Newgrounds Proxy System] Action: Parse Song Object.', [
-                        'data' => $songObject
-                    ]);
-
-                if (empty($songObject[1]) || empty($songObject[10])) {
-                    throw new SongGetException('[NGProxy] Song info missing.');
-                }
-
-                return $this->saveSongFromObject($songObject, $disabled ?? false);
-            } else {
-                throw new SongGetException('[NGProxy] Failed to get song.');
-            }
+        if (!empty($song)) {
+            return $song;
         }
 
-        return $song;
+        if ($getFromApi) {
+            $songObjectData = $this->getFromSongInfoApi($songID);
+            if (empty($songObjectData) || $songObjectData <= 0) {
+                if ($songObjectData === '-2') {
+                    $disabled = true;
+                }
+
+                $songObjectData = $this->getFromGetLevelsApi($songID);
+                if (empty($songObjectData) || $songObjectData <= 0) {
+                    throw new SongGetException('[NGProxy] Failed to get song.');
+                }
+            }
+
+            $songObject = GDObject::split($songObjectData, '~|~');
+            Log::channel('gdcn')
+                ->debug('[Newgrounds Proxy System] Action: Parse Song Object.', [
+                    'data' => $songObject
+                ]);
+
+            if (empty($songObject[1]) || empty($songObject[10])) {
+                throw new SongGetException('[NGProxy] Song info missing.');
+            }
+
+            return $this->saveSongFromObject($songObject, $disabled ?? false);
+        }
+
+        throw new SongGetException('[NGProxy] Failed to get song.');
     }
 
     /**
@@ -83,21 +83,6 @@ class NGProxyService
      * @throws SongNotFoundException
      */
     public function getSongObjectForGD(int $songID): string
-    {
-        Log::channel('gdcn')
-            ->info('[Newgrounds Proxy System] Action: Get Song Object', [
-                'songID' => $songID
-            ]);
-
-        $song = $this->getSong($songID);
-        return $this->convertSongModelToObject($song);
-    }
-
-    /**
-     * @throws SongGetException
-     * @throws SongNotFoundException
-     */
-    public function getSongObjectForGDProxy(int $songID): string
     {
         Log::channel('gdcn')
             ->info('[Newgrounds Proxy System] Action: Get Song Object', [

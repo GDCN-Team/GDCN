@@ -58,16 +58,15 @@ class GDProxyService
      */
     protected function preProcessRequest(string $path, array $data = []): ?string
     {
-        switch ($path) {
-            case '/getGJSongInfo.php':
-                $fromNGProxy = $data['fromNGProxy'] ?? false;
-                if (!$fromNGProxy) {
-                    try {
-                        return app(NGProxyService::class)->getSongObjectForGDProxy($data['songID']);
-                    } catch (SongGetException) {
-                        return ResponseCode::SONG_GET_FAILED;
-                    }
+        if ($path === '/getGJSongInfo.php') {
+            $fromNGProxy = $data['fromNGProxy'] ?? false;
+            if (!$fromNGProxy) {
+                try {
+                    return app(NGProxyService::class)->getSongObjectForGD($data['songID']);
+                } catch (SongGetException) {
+                    return ResponseCode::SONG_GET_FAILED;
                 }
+            }
         }
 
         return null;
@@ -75,30 +74,29 @@ class GDProxyService
 
     protected function processResponse(string $path, array $data = [], string $response = null): ?string
     {
-        switch ($path) {
-            case '/downloadGJLevel22.php':
-                $parts = explode('#', $response);
+        if ($path == '/downloadGJLevel22.php') {
+            $parts = explode('#', $response);
 
-                $levelObject = GDObject::split($parts[0], ':');
-                $levelObject[27] = 'Aw==';
-                $parts[0] = GDObject::merge($levelObject, ':');
+            $levelObject = GDObject::split($parts[0], ':');
+            $levelObject[27] = 'Aw==';
+            $parts[0] = GDObject::merge($levelObject, ':');
 
-                $levelHash = implode(',', [
-                    $levelObject[6] ?? 0,
-                    $levelObject[18] ?? 0,
-                    $levelObject[17] ?? 0,
-                    $levelObject[1] ?? $data['levelID'],
-                    $levelObject[38] ?? 0,
-                    $levelObject[19] ?? 0,
-                    1,
-                    $levelObject[41] ?? 0
-                ]);
+            $levelHash = implode(',', [
+                $levelObject[6] ?? 0,
+                $levelObject[18] ?? 0,
+                $levelObject[17] ?? 0,
+                $levelObject[1] ?? $data['levelID'],
+                $levelObject[38] ?? 0,
+                $levelObject[19] ?? 0,
+                1,
+                $levelObject[41] ?? 0
+            ]);
 
-                $parts[2] = sha1($levelHash . Salts::LEVEL);
+            $parts[2] = sha1($levelHash . Salts::LEVEL);
 
-                return implode('#', $parts);
-            default:
-                return null;
+            return implode('#', $parts);
         }
+
+        return null;
     }
 }

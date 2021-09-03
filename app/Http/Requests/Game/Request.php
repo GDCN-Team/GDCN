@@ -65,8 +65,8 @@ class Request extends FormRequest
     public function getPlayer(): ?User
     {
         if (
-            $this->filled(['accountID', 'gjp']) && $this->validateAccountGJP() ||
-            $this->filled(['userName', 'password']) && $this->validateAccount()
+            ($this->filled(['accountID', 'gjp']) && $this->validateAccountGJP()) ||
+            ($this->filled(['userName', 'password']) && $this->validateAccount())
         ) {
             /** @var Account $account */
             $account = Auth::user();
