@@ -33,7 +33,7 @@ class ValidateAccountCreditRule implements Rule
                 }
 
                 $account = Account::findOrFail($accountID);
-                if ($account->user?->ban?->where('type', BanType::BAN)->exists()) {
+                if ($account->user?->ban()->where('type', BanType::BAN)->exists()) {
                     return false;
                 }
 
