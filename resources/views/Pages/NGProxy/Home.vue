@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="w-2/3" title="Newgrounds Proxy (NGProxy)">
+    <page-layout class="w-1/3" title="Newgrounds Proxy (NGProxy)">
         <n-card>
             <p class="text-lg font-bold">Newgrounds Proxy (NGProxy) 是 Geometry Dash Chinese (GDCN) 附属的一项服务,
                 可以为您提供Newgrounds歌曲加速下载的服务</p>

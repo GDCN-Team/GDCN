@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="链接列表">
+    <page-layout class="lg:w-1/3" title="链接列表">
         <n-card>
             <n-data-table
                 :columns="columns"

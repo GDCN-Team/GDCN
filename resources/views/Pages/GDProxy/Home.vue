@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="w-2/3" title="Geometry Dash Proxy (GDProxy)">
+    <page-layout class="w-1/3" title="Geometry Dash Proxy (GDProxy)">
         <n-card>
             <p>Geometry Dash Proxy (NGProxy) 是 Geometry Dash Chinese (GDCN) 附属的一项服务,
                 可以为您提供Geometry Dash加速链接的服务</p>
