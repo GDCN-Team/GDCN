@@ -48,7 +48,7 @@
             <n-list bordered>
                 <n-list-item v-for="comment in level.comments">
                     <n-thing :description="'评论于 '+formatTime(comment.created_at, '未知')"
-                             :title="comment.account.name + ': ' + Base64.decode(comment.content)">
+                             :title="comment.account.name + ': ' + comment.content">
                         <template #action>
                             <n-button @click="redirectToRoute('dashboard.account.info', comment.account.id)">
                                 查看 {{ comment.account.name }} 的个人资料
@@ -81,7 +81,7 @@ export default {
         }
     },
     setup: function () {
-        return {Base64, formatTime, redirectToRoute}
+        return {formatTime, redirectToRoute}
     },
     components: {
         PageLayout,

@@ -110,7 +110,7 @@ class DashboardPresenter
      */
     public function renderAccountInfoPage(Account $account, array $props = []): Response
     {
-        $account->load(['user.score', 'comments.account']);
+        $account->load(['user.score', 'comments']);
 
         Inertia::share('account', $account);
         return Inertia::render('Dashboard/AccountInfo', $props);
@@ -132,7 +132,7 @@ class DashboardPresenter
      */
     public function renderLevelInfoPage(Level $level, array $props = []): Response
     {
-        $level->load(['user', 'comments']);
+        $level->load(['user', 'comments.account']);
 
         Inertia::share('level', $level);
         return Inertia::render('Dashboard/LevelInfo', $props);

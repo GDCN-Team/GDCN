@@ -36,7 +36,7 @@
             <n-list bordered>
                 <n-list-item v-for="comment in account.comments">
                     <n-thing :description="'评论于 '+formatTime(comment.created_at, '未知')"
-                             :title="Base64.decode(comment.content)"></n-thing>
+                             :title="comment.content"></n-thing>
                 </n-list-item>
             </n-list>
         </n-card>
@@ -47,7 +47,6 @@
 import PageLayout from "../Components/PageLayout";
 import {NCard, NDescriptions, NDescriptionsItem, NList, NListItem, NThing} from "naive-ui";
 import {formatTime, isMobile} from "../../../js/helper";
-import {Base64} from "js-base64";
 
 export default {
     name: "AccountInfo",
@@ -63,7 +62,7 @@ export default {
         }
     },
     setup: function () {
-        return {Base64, formatTime}
+        return {formatTime}
     },
     components: {
         PageLayout,
