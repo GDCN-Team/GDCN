@@ -113,7 +113,7 @@ class Request extends FormRequest
     protected function failedValidation(Validator $validator): void
     {
         Log::channel('gdcn')
-            ->info('[Game Request System] Request Validate Failed', [
+            ->info('[Game Request System] Action: Validate Request Failed', [
                 'errors' => $validator->errors()
             ]);
 

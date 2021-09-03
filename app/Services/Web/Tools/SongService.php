@@ -56,11 +56,12 @@ class SongService
             throw new SongUploadLinkException('外链内容无效');
         }
 
-        Log::info('Uploaded a custom song', [
-            'type' => 'link',
-            'accountID' => $accountID = Auth::id(),
-            'songID' => $song_id
-        ]);
+        Log::channel('gdcn')
+            ->info('[Web Tools Song System] Action: Upload custom song', [
+                'type' => 'link',
+                'accountID' => $accountID = Auth::id(),
+                'songID' => $song_id
+            ]);
 
         return CustomSong::insert([
             'type' => 'link',
@@ -91,11 +92,12 @@ class SongService
         $songs = Http::get("https://music.163.com/api/song/detail?ids=[$musicID]")->json('songs');
         $song = $songs[0];
 
-        Log::info('Uploaded a custom song', [
-            'type' => 'netease',
-            'accountID' => $accountID = Auth::id(),
-            'songID' => $song_id
-        ]);
+        Log::channel('gdcn')
+            ->info('[Web Tools Song System] Action: Upload custom song', [
+                'type' => 'netease',
+                'accountID' => $accountID = Auth::id(),
+                'songID' => $song_id
+            ]);
 
         $artists = collect($song['artists'])
             ->map(function ($artist) {

@@ -25,7 +25,7 @@ class GDProxyService
     {
         if ($result = $this->preProcessRequest($path, $data)) {
             Log::channel('gdcn')
-                ->info('[Geometry Dash Proxy System] Request preprocessed.');
+                ->info('[Geometry Dash Proxy System] Action: Preprocess Request.');
 
             return $result;
         }
@@ -38,11 +38,14 @@ class GDProxyService
             )->body();
 
         Log::channel('gdcn')
-            ->info('[Geometry Dash Proxy System] Requested to official server.');
+            ->info('[Geometry Dash Proxy System] Action: Request official server.', [
+                'uri' => $path,
+                'data' => $data
+            ]);
 
         if ($result = $this->processResponse($path, $data, $response)) {
             Log::channel('gdcn')
-                ->info('[Geometry Dash Proxy System] Processed response.');
+                ->info('[Geometry Dash Proxy System] Action Process response.');
 
             return $result;
         }

@@ -59,7 +59,7 @@ class CommandService
         $commandExecuteResult = $command->execute();
 
         Log::channel('gdcn')
-            ->notice('[Comment Command System] Command Executed', [
+            ->notice('[Comment Command System] Action: Execute Command', [
                 'service' => $service,
                 'operatorAccountID' => $account->id,
                 'levelID' => $comment->level,

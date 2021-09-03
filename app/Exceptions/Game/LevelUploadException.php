@@ -17,7 +17,7 @@ class LevelUploadException extends Exception
     public function report()
     {
         LogFacade::channel('gdcn')
-            ->notice('[Level]上传失败', ['levelName' => $this->level_name, 'reason' => $this->message]);
+            ->notice('[Level] Action: Upload Level Failed', ['levelName' => $this->level_name, 'reason' => $this->message]);
     }
 
     /**

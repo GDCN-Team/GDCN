@@ -46,9 +46,10 @@ class NGProxyService
                 }
 
                 $songObject = GDObject::split($songObjectData, '~|~');
-                Log::debug('[NGProxy] Song object parsed.', [
-                    'data' => $songObject
-                ]);
+                Log::channel('gdcn')
+                    ->debug('[Newgrounds Proxy System] Action: Parse Song Object.', [
+                        'data' => $songObject
+                    ]);
 
                 if (empty($songObject[1]) || empty($songObject[10])) {
                     throw new SongGetException('[NGProxy] Song info missing.');
@@ -167,9 +168,10 @@ class NGProxyService
             'fromNGProxy' => true
         ]);
 
-        Log::debug("[NGProxy] Requested $uri", [
-            'data' => $response
-        ]);
+        Log::channel('gdcn')
+            ->debug("[Newgrounds Proxy System] Action: Request $uri", [
+                'data' => $response
+            ]);
 
         return $response;
     }
@@ -185,9 +187,10 @@ class NGProxyService
             'secret' => 'Wmfd2893gb7'
         ]);
 
-        Log::debug("[NGProxy] Requested $uri", [
-            'data' => $response
-        ]);
+        Log::channel('gdcn')
+            ->debug("[Newgrounds Proxy System] Action: Request $uri", [
+                'data' => $response
+            ]);
 
         return explode('#', $response)[2] ?? '-1';
     }

@@ -48,13 +48,6 @@ return [
             'days' => 3,
         ],
 
-        'debug' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/debug.log'),
-            'level' => 'debug',
-            'days' => 3,
-        ],
-
         'single' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
