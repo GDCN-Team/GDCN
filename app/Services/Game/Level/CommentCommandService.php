@@ -86,31 +86,38 @@ class CommentCommandService
 
             return 'Rate successful!';
         } elseif ($isUpdate) {
-            $stars = is_null($stars) ? $this->level->rating->stars : $stars;
-            $featured = is_null($featured) ? ($isInverse ? !$this->level->rating->featured_score : $this->level->rating->featured_score) : $featured;
-            $epic = is_null($epic) ? ($isInverse ? !$this->level->rating->epic : $this->level->rating->epic) : $epic;
-            $coin_verified = is_null($coin_verified) ? ($isInverse ? !$this->level->rating->coin_verified : $this->level->rating->coin_verified) : $coin_verified;
-            $demon_difficulty = is_null($demon_difficulty) ? $this->level->rating->demon_difficulty : $demon_difficulty;
-
-            if ($isInverse) {
-                $featured = !$featured;
-                $epic = !$epic;
-                $coin_verified = !$coin_verified;
+            $data = [];
+            $ratingService = app(RatingService::class);
+            if (!empty($stars) && is_int($stars) && $stars > 0 && $stars <= 10) {
+                $data['stars'] = $stars;
+                $data['difficulty'] = $ratingService->guessDifficultyFromStars($stars);
+                $data['auto'] = $stars === 1;
+                $data['demon'] = $stars === 10;
             }
 
-            $ratingService = app(RatingService::class);
+            if (!empty($featured) && is_bool($featured) || !empty($featured_score) && is_int($featured_score)) {
+                if (!empty($featured_score)) {
+                    $data['featured_score'] = $featured_score;
+                } else {
+                    $data['featured_score'] = $featured === !$isInverse;
+                }
+            }
+
+            if (!empty($epic) && is_bool($epic)) {
+                $data['epic'] = $epic === !$isInverse;
+            }
+
+            if (!empty($coin_verified) && is_bool($coin_verified)) {
+                $data['coin_verified'] = $coin_verified === !$isInverse;
+            }
+
+            if (!empty($demon_difficulty) && is_int($demon_difficulty) && $demon_difficulty > 0 && $demon_difficulty <= 5) {
+                $data['demon_difficulty'] = $ratingService->guessDemonDifficultyFromRating($demon_difficulty);
+            }
+
             $updated = $this->level
                 ->rating()
-                ->update([
-                    'stars' => $stars,
-                    'difficulty' => $ratingService->guessDifficultyFromStars($stars),
-                    'featured_score' => $featured_score ?? ($featured ? 1 : 0),
-                    'epic' => $epic,
-                    'coin_verified' => $coin_verified,
-                    'auto' => $stars === 1,
-                    'demon' => $stars === 10,
-                    'demon_difficulty' => $ratingService->guessDemonDifficultyFromRating($demon_difficulty)
-                ]);
+                ->update($data);
 
             if (!$updated) {
                 return 'Rate update failed, unknown error.';
