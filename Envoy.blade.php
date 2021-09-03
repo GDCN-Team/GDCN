@@ -5,12 +5,8 @@
 php artisan migrate
 yarn install
 yarn run prod
-cd Modules/GDProxy
-yarn install
-yarn run prod
-cd ../NGProxy
-yarn install
-yarn run prod
-cd ../..
+php artisan optimize:clear
+php artisan optimize
+composer update --no-dev
 php artisan assets:upload
 @endtask
