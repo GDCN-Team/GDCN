@@ -10,6 +10,7 @@ use GDCN\Hash\Components\GJP as GJPComponent;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class FriendRequest
@@ -111,6 +112,11 @@ class Request extends FormRequest
      */
     protected function failedValidation(Validator $validator): void
     {
+        Log::channel('gdcn')
+            ->info('[Game Request System] Request Validate Failed', [
+                'errors' => $validator->errors()
+            ]);
+
         throw new ValidateException($validator);
     }
 }
