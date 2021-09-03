@@ -232,7 +232,7 @@ class LevelTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("1:$level->id:2:$level->name:3:$level->desc");
+        $request->assertSee("1:$level->id:2:$level->name:3:{$level->getRawOriginal('desc')}");
     }
 
     public function test_download(): void
@@ -260,7 +260,7 @@ class LevelTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("1:$level->id:2:$level->name:3:$level->desc:4:$levelString");
+        $request->assertSee("1:$level->id:2:$level->name:3:{$level->getRawOriginal('desc')}:4:$levelString");
     }
 
     public function test_download_use_chk(): void
@@ -298,7 +298,7 @@ class LevelTest extends TestCase
         );
 
         $request->assertOk();
-        $request->assertSee("1:$level->id:2:$level->name:3:$level->desc");
+        $request->assertSee("1:$level->id:2:$level->name:3:{$level->getRawOriginal('desc')}");
     }
 
     public function test_delete(): void
