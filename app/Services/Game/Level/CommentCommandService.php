@@ -86,6 +86,12 @@ class CommentCommandService
 
             return 'Rate successful!';
         } elseif ($isUpdate) {
+            $stars = is_null($stars) ? $this->level->rating->stars : $stars;
+            $featured = is_null($featured) ? ($isInverse ? !$this->level->rating->featured_score : $this->level->rating->featured_score) : $featured;
+            $epic = is_null($epic) ? ($isInverse ? !$this->level->rating->epic : $this->level->rating->epic) : $epic;
+            $coin_verified = is_null($coin_verified) ? ($isInverse ? !$this->level->rating->coin_verified : $this->level->rating->coin_verified) : $coin_verified;
+            $demon_difficulty = is_null($demon_difficulty) ? $this->level->rating->demon_difficulty : $demon_difficulty;
+
             if ($isInverse) {
                 $featured = !$featured;
                 $epic = !$epic;
