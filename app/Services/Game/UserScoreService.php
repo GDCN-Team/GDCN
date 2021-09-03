@@ -6,7 +6,7 @@ use App\Enums\Game\BanType;
 use App\Models\Game\User;
 use App\Models\Game\UserScore;
 use GDCN\GDObject;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 
 class UserScoreService

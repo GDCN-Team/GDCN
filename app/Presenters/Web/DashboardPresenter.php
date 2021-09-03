@@ -11,7 +11,7 @@ use App\Models\Game\Level\Comment as LevelComment;
 use App\Models\Game\Level\Pack as LevelPack;
 use App\Models\Game\Level\Rating as LevelRating;
 use App\Models\Game\UserScore;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
