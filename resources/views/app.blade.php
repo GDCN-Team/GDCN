@@ -9,6 +9,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta name="csrf-token" content=" {{ csrf_token () }}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
     @csrf
     <link rel="icon" href="https://cdn.geometrydashchinese.com/static/images/logo.png">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
