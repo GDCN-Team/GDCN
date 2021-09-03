@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-1/3" title="权限组列表">
+    <page-layout class="lg:w-2/3" title="权限组列表">
         <n-card>
             <n-button @click="createGroupModel.show = true">新建权限组</n-button>
             <br><br>
@@ -12,7 +12,7 @@
         </n-card>
 
         <n-modal :mask-closable="false" v-model:show="createGroupModel.show">
-            <n-card class="lg:w-1/3" title="添加组">
+            <n-card class="lg:w-2/3" title="添加组">
                 <n-form :model="createGroupModel.form">
                     <n-form-item
                         :feedback="createGroupModel.form.errors.name ?? null"

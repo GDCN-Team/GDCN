@@ -101,7 +101,7 @@
         </n-card>
 
         <n-modal v-model:show="modalShow.addMember">
-            <n-card class="lg:w-1/3" title="添加成员">
+            <n-card class="lg:w-2/3" title="添加成员">
                 <n-form :model="searchAccountForm" inline>
                     <n-form-item
                         :feedback="searchAccountForm.errors.accountSearchText ?? null"
@@ -132,7 +132,7 @@
         </n-modal>
 
         <n-modal v-model:show="modalShow.addFlag">
-            <n-card class="lg:w-1/3" title="添加权限">
+            <n-card class="lg:w-2/3" title="添加权限">
                 <n-form :model="searchFlagForm" inline>
                     <n-form-item
                         :feedback="searchFlagForm.errors.flagSearchText ?? null"

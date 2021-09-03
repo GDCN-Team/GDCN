@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-1/3" title="登录">
+    <page-layout class="lg:w-2/3" title="登录">
         <n-card>
             <n-form :model="form">
                 <n-form-item

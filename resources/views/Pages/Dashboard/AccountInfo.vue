@@ -1,5 +1,5 @@
 <template>
-    <page-layout :title="title" class="lg:w-1/3">
+    <page-layout :title="title" class="lg:w-2/3">
         <n-card>
             <n-descriptions :column="columns" bordered>
                 <n-descriptions-item label="账号ID">

@@ -10,7 +10,7 @@
                       @update:page="updatePage"/>
 
         <n-modal :mask-closable="false" v-model:show="createGauntletModal.show">
-            <n-card class="lg:w-1/3" title="添加 Gauntlet">
+            <n-card class="lg:w-2/3" title="添加 Gauntlet">
                 <n-form :model="createGauntletModal.form">
                     <n-form-item
                         :feedback="createGauntletModal.form.errors.gauntlet_id ?? null"
