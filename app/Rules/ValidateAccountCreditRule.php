@@ -21,7 +21,7 @@ class ValidateAccountCreditRule implements Rule
                 }
 
                 $account = Account::whereName($userName)->firstOrFail();
-                if ($account->user?->ban?->where('type', BanType::BAN)->exists()) {
+                if ($account->user?->ban()->where('type', BanType::BAN)->exists()) {
                     return false;
                 }
 
