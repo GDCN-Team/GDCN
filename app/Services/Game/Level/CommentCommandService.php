@@ -11,6 +11,7 @@ use App\Models\Game\Level\Weekly;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class CommentCommandService
 {
@@ -118,6 +119,13 @@ class CommentCommandService
             $updated = $this->level
                 ->rating()
                 ->update($data);
+
+            Log::channel('gdcn')
+                ->notice('[Level Comment Command System] Action: Rating Updated', [
+                    'operatorAccountID' => $this->operator->id,
+                    'levelID' => $this->level->id,
+                    'data' => $data
+                ]);
 
             if (!$updated) {
                 return 'Rate update failed, unknown error.';
