@@ -103,7 +103,7 @@
                                 <n-list-item v-for="(score, index) in dynamic['top_stars'].data">
                                     <n-thing
                                         :description="'TOP ' + (index + 1)"
-                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.stars"
+                                        :title="(score.user?.name ?? '未知') + ' - ' + score.stars"
                                     ></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -113,7 +113,7 @@
                                 <n-list-item v-for="(score, index) in dynamic['top_diamonds'].data">
                                     <n-thing
                                         :description="'TOP ' + (index + 1)"
-                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.diamonds"
+                                        :title="(score.user?.name ?? '未知') + ' - ' + score.diamonds"
                                     ></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -123,7 +123,7 @@
                                 <n-list-item v-for="(score, index) in dynamic['top_demons'].data">
                                     <n-thing
                                         :description="'TOP ' + (index + 1)"
-                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.demons"
+                                        :title="(score.user?.name ?? '未知') + ' - ' + score.demons"
                                     ></n-thing>
                                 </n-list-item>
                             </n-list>
@@ -133,7 +133,7 @@
                                 <n-list-item v-for="(score, index) in dynamic['top_creator_points'].data">
                                     <n-thing
                                         :description="'TOP ' + (index + 1)"
-                                        :title="(score.owner?.name ?? '未知') + ' - ' + score.creator_points"
+                                        :title="(score.user?.name ?? '未知') + ' - ' + score.creator_points"
                                     ></n-thing>
                                 </n-list-item>
                             </n-list>
