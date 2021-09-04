@@ -55,7 +55,8 @@ class ApiController extends Controller
             return back();
         }
 
-        return Redirect::route('dashboard.profile');
+        $profile = $data['intended'] ?? route('dashboard.profile');
+        return Redirect::intended($profile);
     }
 
     /**

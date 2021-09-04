@@ -50,7 +50,8 @@ export default {
     setup: function () {
         const form = useForm({
             name: null,
-            password: null
+            password: null,
+            intended: require('querystring').parse(location.search)['?intended']
         });
 
         return {form, redirectToRoute}

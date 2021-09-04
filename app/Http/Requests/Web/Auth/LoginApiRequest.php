@@ -14,11 +14,15 @@ class LoginApiRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['name' => "\Illuminate\Validation\Rules\Exists", 'password' => "string"])] public function rules(): array
+    #[ArrayShape(['name' => "\Illuminate\Validation\Rules\Exists", 'password' => "string", 'intended' => "string[]"])] public function rules(): array
     {
         return [
             'name' => Rule::exists(Account::class),
-            'password' => 'required'
+            'password' => 'required',
+            'intended' => [
+                'sometimes',
+                'url'
+            ]
         ];
     }
 }

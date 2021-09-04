@@ -12,10 +12,6 @@ jquery(function () {
     window.$ = jquery;
     window.$route = (n, t, r) => route(n, t, r, Ziggy);
 
-    if (window.location.protocol === 'http:') {
-        window.location.href = window.location.href.replace('http', 'https');
-    }
-
     window.app = createInertiaApp({
         resolve: name => require(`../views/Pages/${name}`),
         setup: function (config) {

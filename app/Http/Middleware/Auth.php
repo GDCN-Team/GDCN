@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacade;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request as RequestFacade;
 
 class Auth
 {
@@ -31,6 +32,7 @@ class Auth
      */
     public function process(): RedirectResponse
     {
-        return Redirect::route('auth.login');
+        $url = RequestFacade::fullUrl();
+        return Redirect::route('auth.login', ['intended' => $url])->with('url.intended', $url);
     }
 }
