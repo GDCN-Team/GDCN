@@ -27,9 +27,9 @@
 <script>
 import PageLayout from "../../Components/PageLayout";
 import {NButton, NButtonGroup, NCard, NDataTable, NInput, NSpace, NText} from "naive-ui";
-import {h} from "vue";
-import {redirect, redirectToRoute} from "../../../../js/helper";
-import {useForm} from "@inertiajs/inertia-vue3";
+import {computed, h} from "vue";
+import {formatTime, redirect, redirectToRoute} from "../../../../js/helper";
+import {useForm, usePage} from "@inertiajs/inertia-vue3";
 
 export default {
     name: "List",
@@ -69,6 +69,24 @@ export default {
                     return h(NText, null, {
                         default: () => row.size + ' MB'
                     });
+                }
+            },
+            {
+                title: '上传时间',
+                key: 'created_at',
+                render: function (row) {
+                    return h(NText, null, {
+                        default: () => formatTime(row.created_at, '未知')
+                    })
+                }
+            },
+            {
+                title: '最后编辑时间',
+                key: 'updated_at',
+                render: function (row) {
+                    return h(NText, null, {
+                        default: () => formatTime(row.updated_at, '无')
+                    })
                 }
             },
             {
@@ -113,11 +131,15 @@ export default {
             updatePageForm.get($route('tools.song.list', {_query: {page}}));
         }
 
-        const pagination = {
-            page: props.songs.current_page,
-            pageSize: props.songs.per_page,
-            itemCount: props.songs.total
-        }
+        const pagination = computed(function () {
+            const $page = usePage();
+
+            return {
+                page: $page.props.value.songs.current_page,
+                pageSize: $page.props.value.songs.per_page,
+                itemCount: $page.props.value.songs.total
+            }
+        });
 
         const searchSongForm = useForm({
             search: null

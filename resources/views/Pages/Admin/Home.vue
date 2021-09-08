@@ -3,8 +3,16 @@
         <n-grid cols="1 768:2" x-gap="10" y-gap="10">
             <n-grid-item>
                 <n-card title="账号权限">
-                    <n-space justify="left">
+                    <n-space>
                         <n-button @click="redirectToRoute('admin.group.list')">权限组列表</n-button>
+                    </n-space>
+                </n-card>
+            </n-grid-item>
+            <n-grid-item>
+                <n-card title="关卡">
+                    <n-space>
+                        <n-button @click="redirectToRoute('admin.level.pack.list')">关卡包列表</n-button>
+                        <n-button @click="redirectToRoute('admin.level.gauntlet.list')">Gauntlet 列表</n-button>
                     </n-space>
                 </n-card>
             </n-grid-item>

@@ -10,6 +10,7 @@ use App\Http\Middleware\Auth as AuthMiddleWare;
 use App\Presenters\AdminPresenter;
 use App\Presenters\Web\Admin\GroupManagerPresenter;
 use App\Presenters\Web\Admin\LevelGauntletManagerPresenter;
+use App\Presenters\Web\Admin\LevelPackManagerPresenter;
 use App\Presenters\Web\AuthPresenter;
 use App\Presenters\Web\DashboardPresenter;
 use App\Presenters\Web\GDProxyPresenter;
@@ -45,7 +46,7 @@ Route::group([
         Route::group([
             'middleware' => 'permission_can:ADMIN_MANAGE_GROUPS'
         ], function () {
-            Route::get('/groups', [GroupManagerPresenter::class, 'renderGroupListPage'])
+            Route::get('/groups', [GroupManagerPresenter::class, 'renderListPage'])
                 ->middleware('permission_can:ADMIN_LIST_GROUP')
                 ->name('group.list');
 
@@ -53,7 +54,7 @@ Route::group([
                 ->middleware('permission_can:ADMIN_CREATE_GROUP')
                 ->name('group.create');
 
-            Route::get('/group/{group}', [GroupManagerPresenter::class, 'renderGroupManagePage'])
+            Route::get('/group/{group}', [GroupManagerPresenter::class, 'renderManagePage'])
                 ->middleware('permission_can:ADMIN_MANAGE_GROUP')
                 ->name('group.manage');
 
@@ -83,27 +84,56 @@ Route::group([
         });
 
         Route::group([
-            'middleware' => 'permission_can:ADMIN_MANAGE_LEVEL_GAUNTLETS'
+            'as' => 'level.',
+            'prefix' => 'level'
         ], function () {
-            Route::get('/level/gauntlets', [LevelGauntletManagerPresenter::class, 'renderListPage'])
-                ->middleware('permission_can:ADMIN_LIST_LEVEL_GAUNTLETS')
-                ->name('level.gauntlet.list');
+            Route::group([
+                'middleware' => 'permission_can:ADMIN_MANAGE_LEVEL_GAUNTLETS'
+            ], function () {
+                Route::get('/gauntlets', [LevelGauntletManagerPresenter::class, 'renderListPage'])
+                    ->middleware('permission_can:ADMIN_LIST_LEVEL_GAUNTLETS')
+                    ->name('gauntlet.list');
 
-            Route::get('/level/gauntlet/{gauntlet}', [LevelGauntletManagerPresenter::class, 'renderManagePage'])
-                ->middleware('permission_can:ADMIN_MANAGE_LEVEL_GAUNTLET')
-                ->name('level.gauntlet.manage');
+                Route::get('/gauntlet/{gauntlet}', [LevelGauntletManagerPresenter::class, 'renderManagePage'])
+                    ->middleware('permission_can:ADMIN_MANAGE_LEVEL_GAUNTLET')
+                    ->name('gauntlet.manage');
 
-            Route::put('/level/gauntlet', [AdminApiController::class, 'createLevelGauntlet'])
-                ->middleware('permission_can:ADMIN_CREATE_LEVEL_GAUNTLET')
-                ->name('level.gauntlet.create');
+                Route::put('/gauntlet', [AdminApiController::class, 'createLevelGauntlet'])
+                    ->middleware('permission_can:ADMIN_CREATE_LEVEL_GAUNTLET')
+                    ->name('gauntlet.create');
 
-            Route::patch('/level/gauntlet/{gauntlet}', [AdminApiController::class, 'updateLevelGauntlet'])
-                ->middleware('permission_can:ADMIN_UPDATE_LEVEL_GAUNTLET')
-                ->name('level.gauntlet.update');
+                Route::patch('/gauntlet/{gauntlet}', [AdminApiController::class, 'updateLevelGauntlet'])
+                    ->middleware('permission_can:ADMIN_UPDATE_LEVEL_GAUNTLET')
+                    ->name('gauntlet.update');
 
-            Route::delete('/level/gauntlet/{gauntlet}', [AdminApiController::class, 'deleteLevelGauntlet'])
-                ->middleware('permission_can:ADMIN_DELETE_LEVEL_GAUNTLET')
-                ->name('level.gauntlet.delete');
+                Route::delete('/gauntlet/{gauntlet}', [AdminApiController::class, 'deleteLevelGauntlet'])
+                    ->middleware('permission_can:ADMIN_DELETE_LEVEL_GAUNTLET')
+                    ->name('gauntlet.delete');
+            });
+
+            Route::group([
+                'middleware' => 'permission_can:ADMIN_MANAGE_LEVEL_PACKS'
+            ], function () {
+                Route::get('/packs', [LevelPackManagerPresenter::class, 'renderListPage'])
+                    ->middleware('permission_can:ADMIN_LIST_LEVEL_PACKS')
+                    ->name('pack.list');
+
+                Route::put('/pack', [AdminApiController::class, 'createLevelPack'])
+                    ->middleware('permission_can:ADMIN_CREATE_LEVEL_PACK')
+                    ->name('pack.create');
+
+                Route::get('/pack/{pack}', [LevelPackManagerPresenter::class, 'renderManagePage'])
+                    ->middleware('permission_can:ADMIN_MANAGE_LEVEL_PACK')
+                    ->name('pack.manage');
+
+                Route::patch('/pack/{pack}', [AdminApiController::class, 'updateLevelPack'])
+                    ->middleware('permission_can:ADMIN_UPDATE_LEVEL_PACK')
+                    ->name('pack.update');
+
+                Route::delete('/pack/{pack}', [AdminApiController::class, 'deleteLevelPack'])
+                    ->middleware('permission_can:ADMIN_DELETE_LEVEL_PACK')
+                    ->name('pack.delete');
+            });
         });
     });
 

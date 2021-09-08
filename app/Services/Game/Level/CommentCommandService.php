@@ -154,7 +154,7 @@ class CommentCommandService
                         }
 
                         $time = app(Carbon::class)->addDay();
-                        if ($feature = Level\Daily::latest()) {
+                        if ($feature = Level\Daily::latest()->first()) {
                             $time = $feature->time?->addDay() ?? $time;
                         }
 
@@ -175,7 +175,7 @@ class CommentCommandService
                             ->addWeek()
                             ->startOfWeek();
 
-                        if ($feature = Weekly::latest()) {
+                        if ($feature = Weekly::latest()->first()) {
                             $time = $feature->time?->addWeek()->startOfWeek() ?? $time;
                         }
 

@@ -32,12 +32,12 @@ class PackService
                     5 => $pack->coins,
                     6 => $pack->difficulty,
                     7 => $pack->text_color,
-                    8 => $pack->bar_color
+                    8 => $pack->bar_color ?? '255,255,255'
                 ], ':');
             })->join('|');
 
         Log::channel('gdcn')
-            ->info('[Level Pack System] Action: Get Packs', [
+            ->info('[Level PackManager System] Action: Get Packs', [
                 'page' => $page
             ]);
 

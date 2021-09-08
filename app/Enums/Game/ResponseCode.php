@@ -86,7 +86,7 @@ final class ResponseCode extends Enum
     public const LEVEL_UPDATE_DESC_FAILED = self::FAILED;
     public const LEVEL_EMPTY_RESULT_STRING = '##' . self::LEVEL_PACK_EMPTY_RESULT_STRING;
 
-    // Level Pack
+    // Level PackManager
     public const LEVEL_PACK_EMPTY_RESULT_STRING = self::EMPTY_RESULT_STRING . '#f5da5823d94bbe7208dd83a30ff427c7d88fdb99';
 
     // Misc

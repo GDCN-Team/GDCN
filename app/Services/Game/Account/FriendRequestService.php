@@ -8,6 +8,7 @@ use App\Models\Game\Account\Friend;
 use App\Models\Game\Account\FriendRequest;
 use GDCN\GDObject;
 use GDCN\Hash\Components\PageInfo as PageInfoComponent;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 class FriendRequestService

@@ -35,11 +35,6 @@ class LevelService
     {
     }
 
-    protected function generateObjectNameForOss(int $levelID): string
-    {
-        return "gdcn/levels/$levelID.dat";
-    }
-
     public function upload(
         ?string $uuid,
         int     $levelID,
@@ -157,6 +152,19 @@ class LevelService
             ]);
 
         return $level;
+    }
+
+    protected function generateObjectNameForOss(int $levelID): string
+    {
+        return "gdcn/levels/$levelID.dat";
+    }
+
+    protected function putCache(Level $level, string $levelString): void
+    {
+        Cache::put("level.$level->id", [
+            'version' => $level->version,
+            'levelString' => $levelString
+        ]);
     }
 
     /**
@@ -422,31 +430,15 @@ class LevelService
         ]);
     }
 
-    public function getLevelString(Level $level): ?string
-    {
-        $cache = Cache::get("level.$level->id");
-
-        if (empty($cache) || $cache['version'] !== $level->version) {
-            $levelString = $this->storage->get(
-                $this->generateObjectNameForOss($level->id)
-            );
-
-            $this->putCache($level, $levelString);
-            return $levelString;
-        }
-
-        return $cache['levelString'];
-    }
-
     public function download(int $levelID): string
     {
         /** @var Daily|Weekly $feature */
         $feature = null;
-        if ($levelID == -1) { # Daily
+        if ($levelID === -1) { # Daily
             $today = Carbon::today();
             $feature = Daily::whereDate('time', $today)
                 ->first();
-        } elseif ($levelID == -2) { # Weekly
+        } elseif ($levelID === -2) { # Weekly
             $monday = app(Carbon::class)->startOfWeek();
             $feature = Weekly::whereDate('time', $monday)
                 ->first();
@@ -517,7 +509,7 @@ class LevelService
         ]);
 
         $moreHash = config('app.name');
-        if (!empty($feature?->id)) {
+        if (!is_null($feature->id)) {
             /** @var User $user */
             $user = $level->getRelationValue('user');
 
@@ -540,6 +532,22 @@ class LevelService
             app(LevelInfoComponent::class)->generateHash($levelInfo),
             $moreHash
         ]);
+    }
+
+    public function getLevelString(Level $level): ?string
+    {
+        $cache = Cache::get("level.$level->id");
+
+        if (empty($cache) || $cache['version'] !== $level->version) {
+            $levelString = $this->storage->get(
+                $this->generateObjectNameForOss($level->id)
+            );
+
+            $this->putCache($level, $levelString);
+            return $levelString;
+        }
+
+        return $cache['levelString'];
     }
 
     public function delete(?string $uuid, int $levelID): bool
@@ -643,13 +651,5 @@ class LevelService
             ->update([
                 'desc' => $desc
             ]);
-    }
-
-    protected function putCache(Level $level, string $levelString): void
-    {
-        Cache::put("level.$level->id", [
-            'version' => $level->version,
-            'levelString' => $levelString
-        ]);
     }
 }

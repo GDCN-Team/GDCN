@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Game\Level\Gauntlet
+ * App\Models\Game\Level\GauntletManager
  *
  * @property int $id
  * @property Level $level1

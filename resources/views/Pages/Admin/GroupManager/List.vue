@@ -11,7 +11,7 @@
                           @update:page="updatePage"/>
         </n-card>
 
-        <n-modal :mask-closable="false" v-model:show="createGroupModel.show">
+        <n-modal v-model:show="createGroupModel.show" :mask-closable="false">
             <n-card class="lg:w-2/3" title="添加组">
                 <n-form :model="createGroupModel.form">
                     <n-form-item
@@ -19,7 +19,7 @@
                         :validation-status="createGroupModel.form.errors.name ? 'error' : null"
                         label="名称"
                         required>
-                        <n-input v-model:value="createGroupModel.form.name" placeholder="用户名"></n-input>
+                        <n-input v-model:value="createGroupModel.form.name" placeholder="名称"></n-input>
                     </n-form-item>
 
                     <n-form-item
@@ -36,8 +36,8 @@
                         :validation-status="createGroupModel.form.errors.comment_color ? 'error' : null"
                         label="评论颜色"
                         required>
-                        <n-color-picker :show-alpha="false"
-                                        v-model:value="createGroupModel.form.comment_color"></n-color-picker>
+                        <n-color-picker v-model:value="createGroupModel.form.comment_color"
+                                        :show-alpha="false"></n-color-picker>
                     </n-form-item>
 
                     <n-form-item>
@@ -75,7 +75,7 @@ import {
 } from "naive-ui";
 import {useForm} from "@inertiajs/inertia-vue3";
 import {h, reactive} from "vue";
-import {redirectToRoute} from "../../../../js/helper";
+import {formatTime, redirectToRoute} from "../../../../js/helper";
 
 export default {
     name: "List",
@@ -126,6 +126,24 @@ export default {
                 }
             },
             {
+                title: '创建时间',
+                key: 'created_at',
+                render: function (row) {
+                    return h(NText, null, {
+                        default: () => formatTime(row.created_at, '未知')
+                    })
+                }
+            },
+            {
+                title: '最后编辑时间',
+                key: 'updated_at',
+                render: function (row) {
+                    return h(NText, null, {
+                        default: () => formatTime(row.updated_at, '无')
+                    })
+                }
+            },
+            {
                 title: '操作',
                 key: 'action',
                 render: function (row) {
@@ -133,7 +151,7 @@ export default {
                         h(NButton, {
                             onClick: () => redirectToRoute('admin.group.manage', row.id)
                         }, {
-                            default: () => '编辑'
+                            default: () => '管理'
                         }),
                         h(NPopconfirm, {
                             onPositiveClick: () => deleteGroupForm.delete($route('admin.group.delete', row.id))

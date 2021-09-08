@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Game\Level\Pack
+ * App\Models\Game\Level\PackManager
  *
  * @property int $id
  * @property string $name
@@ -43,4 +43,14 @@ class Pack extends Model
     use HasFactory;
 
     protected $table = 'game_level_packs';
+
+    protected $fillable = [
+        'name',
+        'levels',
+        'stars',
+        'coins',
+        'difficulty',
+        'text_color',
+        'bar_color'
+    ];
 }

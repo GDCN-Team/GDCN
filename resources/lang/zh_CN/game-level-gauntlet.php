@@ -1,8 +1,8 @@
 <?php
 return [
     'labels' => [
-        'Gauntlet' => '关卡挑战(Level Gauntlet)',
-        'game-level-gauntlet' => '关卡挑战(Level Gauntlet)',
+        'GauntletManager' => '关卡挑战(Level GauntletManager)',
+        'game-level-gauntlet' => '关卡挑战(Level GauntletManager)',
     ],
     'fields' => [
         'level1' => '关卡 1',

@@ -9,7 +9,7 @@
                       remote
                       @update:page="updatePage"/>
 
-        <n-modal :mask-closable="false" v-model:show="createGauntletModal.show">
+        <n-modal v-model:show="createGauntletModal.show" :mask-closable="false">
             <n-card class="lg:w-2/3" title="添加 Gauntlet">
                 <n-form :model="createGauntletModal.form">
                     <n-form-item
@@ -26,8 +26,8 @@
                         :validation-status="createGauntletModal.form.errors.level1 ? 'error' : null"
                         label="第一关"
                         required>
-                        <n-input type="number" v-model:value="createGauntletModal.form.level1"
-                                 placeholder="第一关"></n-input>
+                        <n-input v-model:value="createGauntletModal.form.level1" placeholder="第一关"
+                                 type="number"></n-input>
                     </n-form-item>
 
                     <n-form-item
@@ -35,8 +35,8 @@
                         :validation-status="createGauntletModal.form.errors.level2 ? 'error' : null"
                         label="第二关"
                         required>
-                        <n-input type="number" v-model:value="createGauntletModal.form.level2"
-                                 placeholder="第二关"></n-input>
+                        <n-input v-model:value="createGauntletModal.form.level2" placeholder="第二关"
+                                 type="number"></n-input>
                     </n-form-item>
 
                     <n-form-item
@@ -44,8 +44,8 @@
                         :validation-status="createGauntletModal.form.errors.level3 ? 'error' : null"
                         label="第三关"
                         required>
-                        <n-input type="number" v-model:value="createGauntletModal.form.level3"
-                                 placeholder="第三关"></n-input>
+                        <n-input v-model:value="createGauntletModal.form.level3" placeholder="第三关"
+                                 type="number"></n-input>
                     </n-form-item>
 
                     <n-form-item
@@ -53,8 +53,8 @@
                         :validation-status="createGauntletModal.form.errors.level4 ? 'error' : null"
                         label="第四关"
                         required>
-                        <n-input type="number" v-model:value="createGauntletModal.form.level4"
-                                 placeholder="第四关"></n-input>
+                        <n-input v-model:value="createGauntletModal.form.level4" placeholder="第四关"
+                                 type="number"></n-input>
                     </n-form-item>
 
                     <n-form-item
@@ -62,8 +62,8 @@
                         :validation-status="createGauntletModal.form.errors.level5 ? 'error' : null"
                         label="第五关"
                         required>
-                        <n-input type="number" v-model:value="createGauntletModal.form.level5"
-                                 placeholder="第五关"></n-input>
+                        <n-input v-model:value="createGauntletModal.form.level5" placeholder="第五关"
+                                 type="number"></n-input>
                     </n-form-item>
 
                     <n-form-item>
@@ -102,7 +102,7 @@ import {
 } from "naive-ui";
 import {h, reactive} from "vue";
 import {useForm} from "@inertiajs/inertia-vue3";
-import {redirectToRoute} from "../../../../../js/helper";
+import {formatTime, redirectToRoute} from "../../../../../js/helper";
 
 export default {
     name: "List",
@@ -150,6 +150,24 @@ export default {
                 }
             },
             {
+                title: '创建时间',
+                key: 'created_at',
+                render: function (row) {
+                    return h(NText, null, {
+                        default: () => formatTime(row.created_at, '未知')
+                    })
+                }
+            },
+            {
+                title: '最后编辑时间',
+                key: 'updated_at',
+                render: function (row) {
+                    return h(NText, null, {
+                        default: () => formatTime(row.updated_at, '无')
+                    })
+                }
+            },
+            {
                 title: '操作',
                 key: 'action',
                 render: function (row) {
@@ -157,7 +175,7 @@ export default {
                         h(NButton, {
                             onClick: () => redirectToRoute('admin.level.gauntlet.manage', row.id)
                         }, {
-                            default: () => '编辑'
+                            default: () => '管理'
                         }),
                         h(NPopconfirm, {
                             onPositiveClick: () => deleteLevelGauntletForm.delete($route('admin.level.gauntlet.delete', row.id))

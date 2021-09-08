@@ -10,6 +10,10 @@ class Base64UrlCast implements CastsAttributes
 {
     public function get($model, string $key, $value, array $attributes): string
     {
+        if (is_null($value)) {
+            $value = "";
+        }
+
         return Base64Url::decode($value);
     }
 

@@ -1,8 +1,8 @@
 <?php
 return [
     'labels' => [
-        'Pack' => '关卡包(Level Pack)',
-        'game-level-pack' => '关卡包(Level Pack)',
+        'PackManager' => '关卡包(Level PackManager)',
+        'game-level-pack' => '关卡包(Level PackManager)',
     ],
     'fields' => [
         'name' => '名称',

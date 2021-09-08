@@ -125,10 +125,10 @@ class ToolsPresenter
             if (Request::boolean('me')) {
                 return CustomSong::with('uploader:id,name')
                     ->where('uploader', $accountID)
-                    ->paginate();
+                    ->paginate(columns: ['id', 'song_id', 'name', 'author_name', 'size', 'uploader', 'download_url', 'created_at', 'updated_at']);
             }
 
-            return CustomSong::with('uploader:id,name')->where('name', 'LIKE', '%' . Request::get('search') . '%')->paginate();
+            return CustomSong::with('uploader:id,name')->where('name', 'LIKE', '%' . Request::get('search') . '%')->paginate(columns: ['id', 'song_id', 'name', 'author_name', 'size', 'uploader', 'download_url', 'created_at', 'updated_at']);
         });
 
         return Inertia::render('Tools/Song/List', $props);

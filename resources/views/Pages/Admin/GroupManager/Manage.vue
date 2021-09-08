@@ -35,8 +35,8 @@
                     <n-descriptions-item label="创建时间">
                         {{ formatTime(group.created_at, '未知') }}
                     </n-descriptions-item>
-                    <n-descriptions-item label="更新时间">
-                        {{ formatTime(group.updated_at, '未知') }}
+                    <n-descriptions-item label="最后编辑时间">
+                        {{ formatTime(group.updated_at, '无') }}
                     </n-descriptions-item>
                 </n-descriptions>
                 <br>
@@ -44,7 +44,7 @@
                     <n-button @click="updateGroupForm.reset()">取消</n-button>
                     <n-button :loading="updateGroupForm.processing"
                               :disabled="updateGroupForm.processing || !updateGroupForm.isDirty"
-                              @click="updateGroupForm.patch(route('admin.group.update', group.id))">更改
+                              @click="updateGroupForm.patch(route('admin.group.update', group.id))">更新
                     </n-button>
                 </n-space>
             </n-form>

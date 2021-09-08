@@ -36,7 +36,7 @@ class GauntletService
             })->join('|');
 
         Log::channel('gdcn')
-            ->info('[Level Gauntlet System] Action: Get Gauntlets');
+            ->info('[Level GauntletManager System] Action: Get Gauntlets');
 
         return implode('#', [
             $result,
