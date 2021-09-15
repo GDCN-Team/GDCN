@@ -509,7 +509,7 @@ class LevelService
         ]);
 
         $moreHash = config('app.name');
-        if (!is_null($feature->id)) {
+        if (!is_null($feature?->id)) {
             /** @var User $user */
             $user = $level->getRelationValue('user');
 
