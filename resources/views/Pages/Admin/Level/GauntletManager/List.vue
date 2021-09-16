@@ -92,8 +92,6 @@ import {
     NForm,
     NFormItem,
     NInput,
-    NList,
-    NListItem,
     NModal,
     NPopconfirm,
     NSelect,
@@ -130,21 +128,43 @@ export default {
                 title: '关卡',
                 key: 'levels',
                 render: function (row) {
-                    return h(NList, null, () => [
-                        h(NListItem, null, {
-                            default: () => (row.level1?.name ?? '未知') + ' - ' + (row.level1?.user?.name ?? '未知')
+                    return h(NSpace, {
+                        vertical: true
+                    }, () => [
+                        h(NButton, {
+                            text: true,
+                            type: 'primary',
+                            onClick: () => redirectToRoute('dashboard.level.info', row.level1?.id)
+                        }, {
+                            default: () => (row.level1?.id ?? '未知') + ' - ' + (row.level1?.name ?? '未知')
                         }),
-                        h(NListItem, null, {
-                            default: () => (row.level2?.name ?? '未知') + ' - ' + (row.level2?.user?.name ?? '未知')
+                        h(NButton, {
+                            text: true,
+                            type: 'primary',
+                            onClick: () => redirectToRoute('dashboard.level.info', row.level2?.id)
+                        }, {
+                            default: () => (row.level2?.id ?? '未知') + ' - ' + (row.level2?.name ?? '未知')
                         }),
-                        h(NListItem, null, {
-                            default: () => (row.level3?.name ?? '未知') + ' - ' + (row.level3?.user?.name ?? '未知')
+                        h(NButton, {
+                            text: true,
+                            type: 'primary',
+                            onClick: () => redirectToRoute('dashboard.level.info', row.level3?.id)
+                        }, {
+                            default: () => (row.level3?.id ?? '未知') + ' - ' + (row.level3?.name ?? '未知')
                         }),
-                        h(NListItem, null, {
-                            default: () => (row.level4?.name ?? '未知') + ' - ' + (row.level4?.user?.name ?? '未知')
+                        h(NButton, {
+                            text: true,
+                            type: 'primary',
+                            onClick: () => redirectToRoute('dashboard.level.info', row.level4?.id)
+                        }, {
+                            default: () => (row.level4?.id ?? '未知') + ' - ' + (row.level4?.name ?? '未知')
                         }),
-                        h(NListItem, null, {
-                            default: () => (row.level5?.name ?? '未知') + ' - ' + (row.level5?.user?.name ?? '未知')
+                        h(NButton, {
+                            text: true,
+                            type: 'primary',
+                            onClick: () => redirectToRoute('dashboard.level.info', row.level5?.id)
+                        }, {
+                            default: () => (row.level5?.id ?? '未知') + ' - ' + (row.level5?.name ?? '未知')
                         })
                     ])
                 }

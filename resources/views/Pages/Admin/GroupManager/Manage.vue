@@ -180,8 +180,6 @@ import {
     NH4,
     NIcon,
     NInput,
-    NList,
-    NListItem,
     NModal,
     NSelect,
     NSpace
@@ -400,8 +398,6 @@ export default {
         NForm,
         NFormItem,
         NDataTable,
-        NList,
-        NListItem,
         NSelect,
         NColorPicker,
         NSpace

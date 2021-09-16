@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Presenters;
+namespace App\Presenters\Web;
 
 use Inertia\Inertia;
 use Inertia\Response;

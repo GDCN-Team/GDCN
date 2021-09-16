@@ -24,7 +24,7 @@ class DashboardPresenter
      */
     public function renderHomePage(array $props = []): Response
     {
-        Inertia::share([
+        $sharedData = [
             'dynamic.accounts_count' => Account::count(),
             'dynamic.levels_count' => Level::count(),
             'dynamic.level_packs_count' => LevelPack::count(),
@@ -36,53 +36,61 @@ class DashboardPresenter
             'dynamic.new_accounts' => Account::query()
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['id', 'name', 'created_at']),
-            'dynamic.new_levels' => Level::query()
-                ->with('user:id,name')
-                ->orderByDesc('created_at')
-                ->paginate(columns: ['id', 'name', 'user', 'created_at']),
+            'dynamic.new_levels' => Inertia::lazy(function () {
+                return Level::query()
+                    ->with('user:id,name,uuid')
+                    ->orderByDesc('created_at')
+                    ->paginate(columns: ['id', 'name', 'user', 'created_at']);
+            }),
             'dynamic.new_rated_levels' => LevelRating::query()
-                ->with(['level:id,name,user', 'level.user:id,name'])
+                ->with(['level:id,name,user', 'level.user:id,name,uuid'])
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['level', 'created_at']),
-            'dynamic.new_rated_featured_levels' => LevelRating::query()
-                ->with(['level:id,name,user', 'level.user:id,name'])
-                ->where('featured_score', '>', 0)
-                ->orderByDesc('created_at')
-                ->paginate(columns: ['level', 'created_at']),
+            'dynamic.new_rated_featured_levels' => Inertia::lazy(function () {
+                return LevelRating::query()
+                    ->with(['level:id,name,user', 'level.user:id,name,uuid'])
+                    ->where('featured_score', '>', 0)
+                    ->orderByDesc('created_at')
+                    ->paginate(columns: ['level', 'created_at']);
+            }),
             'dynamic.new_rated_epic_levels' => LevelRating::query()
-                ->with(['level:id,name,user', 'level.user:id,name'])
+                ->with(['level:id,name,user', 'level.user:id,name,uuid'])
                 ->whereEpic(true)
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['level', 'created_at']),
             'dynamic.top_stars' => UserScore::query()
                 ->whereDoesntHave('user.ban', function (Builder $query) {
                     return $query->where('type', BanType::BAN);
-                })->with('user:id,name')
+                })->with('user:id,name,uuid')
                 ->orderByDesc('stars')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'stars']),
             'dynamic.top_diamonds' => UserScore::query()
                 ->whereDoesntHave('user.ban', function (Builder $query) {
                     return $query->where('type', BanType::BAN);
-                })->with('user:id,name')
+                })->with('user:id,name,uuid')
                 ->orderByDesc('diamonds')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'diamonds']),
             'dynamic.top_demons' => UserScore::query()
                 ->whereDoesntHave('user.ban', function (Builder $query) {
                     return $query->where('type', BanType::BAN);
-                })->with('user:id,name')
+                })->with('user:id,name,uuid')
                 ->orderByDesc('demons')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'demons']),
             'dynamic.top_creator_points' => UserScore::query()
                 ->whereDoesntHave('user.ban', function (Builder $query) {
                     return $query->where('type', BanType::BAN);
-                })->with('user:id,name')
+                })->with('user:id,name,uuid')
                 ->orderByDesc('creator_points')
                 ->orderByDesc('created_at')
                 ->paginate(columns: ['user', 'creator_points'])
-        ]);
+        ];
+
+        foreach ($sharedData as $key => $value) {
+            Inertia::share($key, $value);
+        }
 
         return Inertia::render('Dashboard/Home', $props);
     }

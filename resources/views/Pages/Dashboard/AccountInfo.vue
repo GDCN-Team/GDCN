@@ -33,20 +33,21 @@
         </n-card>
 
         <n-card class="mt-2.5" title="评论">
-            <n-list bordered>
-                <n-list-item v-for="comment in account.comments">
-                    <n-thing :description="'评论于 '+formatTime(comment.created_at, '未知')"
-                             :title="comment.content"></n-thing>
-                </n-list-item>
-            </n-list>
+            <n-space vertical>
+                <n-space v-for="comment in account.comments" justify="space-between">
+                    <n-text>{{ comment.content }}</n-text>
+                    <n-text>{{ formatTime(comment.created_at, '未知') }}</n-text>
+                </n-space>
+            </n-space>
         </n-card>
     </page-layout>
 </template>
 
 <script>
 import PageLayout from "../Components/PageLayout";
-import {NCard, NDescriptions, NDescriptionsItem, NList, NListItem, NThing} from "naive-ui";
+import {NCard, NDescriptions, NDescriptionsItem, NSpace, NText} from "naive-ui";
 import {formatTime, isMobile} from "../../../js/helper";
+import _ from "lodash";
 
 export default {
     name: "AccountInfo",
@@ -69,9 +70,8 @@ export default {
         NCard,
         NDescriptions,
         NDescriptionsItem,
-        NList,
-        NListItem,
-        NThing
+        NSpace,
+        NText
     }
 }
 </script>

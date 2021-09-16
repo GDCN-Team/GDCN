@@ -2,7 +2,7 @@
     <page-layout class="lg:w-2/3" title="Gauntlet 管理">
         <n-card>
             <n-form :model="updateGauntletForm">
-                <n-descriptions :columns="columns" title="Gauntlet 管理" bordered>
+                <n-descriptions :columns="columns" bordered title="Gauntlet 管理">
                     <n-descriptions-item label="ID">
                         {{ gauntlet.id }}
                     </n-descriptions-item>
@@ -22,10 +22,11 @@
                                 :validation-status="updateGauntletForm.errors.level1 ? 'error' : null"
                                 required>
                                 <n-space vertical>
-                                    <n-text>{{
-                                            (gauntlet.level1?.name ?? '未知') + ' - ' + (gauntlet.level1?.user?.name ?? '未知')
+                                    <n-button text type="primary"
+                                              @click="redirectToRoute('dashboard.level.info', gauntlet.level1?.id)">{{
+                                            (gauntlet.level1?.id ?? '未知') + ' - ' + (gauntlet.level1?.name ?? '未知')
                                         }}
-                                    </n-text>
+                                    </n-button>
 
                                     <n-form-item
                                         :feedback="updateGauntletForm.errors.level1 ?? null"
@@ -35,18 +36,16 @@
                                     </n-form-item>
                                 </n-space>
                             </n-form-item>
-
-                            <n-button @click="redirectToRoute('dashboard.level.info', gauntlet.level1.id)">查看详情
-                            </n-button>
                         </n-space>
                     </n-descriptions-item>
                     <n-descriptions-item label="第二关">
                         <n-space justify="space-between">
                             <n-space vertical>
-                                <n-text>{{
-                                        (gauntlet.level2?.name ?? '未知') + ' - ' + (gauntlet.level2?.user?.name ?? '未知')
+                                <n-button text type="primary"
+                                          @click="redirectToRoute('dashboard.level.info', gauntlet.level2?.id)">{{
+                                        (gauntlet.level2?.id ?? '未知') + ' - ' + (gauntlet.level2?.name ?? '未知')
                                     }}
-                                </n-text>
+                                </n-button>
 
                                 <n-form-item
                                     :feedback="updateGauntletForm.errors.level2 ?? null"
@@ -55,18 +54,16 @@
                                     <n-input v-model:value="updateGauntletForm.level2" placeholder="第二关"></n-input>
                                 </n-form-item>
                             </n-space>
-
-                            <n-button @click="redirectToRoute('dashboard.level.info', gauntlet.level2.id)">查看详情
-                            </n-button>
                         </n-space>
                     </n-descriptions-item>
                     <n-descriptions-item label="第三关">
                         <n-space justify="space-between">
                             <n-space vertical>
-                                <n-text>{{
-                                        (gauntlet.level3?.name ?? '未知') + ' - ' + (gauntlet.level3?.user?.name ?? '未知')
+                                <n-button text type="primary"
+                                          @click="redirectToRoute('dashboard.level.info', gauntlet.level3?.id)">{{
+                                        (gauntlet.level3?.id ?? '未知') + ' - ' + (gauntlet.level3?.name ?? '未知')
                                     }}
-                                </n-text>
+                                </n-button>
 
                                 <n-form-item
                                     :feedback="updateGauntletForm.errors.level3 ?? null"
@@ -75,18 +72,16 @@
                                     <n-input v-model:value="updateGauntletForm.level3" placeholder="第三关"></n-input>
                                 </n-form-item>
                             </n-space>
-
-                            <n-button @click="redirectToRoute('dashboard.level.info', gauntlet.level3.id)">查看详情
-                            </n-button>
                         </n-space>
                     </n-descriptions-item>
                     <n-descriptions-item label="第四关">
                         <n-space justify="space-between">
                             <n-space vertical>
-                                <n-text>{{
-                                        (gauntlet.level4?.name ?? '未知') + ' - ' + (gauntlet.level4?.user?.name ?? '未知')
+                                <n-button text type="primary"
+                                          @click="redirectToRoute('dashboard.level.info', gauntlet.level4?.id)">{{
+                                        (gauntlet.level4?.id ?? '未知') + ' - ' + (gauntlet.level4?.name ?? '未知')
                                     }}
-                                </n-text>
+                                </n-button>
 
                                 <n-form-item
                                     :feedback="updateGauntletForm.errors.level4 ?? null"
@@ -95,18 +90,16 @@
                                     <n-input v-model:value="updateGauntletForm.level4" placeholder="第四关"></n-input>
                                 </n-form-item>
                             </n-space>
-
-                            <n-button @click="redirectToRoute('dashboard.level.info', gauntlet.level4.id)">查看详情
-                            </n-button>
                         </n-space>
                     </n-descriptions-item>
                     <n-descriptions-item label="第五关">
                         <n-space justify="space-between">
                             <n-space vertical>
-                                <n-text>{{
-                                        (gauntlet.level5?.name ?? '未知') + ' - ' + (gauntlet.level5?.user?.name ?? '未知')
+                                <n-button text type="primary"
+                                          @click="redirectToRoute('dashboard.level.info', gauntlet.level5?.id)">{{
+                                        (gauntlet.level5?.id ?? '未知') + ' - ' + (gauntlet.level5?.name ?? '未知')
                                     }}
-                                </n-text>
+                                </n-button>
 
                                 <n-form-item
                                     :feedback="updateGauntletForm.errors.level5 ?? null"
@@ -115,9 +108,6 @@
                                     <n-input v-model:value="updateGauntletForm.level5" placeholder="第五关"></n-input>
                                 </n-form-item>
                             </n-space>
-
-                            <n-button @click="redirectToRoute('dashboard.level.info', gauntlet.level5.id)">查看详情
-                            </n-button>
                         </n-space>
                     </n-descriptions-item>
                     <n-descriptions-item label="创建时间">
@@ -130,8 +120,8 @@
                 <br>
                 <n-space>
                     <n-button @click="updateGauntletForm.reset()">取消</n-button>
-                    <n-button :loading="updateGauntletForm.processing"
-                              :disabled="updateGauntletForm.processing || !updateGauntletForm.isDirty"
+                    <n-button :disabled="updateGauntletForm.processing || !updateGauntletForm.isDirty"
+                              :loading="updateGauntletForm.processing"
                               @click="updateGauntletForm.patch(route('admin.level.gauntlet.update', gauntlet.id))">更新
                     </n-button>
                 </n-space>

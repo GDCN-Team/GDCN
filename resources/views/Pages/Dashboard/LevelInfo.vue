@@ -12,7 +12,14 @@
                     {{ level.desc }}
                 </n-descriptions-item>
                 <n-descriptions-item label="作者">
-                    {{ level?.user?.name ?? '未知' }}
+                    <n-button text type="primary"
+                              @click="redirectToRoute('dashboard.account.info', level.user?.uuid)"
+                              v-if="isAccount(level.user)">
+                        {{ level.user?.name }}
+                    </n-button>
+                    <n-text v-else>
+                        {{ level.user?.name }}
+                    </n-text>
                 </n-descriptions-item>
                 <n-descriptions-item label="下载量">
                     {{ level.downloads }}
@@ -45,18 +52,19 @@
         </n-card>
 
         <n-card class="mt-2.5" title="评论">
-            <n-list bordered>
-                <n-list-item v-for="comment in level.comments">
-                    <n-thing :description="'评论于 '+formatTime(comment.created_at, '未知')"
-                             :title="comment.account.name + ': ' + comment.content">
-                        <template #action>
-                            <n-button @click="redirectToRoute('dashboard.account.info', comment.account.id)">
-                                查看 {{ comment.account.name }} 的个人资料
-                            </n-button>
-                        </template>
-                    </n-thing>
-                </n-list-item>
-            </n-list>
+            <n-space vertical>
+                <n-space v-for="comment in level.comments" justify="space-between">
+                    <n-text>
+                        <n-button text type="primary"
+                                  @click="redirectToRoute('dashboard.account.info', comment.account?.id)">
+                            {{ comment.account?.name }}
+                        </n-button>
+                        : {{ comment.content }}
+                    </n-text>
+
+                    <n-text>{{ formatTime(comment.created_at, '未知') }}</n-text>
+                </n-space>
+            </n-space>
         </n-card>
     </page-layout>
 </template>
@@ -64,7 +72,8 @@
 <script>
 import PageLayout from "../Components/PageLayout";
 import {formatTime, isMobile, redirectToRoute} from "../../../js/helper";
-import {NButton, NCard, NDescriptions, NDescriptionsItem, NList, NListItem, NThing} from "naive-ui";
+import {NButton, NCard, NDescriptions, NDescriptionsItem, NSpace, NText} from "naive-ui";
+import _ from "lodash";
 
 export default {
     name: "LevelInfo",
@@ -80,17 +89,20 @@ export default {
         }
     },
     setup: function () {
-        return {formatTime, redirectToRoute}
+        const isAccount = function (user) {
+            return _.toInteger(user?.uuid) > 0;
+        }
+
+        return {formatTime, redirectToRoute, isAccount}
     },
     components: {
         PageLayout,
         NCard,
         NDescriptions,
         NDescriptionsItem,
-        NList,
-        NListItem,
-        NThing,
-        NButton
+        NButton,
+        NText,
+        NSpace
     }
 }
 </script>

@@ -11,7 +11,7 @@
                           @update:page="updatePage"/>
         </n-card>
 
-        <n-modal :mask-closable="false" v-model:show="createPackModal.show">
+        <n-modal v-model:show="createPackModal.show" :mask-closable="false">
             <n-card class="lg:w-2/3" title="添加关卡包">
                 <n-form :model="createPackModal.form">
                     <n-form-item
@@ -35,8 +35,8 @@
                         :validation-status="createPackModal.form.errors.stars ? 'error' : null"
                         label="奖励星星"
                         required>
-                        <n-slider :min="1" :step="1"
-                                  v-model:value="createPackModal.form.stars"></n-slider>
+                        <n-slider v-model:value="createPackModal.form.stars" :min="1"
+                                  :step="1"></n-slider>
                     </n-form-item>
 
                     <n-form-item
@@ -44,8 +44,8 @@
                         :validation-status="createPackModal.form.errors.coins ? 'error' : null"
                         label="奖励金币"
                         required>
-                        <n-slider :min="1" :step="1"
-                                  v-model:value="createPackModal.form.coins"></n-slider>
+                        <n-slider v-model:value="createPackModal.form.coins" :min="1"
+                                  :step="1"></n-slider>
                     </n-form-item>
 
                     <n-form-item
@@ -53,8 +53,9 @@
                         :validation-status="createPackModal.form.errors.difficulty ? 'error' : null"
                         label="难度"
                         required>
-                        <n-slider :format-tooltip="formatDifficulty" :min="0" :max="10" :step="1"
-                                  v-model:value="createPackModal.form.difficulty"></n-slider>
+                        <n-slider v-model:value="createPackModal.form.difficulty" :format-tooltip="formatDifficulty"
+                                  :max="10" :min="0"
+                                  :step="1"></n-slider>
                     </n-form-item>
 
                     <n-form-item
@@ -104,8 +105,6 @@ import {
     NForm,
     NFormItem,
     NInput,
-    NList,
-    NListItem,
     NModal,
     NPopconfirm,
     NSelect,
@@ -153,24 +152,20 @@ export default {
                 title: '关卡',
                 key: 'levels',
                 render: function (row) {
-                    return h(NList, null, function () {
-                        return row.levels.split(',').map(function (level) {
-                            return h(NListItem, null, {
-                                default: function () {
-                                    return h(NListItem, null, {
-                                        default: function () {
-                                            const name = props.levels[level];
-                                            return `${level} - ${name}`;
-                                        }
-                                    })
-                                },
-                                suffix: () => h(NButton, {
-                                    onClick: () => redirectToRoute('dashboard.level.info', level.id)
+                    return h(NSpace, {
+                        vertical: true
+                    }, {
+                        default: function () {
+                            return row.levels.split(',').map(function (level) {
+                                return h(NButton, {
+                                    text: true,
+                                    type: 'primary',
+                                    onClick: () => redirectToRoute('dashboard.level.info', level)
                                 }, {
-                                    default: () => '查看'
-                                })
+                                    default: () => `${level} - ${props.levels[level]}`
+                                });
                             })
-                        })
+                        }
                     })
                 }
             },

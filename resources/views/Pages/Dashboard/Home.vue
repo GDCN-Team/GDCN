@@ -14,32 +14,35 @@
                 <n-card title="服务器动态">
                     <n-tabs justify-content="space-evenly" type="line">
                         <n-tab-pane name="new_accounts" tab="新增账号">
-                            <n-list bordered>
-                                <n-list-item v-for="account in dynamic['new_accounts'].data">
-                                    <template #suffix>
-                                        <n-button @click="redirectToRoute('dashboard.account.info', account.id)">
-                                            个人资料
-                                        </n-button>
-                                    </template>
-
-                                    <n-thing :description="'注册于 '+formatTime(account.created_at, '未知')"
-                                             :title="account.name"></n-thing>
-                                </n-list-item>
-                            </n-list>
+                            <n-space v-for="account in dynamic['new_accounts'].data" justify="space-between">
+                                <n-button text type="primary"
+                                          @click="redirectToRoute('dashboard.account.info', account.id)">
+                                    {{ account.id }} - {{ account.name }}
+                                </n-button>
+                                <n-text>注册于 {{ formatTime(account.created_at, '未知') }}</n-text>
+                            </n-space>
                         </n-tab-pane>
                         <n-tab-pane name="new_levels" tab="新增关卡">
-                            <n-list bordered>
-                                <n-list-item v-for="level in dynamic['new_levels'].data">
-                                    <template #suffix>
-                                        <n-button @click="redirectToRoute('dashboard.level.info', level.id)">
-                                            查看
+                            <n-space vertical>
+                                <n-space v-for="level in dynamic['new_levels'].data" justify="space-between">
+                                    <div>
+                                        <n-button text type="primary"
+                                                  @click="redirectToRoute('dashboard.level.info', level.id)">
+                                            {{ level.id }} - {{ level.name }}&nbsp;
                                         </n-button>
-                                    </template>
-
-                                    <n-thing :description="'上传于 '+formatTime(level.created_at, '未知')"
-                                             :title="level.name + ' - ' + (level?.user?.name ?? '未知')"></n-thing>
-                                </n-list-item>
-                            </n-list>
+                                        <br>
+                                        <n-button v-if="isAccount(level.user)" text type="info"
+                                                  @click="redirectToRoute('dashboard.account.info', level.user?.uuid)">
+                                            By
+                                            {{ level.user?.name }}
+                                        </n-button>
+                                        <n-button @click="showNotAccountMessage" v-else text type="error">By
+                                            {{ level.user?.name }}
+                                        </n-button>
+                                    </div>
+                                    <n-text>上传于 {{ formatTime(level.created_at, '未知') }}</n-text>
+                                </n-space>
+                            </n-space>
                         </n-tab-pane>
                     </n-tabs>
                 </n-card>
@@ -48,49 +51,75 @@
                 <n-card title="Rate 动态">
                     <n-tabs justify-content="space-evenly" type="line">
                         <n-tab-pane name="new_rated_levels" tab="最近">
-                            <n-list bordered>
-                                <n-list-item v-for="rating in dynamic['new_rated_levels'].data">
-                                    <template #suffix>
-                                        <n-button @click="redirectToRoute('dashboard.level.info', rating.level.id)">
-                                            查看
+                            <n-space vertical>
+                                <n-space v-for="rating in dynamic['new_rated_levels'].data" justify="space-between">
+                                    <div>
+                                        <n-button text type="primary"
+                                                  @click="redirectToRoute('dashboard.level.info', rating?.level?.id)">
+                                            {{ rating?.level?.id }} - {{ rating?.level?.name }}&nbsp;
                                         </n-button>
-                                    </template>
-
-                                    <n-thing
-                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"></n-thing>
-                                </n-list-item>
-                            </n-list>
+                                        <br>
+                                        <n-button v-if="isAccount(rating?.level?.user)" text type="info"
+                                                  @click="redirectToRoute('dashboard.account.info', rating?.level?.user?.uuid)">
+                                            By
+                                            {{ rating?.level?.user?.name }}
+                                        </n-button>
+                                        <n-button
+                                            @click="showNotAccountMessage"
+                                            v-else text type="error">By {{ rating?.level?.user?.name }}
+                                        </n-button>
+                                    </div>
+                                    <n-text>Rate于 {{ formatTime(rating.created_at, '未知') }}</n-text>
+                                </n-space>
+                            </n-space>
                         </n-tab-pane>
                         <n-tab-pane name="new_rated_featured_levels" tab="Featured">
-                            <n-list bordered>
-                                <n-list-item v-for="rating in dynamic['new_rated_featured_levels'].data">
-                                    <template #suffix>
-                                        <n-button @click="redirectToRoute('dashboard.level.info', rating.level.id)">
-                                            查看
+                            <n-space vertical>
+                                <n-space v-for="rating in dynamic['new_rated_featured_levels'].data"
+                                         justify="space-between">
+                                    <div>
+                                        <n-button text type="primary"
+                                                  @click="redirectToRoute('dashboard.level.info', rating?.level?.id)">
+                                            {{ rating?.level?.id }} - {{ rating?.level?.name }}&nbsp;
                                         </n-button>
-                                    </template>
-
-                                    <n-thing
-                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"></n-thing>
-                                </n-list-item>
-                            </n-list>
+                                        <br>
+                                        <n-button v-if="isAccount(rating?.level?.user)" text type="info"
+                                                  @click="redirectToRoute('dashboard.account.info', rating?.level?.user?.uuid)">
+                                            By
+                                            {{ rating?.level?.user?.name }}
+                                        </n-button>
+                                        <n-button
+                                            @click="showNotAccountMessage"
+                                            v-else text type="error">By {{ rating?.level?.user?.name }}
+                                        </n-button>
+                                    </div>
+                                    <n-text>Rate于 {{ formatTime(rating.created_at, '未知') }}</n-text>
+                                </n-space>
+                            </n-space>
                         </n-tab-pane>
                         <n-tab-pane name="new_rated_epic_levels" tab="Epic">
-                            <n-list bordered>
-                                <n-list-item v-for="rating in dynamic['new_rated_epic_levels'].data">
-                                    <template #suffix>
-                                        <n-button @click="redirectToRoute('dashboard.level.info', rating.level.id)">
-                                            查看
+                            <n-space vertical>
+                                <n-space v-for="rating in dynamic['new_rated_epic_levels'].data"
+                                         justify="space-between">
+                                    <div>
+                                        <n-button text type="primary"
+                                                  @click="redirectToRoute('dashboard.level.info', rating?.level?.id)">
+                                            {{ rating?.level?.id }} - {{ rating?.level?.name }}&nbsp;
                                         </n-button>
-                                    </template>
-
-                                    <n-thing
-                                        :description="'Rate于 '+formatTime(rating.created_at, '未知')"
-                                        :title="(rating?.level?.id ?? '未知') + ' - ' + (rating?.level?.name ?? '未知') + ' - ' + (rating?.level?.user?.name ?? '未知')"></n-thing>
-                                </n-list-item>
-                            </n-list>
+                                        <br>
+                                        <n-button v-if="isAccount(rating?.level?.user)" text type="info"
+                                                  @click="redirectToRoute('dashboard.account.info', rating?.level?.user?.uuid)">
+                                            By
+                                            {{ rating?.level?.user?.name }}
+                                        </n-button>
+                                        <n-button
+                                            @click="showNotAccountMessage"
+                                            v-else text type="error">By {{ rating?.level?.user?.name }}
+                                        </n-button>
+                                    </div>
+                                    <n-text>Rate于 {{ formatTime(rating.created_at, '未知') }}</n-text>
+                                </n-space>
+                            </n-space>
                         </n-tab-pane>
                     </n-tabs>
                 </n-card>
@@ -99,44 +128,69 @@
                 <n-card title="排行榜">
                     <n-tabs justify-content="space-evenly" type="line">
                         <n-tab-pane name="top_stars" tab="追星狂">
-                            <n-list bordered>
-                                <n-list-item v-for="(score, index) in dynamic['top_stars'].data">
-                                    <n-thing
-                                        :description="'TOP ' + (index + 1)"
-                                        :title="(score.user?.name ?? '未知') + ' - ' + score.stars"
-                                    ></n-thing>
-                                </n-list-item>
-                            </n-list>
+                            <n-space v-for="(score, index) in dynamic['top_stars'].data" justify="space-between">
+                                <n-text>
+                                    <n-button v-if="isAccount(score.user)"
+                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)" text
+                                              type="primary">
+                                        {{ score.user?.id }} - {{ score.user?.name }}
+                                    </n-button>
+                                    <n-button @click="showNotAccountMessage" text type="error" v-else>
+                                        {{ score.user?.id }} - {{ score.user?.name }}
+                                    </n-button>
+                                    | {{ score.stars }} Stars
+                                </n-text>
+                                <n-text>TOP {{ index + 1 }}</n-text>
+                            </n-space>
                         </n-tab-pane>
                         <n-tab-pane name="top_diamonds" tab="钻石!">
-                            <n-list bordered>
-                                <n-list-item v-for="(score, index) in dynamic['top_diamonds'].data">
-                                    <n-thing
-                                        :description="'TOP ' + (index + 1)"
-                                        :title="(score.user?.name ?? '未知') + ' - ' + score.diamonds"
-                                    ></n-thing>
-                                </n-list-item>
-                            </n-list>
+                            <n-space v-for="(score, index) in dynamic['top_diamonds'].data" justify="space-between">
+                                <n-text>
+                                    <n-button v-if="isAccount(score.user)"
+                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)" text
+                                              type="primary">
+                                        {{ score.user?.id }} - {{ score.user?.name }}
+                                    </n-button>
+                                    <n-button @click="showNotAccountMessage" text type="error" v-else>
+                                        {{ score.user?.id }} - {{ score.user?.name }}
+                                    </n-button>
+                                    | {{ score.diamonds }} Diamonds
+                                </n-text>
+                                <n-text>TOP {{ index + 1 }}</n-text>
+                            </n-space>
                         </n-tab-pane>
                         <n-tab-pane name="top_demons" tab="恶魔猎手">
-                            <n-list bordered>
-                                <n-list-item v-for="(score, index) in dynamic['top_demons'].data">
-                                    <n-thing
-                                        :description="'TOP ' + (index + 1)"
-                                        :title="(score.user?.name ?? '未知') + ' - ' + score.demons"
-                                    ></n-thing>
-                                </n-list-item>
-                            </n-list>
+                            <n-space v-for="(score, index) in dynamic['top_demons'].data" justify="space-between">
+                                <n-text>
+                                    <n-button v-if="isAccount(score.user)"
+                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)" text
+                                              type="primary">
+                                        {{ score.user?.id }} - {{ score.user?.name }}
+                                    </n-button>
+                                    <n-button @click="showNotAccountMessage" text type="error" v-else>
+                                        {{ score.user?.id }} - {{ score.user?.name }}
+                                    </n-button>
+                                    | {{ score.demons }} Demons
+                                </n-text>
+                                <n-text>TOP {{ index + 1 }}</n-text>
+                            </n-space>
                         </n-tab-pane>
                         <n-tab-pane name="top_creator_points" tab="关卡制作者">
-                            <n-list bordered>
-                                <n-list-item v-for="(score, index) in dynamic['top_creator_points'].data">
-                                    <n-thing
-                                        :description="'TOP ' + (index + 1)"
-                                        :title="(score.user?.name ?? '未知') + ' - ' + score.creator_points"
-                                    ></n-thing>
-                                </n-list-item>
-                            </n-list>
+                            <n-space v-for="(score, index) in dynamic['top_creator_points'].data"
+                                     justify="space-between">
+                                <n-text>
+                                    <n-button v-if="isAccount(score.user)"
+                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)" text
+                                              type="primary">
+                                        {{ score.user?.id }} - {{ score.user?.name }}
+                                    </n-button>
+                                    <n-button @click="showNotAccountMessage" text type="error" v-else>
+                                        {{ score.user?.id }} - {{ score.user?.name }}
+                                    </n-button>
+                                    | {{ score.creator_points }} Creator Points
+                                </n-text>
+                                <n-text>TOP {{ index + 1 }}</n-text>
+                            </n-space>
                         </n-tab-pane>
                     </n-tabs>
                 </n-card>
@@ -147,20 +201,9 @@
 
 <script>
 import PageLayout from "../Components/PageLayout";
-import {
-    NButton,
-    NCard,
-    NGrid,
-    NGridItem,
-    NList,
-    NListItem,
-    NSpace,
-    NStatistic,
-    NTabPane,
-    NTabs,
-    NThing
-} from "naive-ui";
+import {NButton, NCard, NDivider, NGrid, NGridItem, NSpace, NStatistic, NTabPane, NTabs, NText} from "naive-ui";
 import {formatTime, redirectToRoute} from "../../../js/helper";
+import _ from "lodash";
 
 export default {
     name: "Home",
@@ -168,7 +211,19 @@ export default {
         dynamic: Object
     },
     setup: function () {
-        return {formatTime, redirectToRoute}
+        const isAccount = function (user) {
+            if (!user) {
+                return false;
+            }
+
+            return _.toInteger(user?.uuid) > 0;
+        }
+
+        const showNotAccountMessage = function () {
+            $message.error('非注册用户无法展示个人资料');
+        }
+
+        return {formatTime, redirectToRoute, isAccount, showNotAccountMessage}
     },
     components: {
         PageLayout,
@@ -177,12 +232,11 @@ export default {
         NCard,
         NTabs,
         NTabPane,
-        NList,
-        NListItem,
         NButton,
-        NThing,
         NStatistic,
-        NSpace
+        NSpace,
+        NText,
+        NDivider
     }
 }
 </script>

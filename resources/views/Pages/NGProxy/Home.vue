@@ -39,13 +39,14 @@
                     {{ song.size }}MB
                 </n-descriptions-item>
                 <n-descriptions-item v-if="song.author_youtube_url" label="作者Youtube">
-                    <n-button @click="redirect('https://youtube.com/channel/'+song.author_youtube_url)">
-                        查看
+                    <n-button text type="primary"
+                              @click="redirect('https://youtube.com/channel/'+song.author_youtube_url)">
+                        https://youtube.com/channel/{{ song.author_youtube_url }}
                     </n-button>
                 </n-descriptions-item>
                 <n-descriptions-item v-if="song.video_id" label="歌曲视频">
                     <n-button text @click="redirect('https://www.youtube.com/watch?v='+song.video_id)">
-                        查看
+                        https://www.youtube.com/watch?v={{ song.video_id }}
                     </n-button>
                 </n-descriptions-item>
                 <n-descriptions-item label="禁用">

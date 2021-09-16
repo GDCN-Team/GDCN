@@ -7,7 +7,7 @@ use App\Http\Controllers\Web\Auth\ApiController as AuthApiController;
 use App\Http\Controllers\Web\Dashboard\ApiController as DashboardApiController;
 use App\Http\Controllers\Web\Tools\ApiController as ToolsApiController;
 use App\Http\Middleware\Auth as AuthMiddleWare;
-use App\Presenters\AdminPresenter;
+use App\Presenters\Web\AdminPresenter;
 use App\Presenters\Web\Admin\GroupManagerPresenter;
 use App\Presenters\Web\Admin\LevelGauntletManagerPresenter;
 use App\Presenters\Web\Admin\LevelPackManagerPresenter;

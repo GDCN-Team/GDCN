@@ -11,7 +11,7 @@ class LevelGauntletManagerPresenter
     public function renderListPage(array $props = []): Response
     {
         Inertia::share('gauntlets', function () {
-            return Gauntlet::with(['level1.user', 'level2.user', 'level3.user', 'level4.user', 'level5.user'])->paginate(columns: ['id', 'gauntlet_id', 'level1', 'level2', 'level3', 'level4', 'level5', 'created_at', 'updated_at']);
+            return Gauntlet::with(['level1:id,name', 'level2:id,name', 'level3:id,name', 'level4:id,name', 'level5:id,name'])->paginate(columns: ['id', 'gauntlet_id', 'level1', 'level2', 'level3', 'level4', 'level5', 'created_at', 'updated_at']);
         });
 
         return Inertia::render('Admin/Level/GauntletManager/List', $props);
@@ -21,7 +21,7 @@ class LevelGauntletManagerPresenter
     {
         Inertia::share('gauntlet', function () use ($gauntlet) {
             $gauntlet->select(['id', 'gauntlet_id', 'level1', 'level2', 'level3', 'level4', 'level5', 'created_at', 'updated_at']);
-            return $gauntlet->load(['level1.user', 'level2.user', 'level3.user', 'level4.user', 'level5.user']);
+            return $gauntlet->load(['level1:id,name', 'level2:id,name', 'level3:id,name', 'level4:id,name', 'level5:id,name']);
         });
 
         return Inertia::render('Admin/Level/GauntletManager/Manage', $props);

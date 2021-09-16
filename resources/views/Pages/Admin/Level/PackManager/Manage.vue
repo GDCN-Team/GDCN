@@ -15,23 +15,23 @@
                         </n-form-item>
                     </n-descriptions-item>
                     <n-descriptions-item label="关卡">
-                        <n-list>
-                            <n-list-item v-for="level in pack.levels.split(',')">
-                                {{ level }} - {{ levels[level] }}
+                        <n-space>
+                            <n-space vertical>
+                                <n-button text type="primary"
+                                          v-for="level in pack.levels.split(',')"
+                                          @click="redirectToRoute('dashboard.level.info', level)">
+                                    {{ level }} - {{ levels[level] }}
+                                </n-button>
+                            </n-space>
 
-                                <template #suffix>
-                                    <n-button @click="redirectToRoute('dashboard.level.info', level)">查看</n-button>
-                                </template>
-                            </n-list-item>
-                        </n-list>
-
-                        <n-form-item
-                            :feedback="updatePackForm.errors.levels ?? null"
-                            :validation-status="updatePackForm.errors.levels ? 'error' : null"
-                            label="关卡"
-                            required>
-                            <n-dynamic-tags v-model:value="updatePackForm.levels"></n-dynamic-tags>
-                        </n-form-item>
+                            <n-form-item
+                                :feedback="updatePackForm.errors.levels ?? null"
+                                :validation-status="updatePackForm.errors.levels ? 'error' : null"
+                                label="关卡"
+                                required>
+                                <n-dynamic-tags v-model:value="updatePackForm.levels"></n-dynamic-tags>
+                            </n-form-item>
+                        </n-space>
                     </n-descriptions-item>
                     <n-descriptions-item label="奖励星星">
                         <n-form-item
@@ -115,8 +115,6 @@ import {
     NForm,
     NFormItem,
     NInput,
-    NList,
-    NListItem,
     NSlider,
     NSpace
 } from "naive-ui";
@@ -156,8 +154,6 @@ export default {
         NCard,
         NDescriptions,
         NDescriptionsItem,
-        NList,
-        NListItem,
         NButton,
         NForm,
         NFormItem,
