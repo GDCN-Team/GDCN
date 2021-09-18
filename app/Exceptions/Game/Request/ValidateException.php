@@ -19,7 +19,7 @@ class ValidateException extends Exception
      * @param Validator $validator
      */
     #[Pure] public function __construct(
-        protected Validator $validator
+        public Validator $validator
     )
     {
         parent::__construct();

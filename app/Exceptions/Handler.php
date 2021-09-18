@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-use App\Exceptions\Game\Request\AuthorizationException;
 use App\Exceptions\Game\Request\ValidateException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\App;
@@ -43,6 +42,10 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             if (App::environment('testing')) {
+                if ($e instanceof ValidateException) {
+                    $e = $e->validator->errors();
+                }
+
                 dump($e);
             }
         });
