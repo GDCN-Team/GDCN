@@ -199,8 +199,11 @@ class LevelService
 
         switch ($type->value) {
             case SearchType::SEARCH:
-                $query->whereKey($str);
-                $query->where('name', 'LIKE', '%' . $str . '%');
+                if (is_int($str)) {
+                    $query->whereKey($str);
+                } else {
+                    $query->where('name', 'LIKE', '%' . $str . '%');
+                }
                 break;
             case SearchType::MOST_DOWNLOADED:
                 $query->orderByDesc('downloads');
