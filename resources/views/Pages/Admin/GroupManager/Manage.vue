@@ -268,9 +268,7 @@ export default {
                         return h(NButton, {
                             type: 'success',
                             loading: accounts_search_table.addForm.processing,
-                            onClick: () => accounts_search_table.addForm.put($route('admin.group.manage.add.member', [props.group.id, row.id]), {
-                                preserveState: false
-                            })
+                            onClick: () => accounts_search_table.addForm.put($route('admin.group.manage.add.member', [props.group.id, row.id]))
                         }, {
                             default: () => '添加'
                         })
@@ -313,9 +311,7 @@ export default {
                         return h(NButton, {
                             type: 'success',
                             loading: flags_search_table.addForm.processing,
-                            onClick: () => flags_search_table.addForm.put($route('admin.group.manage.add.flag', [props.group.id, row.id]), {
-                                preserveState: false
-                            })
+                            onClick: () => flags_search_table.addForm.put($route('admin.group.manage.add.flag', [props.group.id, row.id]))
                         }, {
                             default: () => '添加'
                         })
