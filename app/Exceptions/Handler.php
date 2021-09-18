@@ -2,9 +2,9 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Game\Request\AuthorizationException;
 use App\Exceptions\Game\Request\ValidateException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Facades\App;
 use Throwable;
 
 /**
@@ -19,8 +19,8 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        # AuthorizationException::class,
-        # ValidateException::class
+        AuthorizationException::class,
+        ValidateException::class
     ];
 
     /**
@@ -41,13 +41,7 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            if (App::environment('testing')) {
-                if ($e instanceof ValidateException) {
-                    $e = $e->validator->errors();
-                }
 
-                dump($e);
-            }
         });
     }
 }
