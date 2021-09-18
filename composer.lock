@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c799d6c13ba02e35d6acac65bcee3019",
+    "content-hash": "f79828ebe6248b049dedec82152d02d3",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -2004,16 +2004,16 @@
         },
         {
             "name": "gdcn/hash",
-            "version": "2.1",
+            "version": "2.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GDCN-Team/Hash.git",
-                "reference": "9267d0f40eb59cd25eaaa7056692aeff9c0ce949"
+                "reference": "9fb2f397c3acd24b66b4784fe4f67d09c3440fac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GDCN-Team/Hash/zipball/9267d0f40eb59cd25eaaa7056692aeff9c0ce949",
-                "reference": "9267d0f40eb59cd25eaaa7056692aeff9c0ce949",
+                "url": "https://api.github.com/repos/GDCN-Team/Hash/zipball/9fb2f397c3acd24b66b4784fe4f67d09c3440fac",
+                "reference": "9fb2f397c3acd24b66b4784fe4f67d09c3440fac",
                 "shasum": ""
             },
             "require": {
@@ -2043,9 +2043,9 @@
             "description": "Geometry Dash Chinese Hash",
             "support": {
                 "issues": "https://github.com/GDCN-Team/Hash/issues",
-                "source": "https://github.com/GDCN-Team/Hash/tree/2.1"
+                "source": "https://github.com/GDCN-Team/Hash/tree/2.12"
             },
-            "time": "2021-08-21T13:28:17+00:00"
+            "time": "2021-09-12T04:35:02+00:00"
         },
         {
             "name": "gdcn/xor-cipher",

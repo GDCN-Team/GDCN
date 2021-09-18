@@ -19,7 +19,7 @@
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "gdcn/gd-object": "^1.0",
-        "gdcn/hash": "^2.0",
+        "gdcn/hash": "^2.1",
         "gdcn/xor-cipher": "^1.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^0.4.4",
