@@ -7,10 +7,10 @@ use App\Http\Controllers\Web\Auth\ApiController as AuthApiController;
 use App\Http\Controllers\Web\Dashboard\ApiController as DashboardApiController;
 use App\Http\Controllers\Web\Tools\ApiController as ToolsApiController;
 use App\Http\Middleware\Auth as AuthMiddleWare;
-use App\Presenters\Web\AdminPresenter;
 use App\Presenters\Web\Admin\GroupManagerPresenter;
 use App\Presenters\Web\Admin\LevelGauntletManagerPresenter;
 use App\Presenters\Web\Admin\LevelPackManagerPresenter;
+use App\Presenters\Web\AdminPresenter;
 use App\Presenters\Web\AuthPresenter;
 use App\Presenters\Web\DashboardPresenter;
 use App\Presenters\Web\GDProxyPresenter;
@@ -33,7 +33,6 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'domain' => 'gf.geometrydashchinese.com'
 ], function () {
-    Route::redirect('password.confirm', 'auth.password.confirm');
     Route::get('/', [HomePresenter::class, 'renderHomePage'])->name('home');
 
     Route::group([
@@ -181,7 +180,7 @@ Route::group([
             Route::get('player', [DashboardPresenter::class, 'renderProfilePage'])->name('profile');
 
             Route::group([
-                'middleware' => 'password.confirm'
+                'middleware' => 'password.confirm:auth.password.confirm'
             ], function () {
                 Route::get('/player/setting', [DashboardPresenter::class, 'renderProfileSettingPage'])->name('profile.setting');
 
