@@ -180,6 +180,8 @@ import {
     NH4,
     NIcon,
     NInput,
+    NList,
+    NListItem,
     NModal,
     NSelect,
     NSpace
@@ -400,7 +402,9 @@ export default {
         NDataTable,
         NSelect,
         NColorPicker,
-        NSpace
+        NSpace,
+        NList,
+        NListItem
     }
 }
 </script>
