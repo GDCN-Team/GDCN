@@ -28,10 +28,18 @@ class GroupManagerPresenter
                 return $group?->load(['members:' . app(Account::class)->getTable() . '.id,name', 'flags:' . app(Flag::class)->getTable() . '.id,name']);
             },
             'accounts' => Inertia::lazy(function () {
-                return Account::where('name', 'LIKE', '%' . Request::get('accountSearchText') . '%')->paginate(columns: ['id', 'name']);
+                $existsAccounts = Account\Permission\Assign::whereGroup(Request::route('group')->id)->pluck('account');
+
+                return Account::where('name', 'LIKE', '%' . Request::get('accountSearchText') . '%')
+                    ->whereNotIn('id', $existsAccounts)
+                    ->paginate(columns: ['id', 'name']);
             }),
             'flags' => Inertia::lazy(function () {
-                return Flag::where('name', 'LIKE', '%' . Request::get('flagSearchText') . '%')->paginate(columns: ['id', 'name']);
+                $existsFlags = Account\Permission\FlagAssign::whereGroup(Request::route('group')->id)->pluck('flag');
+
+                return Flag::where('name', 'LIKE', '%' . Request::get('flagSearchText') . '%')
+                    ->whereNotIn('id', $existsFlags)
+                    ->paginate(columns: ['id', 'name']);
             })
         ];
 
