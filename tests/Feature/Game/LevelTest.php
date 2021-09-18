@@ -6,8 +6,10 @@ use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\User;
 use Base64Url\Base64Url;
+use GDCN\Hash\Base\Encoder;
 use GDCN\Hash\Components\DownloadLevelChk;
 use GDCN\Hash\Components\LevelString;
+use GDCN\Hash\Enums\XorKeys;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
@@ -64,7 +66,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => app(LevelString::class)->generateHash($levelString, 50, 49),
+                'seed2' => app(Encoder::class)->encode(app(LevelString::class)->generateHash($levelString, 50, 49), XorKeys::LEVEL_SEED),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
@@ -122,7 +124,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => app(LevelString::class)->generateHash($levelString, 50, 49),
+                'seed2' => app(Encoder::class)->encode(app(LevelString::class)->generateHash($levelString, 50, 49), XorKeys::LEVEL_SEED),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
@@ -180,7 +182,7 @@ class LevelTest extends TestCase
                 'ldm' => false,
                 'extraString' => '0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0',
                 'seed' => Str::random(),
-                'seed2' => app(LevelString::class)->generateHash($levelString, 50, 49),
+                'seed2' => app(Encoder::class)->encode(app(LevelString::class)->generateHash($levelString, 50, 49), XorKeys::LEVEL_SEED),
                 'levelString' => $levelString,
                 'levelInfo' => Str::random(),
                 'secret' => 'Wmfd2893gb7'
