@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="权限组列表">
+    <page-layout title="权限组列表">
         <n-card>
             <n-button @click="createGroupModel.show = true">新建权限组</n-button>
             <br><br>

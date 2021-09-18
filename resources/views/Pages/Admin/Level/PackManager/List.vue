@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="关卡包列表">
+    <page-layout title="关卡包列表">
         <n-card>
             <n-button @click="createPackModal.show = true">新建关卡包</n-button>
             <br><br>

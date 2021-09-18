@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="个人资料">
+    <page-layout title="个人资料">
         <n-card class="mt-5">
             <n-grid cols="1 768:2" x-gap="10" y-gap="10">
                 <n-grid-item>
@@ -34,7 +34,8 @@
                             </n-descriptions-item>
                             <n-descriptions-item label="用户名">
                                 {{ account.user.name }}
-                                <n-button :disabled="syncUserNameForm.processing || account.name === account.user.name" :loading="syncUserNameForm.processing"
+                                <n-button :disabled="syncUserNameForm.processing || account.name === account.user.name"
+                                          :loading="syncUserNameForm.processing"
                                           text
                                           type="primary"
                                           @click="syncUserNameForm.get(route('dashboard.profile.name.sync.api'))">

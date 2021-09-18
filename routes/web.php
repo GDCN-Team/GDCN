@@ -13,6 +13,7 @@ use App\Presenters\Web\Admin\LevelPackManagerPresenter;
 use App\Presenters\Web\AdminPresenter;
 use App\Presenters\Web\AuthPresenter;
 use App\Presenters\Web\DashboardPresenter;
+use App\Presenters\Web\DocsPresenter;
 use App\Presenters\Web\GDProxyPresenter;
 use App\Presenters\Web\HomePresenter;
 use App\Presenters\Web\NGProxyPresenter;
@@ -134,6 +135,14 @@ Route::group([
                     ->name('pack.delete');
             });
         });
+    });
+
+    Route::group([
+        'prefix' => 'docs',
+        'as' => 'docs.'
+    ], function () {
+        Route::get('/', [DocsPresenter::class, 'renderHomePage'])->name('home');
+        Route::get('/commands', [DocsPresenter::class, 'renderCommandsPage'])->name('commands');
     });
 
     Route::group([

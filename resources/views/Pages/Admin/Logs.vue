@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="日志查看">
+    <page-layout title="日志查看">
 
     </page-layout>
 </template>

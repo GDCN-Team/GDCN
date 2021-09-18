@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-1/3" title="关卡搬进">
+    <page-layout title="关卡搬进">
         <n-card>
             <n-form :model="form">
                 <n-form-item

@@ -14,7 +14,7 @@
 
 <script>
 import {h} from "vue";
-import {ColorSwitch, Dashboard, Home, Tools, User} from "@vicons/carbon";
+import {Book, ColorSwitch, Dashboard, Home, Tools, User} from "@vicons/carbon";
 import {NIcon, NMenu, NSpace} from "naive-ui";
 import {isMobile} from "../../../js/helper";
 
@@ -58,6 +58,13 @@ export default {
                         }, 'Tools'),
                         key: 'tools.home',
                         icon: renderMenuIcon(Tools)
+                    },
+                    { // Docs
+                        label: () => h('a', {
+                            href: $route('docs.home')
+                        }, '文档站'),
+                        key: 'docs.home',
+                        icon: renderMenuIcon(Book)
                     }
                 ]
             },

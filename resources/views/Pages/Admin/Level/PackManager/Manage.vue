@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="关卡包管理">
+    <page-layout title="关卡包管理">
         <n-card>
             <n-form :model="updatePackForm">
                 <n-descriptions :columns="columns" :title="pack.name" bordered>
@@ -17,8 +17,8 @@
                     <n-descriptions-item label="关卡">
                         <n-space>
                             <n-space vertical>
-                                <n-button text type="primary"
-                                          v-for="level in pack.levels.split(',')"
+                                <n-button v-for="level in pack.levels.split(',')" text
+                                          type="primary"
                                           @click="redirectToRoute('dashboard.level.info', level)">
                                     {{ level }} - {{ levels[level] }}
                                 </n-button>
@@ -39,8 +39,8 @@
                             :validation-status="updatePackForm.errors.stars ? 'error' : null"
                             label="奖励星星"
                             required>
-                            <n-slider :min="1" :step="1"
-                                      v-model:value="updatePackForm.stars"></n-slider>
+                            <n-slider v-model:value="updatePackForm.stars" :min="1"
+                                      :step="1"></n-slider>
                         </n-form-item>
                     </n-descriptions-item>
                     <n-descriptions-item label="奖励金币">
@@ -49,8 +49,8 @@
                             :validation-status="updatePackForm.errors.coins ? 'error' : null"
                             label="奖励金币"
                             required>
-                            <n-slider :min="1" :step="1"
-                                      v-model:value="updatePackForm.coins"></n-slider>
+                            <n-slider v-model:value="updatePackForm.coins" :min="1"
+                                      :step="1"></n-slider>
                         </n-form-item>
                     </n-descriptions-item>
                     <n-descriptions-item label="难度">
@@ -59,8 +59,8 @@
                             :validation-status="updatePackForm.errors.difficulty ? 'error' : null"
                             label="难度"
                             required>
-                            <n-slider :format-tooltip="formatDifficulty" :min="0" :max="10" :step="1"
-                                      v-model:value="updatePackForm.difficulty"></n-slider>
+                            <n-slider v-model:value="updatePackForm.difficulty" :format-tooltip="formatDifficulty" :max="10" :min="0"
+                                      :step="1"></n-slider>
                         </n-form-item>
                     </n-descriptions-item>
                     <n-descriptions-item label="标题颜色">
@@ -93,8 +93,8 @@
                 <br>
                 <n-space>
                     <n-button @click="updatePackForm.reset()">取消</n-button>
-                    <n-button :loading="updatePackForm.processing"
-                              :disabled="updatePackForm.processing || !updatePackForm.isDirty"
+                    <n-button :disabled="updatePackForm.processing || !updatePackForm.isDirty"
+                              :loading="updatePackForm.processing"
                               @click="updatePackForm.patch(route('admin.level.pack.update', pack.id))">更新
                     </n-button>
                 </n-space>

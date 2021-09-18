@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="管理员工具">
+    <page-layout title="管理员工具">
         <n-grid cols="1 768:2" x-gap="10" y-gap="10">
             <n-grid-item>
                 <n-card title="账号权限">

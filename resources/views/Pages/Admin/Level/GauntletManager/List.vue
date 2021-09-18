@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="Gauntlets 列表">
+    <page-layout title="Gauntlets 列表">
         <n-button @click="createGauntletModal.show = true">新建 Gauntlet</n-button>
         <br><br>
         <n-data-table :columns="columns"

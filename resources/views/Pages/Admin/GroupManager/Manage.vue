@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="权限组管理">
+    <page-layout title="权限组管理">
         <n-card>
             <n-form :model="updateGroupForm">
                 <n-descriptions :columns="columns" :title="group.name" bordered>
@@ -28,8 +28,8 @@
                             :feedback="updateGroupForm.errors.comment_color ?? null"
                             :validation-status="updateGroupForm.errors.comment_color ? 'error' : null"
                             required>
-                            <n-color-picker :show-alpha="false"
-                                            v-model:value="updateGroupForm.comment_color"></n-color-picker>
+                            <n-color-picker v-model:value="updateGroupForm.comment_color"
+                                            :show-alpha="false"></n-color-picker>
                         </n-form-item>
                     </n-descriptions-item>
                     <n-descriptions-item label="创建时间">
@@ -42,8 +42,8 @@
                 <br>
                 <n-space>
                     <n-button @click="updateGroupForm.reset()">取消</n-button>
-                    <n-button :loading="updateGroupForm.processing"
-                              :disabled="updateGroupForm.processing || !updateGroupForm.isDirty"
+                    <n-button :disabled="updateGroupForm.processing || !updateGroupForm.isDirty"
+                              :loading="updateGroupForm.processing"
                               @click="updateGroupForm.patch(route('admin.group.update', group.id))">更新
                     </n-button>
                 </n-space>
@@ -64,8 +64,8 @@
                             {{ account.name }}
 
                             <template #suffix>
-                                <n-button :loading="removeAccountFromGroupForm.processing" type="error"
-                                          :disabled="removeAccountFromGroupForm.processing"
+                                <n-button :disabled="removeAccountFromGroupForm.processing" :loading="removeAccountFromGroupForm.processing"
+                                          type="error"
                                           @click="removeAccountFromGroupForm.delete(route('admin.group.manage.delete.member', [group.id, account.id]))">
                                     移除
                                 </n-button>
@@ -88,8 +88,8 @@
                             {{ flag.name }}
 
                             <template #suffix>
-                                <n-button :loading="removeFlagFromGroupForm.processing" type="error"
-                                          :disabled="removeFlagFromGroupForm.processing"
+                                <n-button :disabled="removeFlagFromGroupForm.processing" :loading="removeFlagFromGroupForm.processing"
+                                          type="error"
                                           @click="removeFlagFromGroupForm.delete(route('admin.group.manage.delete.flag', [group.id, flag.id]))">
                                     移除
                                 </n-button>

@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="账号设置">
+    <page-layout title="账号设置">
         <n-card>
             <n-form :model="form">
                 <n-form-item

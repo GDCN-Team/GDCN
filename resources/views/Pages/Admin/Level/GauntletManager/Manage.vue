@@ -1,5 +1,5 @@
 <template>
-    <page-layout class="lg:w-2/3" title="Gauntlet 管理">
+    <page-layout title="Gauntlet 管理">
         <n-card>
             <n-form :model="updateGauntletForm">
                 <n-descriptions :columns="columns" bordered title="Gauntlet 管理">
