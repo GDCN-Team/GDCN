@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Models\Game\Account;
 use App\Models\Game\Account\PasswordReset;
 use App\Services\Game\AntiCheatService;
+use App\Services\Game\OptimizeService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -45,6 +46,10 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             app(AntiCheatService::class)->run();
+        })->daily();
+
+        $schedule->call(function () {
+            app(OptimizeService::class)->run();
         })->daily();
     }
 
