@@ -17,9 +17,13 @@ class GauntletService
                 $hash .= implode(null, [
                     $gauntlet->gauntlet_id,
                     $gauntlet->level1,
+                    ',',
                     $gauntlet->level2,
+                    ',',
                     $gauntlet->level3,
+                    ',',
                     $gauntlet->level4,
+                    ',',
                     $gauntlet->level5
                 ]);
 
