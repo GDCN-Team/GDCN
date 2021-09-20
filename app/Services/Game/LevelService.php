@@ -306,7 +306,7 @@ class LevelService
                 default:
                     $query->whereHas('rating', function (Builder $query) use ($diff) {
                         $difficulties = explode(',', strtr($diff, [',' => '0,']) . '0');
-                        $query->where('difficulty', $difficulties);
+                        $query->whereIn('difficulty', $difficulties);
                         $query->where('auto', false);
                         $query->where('demon', false);
                     });
