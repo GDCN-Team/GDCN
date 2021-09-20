@@ -293,8 +293,12 @@ class LevelService
                     break;
                 case -2: // Demon
                     $query->whereHas('rating', function (Builder $query) use ($demonFilter) {
-                        $diff = app(RatingService::class)->guessDemonDifficultyFromRating($demonFilter);
-                        $query->where('demon_difficulty', $diff);
+                        $query->where('demon', true);
+
+                        if (!empty($demonFilter)) {
+                            $diff = app(RatingService::class)->guessDemonDifficultyFromRating($demonFilter);
+                            $query->where('demon_difficulty', $diff);
+                        }
                     });
                     break;
                 case -3: // Auto
