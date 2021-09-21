@@ -18,7 +18,7 @@ class CreateGameLevelContestsTable extends Migration
             $table->string('name');
             $table->string('desc');
             $table->foreignId('accountID');
-            $table->timestamp('expired_at');
+            $table->timestamp('expired_at')->useCurrent();
             $table->timestamps();
         });
     }
