@@ -24,7 +24,7 @@ export default {
     },
     computed: {
         container_class: function () {
-            return `container lg:mx-auto ${this.class}`;
+            return `container mx-auto ${this.class}`;
         }
     },
     setup: function () {

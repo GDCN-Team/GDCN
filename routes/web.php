@@ -5,13 +5,14 @@ use App\Http\Controllers\Game\NGProxyController;
 use App\Http\Controllers\Web\Admin\ApiController as AdminApiController;
 use App\Http\Controllers\Web\Auth\ApiController as AuthApiController;
 use App\Http\Controllers\Web\Dashboard\ApiController as DashboardApiController;
+use App\Http\Controllers\Web\Dashboard\Contest\ApiController as DashboardContestApiController;
 use App\Http\Controllers\Web\Tools\ApiController as ToolsApiController;
-use App\Http\Middleware\Auth as AuthMiddleWare;
 use App\Presenters\Web\Admin\GroupManagerPresenter;
 use App\Presenters\Web\Admin\LevelGauntletManagerPresenter;
 use App\Presenters\Web\Admin\LevelPackManagerPresenter;
 use App\Presenters\Web\AdminPresenter;
 use App\Presenters\Web\AuthPresenter;
+use App\Presenters\Web\Dashboard\ContestPresenter;
 use App\Presenters\Web\DashboardPresenter;
 use App\Presenters\Web\DocsPresenter;
 use App\Presenters\Web\GDProxyPresenter;
@@ -37,7 +38,7 @@ Route::group([
     Route::get('/', [HomePresenter::class, 'renderHomePage'])->name('home');
 
     Route::group([
-        'middleware' => AuthMiddleWare::class,
+        'middleware' => 'auth',
         'prefix' => 'admin',
         'as' => 'admin.'
     ], function () {
@@ -166,7 +167,7 @@ Route::group([
         });
 
         Route::group([
-            'middleware' => AuthMiddleWare::class
+            'middleware' => 'auth'
         ], function () {
             Route::get('/password/confirm', [AuthPresenter::class, 'renderPasswordConfirmPage'])->name('password.confirm');
 
@@ -184,7 +185,16 @@ Route::group([
         Route::get('/level/{level}', [DashboardPresenter::class, 'renderLevelInfoPage'])->name('level.info');
 
         Route::group([
-            'middleware' => AuthMiddleWare::class
+            'as' => 'contest.'
+        ], function () {
+            Route::get('/contest/{contest}', [ContestPresenter::class, 'renderInfoPage'])->name('info');
+            Route::get('/contest/{contest}/join', [ContestPresenter::class, 'renderJoinPage'])->name('join');
+            Route::get('/contest/{contest}/join/{level}', [DashboardContestApiController::class, 'joinContest'])->name('join.api');
+            Route::get('/contests', [ContestPresenter::class, 'renderListPage'])->name('list');
+        });
+
+        Route::group([
+            'middleware' => 'auth'
         ], function () {
             Route::get('player', [DashboardPresenter::class, 'renderProfilePage'])->name('profile');
 
@@ -207,7 +217,7 @@ Route::group([
         Route::get('/', [ToolsPresenter::class, 'renderHomePage'])->name('home');
 
         Route::group([
-            'middleware' => AuthMiddleWare::class
+            'middleware' => 'auth'
         ], function () {
             Route::get('/account/link', [ToolsPresenter::class, 'renderAccountLinkPage'])->name('account.link');
             Route::get('/account/links', [ToolsPresenter::class, 'renderAccountLinkListPage'])->name('account.link.list');

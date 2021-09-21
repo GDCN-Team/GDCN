@@ -29,6 +29,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|BannedUser whereUpdatedAt($value)
  * @method static Builder|BannedUser whereUser($value)
  * @mixin Eloquent
+ * @property string|null $expired_at
+ * @method static Builder|BannedUser whereExpiredAt($value)
  */
 class BannedUser extends Model
 {

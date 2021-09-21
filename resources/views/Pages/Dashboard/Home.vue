@@ -1,14 +1,19 @@
 <template>
     <page-layout title="Dashboard">
-        <n-card title="统计">
-            <n-space justify="space-evenly">
-                <n-statistic label="账号">{{ dynamic['accounts_count'] }}</n-statistic>
-                <n-statistic label="关卡">{{ dynamic['levels_count'] }}</n-statistic>
-                <n-statistic label="关卡包">{{ dynamic['level_packs_count'] }}</n-statistic>
-                <n-statistic label="评论">{{ dynamic['comments_count'] }}</n-statistic>
-                <n-statistic label="Moderator">{{ dynamic['moderators_count'] }}</n-statistic>
-            </n-space>
-        </n-card>
+        <n-space vertical>
+            <n-card>
+                <n-button @click="redirectToRoute('dashboard.contest.list')">所有比赛</n-button>
+            </n-card>
+            <n-card title="统计">
+                <n-space justify="space-evenly">
+                    <n-statistic label="账号">{{ dynamic['accounts_count'] }}</n-statistic>
+                    <n-statistic label="关卡">{{ dynamic['levels_count'] }}</n-statistic>
+                    <n-statistic label="关卡包">{{ dynamic['level_packs_count'] }}</n-statistic>
+                    <n-statistic label="评论">{{ dynamic['comments_count'] }}</n-statistic>
+                    <n-statistic label="Moderator">{{ dynamic['moderators_count'] }}</n-statistic>
+                </n-space>
+            </n-card>
+        </n-space>
         <n-grid class="mt-5" cols="1 768:3" x-gap="10" y-gap="10">
             <n-grid-item>
                 <n-card title="服务器动态">
@@ -36,7 +41,7 @@
                                             By
                                             {{ level.user?.name }}
                                         </n-button>
-                                        <n-button @click="showNotAccountMessage" v-else text type="error">By
+                                        <n-button v-else text type="error" @click="showNotAccountMessage">By
                                             {{ level.user?.name }}
                                         </n-button>
                                     </div>
@@ -65,8 +70,9 @@
                                             {{ rating?.level?.user?.name }}
                                         </n-button>
                                         <n-button
-                                            @click="showNotAccountMessage"
-                                            v-else text type="error">By {{ rating?.level?.user?.name }}
+                                            v-else
+                                            text type="error" @click="showNotAccountMessage">By
+                                            {{ rating?.level?.user?.name }}
                                         </n-button>
                                     </div>
                                     <n-text>Rate于 {{ formatTime(rating.created_at, '未知') }}</n-text>
@@ -89,8 +95,9 @@
                                             {{ rating?.level?.user?.name }}
                                         </n-button>
                                         <n-button
-                                            @click="showNotAccountMessage"
-                                            v-else text type="error">By {{ rating?.level?.user?.name }}
+                                            v-else
+                                            text type="error" @click="showNotAccountMessage">By
+                                            {{ rating?.level?.user?.name }}
                                         </n-button>
                                     </div>
                                     <n-text>Rate于 {{ formatTime(rating.created_at, '未知') }}</n-text>
@@ -113,8 +120,9 @@
                                             {{ rating?.level?.user?.name }}
                                         </n-button>
                                         <n-button
-                                            @click="showNotAccountMessage"
-                                            v-else text type="error">By {{ rating?.level?.user?.name }}
+                                            v-else
+                                            text type="error" @click="showNotAccountMessage">By
+                                            {{ rating?.level?.user?.name }}
                                         </n-button>
                                     </div>
                                     <n-text>Rate于 {{ formatTime(rating.created_at, '未知') }}</n-text>
@@ -131,11 +139,11 @@
                             <n-space v-for="(score, index) in dynamic['top_stars'].data" justify="space-between">
                                 <n-text>
                                     <n-button v-if="isAccount(score.user)"
-                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)" text
-                                              type="primary">
+                                              text type="primary"
+                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)">
                                         {{ score.user?.id }} - {{ score.user?.name }}
                                     </n-button>
-                                    <n-button @click="showNotAccountMessage" text type="error" v-else>
+                                    <n-button v-else text type="error" @click="showNotAccountMessage">
                                         {{ score.user?.id }} - {{ score.user?.name }}
                                     </n-button>
                                     | {{ score.stars }} Stars
@@ -147,11 +155,11 @@
                             <n-space v-for="(score, index) in dynamic['top_diamonds'].data" justify="space-between">
                                 <n-text>
                                     <n-button v-if="isAccount(score.user)"
-                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)" text
-                                              type="primary">
+                                              text type="primary"
+                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)">
                                         {{ score.user?.id }} - {{ score.user?.name }}
                                     </n-button>
-                                    <n-button @click="showNotAccountMessage" text type="error" v-else>
+                                    <n-button v-else text type="error" @click="showNotAccountMessage">
                                         {{ score.user?.id }} - {{ score.user?.name }}
                                     </n-button>
                                     | {{ score.diamonds }} Diamonds
@@ -163,11 +171,11 @@
                             <n-space v-for="(score, index) in dynamic['top_demons'].data" justify="space-between">
                                 <n-text>
                                     <n-button v-if="isAccount(score.user)"
-                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)" text
-                                              type="primary">
+                                              text type="primary"
+                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)">
                                         {{ score.user?.id }} - {{ score.user?.name }}
                                     </n-button>
-                                    <n-button @click="showNotAccountMessage" text type="error" v-else>
+                                    <n-button v-else text type="error" @click="showNotAccountMessage">
                                         {{ score.user?.id }} - {{ score.user?.name }}
                                     </n-button>
                                     | {{ score.demons }} Demons
@@ -180,11 +188,11 @@
                                      justify="space-between">
                                 <n-text>
                                     <n-button v-if="isAccount(score.user)"
-                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)" text
-                                              type="primary">
+                                              text type="primary"
+                                              @click="redirectToRoute('dashboard.account.info', score.user?.uuid)">
                                         {{ score.user?.id }} - {{ score.user?.name }}
                                     </n-button>
-                                    <n-button @click="showNotAccountMessage" text type="error" v-else>
+                                    <n-button v-else text type="error" @click="showNotAccountMessage">
                                         {{ score.user?.id }} - {{ score.user?.name }}
                                     </n-button>
                                     | {{ score.creator_points }} Creator Points

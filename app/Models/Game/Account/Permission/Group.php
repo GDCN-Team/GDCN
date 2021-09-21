@@ -2,7 +2,6 @@
 
 namespace App\Models\Game\Account\Permission;
 
-use App\Events\DeleteingGroupEvent;
 use App\Events\GroupDeleting;
 use App\Models\Game\Account;
 use Database\Factories\Game\Account\Permission\GroupFactory;

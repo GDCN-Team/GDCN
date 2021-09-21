@@ -1,6 +1,6 @@
 <template>
     <layout>
-        <div class="container p-2 lg:mx-auto">
+        <div class="container p-2 mx-auto">
             <img :alt="server.app_name" :src="server.cdn_url + '/images/title.png'">
 
             <n-grid class="mt-5" cols="1 768:2 1024:4" x-gap="10" y-gap="10">

@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Models\Game\Level\Contest\Level;
+
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
+
+/**
+ * App\Models\Game\Level\Contest\Level\Flag
+ *
+ * @property int $id
+ * @property string $name
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @method static Builder|Flag newModelQuery()
+ * @method static Builder|Flag newQuery()
+ * @method static Builder|Flag query()
+ * @method static Builder|Flag whereCreatedAt($value)
+ * @method static Builder|Flag whereId($value)
+ * @method static Builder|Flag whereName($value)
+ * @method static Builder|Flag whereUpdatedAt($value)
+ * @mixin Eloquent
+ */
+class Flag extends Model
+{
+    use HasFactory;
+
+    protected $table = 'game_level_contest_level_flags';
+
+    public function assigns(): HasMany
+    {
+        return $this->hasMany(FlagAssign::class, 'flagID');
+    }
+}
