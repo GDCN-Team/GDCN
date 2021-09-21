@@ -44,8 +44,13 @@ class LevelsController extends Controller
      */
     public function search(SearchRequest $request): string
     {
-        $data = $request->validated();
         try {
+            $data = $request->validated();
+
+            if (!empty($data['gauntlet'])) {
+                return $this->service->SearchGauntlet($data['gauntlet']);
+            }
+
             return $this->service->search(
                 SearchType::fromValue((int)$data['type']),
                 $data['str'],

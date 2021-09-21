@@ -6,6 +6,7 @@ use BenSampo\Enum\Enum;
 
 final class SearchType extends Enum
 {
+    public const GAUNTLET = -1;
     public const SEARCH = 0;
     public const MOST_DOWNLOADED = 1;
     public const MOST_LIKED = 2;

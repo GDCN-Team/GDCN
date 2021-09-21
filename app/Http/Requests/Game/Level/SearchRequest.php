@@ -4,6 +4,7 @@ namespace App\Http\Requests\Game\Level;
 
 use App\Http\Requests\Game\Request;
 use App\Models\Game\Account;
+use App\Models\Game\Level\Gauntlet;
 use App\Rules\ValidateAccountCreditRule;
 use Illuminate\Validation\Rule;
 
@@ -69,6 +70,10 @@ class SearchRequest extends Request
             'demonFilter' => [
                 'sometimes',
                 'between:1,5'
+            ],
+            'gauntlet' => [
+                'sometimes',
+                Rule::exists(Gauntlet::class, 'gauntlet_id')
             ],
             'secret' => Rule::in(['Wmfd2893gb7'])
         ];

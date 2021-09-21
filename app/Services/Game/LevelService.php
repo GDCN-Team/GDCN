@@ -9,6 +9,7 @@ use App\Exceptions\Game\NoItemException;
 use App\Models\Game\Account;
 use App\Models\Game\Level;
 use App\Models\Game\Level\Daily;
+use App\Models\Game\Level\Gauntlet;
 use App\Models\Game\Level\Report;
 use App\Models\Game\Level\Weekly;
 use App\Models\Game\Log;
@@ -164,276 +165,6 @@ class LevelService
         Cache::put("level.$level->id", [
             'version' => $level->version,
             'levelString' => $levelString
-        ]);
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     * @throws NoItemException
-     */
-    public function search(
-        SearchType $type,
-        ?string    $str,
-        int        $page,
-        int        $accountID,
-        ?string    $followed,
-        ?string    $len,
-        ?bool      $star,
-        ?string    $diff,
-        ?int       $demonFilter,
-        ?bool      $unCompleted,
-        ?bool      $onlyCompleted,
-        ?string    $completedLevels,
-        ?bool      $featured,
-        ?bool      $original,
-        ?bool      $epic,
-        ?int       $song,
-        ?bool      $customSong,
-        ?bool      $noStar,
-        ?bool      $coins,
-        ?bool      $twoPlayer
-    ): string
-    {
-        $query = Level::query();
-        $showUnlisted = false;
-
-        switch ($type->value) {
-            case SearchType::SEARCH:
-                if (is_int($str)) {
-                    $query->whereKey($str);
-                } else {
-                    $query->where('name', 'LIKE', '%' . $str . '%');
-                }
-                break;
-            case SearchType::MOST_DOWNLOADED:
-                $query->orderByDesc('downloads');
-                break;
-            case SearchType::MOST_LIKED:
-                $query->orderByDesc('likes');
-                break;
-            case SearchType::TRENDING:
-                $query->whereDate('created_at', '>', app(Carbon::class)->subWeek());
-                $query->orderByDesc('likes');
-                break;
-            case SearchType::RECENT:
-                $query->orderByDesc('created_at');
-                break;
-            case SearchType::USER:
-                $user = User::find($str);
-                if (empty($user)) {
-                    throw new NoItemException();
-                }
-
-                if ($accountID == $user->id) {
-                    $showUnlisted = true;
-                }
-
-                $query->where('user', $str);
-                break;
-            case SearchType::FEATURED:
-                $query->whereHas('rating', function (Builder $query) {
-                    $query->where('featured_score', '>', 0);
-                });
-                break;
-            case SearchType::MAGIC:
-                $query->where('objects', '>', 9999);
-                break;
-            case SearchType::PACK:
-                $query->whereIn('id', explode(',', $str));
-                break;
-            case SearchType::AWARDED:
-                $query->whereHas('rating', function (Builder $query) {
-                    $query->where('stars', '>', 0);
-                });
-                break;
-            case SearchType::FOLLOWED:
-                $query->whereHas('user', function (Builder $query) use ($followed) {
-                    $query->whereIn('uuid', explode(',', $followed));
-                });
-                break;
-            case SearchType::FRIENDS:
-                $account = Account::find($accountID);
-                if (empty($account)) {
-                    throw new NoItemException();
-                }
-
-                $query->whereHas('user', function (Builder $query) use ($account) {
-                    $query->whereIn('uuid', $account->friends->pluck('id'));
-                });
-                break;
-            case SearchType::HALL_OF_FAME:
-                $query->whereHas('rating', function (Builder $query) {
-                    $query->where('epic', true);
-                });
-                break;
-            default:
-                throw new InvalidArgumentException();
-        }
-
-        if (!$showUnlisted) {
-            $query->where('unlisted', '!=', true);
-        }
-
-        // Filters
-
-        if (!empty($len) && $len !== '-') {
-            $query->whereLength($len);
-        }
-
-        if ($star === true) {
-            $query->whereHas('rating', function (Builder $query) use ($star) {
-                $query->where('stars', $star);
-            });
-        }
-
-        if (!empty($diff) && $diff !== '-') {
-            switch ($diff) {
-                case -1: // N/A
-                    $query->whereDoesntHave('rating');
-                    break;
-                case -2: // Demon
-                    $query->whereHas('rating', function (Builder $query) use ($demonFilter) {
-                        $query->where('demon', true);
-
-                        if (!empty($demonFilter)) {
-                            $diff = app(RatingService::class)->guessDemonDifficultyFromRating($demonFilter);
-                            $query->where('demon_difficulty', $diff);
-                        }
-                    });
-                    break;
-                case -3: // Auto
-                    $query->whereHas('rating', function (Builder $query) {
-                        $query->where('stars', 1);
-                        $query->where('auto', true);
-                    });
-                    break;
-                default:
-                    $query->whereHas('rating', function (Builder $query) use ($diff) {
-                        $difficulties = explode(',', strtr($diff, [',' => '0,']) . '0');
-                        $query->whereIn('difficulty', $difficulties);
-                        $query->where('auto', false);
-                        $query->where('demon', false);
-                    });
-            }
-        }
-
-        // Advanced Options
-
-        if ($unCompleted === true && !empty($completedLevels)) {
-            $query->whereNotIn('id', explode(',', $completedLevels));
-        }
-
-        if ($onlyCompleted === true && !empty($completedLevels)) {
-            $query->whereIn('id', explode(',', $completedLevels));
-        }
-
-        if ($featured === true) {
-            $query->whereHas('rating', function (Builder $query) {
-                $query->where('featured_score', '>', 0);
-            });
-        }
-
-        if ($original === true) {
-            $query->whereNotNull('original');
-        }
-
-        if ($epic === true) {
-            $query->whereHas('rating', function (Builder $query) {
-                $query->where('epic', true);
-            });
-        }
-
-        if (!empty($song)) {
-            if ($customSong === true) {
-                $query->whereSong($song);
-            } else {
-                $query->whereAudioTrack($song);
-            }
-        }
-
-        if ($noStar === true) {
-            $query->whereHas('rating', function (Builder $query) {
-                $query->orWhere('stars', '<=', 0);
-            });
-        }
-
-        if ($coins === true) {
-            $query->where('coins', '!=', 0);
-        }
-
-        if ($twoPlayer === true) {
-            $query->where('two_player', true);
-        }
-
-        $hash = '';
-        $users = [];
-        $songs = [];
-
-        $count = $query->count();
-        $result = $query->forPage(++$page, PageInfoComponent::$per_page)
-            ->with('rating')
-            ->get()
-            ->map(function (Level $level) use (&$hash, &$users, &$songs) {
-                $hash .= implode(null, [
-                    substr($level->id, 0, 1),
-                    substr($level->id, -1),
-                    $level->rating->stars ?? 0,
-                    $level->rating->coin_verified ?? 0
-                ]);
-
-                /** @var User $user */
-                $user = $level->getRelationValue('user');
-                $users[] = implode(':', [
-                    $user->id,
-                    $user->name,
-                    is_numeric($user->uuid) ? $user->uuid : 0
-                ]);
-
-                if ($level->song > 0) {
-                    $songs[] = $this->songService->get($level->song);
-                }
-
-                return GDObject::merge([
-                    1 => $level->id,
-                    2 => $level->name,
-                    3 => $level->getRawOriginal('desc'),
-                    5 => $level->version,
-                    6 => $level->user,
-                    8 => ($level->rating->difficulty ?? 0) > 0 ? 10 : 0,
-                    9 => $level->rating->difficulty ?? 0,
-                    10 => $level->downloads,
-                    12 => $level->audio_track,
-                    13 => $level->game_version,
-                    14 => $level->likes,
-                    15 => $level->length,
-                    17 => $level->rating->demon ?? 0,
-                    18 => $level->rating->stars ?? 0,
-                    19 => $level->rating->featured_score ?? 0,
-                    25 => $level->rating->auto ?? 0,
-                    30 => $level->original,
-                    31 => $level->two_player,
-                    35 => $level->song,
-                    36 => $level->extra_string,
-                    37 => $level->coins,
-                    38 => $level->rating->coin_verified ?? 0,
-                    39 => $level->requested_stars,
-                    42 => $level->rating->epic ?? 0,
-                    43 => $level->rating->demon_difficulty ?? 0,
-                    45 => $level->objects
-                ], ':');
-            })->join('|');
-
-        LogFacade::channel('gdcn')
-            ->info('[Level System] Action: Search Level', [
-                'query' => $query->toSql()
-            ]);
-
-        return implode('#', [
-            $result,
-            implode('|', $users),
-            implode('~:~', $songs),
-            app(PageInfoComponent::class)->generate($count, $page),
-            app(LevelInfoComponent::class)->generateHash($hash)
         ]);
     }
 
@@ -658,5 +389,301 @@ class LevelService
             ->update([
                 'desc' => $desc
             ]);
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws NoItemException
+     */
+    public function SearchGauntlet(int $gauntletID): string
+    {
+        return $this->search(
+            SearchType::fromValue(-1),
+            gauntletID: $gauntletID
+        );
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws NoItemException
+     */
+    public function search(
+        SearchType $type,
+        ?string    $str = null,
+        int        $page = 0,
+        int        $accountID = 0,
+        ?string    $followed = null,
+        ?string    $len = null,
+        ?bool      $star = null,
+        ?string    $diff = null,
+        ?int       $demonFilter = null,
+        ?bool      $unCompleted = null,
+        ?bool      $onlyCompleted = null,
+        ?string    $completedLevels = null,
+        ?bool      $featured = null,
+        ?bool      $original = null,
+        ?bool      $epic = null,
+        ?int       $song = null,
+        ?bool      $customSong = null,
+        ?bool      $noStar = null,
+        ?bool      $coins = null,
+        ?bool      $twoPlayer = null,
+        int        $gauntletID = null
+    ): string
+    {
+        $query = Level::query();
+        $showUnlisted = false;
+
+        switch ($type->value) {
+            case SearchType::GAUNTLET:
+                $gauntlet = Gauntlet::whereGauntletId($gauntletID)->first();
+                $query->findMany([
+                    $gauntlet->level1,
+                    $gauntlet->level2,
+                    $gauntlet->level3,
+                    $gauntlet->level4,
+                    $gauntlet->level5
+                ]);
+                break;
+            case SearchType::SEARCH:
+                if (is_int($str)) {
+                    $query->whereKey($str);
+                } else {
+                    $query->where('name', 'LIKE', '%' . $str . '%');
+                }
+                break;
+            case SearchType::MOST_DOWNLOADED:
+                $query->orderByDesc('downloads');
+                break;
+            case SearchType::MOST_LIKED:
+                $query->orderByDesc('likes');
+                break;
+            case SearchType::TRENDING:
+                $query->whereDate('created_at', '>', app(Carbon::class)->subWeek());
+                $query->orderByDesc('likes');
+                break;
+            case SearchType::RECENT:
+                $query->orderByDesc('created_at');
+                break;
+            case SearchType::USER:
+                $user = User::find($str);
+                if (empty($user)) {
+                    throw new NoItemException();
+                }
+
+                if ($accountID == $user->id) {
+                    $showUnlisted = true;
+                }
+
+                $query->where('user', $str);
+                break;
+            case SearchType::FEATURED:
+                $query->whereHas('rating', function (Builder $query) {
+                    $query->where('featured_score', '>', 0);
+                });
+                break;
+            case SearchType::MAGIC:
+                $query->where('objects', '>', 9999);
+                break;
+            case SearchType::PACK:
+                $query->findMany(
+                    explode(',', $str)
+                );
+                break;
+            case SearchType::AWARDED:
+                $query->whereHas('rating', function (Builder $query) {
+                    $query->where('stars', '>', 0);
+                });
+                break;
+            case SearchType::FOLLOWED:
+                $query->whereHas('user', function (Builder $query) use ($followed) {
+                    $query->whereIn('uuid', explode(',', $followed));
+                });
+                break;
+            case SearchType::FRIENDS:
+                $account = Account::find($accountID);
+                if (empty($account)) {
+                    throw new NoItemException();
+                }
+
+                $query->whereHas('user', function (Builder $query) use ($account) {
+                    $query->whereIn('uuid', $account->friends->pluck('id'));
+                });
+                break;
+            case SearchType::HALL_OF_FAME:
+                $query->whereHas('rating', function (Builder $query) {
+                    $query->where('epic', true);
+                });
+                break;
+            default:
+                throw new InvalidArgumentException();
+        }
+
+        if (!$showUnlisted) {
+            $query->where('unlisted', '!=', true);
+        }
+
+        // Filters
+
+        if (!empty($len) && $len !== '-') {
+            $query->whereLength($len);
+        }
+
+        if ($star === true) {
+            $query->whereHas('rating', function (Builder $query) use ($star) {
+                $query->where('stars', $star);
+            });
+        }
+
+        if (!empty($diff) && $diff !== '-') {
+            switch ($diff) {
+                case -1: // N/A
+                    $query->whereDoesntHave('rating');
+                    break;
+                case -2: // Demon
+                    $query->whereHas('rating', function (Builder $query) use ($demonFilter) {
+                        $query->where('demon', true);
+
+                        if (!empty($demonFilter)) {
+                            $diff = app(RatingService::class)->guessDemonDifficultyFromRating($demonFilter);
+                            $query->where('demon_difficulty', $diff);
+                        }
+                    });
+                    break;
+                case -3: // Auto
+                    $query->whereHas('rating', function (Builder $query) {
+                        $query->where('stars', 1);
+                        $query->where('auto', true);
+                    });
+                    break;
+                default:
+                    $query->whereHas('rating', function (Builder $query) use ($diff) {
+                        $difficulties = explode(',', strtr($diff, [',' => '0,']) . '0');
+                        $query->whereIn('difficulty', $difficulties);
+                        $query->where('auto', false);
+                        $query->where('demon', false);
+                    });
+            }
+        }
+
+        // Advanced Options
+
+        if ($unCompleted === true && !empty($completedLevels)) {
+            $query->whereNotIn('id', explode(',', $completedLevels));
+        }
+
+        if ($onlyCompleted === true && !empty($completedLevels)) {
+            $query->whereIn('id', explode(',', $completedLevels));
+        }
+
+        if ($featured === true) {
+            $query->whereHas('rating', function (Builder $query) {
+                $query->where('featured_score', '>', 0);
+            });
+        }
+
+        if ($original === true) {
+            $query->whereNotNull('original');
+        }
+
+        if ($epic === true) {
+            $query->whereHas('rating', function (Builder $query) {
+                $query->where('epic', true);
+            });
+        }
+
+        if (!empty($song)) {
+            if ($customSong === true) {
+                $query->whereSong($song);
+            } else {
+                $query->whereAudioTrack($song);
+            }
+        }
+
+        if ($noStar === true) {
+            $query->whereHas('rating', function (Builder $query) {
+                $query->orWhere('stars', '<=', 0);
+            });
+        }
+
+        if ($coins === true) {
+            $query->where('coins', '!=', 0);
+        }
+
+        if ($twoPlayer === true) {
+            $query->where('two_player', true);
+        }
+
+        $hash = '';
+        $users = [];
+        $songs = [];
+
+        $count = $query->count();
+        $result = $query->forPage(++$page, PageInfoComponent::$per_page)
+            ->with('rating')
+            ->get()
+            ->map(function (Level $level) use ($gauntletID, &$hash, &$users, &$songs) {
+                $hash .= implode(null, [
+                    substr($level->id, 0, 1),
+                    substr($level->id, -1),
+                    $level->rating->stars ?? 0,
+                    $level->rating->coin_verified ?? 0
+                ]);
+
+                /** @var User $user */
+                $user = $level->getRelationValue('user');
+                $users[] = implode(':', [
+                    $user->id,
+                    $user->name,
+                    is_numeric($user->uuid) ? $user->uuid : 0
+                ]);
+
+                if ($level->song > 0) {
+                    $songs[] = $this->songService->get($level->song);
+                }
+
+                return GDObject::merge([
+                    1 => $level->id,
+                    2 => $level->name,
+                    3 => $level->getRawOriginal('desc'),
+                    5 => $level->version,
+                    6 => $level->user,
+                    8 => ($level->rating->difficulty ?? 0) > 0 ? 10 : 0,
+                    9 => $level->rating->difficulty ?? 0,
+                    10 => $level->downloads,
+                    12 => $level->audio_track,
+                    13 => $level->game_version,
+                    14 => $level->likes,
+                    15 => $level->length,
+                    17 => $level->rating->demon ?? 0,
+                    18 => $level->rating->stars ?? 0,
+                    19 => $level->rating->featured_score ?? 0,
+                    25 => $level->rating->auto ?? 0,
+                    30 => $level->original,
+                    31 => $level->two_player,
+                    35 => $level->song,
+                    36 => $level->extra_string,
+                    37 => $level->coins,
+                    38 => $level->rating->coin_verified ?? 0,
+                    39 => $level->requested_stars,
+                    42 => $level->rating->epic ?? 0,
+                    43 => $level->rating->demon_difficulty ?? 0,
+                    44 => $gauntletID,
+                    45 => $level->objects
+                ], ':');
+            })->join('|');
+
+        LogFacade::channel('gdcn')
+            ->info('[Level System] Action: Search Level', [
+                'query' => $query->toSql()
+            ]);
+
+        return implode('#', [
+            $result,
+            implode('|', $users),
+            implode('~:~', $songs),
+            app(PageInfoComponent::class)->generate($count, $page),
+            app(LevelInfoComponent::class)->generateHash($hash)
+        ]);
     }
 }
