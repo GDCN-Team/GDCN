@@ -35,22 +35,22 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $now = now();
             $hourLater = $now->addHour();
-            Account::whereNull('email_verified_at')->where('created_at', '<', $hourLater)->delete();
-        })->daily();
+            Account::whereNull('email_verified_at')->whereTime('created_at', '<', $hourLater)->delete();
+        })->daily()->name('删除一小时未验证邮箱的账号');
 
         $schedule->call(function () {
             $now = now();
             $expiredTime = $now->addSeconds(config('auth.password_timeout', 10800));
             PasswordReset::where('created_at', '<', $expiredTime)->delete();
-        })->daily();
+        })->daily()->name('删除过期密码重置请求');
 
         $schedule->call(function () {
             app(AntiCheatService::class)->run();
-        })->daily();
+        })->daily()->name('运行反作弊服务');
 
         $schedule->call(function () {
             app(OptimizeService::class)->run();
-        })->daily();
+        })->daily()->name('运行优化服务');
     }
 
     /**
